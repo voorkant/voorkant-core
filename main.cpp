@@ -13,8 +13,11 @@
 #define ADDRESS "127.0.0.1"
 #define CLIENT_ID "habbieclient"
 
+using std::cerr;
 using std::cout;
 using std::endl;
+using std::string;
+using std::map;
 
 using json = nlohmann::json;
 
@@ -25,6 +28,8 @@ int main(int argc, char* argv[])
     mqtt::callback cb;
     cli.set_callback(cb);
 
+    cerr<<"starting"<<endl;
+
     auto connOpts = mqtt::connect_options_builder() 
         // .keep_alive_interval(20)
         .clean_session()
@@ -33,6 +38,7 @@ int main(int argc, char* argv[])
     try {
         cli.connect(connOpts);
 
+        cerr<<"connected"<<endl;
         // // First use a message pointer.
 
         // mqtt::message_ptr pubmsg = mqtt::make_message(PAYLOAD1);
@@ -41,7 +47,7 @@ int main(int argc, char* argv[])
 
         // Now try with itemized publish.
 
-        cli.publish(TOPIC, PAYLOAD2, strlen(PAYLOAD2)+1, 0, false);
+        // cli.publish(TOPIC, PAYLOAD2, strlen(PAYLOAD2)+1, 0, false);
 
         // Disconnect
         
@@ -60,15 +66,32 @@ int main(int argc, char* argv[])
 
     cli.subscribe({ '#' }, 1);
 
+    map<string, json> states;
+
     while (true) {
-    	auto msg = cli.consume_message();
+        auto msg = cli.consume_message();
 
-    	if (msg) {
-			cout << msg->get_topic() << ": " << msg->to_string() << endl;
-    	}
+        if (msg) {
+            json j = json::parse(msg->to_string());
 
-    	json j = json::parse(msg->to_string());
-        
+            // cout << msg->get_topic() << ": " << j.dump(4) << endl;
+            auto event_type = j["event_type"];
+            auto ev = j["event_data"];
+            auto entity_id = ev["entity_id"];
+
+            auto old_state = ev["old_state"];
+            auto new_state = ev["new_state"];
+
+            cout << "event_type=" << event_type << ", ";
+            cout << "entity_id=" << entity_id << ", ";
+            cout << "state=" << new_state["state"];
+            cout << endl;
+
+            // cout << "changed:" << endl;
+            // auto d = json::diff(ev["old_state"], ev["new_state"]);
+            // cout << d.dump(4) << endl;
+        }
+
     }
 
     return 0;
