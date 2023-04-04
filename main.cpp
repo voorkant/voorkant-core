@@ -87,11 +87,20 @@ int main(int argc, char* argv[])
             cout << "state=" << new_state["state"];
             cout << endl;
 
+            if (event_type == "state_changed") {
+                states[entity_id] = new_state;
+            }
+
             // cout << "changed:" << endl;
             // auto d = json::diff(ev["old_state"], ev["new_state"]);
             // cout << d.dump(4) << endl;
         }
 
+        cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
+        cerr<<endl;
+        for (auto &[k,v] : states) {
+            cout<<k<<"="<<v["state"]<<endl;
+        }
     }
 
     return 0;
