@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 
     cli.subscribe({ '#' }, 1);
 
-    map<string, HAEntity> states;
+    map<string, std::shared_ptr<HAEntity>> states;
 
     while (true) {
         auto msg = cli.consume_message();
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
             cout << endl;
 
             if (event_type == "state_changed") {
-                states[entity_id] = HAEntity(new_state);
+                states[entity_id] = std::make_shared<HAEntity>(new_state);
             }
 
         }
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
         cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
         cerr<<endl;
         for (auto &[k,v] : states) {
-            cout<<k<<"="<<v.getState()<<endl;
+            cout<<k<<"="<<v->getState()<<endl;
         }
     }
 
