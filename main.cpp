@@ -39,19 +39,6 @@ int main(int argc, char* argv[])
         cli.connect(connOpts);
 
         cerr<<"connected"<<endl;
-        // // First use a message pointer.
-
-        // mqtt::message_ptr pubmsg = mqtt::make_message(PAYLOAD1);
-        // pubmsg->set_qos();
-        // cli.publish(TOPIC, pubmsg);
-
-        // Now try with itemized publish.
-
-        // cli.publish(TOPIC, PAYLOAD2, strlen(PAYLOAD2)+1, 0, false);
-
-        // Disconnect
-        
-        // cli.disconnect();
     }
     catch (const mqtt::persistence_exception& exc) {
         std::cerr << "Persistence Error: " << exc.what() << " ["
@@ -74,7 +61,6 @@ int main(int argc, char* argv[])
         if (msg) {
             json j = json::parse(msg->to_string());
 
-            // cout << msg->get_topic() << ": " << j.dump(4) << endl;
             auto event_type = j["event_type"];
             auto ev = j["event_data"];
             auto entity_id = ev["entity_id"];
@@ -91,9 +77,6 @@ int main(int argc, char* argv[])
                 states[entity_id] = new_state;
             }
 
-            // cout << "changed:" << endl;
-            // auto d = json::diff(ev["old_state"], ev["new_state"]);
-            // cout << d.dump(4) << endl;
         }
 
         cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
