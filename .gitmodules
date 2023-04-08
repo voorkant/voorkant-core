@@ -1,3 +1,6 @@
 [submodule "libs/paho.mqtt.cpp"]
 	path = libs/paho.mqtt.cpp
 	url = https://github.com/eclipse/paho.mqtt.cpp
+[submodule "libs/imtui"]
+	path = libs/imtui
+	url = https://github.com/ggerganov/imtui
