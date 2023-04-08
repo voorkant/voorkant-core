@@ -104,7 +104,6 @@ int main(int argc, char* argv[])
             if (event_type == "state_changed") {
                 states[entity_id] = std::make_shared<HAEntity>(new_state);
             }
-
         }
 
         cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
