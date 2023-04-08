@@ -21,6 +21,34 @@ using std::map;
 
 using json = nlohmann::json;
 
+class HAEntity
+{
+public:
+    HAEntity(void) {
+
+    }
+    HAEntity(json _state) {
+        state = _state;
+    }
+    ~HAEntity() {
+
+    }
+
+    void update(json _state) {
+        state = _state;
+    }
+
+    std::string toString(void) {
+        return state.dump();
+    }
+
+    std::string getState(void) {
+        return state["state"];
+    }
+private:
+    json state;
+};
+
 int main(int argc, char* argv[])
 {
     mqtt::client cli(ADDRESS, CLIENT_ID);
@@ -53,7 +81,7 @@ int main(int argc, char* argv[])
 
     cli.subscribe({ '#' }, 1);
 
-    map<string, json> states;
+    map<string, HAEntity> states;
 
     while (true) {
         auto msg = cli.consume_message();
@@ -74,7 +102,7 @@ int main(int argc, char* argv[])
             cout << endl;
 
             if (event_type == "state_changed") {
-                states[entity_id] = new_state;
+                states[entity_id] = HAEntity(new_state);
             }
 
         }
@@ -82,7 +110,7 @@ int main(int argc, char* argv[])
         cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
         cerr<<endl;
         for (auto &[k,v] : states) {
-            cout<<k<<"="<<v["state"]<<endl;
+            cout<<k<<"="<<v.getState()<<endl;
         }
     }
 
