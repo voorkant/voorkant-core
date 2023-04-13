@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unistd.h>
+#include <poll.h>
 #include <nlohmann/json.hpp>
 
 #include <curl/curl.h>
@@ -57,12 +58,18 @@ int main(int argc, char* argv[])
     char buffer[64000];
     size_t recv;
     struct curl_ws_frame *meta;
+    struct pollfd pfd;
 
-    cerr<<curl_ws_recv(handle, buffer, sizeof(buffer), &recv, &meta);
-    cerr<<curl_ws_recv(handle, buffer, sizeof(buffer), &recv, &meta);
-    cerr<<curl_ws_recv(handle, buffer, sizeof(buffer), &recv, &meta);
-    sleep(5);
-    cerr<<curl_ws_recv(handle, buffer, sizeof(buffer), &recv, &meta);
+    pfd.events = POLLIN;
+    cerr<<curl_easy_getinfo(handle, CURLINFO_ACTIVESOCKET, &pfd.fd)<<endl;
+
+
+    CURLcode ret;
+    while((ret = curl_ws_recv(handle, buffer, sizeof(buffer), &recv, &meta)) == CURLE_AGAIN) {
+      cerr<<"CURLE_AGAIN"<<endl;
+      poll(&pfd, 1, 1);
+    }
+    cerr<<ret<<endl;
     cerr<<buffer<<endl;
 
 
