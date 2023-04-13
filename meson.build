@@ -20,8 +20,26 @@ json_dep = dependency('nlohmann_json')
 
 thread_dep = dependency('threads')
 
+#curl_dep = dependency('libcurl')
+
+# cmake = import('cmake')
+
+# libcurl_proj = cmake.subproject('libcurl')
+# libcurl_dep = libcurl_proj.get_variable('CURL_LIBRARIES')
+
+# curlwrap_proj = subproject('curl-wrap')
+# message('curlwrap variables:\n - ' + '\n - '.join(curlwrap_proj.target_list()))
+
+# curlwrap_dep = curlwrap_proj.get_variable('curl_dep')
+
+# curl_dep = dependency('libcurl', version : '>=8', fallback : ['libcurl', 'curl_dep'])
+curl_dep = dependency('curl')
+
+#, version : '>=8', fallback : ['libcurl', 'curl_dep'])
+
+# , ['curl-wrap', 'curl_dep'])
 executable('client',
            'main.cpp',
            install : true,
-           dependencies : [pahopp_lib, paho_liba, paho_libc, paho_libas, paho_libcs, thread_dep],
+           dependencies : [pahopp_lib, paho_liba, paho_libc, paho_libas, paho_libcs, thread_dep, curl_dep],
            include_directories : [pahopp_inc])

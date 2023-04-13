@@ -1,17 +1,8 @@
-#include <cstring>
-
-#include <mqtt/client.h>
-#include <mqtt/callback.h>
-#include <mqtt/connect_options.h>
-
+#include <iostream>
+#include <unistd.h>
 #include <nlohmann/json.hpp>
 
-#define PAYLOAD1 "bar"
-#define PAYLOAD2 "foo"
-#define TOPIC "/bla"
-#define QOS 1
-#define ADDRESS "127.0.0.1"
-#define CLIENT_ID "habbieclient"
+#include <curl/curl.h>
 
 using std::cerr;
 using std::cout;
@@ -51,6 +42,31 @@ private:
 
 int main(int argc, char* argv[])
 {
+
+    curl_global_init(CURL_GLOBAL_ALL);
+    auto handle = curl_easy_init();
+
+    auto wsurl = getenv("HA_WS_URL");
+
+    cerr<<"wsurl="<<wsurl<<endl;
+
+    cerr<<curl_easy_setopt(handle, CURLOPT_URL, wsurl)<<endl;
+    cerr<<curl_easy_setopt(handle, CURLOPT_CONNECT_ONLY, 2L)<<endl;
+    cerr<<curl_easy_perform(handle)<<endl ;
+
+    char buffer[64000];
+    size_t recv;
+    struct curl_ws_frame *meta;
+
+    cerr<<curl_ws_recv(handle, buffer, sizeof(buffer), &recv, &meta);
+    cerr<<curl_ws_recv(handle, buffer, sizeof(buffer), &recv, &meta);
+    cerr<<curl_ws_recv(handle, buffer, sizeof(buffer), &recv, &meta);
+    sleep(5);
+    cerr<<curl_ws_recv(handle, buffer, sizeof(buffer), &recv, &meta);
+    cerr<<buffer<<endl;
+
+
+#if 0
     mqtt::client cli(ADDRESS, CLIENT_ID);
 
     mqtt::callback cb;
@@ -112,6 +128,6 @@ int main(int argc, char* argv[])
             cout<<k<<"="<<v->getState()<<endl;
         }
     }
-
+#endif
     return 0;
 }
