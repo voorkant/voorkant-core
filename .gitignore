@@ -1,0 +1,4 @@
+.cache
+.secrets
+subprojects/curl-8.0.1/
+subprojects/packagecache/
