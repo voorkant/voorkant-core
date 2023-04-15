@@ -14,6 +14,8 @@ using std::map;
 
 using json = nlohmann::json;
 
+static const uint32_t ID_SUBSCRIPTION = 1;
+
 class HAEntity
 {
 public:
@@ -62,13 +64,13 @@ public:
         struct pollfd pfd;
 
         pfd.events = POLLIN;
-        cerr<<curl_easy_getinfo(wshandle, CURLINFO_ACTIVESOCKET, &pfd.fd)<<endl;
+        /* cerr<< */ curl_easy_getinfo(wshandle, CURLINFO_ACTIVESOCKET, &pfd.fd) /* <<endl */ ;
 
         CURLcode ret;
 
         // FIXME: handle frames > 64k
         while((ret = curl_ws_recv(wshandle, buffer, sizeof(buffer), &recv, &meta)) == CURLE_AGAIN) {
-          cerr<<"CURLE_AGAIN"<<endl;
+          // cerr<<"CURLE_AGAIN"<<endl;
           poll(&pfd, 1, 1000);
         }
         // cerr<<ret<<endl;
@@ -86,7 +88,7 @@ public:
     char buffer[64000];
 };
 
-int main(int /* argc */, char* /* argv[] */*)
+int main(void) // int /* argc */, char* /* argv[] */*)
 {
 
     curl_global_init(CURL_GLOBAL_ALL);
@@ -113,70 +115,39 @@ int main(int /* argc */, char* /* argv[] */*)
 
     json subscribe;
 
-    subscribe["id"] = 1;
+    subscribe["id"] = ID_SUBSCRIPTION;
     subscribe["type"] = "subscribe_events";
 
     auto jsubscribe = subscribe.dump();
 
     wc.send(jsubscribe);
 
-    while(true) { cerr<<wc.recv()<<endl; }
-
-
-#if 0
-    mqtt::client cli(ADDRESS, CLIENT_ID);
-
-    mqtt::callback cb;
-    cli.set_callback(cb);
-
-    cerr<<"starting"<<endl;
-
-    auto connOpts = mqtt::connect_options_builder() 
-        // .keep_alive_interval(20)
-        .clean_session()
-        .finalize();
-
-    try {
-        cli.connect(connOpts);
-
-        cerr<<"connected"<<endl;
-    }
-    catch (const mqtt::persistence_exception& exc) {
-        std::cerr << "Persistence Error: " << exc.what() << " ["
-            << exc.get_reason_code() << "]" << std::endl;
-        return 1;
-    }
-    catch (const mqtt::exception& exc) {
-        std::cerr << "Error: " << exc.what() << " ["
-            << exc.get_reason_code() << "]" << std::endl;
-        return 1;
-    }
-
-    cli.subscribe({ '#' }, 1);
-
     map<string, std::shared_ptr<HAEntity>> states;
 
     while (true) {
-        auto msg = cli.consume_message();
+        auto msg = wc.recv();
 
-        if (msg) {
-            json j = json::parse(msg->to_string());
+        json j = json::parse(msg);
 
-            auto event_type = j["event_type"];
-            auto ev = j["event_data"];
-            auto entity_id = ev["entity_id"];
+        if (j["id"] != ID_SUBSCRIPTION) {
+            continue;
+        }
 
-            auto old_state = ev["old_state"];
-            auto new_state = ev["new_state"];
+        auto event = j["event"];
+        auto event_type = event["event_type"];
+        auto evd = event["data"];
+        auto entity_id = evd["entity_id"];
 
-            cout << "event_type=" << event_type << ", ";
-            cout << "entity_id=" << entity_id << ", ";
-            cout << "state=" << new_state["state"];
-            cout << endl;
+        auto old_state = evd["old_state"];
+        auto new_state = evd["new_state"];
 
-            if (event_type == "state_changed") {
-                states[entity_id] = std::make_shared<HAEntity>(new_state);
-            }
+        cout << "event_type=" << event_type << ", ";
+        cout << "entity_id=" << entity_id << ", ";
+        cout << "state=" << new_state["state"];
+        cout << endl;
+
+        if (event_type == "state_changed") {
+            states[entity_id] = std::make_shared<HAEntity>(new_state);
         }
 
         cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
@@ -185,6 +156,5 @@ int main(int /* argc */, char* /* argv[] */*)
             cout<<k<<"="<<v->getState()<<endl;
         }
     }
-#endif
     return 0;
 }
