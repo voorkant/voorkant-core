@@ -77,7 +77,7 @@ public:
 
     }
 
-    std::string send(std::string& msg) {
+    void send(std::string& msg) {
         size_t sent;
         curl_ws_send(wshandle, msg.c_str(), msg.length(), &sent, 0, CURLWS_TEXT);
     }
@@ -86,7 +86,7 @@ public:
     char buffer[64000];
 };
 
-int main(int argc, char* argv[])
+int main(int /* argc */, char* /* argv[] */*)
 {
 
     curl_global_init(CURL_GLOBAL_ALL);
@@ -106,9 +106,22 @@ int main(int argc, char* argv[])
     cerr<<auth.dump()<<endl;
 
     auto jauth = auth.dump();
+    cerr<<jauth<<endl;
     wc.send(jauth);
 
-    cerr<<wc.recv()<<endl;
+    cerr<<wc.recv()<<endl; // FIXME assert auth_ok
+
+    json subscribe;
+
+    subscribe["id"] = 1;
+    subscribe["type"] = "subscribe_events";
+
+    auto jsubscribe = subscribe.dump();
+
+    wc.send(jsubscribe);
+
+    while(true) { cerr<<wc.recv()<<endl; }
+
 
 #if 0
     mqtt::client cli(ADDRESS, CLIENT_ID);
