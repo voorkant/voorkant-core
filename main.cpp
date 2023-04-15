@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 
 #include <curl/curl.h>
+#include "curl/easy.h"
 
 using std::cerr;
 using std::cout;
@@ -41,37 +42,73 @@ private:
     json state;
 };
 
+class WSConn
+{
+public:
+    WSConn(std::string url) {
+        wshandle = curl_easy_init();
+
+        curl_easy_setopt(wshandle, CURLOPT_CONNECT_ONLY, 2L);
+        curl_easy_setopt(wshandle, CURLOPT_URL, url.c_str());
+        curl_easy_perform(wshandle);
+    }
+    ~WSConn() {
+        // FIXME clean up here
+    }
+
+    std::string recv(void) {
+        size_t recv;
+        struct curl_ws_frame *meta;
+        struct pollfd pfd;
+
+        pfd.events = POLLIN;
+        cerr<<curl_easy_getinfo(wshandle, CURLINFO_ACTIVESOCKET, &pfd.fd)<<endl;
+
+        CURLcode ret;
+
+        // FIXME: handle frames > 64k
+        while((ret = curl_ws_recv(wshandle, buffer, sizeof(buffer), &recv, &meta)) == CURLE_AGAIN) {
+          cerr<<"CURLE_AGAIN"<<endl;
+          poll(&pfd, 1, 1000);
+        }
+        // cerr<<ret<<endl;
+        // cerr<<buffer<<endl;
+        return std::string(buffer, recv);
+
+    }
+
+    std::string send(std::string& msg) {
+        size_t sent;
+        curl_ws_send(wshandle, msg.c_str(), msg.length(), &sent, 0, CURLWS_TEXT);
+    }
+    
+    CURL* wshandle;
+    char buffer[64000];
+};
+
 int main(int argc, char* argv[])
 {
 
     curl_global_init(CURL_GLOBAL_ALL);
-    auto handle = curl_easy_init();
+    auto wc = WSConn(std::string(getenv("HA_WS_URL")));
 
-    auto wsurl = getenv("HA_WS_URL");
+    auto welcome = wc.recv();
 
-    cerr<<"wsurl="<<wsurl<<endl;
+    auto jwelcome = json::parse(welcome);
 
-    cerr<<curl_easy_setopt(handle, CURLOPT_URL, wsurl)<<endl;
-    cerr<<curl_easy_setopt(handle, CURLOPT_CONNECT_ONLY, 2L)<<endl;
-    cerr<<curl_easy_perform(handle)<<endl ;
+    cerr<<"got welcome: "<<welcome<<endl; // FIXME check that it is the expected auth_required message
 
-    char buffer[64000];
-    size_t recv;
-    struct curl_ws_frame *meta;
-    struct pollfd pfd;
+    json auth;
 
-    pfd.events = POLLIN;
-    cerr<<curl_easy_getinfo(handle, CURLINFO_ACTIVESOCKET, &pfd.fd)<<endl;
+    auth["type"] = "auth";
+    auth["access_token"] = getenv("HA_API_TOKEN");
 
+    cerr<<auth.dump()<<endl;
 
-    CURLcode ret;
-    while((ret = curl_ws_recv(handle, buffer, sizeof(buffer), &recv, &meta)) == CURLE_AGAIN) {
-      cerr<<"CURLE_AGAIN"<<endl;
-      poll(&pfd, 1, 1);
-    }
-    cerr<<ret<<endl;
-    cerr<<buffer<<endl;
+    auto jauth = auth.dump();
+    wc.send(jauth);
 
+    cerr<<wc.recv()<<endl;
 
 #if 0
     mqtt::client cli(ADDRESS, CLIENT_ID);
