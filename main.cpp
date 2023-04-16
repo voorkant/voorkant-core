@@ -15,6 +15,8 @@ using std::map;
 using json = nlohmann::json;
 
 static const uint32_t ID_SUBSCRIPTION = 1;
+static const uint32_t ID_GETSTATES = 2;
+static const uint32_t ID_START = 100;
 
 class HAEntity
 {
@@ -44,6 +46,8 @@ private:
   json state;
 };
 
+map<string, std::shared_ptr<HAEntity>> states;
+
 class WSConn
 {
 public:
@@ -63,20 +67,43 @@ public:
     struct curl_ws_frame *meta;
     struct pollfd pfd;
 
+    char buffer[8192];
+
+    std::string result;
+
     pfd.events = POLLIN;
         /* cerr<< */ curl_easy_getinfo(wshandle, CURLINFO_ACTIVESOCKET, &pfd.fd) /* <<endl */ ;
 
     CURLcode ret;
 
         // FIXME: handle frames > 64k
-    while((ret = curl_ws_recv(wshandle, buffer, sizeof(buffer), &recv, &meta)) == CURLE_AGAIN) {
+    while(true) {
+      ret = curl_ws_recv(wshandle, buffer, sizeof(buffer), &recv, &meta);
           // cerr<<"CURLE_AGAIN"<<endl;
-      poll(&pfd, 1, 1000);
+      cerr<<"recv ret="<<ret<<endl;
+      if (ret == CURLE_OK) {
+        std::string chunk(buffer, recv); // FIXME: string_view?
+        result = result + chunk;
+        cerr<<"bytesleft="<<(meta->bytesleft)<<endl;
+        cerr<<"result.size()="<<result.size()<<endl;
+        if (meta->bytesleft == 0) {
+          break;
+        }
+      }
+      else if (ret == CURLE_AGAIN) {
+        poll(&pfd, 1, 1000);
+      }
+      else {
+        throw std::runtime_error("got error from curl");
+      }
     }
-        // cerr<<ret<<endl;
-        // cerr<<buffer<<endl;
-    return std::string(buffer, recv);
-
+        cerr<<"ret="<<ret<<endl;
+        cerr<<"buffer="<<buffer<<endl;
+        cerr<<"recv="<<recv<<endl;
+        cout<<"RESULT:"<<endl;
+        cout<<result<<endl;
+        cout<<"END RESULT"<<endl;
+    return result;
   }
 
   void send(std::string& msg) {
@@ -85,11 +112,11 @@ public:
   }
 
   CURL* wshandle;
-  char buffer[64000];
 };
 
 int main(void) // int /* argc */, char* /* argv[] */*)
 {
+  int msgid=ID_START;
 
   curl_global_init(CURL_GLOBAL_ALL);
   auto wc = WSConn(std::string(getenv("HA_WS_URL")));
@@ -122,11 +149,10 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
   wc.send(jsubscribe);
 
-  map<string, std::shared_ptr<HAEntity>> states;
 
   json call;
 
-  call["id"]=24;
+  call["id"]=msgid++;
   call["type"]="call_service";
   call["domain"]="light";
   call["service"]="toggle";
@@ -134,14 +160,30 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
   auto jcall = call.dump();
 
-  wc.send(jcall);
+  // wc.send(jcall);
+
+  json getstates;
+
+  getstates["id"]=ID_GETSTATES;
+  getstates["type"]="get_states";
+
+  auto jgetstates = getstates.dump();
+
+  wc.send(jgetstates);
+
+
 
   while (true) {
     auto msg = wc.recv();
 
+    // cout<<msg<<endl;
     json j = json::parse(msg);
 
-    if (j["id"] != ID_SUBSCRIPTION) {
+    if (j["id"] == ID_GETSTATES) {
+      continue;
+    }
+
+    if (j["id"] != ID_SUBSCRIPTION && j["id"] != ID_GETSTATES) {
       continue;
     }
 
