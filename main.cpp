@@ -80,7 +80,7 @@ public:
     while(true) {
       ret = curl_ws_recv(wshandle, buffer, sizeof(buffer), &recv, &meta);
           // cerr<<"CURLE_AGAIN"<<endl;
-      cerr<<"recv ret="<<ret<<endl;
+      // cerr<<"recv ret="<<ret<<endl;
       if (ret == CURLE_OK) {
         std::string chunk(buffer, recv); // FIXME: string_view?
         result = result + chunk;
@@ -171,6 +171,37 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
   wc.send(jgetstates);
 
+/* example ID_SUBSCRIPTION message:
+{
+  "id": 1,
+  "type": "event",
+  "event": {
+    "event_type": "state_changed",
+    "data": {
+      "entity_id": "sensor.shellyplug_s_bc6aa8_power",
+      "old_state": {
+...
+      },
+      "new_state": {
+        "entity_id": "sensor.shellyplug_s_bc6aa8_power",
+        "state": "9.89",
+...
+ */
+
+/* example ID_GETSTATES message:
+{
+  "id": 2,
+  "type": "result",
+  "success": true,
+  "result": [
+    {
+      "entity_id": "light.plafondlamp_kantoor_peter_level_light_color_on_off",
+      "state": "on",
+      "attributes": {
+        "min_color_temp_kelvin": 2000,
+        "max_color_temp_kelvin": 6535,
+
+*/
 
 
   while (true) {
@@ -180,28 +211,42 @@ int main(void) // int /* argc */, char* /* argv[] */*)
     json j = json::parse(msg);
 
     if (j["id"] == ID_GETSTATES) {
-      continue;
+      for (auto evd : j["result"]) {
+        // cerr<<evd.dump()<<endl;
+        auto entity_id = evd["entity_id"];
+
+        auto old_state = evd["old_state"];
+        auto new_state = evd["new_state"];
+
+        cout << "entity_id=" << entity_id << ", ";
+        cout << "state=" << evd["state"];
+        cout << endl;
+
+        states[entity_id] = std::make_shared<HAEntity>(evd);
+      }
+      // exit(1);
     }
+    else if (j["id"] == ID_SUBSCRIPTION) {
+      auto event = j["event"];
+      auto event_type = event["event_type"];
+      auto evd = event["data"];
+      auto entity_id = evd["entity_id"];
 
-    if (j["id"] != ID_SUBSCRIPTION && j["id"] != ID_GETSTATES) {
-      continue;
+      auto old_state = evd["old_state"];
+      auto new_state = evd["new_state"];
+
+      cout << "event_type=" << event_type << ", ";
+      cout << "entity_id=" << entity_id << ", ";
+      cout << "state=" << new_state["state"];
+      cout << endl;
+
+      if (event_type == "state_changed") {
+        states[entity_id] = std::make_shared<HAEntity>(new_state);
+      }
     }
-
-    auto event = j["event"];
-    auto event_type = event["event_type"];
-    auto evd = event["data"];
-    auto entity_id = evd["entity_id"];
-
-    auto old_state = evd["old_state"];
-    auto new_state = evd["new_state"];
-
-    cout << "event_type=" << event_type << ", ";
-    cout << "entity_id=" << entity_id << ", ";
-    cout << "state=" << new_state["state"];
-    cout << endl;
-
-    if (event_type == "state_changed") {
-      states[entity_id] = std::make_shared<HAEntity>(new_state);
+    else {
+      // not a message we were expecting
+      continue;
     }
 
     cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
