@@ -124,6 +124,18 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
   map<string, std::shared_ptr<HAEntity>> states;
 
+  json call;
+
+  call["id"]=24;
+  call["type"]="call_service";
+  call["domain"]="light";
+  call["service"]="toggle";
+  call["target"]["entity_id"]="light.plafondlamp_kantoor_peter_level_light_color_on_off";
+
+  auto jcall = call.dump();
+
+  wc.send(jcall);
+
   while (true) {
     auto msg = wc.recv();
 
