@@ -1,0 +1,9 @@
+[wrap-file]
+directory = curl-8.0.1
+
+source_url = https://curl.se/download/curl-8.0.1.tar.bz2
+source_filename = curl-8.0.1.tar.bz2
+source_hash = 9b6b1e96b748d04b968786b6bdf407aa5c75ab53a3d37c1c8c81cdb736555ccf
+
+[provide]
+dependency_names = libcurl
