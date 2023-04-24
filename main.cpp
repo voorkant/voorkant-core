@@ -6,6 +6,9 @@
 #include <curl/curl.h>
 #include "curl/easy.h"
 
+#include <ftxui/dom/elements.hpp>
+#include <ftxui/screen/screen.hpp>
+
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -116,6 +119,27 @@ public:
 
 int main(void) // int /* argc */, char* /* argv[] */*)
 {
+#if 0
+  using namespace ftxui;
+ 
+  // Define the document
+  Element document =
+    hbox({
+      text("left")   | border,
+      text("middle") | border | flex,
+      text("right")  | border,
+    });
+ 
+  auto screen = Screen::Create(
+    Dimension::Full(),       // Width
+    Dimension::Fit(document) // Height
+  );
+  Render(screen, document);
+  screen.Print();
+ 
+  return EXIT_SUCCESS;
+#endif
+  
   int msgid=ID_START;
 
   curl_global_init(CURL_GLOBAL_ALL);

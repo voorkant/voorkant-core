@@ -20,12 +20,16 @@ json_dep = dependency('nlohmann_json')
 
 thread_dep = dependency('threads')
 
+ftxui_screen_dep = dependency('ftxui-screen')
+ftxui_dom_dep = dependency('ftxui-dom')
+
 curl_dep = dependency('curl')
+
 
 executable('client',
            'main.cpp',
            install : true,
 	   #           dependencies : [pahopp_lib, paho_liba, paho_libc, paho_libas, paho_libcs, thread_dep, curl_dep],
-	   dependencies : [json_dep, thread_dep, curl_dep]
+	   dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep]
 	   #include_directories : [pahopp_inc])
 	   )
