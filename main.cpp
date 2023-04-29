@@ -5,6 +5,9 @@
 
 #include <curl/curl.h>
 #include "curl/easy.h"
+#include "ftxui/component/component.hpp"
+#include "ftxui/component/component_base.hpp"
+#include "ftxui/component/screen_interactive.hpp"
 
 #include <ftxui/dom/elements.hpp>
 #include <ftxui/screen/screen.hpp>
@@ -119,27 +122,7 @@ public:
 
 int main(void) // int /* argc */, char* /* argv[] */*)
 {
-#if 0
-  using namespace ftxui;
- 
-  // Define the document
-  Element document =
-    hbox({
-      text("left")   | border,
-      text("middle") | border | flex,
-      text("right")  | border,
-    });
- 
-  auto screen = Screen::Create(
-    Dimension::Full(),       // Width
-    Dimension::Fit(document) // Height
-  );
-  Render(screen, document);
-  screen.Print();
- 
-  return EXIT_SUCCESS;
-#endif
-  
+
   int msgid=ID_START;
 
   curl_global_init(CURL_GLOBAL_ALL);
@@ -227,6 +210,7 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
 */
 
+  int selected = 0;
 
   while (true) {
     auto msg = wc.recv();
@@ -273,11 +257,32 @@ int main(void) // int /* argc */, char* /* argv[] */*)
       continue;
     }
 
+
     cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
+    cerr<<"selected = "<<selected<<endl;
     cerr<<endl;
-    for (auto &[k,v] : states) {
-      cout<<k<<"="<<v->getState()<<endl;
+    // for (auto &[k,v] : states) {
+    //   cout<<k<<"="<<v->getState()<<endl;
+    // }
+
+    using namespace ftxui;
+    std::vector<std::string> entries;
+   
+    for (auto &[k,v] :states) {
+      entries.push_back(k);
     }
+    auto radiobox = Menu(&entries, &selected);
+    auto renderer = Renderer(radiobox, [&] {
+      return vbox({
+              hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
+              radiobox->Render() | vscroll_indicator | frame |
+             size(HEIGHT, LESS_THAN, 25)  | border
+           });
+    });
+   
+    auto screen = ScreenInteractive::FitComponent();
+    screen.Loop(renderer);
+
   }
   return 0;
 }
