@@ -1,4 +1,6 @@
+#include <exception>
 #include <iostream>
+#include <stdexcept>
 #include <unistd.h>
 #include <poll.h>
 #include <nlohmann/json.hpp>
@@ -165,13 +167,24 @@ void uithread() {
   screen.Loop(topRenderer);
 }
 
+std::string GetEnv(std::string key)
+{
+  auto value = getenv(key.c_str());
+
+  if (value == nullptr) {
+    throw std::runtime_error("environment variable "+key+" not set, exiting");
+  }
+
+  return value;
+}
+
 int main(void) // int /* argc */, char* /* argv[] */*)
 {
 
   int msgid=ID_START;
 
   curl_global_init(CURL_GLOBAL_ALL);
-  auto wc = WSConn(std::string(getenv("HA_WS_URL")));
+  auto wc = WSConn(GetEnv("HA_WS_URL"));
 
   auto welcome = wc.recv();
 
@@ -182,7 +195,7 @@ int main(void) // int /* argc */, char* /* argv[] */*)
   json auth;
 
   auth["type"] = "auth";
-  auth["access_token"] = getenv("HA_API_TOKEN");
+  auth["access_token"] = GetEnv("HA_API_TOKEN");
 
   // cerr<<auth.dump()<<endl;
 
