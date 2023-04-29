@@ -53,6 +53,7 @@ private:
 };
 
 map<string, std::shared_ptr<HAEntity>> states;
+std::mutex stateslock;
 
 class WSConn
 {
@@ -90,8 +91,8 @@ public:
       if (ret == CURLE_OK) {
         std::string chunk(buffer, recv); // FIXME: string_view?
         result = result + chunk;
-        cerr<<"bytesleft="<<(meta->bytesleft)<<endl;
-        cerr<<"result.size()="<<result.size()<<endl;
+        // cerr<<"bytesleft="<<(meta->bytesleft)<<endl;
+        // cerr<<"result.size()="<<result.size()<<endl;
         if (meta->bytesleft == 0) {
           break;
         }
@@ -103,12 +104,12 @@ public:
         throw std::runtime_error("got error from curl");
       }
     }
-        cerr<<"ret="<<ret<<endl;
-        cerr<<"buffer="<<buffer<<endl;
-        cerr<<"recv="<<recv<<endl;
-        cout<<"RESULT:"<<endl;
-        cout<<result<<endl;
-        cout<<"END RESULT"<<endl;
+        // cerr<<"ret="<<ret<<endl;
+        // cerr<<"buffer="<<buffer<<endl;
+        // cerr<<"recv="<<recv<<endl;
+        // cout<<"RESULT:"<<endl;
+        // cout<<result<<endl;
+        // cout<<"END RESULT"<<endl;
     return result;
   }
 
@@ -119,6 +120,31 @@ public:
 
   CURL* wshandle;
 };
+
+std::vector<std::string> entries;
+std::mutex entrieslock;
+
+ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FitComponent();
+
+void uithread() {
+  using namespace ftxui;
+
+  int selected;
+
+  auto radiobox = Menu(&entries, &selected);
+  auto renderer = Renderer(radiobox, [&] {
+    std::scoped_lock lk(entrieslock);
+
+    return vbox({
+            hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
+            radiobox->Render() | vscroll_indicator | frame |
+           size(HEIGHT, LESS_THAN, 25)  | border
+         });
+  });
+ 
+  // auto screen = ScreenInteractive::FitComponent();
+  screen.Loop(renderer);
+}
 
 int main(void) // int /* argc */, char* /* argv[] */*)
 {
@@ -132,20 +158,20 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
   auto jwelcome = json::parse(welcome);
 
-  cerr<<"got welcome: "<<welcome<<endl; // FIXME check that it is the expected auth_required message
+  // cerr<<"got welcome: "<<welcome<<endl; // FIXME check that it is the expected auth_required message
 
   json auth;
 
   auth["type"] = "auth";
   auth["access_token"] = getenv("HA_API_TOKEN");
 
-  cerr<<auth.dump()<<endl;
+  // cerr<<auth.dump()<<endl;
 
   auto jauth = auth.dump();
-  cerr<<jauth<<endl;
+  // cerr<<jauth<<endl;
   wc.send(jauth);
 
-  cerr<<wc.recv()<<endl; // FIXME assert auth_ok
+  // cerr<<wc.recv()<<endl; // FIXME assert auth_ok
 
   json subscribe;
 
@@ -210,7 +236,7 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
 */
 
-  int selected = 0;
+  std::thread ui(uithread);
 
   while (true) {
     auto msg = wc.recv();
@@ -218,71 +244,66 @@ int main(void) // int /* argc */, char* /* argv[] */*)
     // cout<<msg<<endl;
     json j = json::parse(msg);
 
-    if (j["id"] == ID_GETSTATES) {
-      for (auto evd : j["result"]) {
-        // cerr<<evd.dump()<<endl;
+
+    {
+      std::scoped_lock lk(stateslock);
+
+      if (j["id"] == ID_GETSTATES) {
+        for (auto evd : j["result"]) {
+          // cerr<<evd.dump()<<endl;
+          auto entity_id = evd["entity_id"];
+
+          auto old_state = evd["old_state"];
+          auto new_state = evd["new_state"];
+
+          // cout << "entity_id=" << entity_id << ", ";
+          // cout << "state=" << evd["state"];
+          // cout << endl;
+
+          states[entity_id] = std::make_shared<HAEntity>(evd);
+        }
+        // exit(1);
+      }
+      else if (j["id"] == ID_SUBSCRIPTION) {
+        auto event = j["event"];
+        auto event_type = event["event_type"];
+        auto evd = event["data"];
         auto entity_id = evd["entity_id"];
 
         auto old_state = evd["old_state"];
         auto new_state = evd["new_state"];
 
-        cout << "entity_id=" << entity_id << ", ";
-        cout << "state=" << evd["state"];
-        cout << endl;
+        // cout << "event_type=" << event_type << ", ";
+        // cout << "entity_id=" << entity_id << ", ";
+        // cout << "state=" << new_state["state"];
+        // cout << endl;
 
-        states[entity_id] = std::make_shared<HAEntity>(evd);
+        if (event_type == "state_changed") {
+          states[entity_id] = std::make_shared<HAEntity>(new_state);
+        }
       }
-      // exit(1);
-    }
-    else if (j["id"] == ID_SUBSCRIPTION) {
-      auto event = j["event"];
-      auto event_type = event["event_type"];
-      auto evd = event["data"];
-      auto entity_id = evd["entity_id"];
-
-      auto old_state = evd["old_state"];
-      auto new_state = evd["new_state"];
-
-      cout << "event_type=" << event_type << ", ";
-      cout << "entity_id=" << entity_id << ", ";
-      cout << "state=" << new_state["state"];
-      cout << endl;
-
-      if (event_type == "state_changed") {
-        states[entity_id] = std::make_shared<HAEntity>(new_state);
+      else {
+        // not a message we were expecting
+        continue;
       }
-    }
-    else {
-      // not a message we were expecting
-      continue;
-    }
 
-
-    cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
-    cerr<<"selected = "<<selected<<endl;
-    cerr<<endl;
+    }
+    // cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
+    // cerr<<"selected = "<<selected<<endl;
+    // cerr<<endl;
     // for (auto &[k,v] : states) {
     //   cout<<k<<"="<<v->getState()<<endl;
     // }
+    { 
+      std::scoped_lock lk(entrieslock);
+      entries.clear();
 
-    using namespace ftxui;
-    std::vector<std::string> entries;
-   
-    for (auto &[k,v] :states) {
-      entries.push_back(k);
+      for (auto &[k,v] : states) {
+        entries.push_back(k+":"+v->getState());
+      }
     }
-    auto radiobox = Menu(&entries, &selected);
-    auto renderer = Renderer(radiobox, [&] {
-      return vbox({
-              hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
-              radiobox->Render() | vscroll_indicator | frame |
-             size(HEIGHT, LESS_THAN, 25)  | border
-           });
-    });
-   
-    auto screen = ScreenInteractive::FitComponent();
-    screen.Loop(renderer);
 
+    screen.PostEvent(ftxui::Event::Custom);
   }
   return 0;
 }
