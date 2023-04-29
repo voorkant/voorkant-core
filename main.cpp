@@ -130,15 +130,24 @@ void uithread() {
   using namespace ftxui;
 
   int selected;
+  int selected2;
+
+  std::vector<std::string> entries2;
+  entries2.push_back("hoi");
+  entries2.push_back("hoi2");
 
   auto radiobox = Menu(&entries, &selected);
+  auto radiobox2 = Menu(&entries2, &selected2);
   auto renderer = Renderer(radiobox, [&] {
     std::scoped_lock lk(entrieslock);
 
     return vbox({
             hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
-            radiobox->Render() | vscroll_indicator | frame |
-           size(HEIGHT, LESS_THAN, 25)  | border
+            vbox(
+              {
+              hbox(radiobox->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15)  | border),
+              hbox(radiobox2->Render() | vscroll_indicator | frame | border)
+            })
          });
   });
  
