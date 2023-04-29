@@ -143,16 +143,26 @@ void uithread() {
 
     return vbox({
             hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
+            hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
             vbox(
               {
               hbox(radiobox->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15)  | border),
-              hbox(radiobox2->Render() | vscroll_indicator | frame | border)
             })
          });
   });
+
+  auto renderer2 = Renderer(radiobox2, [&] {
+    return vbox({
+              hbox(radiobox2->Render() | vscroll_indicator | frame | border),
+            });
+  });
+
+  auto topRenderer = Container::Horizontal({
+    renderer, renderer2
+  });
  
   // auto screen = ScreenInteractive::FitComponent();
-  screen.Loop(renderer);
+  screen.Loop(topRenderer);
 }
 
 int main(void) // int /* argc */, char* /* argv[] */*)
