@@ -1,5 +1,6 @@
 #include <exception>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <unistd.h>
 #include <poll.h>
@@ -50,12 +51,68 @@ public:
   std::string getState(void) {
     return state["state"];
   }
+
+  std::string getInfo(void) {
+    std::ostringstream ret;
+
+    ret<<"state="<<getState()<<"  ";
+    ret<<"domain="<<getDomain()<<"  ";
+    // ret<<""
+    return ret.str();
+  }
+
+  std::string getDomain(void) {
+    auto id = state["entity_id"].get<std::string>();
+
+    // FIXME: boost::split might be nice here, check if its header only?
+    auto pos = id.find(".");
+
+    if (pos == std::string::npos) {
+      throw std::runtime_error("entity ID ["+id+"] contains no period, has no domain?");
+    }
+
+    return id.substr(0, pos);
+  }
 private:
   json state;
 };
 
+class HADomain
+{
+public:
+  HADomain(void) {
+
+  }
+  HADomain(json _state) {
+    state = _state;
+  }
+  ~HADomain() {
+
+  }
+
+  void update(json _state) {
+    state = _state;
+  }
+
+  std::string toString(void) {
+    return state.dump(2);
+  }
+
+  std::string getState(void) {
+    return state["state"];
+  }
+
+private:
+  json state;
+};
+
+
+// FIXME: combine states and stateslock so unlocked use becomes impossible
 map<string, std::shared_ptr<HAEntity>> states;
 std::mutex stateslock;
+
+map<string, std::shared_ptr<HADomain>> domains;
+std::mutex domainslock;
 
 class WSConn
 {
@@ -153,7 +210,7 @@ void uithread() {
                     radiobox->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15)  | border,
                     vbox(
                       {
-                        paragraph(selected >= 0 ? states.at(entries.at(selected))->getState() : "") | border,
+                        paragraph(selected >= 0 ? states.at(entries.at(selected))->getInfo() : "") | border,
 
                       }
                     )
@@ -225,17 +282,17 @@ int main(void) // int /* argc */, char* /* argv[] */*)
   wc.send(jsubscribe);
 
 
-  json call;
+  // json call;
 
-  call["id"]=msgid++;
-  call["type"]="call_service";
-  call["domain"]="light";
-  call["service"]="toggle";
-  call["target"]["entity_id"]="light.plafondlamp_kantoor_peter_level_light_color_on_off";
+  // call["id"]=msgid++;
+  // call["type"]="call_service";
+  // call["domain"]="light";
+  // call["service"]="toggle";
+  // call["target"]["entity_id"]="light.plafondlamp_kantoor_peter_level_light_color_on_off";
 
-  auto jcall = call.dump();
+  // auto jcall = call.dump();
 
-  wc.send(jcall);
+  // wc.send(jcall);
 
   json getstates;
 
@@ -245,6 +302,15 @@ int main(void) // int /* argc */, char* /* argv[] */*)
   auto jgetstates = getstates.dump();
 
   wc.send(jgetstates);
+
+  json getdomains;
+
+  getdomains["id"]=msgid++;
+  getdomains["type"]="get_services";
+
+  auto jgetdomains = getdomains.dump();
+
+  wc.send(jgetdomains);
 
 /* example ID_SUBSCRIPTION message:
 {
@@ -303,6 +369,21 @@ int main(void) // int /* argc */, char* /* argv[] */*)
           // cout << endl;
 
           states[entity_id] = std::make_shared<HAEntity>(evd);
+        }
+        // exit(1);
+      }
+      else if (j["id"] == getdomains["id"]) {
+        cerr<<j.dump()<<endl;
+        for (auto &[domain,_services] : j["result"].items()) {
+          // cerr<<service.dump()<<endl;
+
+
+          // cout << "entity_id=" << entity_id << ", ";
+          // cout << "state=" << evd["state"];
+          // cout << endl;
+
+          domains[domain] = std::make_shared<HADomain>(_services);
+          cerr<<"got services for domain "<<domain<<endl;
         }
         // exit(1);
       }
