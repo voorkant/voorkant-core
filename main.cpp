@@ -44,7 +44,7 @@ public:
   }
 
   std::string toString(void) {
-    return state.dump();
+    return state.dump(2);
   }
 
   std::string getState(void) {
@@ -134,33 +134,43 @@ void uithread() {
   int selected;
   int selected2;
 
-  std::vector<std::string> entries2;
-  entries2.push_back("hoi");
-  entries2.push_back("hoi2");
+  // std::vector<std::string> entries2;
+  // entries2.push_back("hoi");
+  // entries2.push_back("hoi2");
 
   auto radiobox = Menu(&entries, &selected);
-  auto radiobox2 = Menu(&entries2, &selected2);
+  // auto radiobox2 = Menu(&entries2, &selected2);
   auto renderer = Renderer(radiobox, [&] {
-    std::scoped_lock lk(entrieslock);
+    std::scoped_lock lk(entrieslock, stateslock);
 
     return vbox({
             hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
-            hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
+            // hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
             vbox(
               {
-              hbox(radiobox->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15)  | border),
+                hbox(
+                  {
+                    radiobox->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15)  | border,
+                    vbox(
+                      {
+                        paragraph(selected >= 0 ? states.at(entries.at(selected))->getState() : "") | border,
+
+                      }
+                    )
+                  }
+                )
             })
          });
   });
 
-  auto renderer2 = Renderer(radiobox2, [&] {
-    return vbox({
-              hbox(radiobox2->Render() | vscroll_indicator | frame | border),
-            });
-  });
+  // auto renderer2 = Renderer(radiobox2, [&] {
+  //   return vbox({
+  //             hbox(radiobox2->Render() | vscroll_indicator | frame | border),
+  //           });
+  // });
 
   auto topRenderer = Container::Horizontal({
-    renderer, renderer2
+    renderer // , renderer2
   });
  
   // auto screen = ScreenInteractive::FitComponent();
@@ -331,7 +341,7 @@ int main(void) // int /* argc */, char* /* argv[] */*)
       entries.clear();
 
       for (auto &[k,v] : states) {
-        entries.push_back(k+":"+v->getState());
+        entries.push_back(k); // +":"+v->getState());
       }
     }
 
