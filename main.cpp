@@ -102,6 +102,17 @@ public:
     return state["state"];
   }
 
+  std::vector<std::string> getServices(void) {
+    std::vector<std::string> ret;
+
+    cerr<<state.dump()<<endl;
+    for (auto &[service,info] : state.items()) {
+      ret.push_back(service);
+    }
+
+    return ret;
+  }
+
 private:
   json state;
 };
@@ -185,6 +196,18 @@ std::mutex entrieslock;
 
 ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FitComponent();
 
+// FIXME: leaking ref from inside a lock
+// FIXME: don't copy entire vectors
+// FIXME: arg wants to be ref
+std::vector<std::string> getServicesForDomain(std::string domain) {
+  if (domains.count(domain)) {
+    return domains[domain]->getServices();
+  }
+  else {
+    return {"nothing"}; // ew
+  }
+}
+
 void uithread() {
   using namespace ftxui;
 
@@ -198,8 +221,11 @@ void uithread() {
   auto radiobox = Menu(&entries, &selected);
   // auto radiobox2 = Menu(&entries2, &selected2);
   auto renderer = Renderer(radiobox, [&] {
-    std::scoped_lock lk(entrieslock, stateslock);
+    std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
+    for(auto &[k,v] : domains) {
+      cerr<<"domain "<<k<<"exists"<<endl;
+    }
     return vbox({
             hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
             // hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
@@ -211,7 +237,8 @@ void uithread() {
                     vbox(
                       {
                         paragraph(selected >= 0 ? states.at(entries.at(selected))->getInfo() : "") | border,
-
+                        // paragraph(selected >= 0 && domains.size()>0 ? domains.at(states.at(entries.at(selected))->getDomain())->getServices()[0] : "")
+                        paragraph(selected >= 0 ? getServicesForDomain(states.at(entries.at(selected))->getDomain() )[0] : "")
                       }
                     )
                   }
