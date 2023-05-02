@@ -22,9 +22,9 @@ using std::map;
 
 using json = nlohmann::json;
 
-static const uint32_t ID_SUBSCRIPTION = 1;
-static const uint32_t ID_GETSTATES = 2;
-static const uint32_t ID_START = 100;
+// static const uint32_t ID_SUBSCRIPTION = 1;
+// static const uint32_t ID_GETSTATES = 2;
+// static const uint32_t ID_START = 100;
 
 class HAEntity
 {
@@ -181,7 +181,7 @@ std::string GetEnv(std::string key)
 int main(void) // int /* argc */, char* /* argv[] */*)
 {
 
-  int msgid=ID_START;
+  int msgid=1;
 
   curl_global_init(CURL_GLOBAL_ALL);
   auto wc = WSConn(GetEnv("HA_WS_URL"));
@@ -207,7 +207,7 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
   json subscribe;
 
-  subscribe["id"] = ID_SUBSCRIPTION;
+  subscribe["id"] = msgid++;
   subscribe["type"] = "subscribe_events";
 
   auto jsubscribe = subscribe.dump();
@@ -225,11 +225,11 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
   auto jcall = call.dump();
 
-  // wc.send(jcall);
+  wc.send(jcall);
 
   json getstates;
 
-  getstates["id"]=ID_GETSTATES;
+  getstates["id"]=msgid++;
   getstates["type"]="get_states";
 
   auto jgetstates = getstates.dump();
@@ -280,7 +280,7 @@ int main(void) // int /* argc */, char* /* argv[] */*)
     {
       std::scoped_lock lk(stateslock);
 
-      if (j["id"] == ID_GETSTATES) {
+      if (j["id"] == getstates["id"]) {
         for (auto evd : j["result"]) {
           // cerr<<evd.dump()<<endl;
           auto entity_id = evd["entity_id"];
@@ -296,7 +296,7 @@ int main(void) // int /* argc */, char* /* argv[] */*)
         }
         // exit(1);
       }
-      else if (j["id"] == ID_SUBSCRIPTION) {
+      else if (j["type"] == "event") {
         auto event = j["event"];
         auto event_type = event["event_type"];
         auto evd = event["data"];
