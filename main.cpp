@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <exception>
 #include <iostream>
 #include <sstream>
@@ -10,6 +11,7 @@
 #include "curl/easy.h"
 #include "ftxui/component/component.hpp"
 #include "ftxui/component/component_base.hpp"
+// #include "ftxui/component/component_options.hpp"
 #include "ftxui/component/screen_interactive.hpp"
 
 #include <ftxui/dom/elements.hpp>
@@ -105,7 +107,7 @@ public:
   std::vector<std::string> getServices(void) {
     std::vector<std::string> ret;
 
-    cerr<<state.dump()<<endl;
+    // cerr<<state.dump()<<endl;
     for (auto &[service,info] : state.items()) {
       ret.push_back(service);
     }
@@ -214,18 +216,39 @@ void uithread() {
   int selected;
   int selected2;
 
-  // std::vector<std::string> entries2;
-  // entries2.push_back("hoi");
-  // entries2.push_back("hoi2");
+  std::vector<std::string> entries2;
+  entries2.push_back("hoi");
+  entries2.push_back("hoi2");
 
   auto radiobox = Menu(&entries, &selected);
-  // auto radiobox2 = Menu(&entries2, &selected2);
+  auto radiobox2 = Menu(&entries2, &selected2);
   auto renderer = Renderer(radiobox, [&] {
     std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
-    for(auto &[k,v] : domains) {
-      cerr<<"domain "<<k<<"exists"<<endl;
+    // for(auto &[k,v] : domains) {
+    //   cerr<<"domain "<<k<<"exists"<<endl;
+    // }
+    std::vector<std::string> services;
+    cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
+    if (selected >= 0 && entries.size() > 0) {
+      cerr<<"getting services"<<endl;
+      services = getServicesForDomain(states.at(entries.at(selected))->getDomain());
     }
+
+    std::vector<Component> buttons;
+
+    for (const auto &service : services) {
+      auto entity = entries.at(selected);
+
+      cerr<<service<<endl;
+      buttons.push_back(Button(service, [=] { cout<<service<<endl; } ));
+    }
+
+    cerr<<"services.size()=="<<services.size()<<", buttons.size()=="<<buttons.size()<<endl;
+    auto buttonrenderer = Container::Vertical(buttons);
+
+
+    // FIXME: rewrite this to have one Render per Container so things might actually work
     return vbox({
             hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
             // hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
@@ -233,32 +256,29 @@ void uithread() {
               {
                 hbox(
                   {
-                    radiobox->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15)  | border,
+                    // vbox(buttons) | frame | size(WIDTH, LESS_THAN, 15) | border,
+                    radiobox->Render() | vscroll_indicator | frame | /* size(HEIGHT, LESS_THAN, 15) | */ size(WIDTH, LESS_THAN, 60) | border,
+                    buttonrenderer->Render(),
                     vbox(
                       {
-                        paragraph(selected >= 0 ? states.at(entries.at(selected))->getInfo() : "") | border,
+                        paragraph(selected >= 0 && entries.size() > 0 ? states.at(entries.at(selected))->getInfo() : "") | border,
                         // paragraph(selected >= 0 && domains.size()>0 ? domains.at(states.at(entries.at(selected))->getDomain())->getServices()[0] : "")
-                        paragraph(selected >= 0 ? getServicesForDomain(states.at(entries.at(selected))->getDomain() )[0] : "")
+                        paragraph(selected >= 0 && entries.size() > 0 ? getServicesForDomain(states.at(entries.at(selected))->getDomain() )[0] : "")
                       }
-                    )
+                    ),
                   }
                 )
             })
          });
   });
 
-  // auto renderer2 = Renderer(radiobox2, [&] {
-  //   return vbox({
-  //             hbox(radiobox2->Render() | vscroll_indicator | frame | border),
-  //           });
-  // });
 
   auto topRenderer = Container::Horizontal({
-    renderer // , renderer2
+    renderer //, buttonrenderer
   });
  
   // auto screen = ScreenInteractive::FitComponent();
-  screen.Loop(topRenderer);
+  screen.Loop(renderer);
 }
 
 std::string GetEnv(std::string key)
@@ -410,7 +430,7 @@ int main(void) // int /* argc */, char* /* argv[] */*)
           // cout << endl;
 
           domains[domain] = std::make_shared<HADomain>(_services);
-          cerr<<"got services for domain "<<domain<<endl;
+          // cerr<<"got services for domain "<<domain<<endl;
         }
         // exit(1);
       }
