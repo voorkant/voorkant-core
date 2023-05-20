@@ -1,2 +1,3 @@
 - screen brightness management
 - figure out usage with nabu casa remote access
+- config? store as HA state, identified by some per-client ID?
