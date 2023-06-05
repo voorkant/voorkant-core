@@ -6,3 +6,6 @@
 - valgrind is unhappy even before the crash, clean this up
 
 - entity list scrolls back to top when i focus buttons
+
+- finally got a state-related crash. With voorkant focused on the "new devices discovered" thing, dismissing that notification in HA crashes voorkant.
+
