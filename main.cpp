@@ -206,7 +206,7 @@ std::vector<std::string> getServicesForDomain(std::string domain) {
     return domains[domain]->getServices();
   }
   else {
-    return {"nothing"}; // ew
+    return {"no actions"}; // ew
   }
 }
 
@@ -247,13 +247,15 @@ void uithread() {
       buttons.push_back(Button(service, [=] { cout<<"PUSHED: "<< entries.at(selected) << service<<endl; } )); // FIXME: this use of entries.at is gross, should centralise the empty-entries-list fallback
     }
 
-    // cerr<<"services.size()=="<<services.size()<<", buttons.size()=="<<buttons.size()<<endl;
+    cerr<<"services.size()=="<<services.size()<<", buttons.size()=="<<buttons.size()<<endl;
 
-    auto buttonrenderer = Container::Vertical(buttons, &selectedbutton);
 
     uirenderer->DetachAllChildren();
     uirenderer->Add(radiobox | vscroll_indicator | frame | /* size(HEIGHT, LESS_THAN, 15) | */ size(WIDTH, LESS_THAN, 60) | border);
-    uirenderer->Add(buttonrenderer);
+    if (services.size() && services[0] != "no actions") { 
+      auto buttonrenderer = Container::Vertical(buttons, &selectedbutton);
+      uirenderer->Add(buttonrenderer);
+    }
 
     return vbox({
             hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
