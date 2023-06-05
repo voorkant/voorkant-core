@@ -50,6 +50,17 @@ public:
     return state.dump(2);
   }
 
+  std::vector<std::string> attrVector(void) {
+    std::vector<std::string> ret;
+
+
+    for (const auto &[k, v] : state["attributes"].items()) {
+      ret.push_back(k+std::string(": ")+v.dump());
+    }
+
+    return ret;
+  }
+
   std::string getState(void) {
     return state["state"];
   }
@@ -257,6 +268,17 @@ void uithread() {
       uirenderer->Add(buttonrenderer);
     }
 
+    std::vector<Element> attrs;
+    if (selected >= 0 && entries.size() > 0) {
+      for(const auto &attr : states.at(entries.at(selected))->attrVector()) {
+        attrs.push_back(text(attr));
+      }
+    }
+
+
+
+
+
     return vbox(
               hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
               text(selected >= 0 && entries.size() > 0 ? states.at(entries.at(selected))->getInfo() : "no info"),
@@ -271,7 +293,10 @@ void uithread() {
                     //     // paragraph(selected >= 0 && entries.size() > 0 ? getServicesForDomain(states.at(entries.at(selected))->getDomain() )[0] : "")
                     //   }
                     // ),
-              uirenderer->Render()
+              hbox({
+                uirenderer->Render(),
+                vbox(attrs)
+              })
                   // }
                 // )
             );
