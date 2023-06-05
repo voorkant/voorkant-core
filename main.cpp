@@ -261,11 +261,11 @@ void uithread() {
     // cerr<<"services.size()=="<<services.size()<<", buttons.size()=="<<buttons.size()<<endl;
 
     uirenderer->DetachAllChildren();
-    uirenderer->Add(radiobox | vscroll_indicator | frame | /* size(HEIGHT, LESS_THAN, 15) | */ size(WIDTH, LESS_THAN, 60) | border);
+    uirenderer->Add(radiobox | vscroll_indicator | frame | /* size(HEIGHT, LESS_THAN, 15) | */ size(WIDTH, EQUAL, 60) | border);
     // if (selected >= 0 && entries.size() > 0)
     if (!buttons.empty()) { 
       auto buttonrenderer = Container::Vertical(buttons, &selectedbutton);
-      uirenderer->Add(buttonrenderer);
+      uirenderer->Add(buttonrenderer | size(WIDTH, GREATER_THAN, 15));
     }
 
     std::vector<Element> attrs;
