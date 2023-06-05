@@ -257,7 +257,6 @@ void uithread() {
     uirenderer->Add(radiobox | vscroll_indicator | frame | /* size(HEIGHT, LESS_THAN, 15) | */ size(WIDTH, LESS_THAN, 60) | border);
     uirenderer->Add(buttonrenderer);
 
-
     return vbox({
             hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
             // hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
