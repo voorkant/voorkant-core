@@ -206,7 +206,7 @@ std::vector<std::string> getServicesForDomain(std::string domain) {
     return domains[domain]->getServices();
   }
   else {
-    return {"no actions"}; // ew
+    return {};
   }
 }
 
@@ -247,32 +247,34 @@ void uithread() {
       buttons.push_back(Button(service, [=] { cout<<"PUSHED: "<< entries.at(selected) << service<<endl; } )); // FIXME: this use of entries.at is gross, should centralise the empty-entries-list fallback
     }
 
-    cerr<<"services.size()=="<<services.size()<<", buttons.size()=="<<buttons.size()<<endl;
-
+    // cerr<<"services.size()=="<<services.size()<<", buttons.size()=="<<buttons.size()<<endl;
 
     uirenderer->DetachAllChildren();
     uirenderer->Add(radiobox | vscroll_indicator | frame | /* size(HEIGHT, LESS_THAN, 15) | */ size(WIDTH, LESS_THAN, 60) | border);
-    if (services.size() && services[0] != "no actions") { 
+    // if (selected >= 0 && entries.size() > 0)
+    if (!buttons.empty()) { 
       auto buttonrenderer = Container::Vertical(buttons, &selectedbutton);
       uirenderer->Add(buttonrenderer);
     }
 
-    return vbox({
-            hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
+    return vbox(
+              hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
+              text(selected >= 0 && entries.size() > 0 ? states.at(entries.at(selected))->getInfo() : "no info"),
+                        // text("hi"),
             // hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
-            vbox(
-              {
-                uirenderer->Render(),
-                    vbox(
-                      {
-                        paragraph(selected >= 0 && entries.size() > 0 ? states.at(entries.at(selected))->getInfo() : "") | border,
-                        // paragraph(selected >= 0 && domains.size()>0 ? domains.at(states.at(entries.at(selected))->getDomain())->getServices()[0] : "")
-                        paragraph(selected >= 0 && entries.size() > 0 ? getServicesForDomain(states.at(entries.at(selected))->getDomain() )[0] : "")
-                      }
-                    ),
-                  }
-                )
-            });
+            // vbox(
+              // {
+                    // hbox(
+                    //   {
+                    //     // text("test") | border,
+                    //     // paragraph(selected >= 0 && domains.size()>0 ? domains.at(states.at(entries.at(selected))->getDomain())->getServices()[0] : "")
+                    //     // paragraph(selected >= 0 && entries.size() > 0 ? getServicesForDomain(states.at(entries.at(selected))->getDomain() )[0] : "")
+                    //   }
+                    // ),
+              uirenderer->Render()
+                  // }
+                // )
+            );
   });
 
 
