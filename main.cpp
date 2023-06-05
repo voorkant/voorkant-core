@@ -239,14 +239,12 @@ void uithread() {
       services = getServicesForDomain(states.at(entries.at(selected))->getDomain());
     }
 
-
-
     std::vector<Component> buttons;
     for (const auto &service : services) {
       auto entity = entries.at(selected);
 
       // cerr<<service<<endl;
-      buttons.push_back(Button(service, [=] { cout<<"PUSHED: "<< service<<endl; } ));
+      buttons.push_back(Button(service, [=] { cout<<"PUSHED: "<< entries.at(selected) << service<<endl; } )); // FIXME: this use of entries.at is gross, should centralise the empty-entries-list fallback
     }
 
     // cerr<<"services.size()=="<<services.size()<<", buttons.size()=="<<buttons.size()<<endl;
