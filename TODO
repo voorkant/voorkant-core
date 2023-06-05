@@ -1,3 +1,6 @@
 - screen brightness management
 - figure out usage with nabu casa remote access
 - config? store as HA state, identified by some per-client ID?
+- figure out crash when an entity has too many buttons (is this the reason? climate crashes on a big terminal too)
+- when a thread segfaults, exit everything, don't go into a tight loop
+- valgrind is unhappy even before the crash, clean this up

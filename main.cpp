@@ -215,6 +215,7 @@ void uithread() {
 
   int selected;
   int selected2;
+  int selectedbutton;
 
   std::vector<std::string> entries2;
   entries2.push_back("hoi");
@@ -222,43 +223,47 @@ void uithread() {
 
   auto radiobox = Menu(&entries, &selected);
   auto radiobox2 = Menu(&entries2, &selected2);
-  auto renderer = Renderer(radiobox, [&] {
+
+  auto uirenderer = Container::Horizontal({});
+
+  auto renderer = Renderer(uirenderer, [&] {
     std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
     // for(auto &[k,v] : domains) {
     //   cerr<<"domain "<<k<<"exists"<<endl;
     // }
     std::vector<std::string> services;
-    cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
+    // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
     if (selected >= 0 && entries.size() > 0) {
-      cerr<<"getting services"<<endl;
+      // cerr<<"getting services"<<endl;
       services = getServicesForDomain(states.at(entries.at(selected))->getDomain());
     }
 
-    std::vector<Component> buttons;
 
+
+    std::vector<Component> buttons;
     for (const auto &service : services) {
       auto entity = entries.at(selected);
 
-      cerr<<service<<endl;
-      buttons.push_back(Button(service, [=] { cout<<service<<endl; } ));
+      // cerr<<service<<endl;
+      buttons.push_back(Button(service, [=] { cout<<"PUSHED: "<< service<<endl; } ));
     }
 
-    cerr<<"services.size()=="<<services.size()<<", buttons.size()=="<<buttons.size()<<endl;
-    auto buttonrenderer = Container::Vertical(buttons);
+    // cerr<<"services.size()=="<<services.size()<<", buttons.size()=="<<buttons.size()<<endl;
+
+    auto buttonrenderer = Container::Vertical(buttons, &selectedbutton);
+
+    uirenderer->DetachAllChildren();
+    uirenderer->Add(radiobox | vscroll_indicator | frame | /* size(HEIGHT, LESS_THAN, 15) | */ size(WIDTH, LESS_THAN, 60) | border);
+    uirenderer->Add(buttonrenderer);
 
 
-    // FIXME: rewrite this to have one Render per Container so things might actually work
     return vbox({
             hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
             // hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
             vbox(
               {
-                hbox(
-                  {
-                    // vbox(buttons) | frame | size(WIDTH, LESS_THAN, 15) | border,
-                    radiobox->Render() | vscroll_indicator | frame | /* size(HEIGHT, LESS_THAN, 15) | */ size(WIDTH, LESS_THAN, 60) | border,
-                    buttonrenderer->Render(),
+                uirenderer->Render(),
                     vbox(
                       {
                         paragraph(selected >= 0 && entries.size() > 0 ? states.at(entries.at(selected))->getInfo() : "") | border,
@@ -268,8 +273,7 @@ void uithread() {
                     ),
                   }
                 )
-            })
-         });
+            });
   });
 
 
