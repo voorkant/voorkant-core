@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <unistd.h>
 #include <poll.h>
 #include <nlohmann/json.hpp>
@@ -184,7 +185,7 @@ public:
         poll(&pfd, 1, 1000);
       }
       else {
-        throw std::runtime_error("got error from curl");
+        throw std::runtime_error("got error from curl_ws_recv: "+std::string(curl_easy_strerror(ret))); //+std::to_string(ret));
       }
     }
         // cerr<<"ret="<<ret<<endl;
