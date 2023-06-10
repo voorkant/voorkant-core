@@ -169,7 +169,10 @@ public:
 
         // FIXME: handle frames > 64k
     while(true) {
-      ret = curl_ws_recv(wshandle, buffer, sizeof(buffer), &recv, &meta);
+      {
+        std::scoped_lock lk(wshandlelock);
+        ret = curl_ws_recv(wshandle, buffer, sizeof(buffer), &recv, &meta);
+      }
           // cerr<<"CURLE_AGAIN"<<endl;
       // cerr<<"recv ret="<<ret<<endl;
       if (ret == CURLE_OK) {
@@ -185,7 +188,7 @@ public:
         poll(&pfd, 1, 1000);
       }
       else {
-        throw std::runtime_error("got error from curl_ws_recv: "+std::string(curl_easy_strerror(ret))); //+std::to_string(ret));
+        throw std::runtime_error("got error from curl_ws_recv: "+std::string(curl_easy_strerror(ret))); // FIXME: does not hold wshandlelock, might even print the wrong error in theory
       }
     }
         // cerr<<"ret="<<ret<<endl;
@@ -198,10 +201,12 @@ public:
   }
 
   void send(std::string& msg) {
+    std::scoped_lock lk(wshandlelock);
     size_t sent;
     curl_ws_send(wshandle, msg.c_str(), msg.length(), &sent, 0, CURLWS_TEXT);
   }
 
+  std::mutex wshandlelock;
   CURL* wshandle;
 };
 
@@ -222,7 +227,8 @@ std::vector<std::string> getServicesForDomain(std::string domain) {
   }
 }
 
-void uithread() {
+// FIXME msgid should likely be a wc property
+void uithread(WSConn& wc, int msgid) {
   using namespace ftxui;
 
   int selected;
@@ -256,7 +262,22 @@ void uithread() {
       auto entity = entries.at(selected);
 
       // cerr<<service<<endl;
-      buttons.push_back(Button(service, [=] { cout<<"PUSHED: "<< entries.at(selected) << service<<endl; } )); // FIXME: this use of entries.at is gross, should centralise the empty-entries-list fallback
+      buttons.push_back(Button(service, [&msgid, &selected, &wc, service] {
+        cout<<"PUSHED: "<< entries.at(selected) << service<<endl;
+
+        json cmd;
+
+        cmd["id"]=msgid++;
+        cmd["type"]="call_service";
+        cmd["domain"]=states.at(entries.at(selected))->getDomain();
+        cmd["service"]=service;
+        cmd["target"]["entity_id"]=entries.at(selected);
+
+        auto jcmd = cmd.dump();
+
+        wc.send(jcmd);
+
+      })); // FIXME: this use of entries.at is gross, should centralise the empty-entries-list fallback
     }
 
     // cerr<<"services.size()=="<<services.size()<<", buttons.size()=="<<buttons.size()<<endl;
@@ -422,7 +443,7 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
 */
 
-  std::thread ui(uithread);
+  std::thread ui(uithread, std::ref(wc), msgid+0);
 
   while (true) {
     auto msg = wc.recv();
