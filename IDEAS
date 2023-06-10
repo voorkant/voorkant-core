@@ -1,0 +1,7 @@
+- FTXUI first
+- LVGL second
+- then see if we can port to ESP
+- improv wifi/serial for config, including HA URL?
+
+- oauth setup flow instead of somehow getting an API key and URL?
+
