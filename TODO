@@ -7,6 +7,6 @@
 
 - entity list scrolls back to top when i focus buttons
 
-- finally got a state-related crash. With voorkant focused on the "new devices discovered" thing, dismissing that notification in HA crashes voorkant.
+- finally got a state-related crash. With voorkant focused on the "new devices discovered" thing, dismissing that notification in HA crashes voorkant. Dismissing it while not sitting on it delays the crash until you scroll past the now-gone entity.
 
 - after sitting idle for an hour, pushing a button causes a crash, presumably because HA has timed out the WS connection. need to add reconnection logic, maybe pings
