@@ -201,6 +201,17 @@ public:
   }
 
   void send(json& msg) {
+    {
+      std::scoped_lock lk(msgidlock);
+
+      if (msgid) {
+        // FIXME: at zero, we are authing, which does not get an id. this is a hack.
+        msg["id"]=msgid;
+      }
+
+      msgid++;
+    }
+
     auto jmsg = msg.dump();
 
     send(jmsg);
@@ -209,10 +220,15 @@ public:
   std::mutex wshandlelock;
   CURL* wshandle;
 
+  std::mutex msgidlock;
+  int msgid = 0;
+
 private:
+  // call with wshandlelock held
   void send(std::string& msg) {
     std::scoped_lock lk(wshandlelock);
     size_t sent;
+    // cerr<<"sending: "<<msg<<endl;
     curl_ws_send(wshandle, msg.c_str(), msg.length(), &sent, 0, CURLWS_TEXT);
   }
 };
@@ -234,8 +250,7 @@ std::vector<std::string> getServicesForDomain(std::string domain) {
   }
 }
 
-// FIXME msgid should likely be a wc property
-void uithread(WSConn& wc, int msgid) {
+void uithread(WSConn& wc) {
   using namespace ftxui;
 
   int selected;
@@ -271,12 +286,11 @@ void uithread(WSConn& wc, int msgid) {
       auto entity = entries.at(selected);
 
       // cerr<<service<<endl;
-      buttons.push_back(Button(service, [&msgid, &selected, &wc, service] {
+      buttons.push_back(Button(service, [&selected, &wc, service] {
         cout<<"PUSHED: "<< entries.at(selected) << service<<endl;
 
         json cmd;
 
-        cmd["id"]=msgid++;
         cmd["type"]="call_service";
         cmd["domain"]=states.at(entries.at(selected))->getDomain();
         cmd["service"]=service;
@@ -360,7 +374,7 @@ std::string GetEnv(std::string key)
   return value;
 }
 
-void hathread(WSConn& wc, int msgid) {
+void hathread(WSConn& wc) {
 
   auto welcome = wc.recv();
 
@@ -382,7 +396,6 @@ void hathread(WSConn& wc, int msgid) {
 
   json subscribe;
 
-  subscribe["id"] = msgid++;
   subscribe["type"] = "subscribe_events";
 
   wc.send(subscribe);
@@ -390,7 +403,6 @@ void hathread(WSConn& wc, int msgid) {
 
   // json call;
 
-  // call["id"]=msgid++;
   // call["type"]="call_service";
   // call["domain"]="light";
   // call["service"]="toggle";
@@ -402,14 +414,12 @@ void hathread(WSConn& wc, int msgid) {
 
   json getstates;
 
-  getstates["id"]=msgid++;
   getstates["type"]="get_states";
 
   wc.send(getstates);
 
   json getdomains;
 
-  getdomains["id"]=msgid++;
   getdomains["type"]="get_services";
 
   wc.send(getdomains);
@@ -532,14 +542,11 @@ void hathread(WSConn& wc, int msgid) {
 
 int main(void) // int /* argc */, char* /* argv[] */*)
 {
-
-  int msgid=1;
-
   curl_global_init(CURL_GLOBAL_ALL);
   auto wc = WSConn(GetEnv("HA_WS_URL"));
 
-  std::thread ui(uithread, std::ref(wc), msgid+0);
-  std::thread ha(hathread, std::ref(wc), msgid+0);
+  std::thread ui(uithread, std::ref(wc));
+  std::thread ha(hathread, std::ref(wc));
 
   ha.detach();
   ui.join();
