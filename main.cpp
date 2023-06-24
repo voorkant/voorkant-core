@@ -355,13 +355,7 @@ std::string GetEnv(std::string key)
   return value;
 }
 
-int main(void) // int /* argc */, char* /* argv[] */*)
-{
-
-  int msgid=1;
-
-  curl_global_init(CURL_GLOBAL_ALL);
-  auto wc = WSConn(GetEnv("HA_WS_URL"));
+void hathread(WSConn& wc, int msgid) {
 
   auto welcome = wc.recv();
 
@@ -454,8 +448,6 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
 */
 
-  std::thread ui(uithread, std::ref(wc), msgid+0);
-
   while (true) {
     auto msg = wc.recv();
 
@@ -538,5 +530,19 @@ int main(void) // int /* argc */, char* /* argv[] */*)
 
     screen.PostEvent(ftxui::Event::Custom);
   }
-  return 0;
+}
+
+int main(void) // int /* argc */, char* /* argv[] */*)
+{
+
+  int msgid=1;
+
+  curl_global_init(CURL_GLOBAL_ALL);
+  auto wc = WSConn(GetEnv("HA_WS_URL"));
+
+  std::thread ui(uithread, std::ref(wc), msgid+0);
+  std::thread ha(hathread, std::ref(wc), msgid+0);
+
+  ha.detach();
+  ui.join();
 }
