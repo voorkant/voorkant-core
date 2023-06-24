@@ -287,7 +287,7 @@ void uithread(WSConn& wc) {
 
       // cerr<<service<<endl;
       buttons.push_back(Button(service, [&selected, &wc, service] {
-        cout<<"PUSHED: "<< entries.at(selected) << service<<endl;
+        // cout<<"PUSHED: "<< entries.at(selected) << service<<endl;
 
         json cmd;
 
