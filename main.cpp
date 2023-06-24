@@ -200,14 +200,21 @@ public:
     return result;
   }
 
+  void send(json& msg) {
+    auto jmsg = msg.dump();
+
+    send(jmsg);
+  }
+
+  std::mutex wshandlelock;
+  CURL* wshandle;
+
+private:
   void send(std::string& msg) {
     std::scoped_lock lk(wshandlelock);
     size_t sent;
     curl_ws_send(wshandle, msg.c_str(), msg.length(), &sent, 0, CURLWS_TEXT);
   }
-
-  std::mutex wshandlelock;
-  CURL* wshandle;
 };
 
 std::vector<std::string> entries;
@@ -275,9 +282,7 @@ void uithread(WSConn& wc, int msgid) {
         cmd["service"]=service;
         cmd["target"]["entity_id"]=entries.at(selected);
 
-        auto jcmd = cmd.dump();
-
-        wc.send(jcmd);
+        wc.send(cmd);
 
       })); // FIXME: this use of entries.at is gross, should centralise the empty-entries-list fallback
     }
@@ -370,9 +375,8 @@ void hathread(WSConn& wc, int msgid) {
 
   // cerr<<auth.dump()<<endl;
 
-  auto jauth = auth.dump();
   // cerr<<jauth<<endl;
-  wc.send(jauth);
+  wc.send(auth);
 
   // cerr<<wc.recv()<<endl; // FIXME assert auth_ok
 
@@ -381,9 +385,7 @@ void hathread(WSConn& wc, int msgid) {
   subscribe["id"] = msgid++;
   subscribe["type"] = "subscribe_events";
 
-  auto jsubscribe = subscribe.dump();
-
-  wc.send(jsubscribe);
+  wc.send(subscribe);
 
 
   // json call;
@@ -403,18 +405,14 @@ void hathread(WSConn& wc, int msgid) {
   getstates["id"]=msgid++;
   getstates["type"]="get_states";
 
-  auto jgetstates = getstates.dump();
-
-  wc.send(jgetstates);
+  wc.send(getstates);
 
   json getdomains;
 
   getdomains["id"]=msgid++;
   getdomains["type"]="get_services";
 
-  auto jgetdomains = getdomains.dump();
-
-  wc.send(jgetdomains);
+  wc.send(getdomains);
 
 /* example ID_SUBSCRIPTION message:
 {
