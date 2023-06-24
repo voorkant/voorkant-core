@@ -244,6 +244,8 @@ void uithread(WSConn& wc, int msgid) {
 
   auto uirenderer = Container::Horizontal({});
 
+  string pressed;
+
   auto renderer = Renderer(uirenderer, [&] {
     std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
@@ -297,13 +299,10 @@ void uithread(WSConn& wc, int msgid) {
       }
     }
 
-
-
-
-
     return vbox(
               hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
               text(selected >= 0 && entries.size() > 0 ? states.at(entries.at(selected))->getInfo() : "no info"),
+              text(pressed),
                         // text("hi"),
             // hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
             // vbox(
@@ -329,6 +328,18 @@ void uithread(WSConn& wc, int msgid) {
     renderer //, buttonrenderer
   });
  
+  renderer |= CatchEvent([&](Event event) {
+    if (event.is_character()) {
+      auto c = event.character();
+
+      if (c == "q") {
+        screen.ExitLoopClosure()(); // FIXME: surely this can be cleaner
+      }
+
+      pressed += event.character();
+    }
+    return false;
+  });
   // auto screen = ScreenInteractive::FitComponent();
   screen.Loop(renderer);
 }
