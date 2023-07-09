@@ -1,3 +1,0 @@
-[submodule "libs/imtui"]
-	path = libs/imtui
-	url = https://github.com/ggerganov/imtui
