@@ -342,11 +342,6 @@ void uithread(WSConn& wc) {
             );
   });
 
-
-  auto topRenderer = Container::Horizontal({
-    renderer //, buttonrenderer
-  });
- 
   renderer |= CatchEvent([&](Event event) {
     if (event.is_character()) {
       auto c = event.character();
