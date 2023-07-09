@@ -24,6 +24,6 @@ $ # or run `. .secrets` if you put those lines in there
 $ LD_LIBRARY_PATH=build/subprojects/curl-8.0.1/build/lib/.libs/ build/client
 ```
 
-Push ctrl-C twice to exit.
+Push q or ctrl-C to exit.
 
 If it hangs, `killall -9` it and try to find out how you caused that :-)
