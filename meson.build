@@ -16,7 +16,8 @@ curl_dep = dependency('curl')
 
 
 executable('client',
-           'src/main.cpp',
+           ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-ftxui.cpp'],
            install : true,
 	   dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep]
 	   )
+
