@@ -13,7 +13,7 @@
 using json = nlohmann::json;
 
 std::string GetEnv(std::string key);
-void backToFrontPing();
+// void backToFrontPing();
 
 class WSConn
 {
@@ -138,3 +138,4 @@ private:
   json state;
 };
 
+extern void uithread_refresh(); // FIXME: I think the UI should be an object on which this is just a method?

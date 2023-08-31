@@ -8,8 +8,6 @@
 
 #include "main.hpp"
 
-#include "ftxui/component/screen_interactive.hpp" // REMOVE
-
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -28,12 +26,6 @@ std::string GetEnv(std::string key)
   }
 
   return value;
-}
-
-extern ftxui::ScreenInteractive screen; // REMOVE
-
-void backToFrontPing() {
-  screen.PostEvent(ftxui::Event::Custom); // REMOVE
 }
 
 WSConn::WSConn(std::string url) {

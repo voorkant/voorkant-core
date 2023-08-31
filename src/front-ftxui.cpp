@@ -131,3 +131,8 @@ void uithread(WSConn& wc) {
   // auto screen = ScreenInteractive::FitComponent();
   screen.Loop(renderer);
 }
+
+void uithread_refresh()
+{
+  screen.PostEvent(ftxui::Event::Custom); // REMOVE
+}

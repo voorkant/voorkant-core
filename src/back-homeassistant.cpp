@@ -204,7 +204,6 @@ void hathread(WSConn& wc) {
       }
     }
 
-    // screen.PostEvent(ftxui::Event::Custom);
-    backToFrontPing();
+    uithread_refresh();
   }
 }
