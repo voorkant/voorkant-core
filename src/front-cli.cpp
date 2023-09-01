@@ -21,7 +21,7 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
 
     argparse::ArgumentParser subscribe_command("subscribe");
     subscribe_command.add_argument("pattern")
-      .help("specific state name, or *");
+      .help("specific state name, or *"); // maybe .remaining() so you can subscribe multiple?
 
     program.add_subparser(subscribe_command);
 
@@ -48,7 +48,7 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
     }
 }
 
-void uithread_refresh()
+void uithread_refresh() // would be cool if this got told what changed
 {
     std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
