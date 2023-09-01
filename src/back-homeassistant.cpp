@@ -151,7 +151,7 @@ void hathread(WSConn& wc) {
         // exit(1);
       }
       else if (j["id"] == getdomains["id"]) {
-        cerr<<j.dump()<<endl;
+        // cerr<<j.dump()<<endl;
         for (auto &[domain,_services] : j["result"].items()) {
           // cerr<<service.dump()<<endl;
 

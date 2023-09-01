@@ -10,6 +10,9 @@
 
 #include <nlohmann/json.hpp>
 
+using std::string;
+using std::map;
+
 using json = nlohmann::json;
 
 std::string GetEnv(std::string key);
@@ -138,4 +141,15 @@ private:
   json state;
 };
 
+extern void uithread(WSConn& wc, int argc=0, char* argv[] = nullptr);
+extern void hathread(WSConn& wc);
 extern void uithread_refresh(); // FIXME: I think the UI should be an object on which this is just a method?
+
+extern std::vector<std::string> entries; // REMOVE
+extern std::mutex entrieslock; // REMOVE
+extern map<string, std::shared_ptr<HAEntity>> states; // REMOVE
+extern std::mutex stateslock; // REMOVE
+extern map<string, std::shared_ptr<HADomain>> domains; // REMOVE
+extern std::mutex domainslock; // REMOVE
+
+extern std::vector<std::string> getServicesForDomain(std::string domain); // REMOVE

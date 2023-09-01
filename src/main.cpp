@@ -116,14 +116,12 @@ void WSConn::send(std::string& msg) {
   curl_ws_send(wshandle, msg.c_str(), msg.length(), &sent, 0, CURLWS_TEXT);
 }
 
-extern void uithread(WSConn& wc);
-extern void hathread(WSConn& wc);
 
-int main(void) // int /* argc */, char* /* argv[] */*)
+int main(int argc, char* argv[])
 {
   auto wc = WSConn(GetEnv("HA_WS_URL"));
 
-  std::thread ui(uithread, std::ref(wc));
+  std::thread ui(uithread, std::ref(wc), argc, argv);
   std::thread ha(hathread, std::ref(wc));
 
   ha.detach();

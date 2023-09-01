@@ -15,16 +15,9 @@ using std::map;
 
 ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FitComponent();
 
-extern std::vector<std::string> entries; // REMOVE
-extern std::mutex entrieslock; // REMOVE
-extern map<string, std::shared_ptr<HAEntity>> states; // REMOVE
-extern std::mutex stateslock; // REMOVE
-extern map<string, std::shared_ptr<HADomain>> domains; // REMOVE
-extern std::mutex domainslock; // REMOVE
 
-extern std::vector<std::string> getServicesForDomain(std::string domain); // REMOVE
+void uithread(WSConn& wc, int /* argc */, char* []/* argv[] */) {
 
-void uithread(WSConn& wc) {
   using namespace ftxui;
 
   int selected;
