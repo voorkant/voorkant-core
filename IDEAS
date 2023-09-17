@@ -2,6 +2,8 @@
 - LVGL second
 - then see if we can port to ESP
 - improv wifi/serial for config, including HA URL?
+- somebody on #homeassistant suggested that a web frontend -without- JS would be useful in some situations
+  - once we have LVGL, perhaps we can even emit useful PNGs via HTTP?
 
 - oauth setup flow instead of somehow getting an API key and URL?
 
