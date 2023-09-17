@@ -121,6 +121,8 @@ int main(int argc, char* argv[])
 {
   auto wc = WSConn(GetEnv("HA_WS_URL"));
 
+  // these two really want a reference to eachother, instead of a shared ref to wc
+  // python threading object would be nice here
   std::thread ui(uithread, std::ref(wc), argc, argv);
   std::thread ha(hathread, std::ref(wc));
 
