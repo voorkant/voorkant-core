@@ -125,7 +125,7 @@ void uithread(WSConn& wc, int /* argc */, char* []/* argv[] */) {
   screen.Loop(renderer);
 }
 
-void uithread_refresh()
+void uithread_refresh(std::vector<std::string> whatchanged)
 {
   screen.PostEvent(ftxui::Event::Custom); // REMOVE
 }

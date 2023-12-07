@@ -143,7 +143,7 @@ private:
 
 extern void uithread(WSConn& wc, int argc=0, char* argv[] = nullptr);
 extern void hathread(WSConn& wc);
-extern void uithread_refresh(); // FIXME: I think the UI should be an object on which this is just a method?
+extern void uithread_refresh(std::vector<std::string> whatchanged); // FIXME: I think the UI should be an object on which this is just a method?
 
 extern std::vector<std::string> entries; // REMOVE
 extern std::mutex entrieslock; // REMOVE

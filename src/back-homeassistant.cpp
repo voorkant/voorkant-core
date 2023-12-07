@@ -130,11 +130,12 @@ void hathread(WSConn& wc) {
     // cout<<msg<<endl;
     json j = json::parse(msg);
 
-
+    std::vector<std::string> whatchanged;
     {
       std::scoped_lock lk(stateslock);
 
       if (j["id"] == getstates["id"]) {
+        // response for initial getstates call
         for (auto evd : j["result"]) {
           // cerr<<evd.dump()<<endl;
           auto entity_id = evd["entity_id"];
@@ -151,6 +152,7 @@ void hathread(WSConn& wc) {
         // exit(1);
       }
       else if (j["id"] == getdomains["id"]) {
+        // response for initial getdomains call
         // cerr<<j.dump()<<endl;
         for (auto &[domain,_services] : j["result"].items()) {
           // cerr<<service.dump()<<endl;
@@ -166,6 +168,7 @@ void hathread(WSConn& wc) {
         // exit(1);
       }
       else if (j["type"] == "event") {
+        // something happened!
         auto event = j["event"];
         auto event_type = event["event_type"];
         auto evd = event["data"];
@@ -181,6 +184,7 @@ void hathread(WSConn& wc) {
 
         if (event_type == "state_changed") {
           states[entity_id] = std::make_shared<HAEntity>(new_state);
+          whatchanged.push_back(entity_id);
         }
       }
       else {
@@ -204,6 +208,6 @@ void hathread(WSConn& wc) {
       }
     }
 
-    uithread_refresh();
+    uithread_refresh(whatchanged);
   }
 }
