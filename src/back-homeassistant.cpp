@@ -148,6 +148,7 @@ void hathread(WSConn& wc) {
           // cout << endl;
 
           states[entity_id] = std::make_shared<HAEntity>(evd);
+          whatchanged.push_back(entity_id);
         }
         // exit(1);
       }
