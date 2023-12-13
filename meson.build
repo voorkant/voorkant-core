@@ -4,7 +4,9 @@ project('client', 'cpp',
 
 cpp = meson.get_compiler('cpp')
 
-add_global_arguments('-DLV_CONF_PATH=/home/peter/projects/home/toon-ha/client/src/lv_conf.h', language : 'c')
+# this is terrible
+add_global_arguments(['-DLV_CONF_PATH=/home/peter/projects/home/toon-ha/client/src/lv_conf.h', '-DLV_CONF_INCLUDE_SIMPLE', '-DLV_LVGL_H_INCLUDE_SIMPLE', '-I/home/peter/projects/home/toon-ha/client/src/', '-I/home/peter/projects/home/toon-ha/client/subprojects/lvgl'], language : 'c')
+add_global_arguments(['-DLV_CONF_PATH=/home/peter/projects/home/toon-ha/client/src/lv_conf.h', '-DLV_CONF_INCLUDE_SIMPLE', '-DLV_LVGL_H_INCLUDE_SIMPLE', '-I/home/peter/projects/home/toon-ha/client/src/', '-I/home/peter/projects/home/toon-ha/client/subprojects/lvgl'], language : 'cpp')
 
 json_dep = dependency('nlohmann_json')
 
@@ -22,6 +24,11 @@ cmake = import('cmake')
 lvgl_proj = cmake.subproject('lvgl')
 lvgl_dep = lvgl_proj.dependency('lvgl')
 
+lvgl_drivers_proj = cmake.subproject('lv_drivers')
+lvgl_drivers_dep = lvgl_drivers_proj.dependency('lv_drivers')
+
+sdl2_dep = dependency('sdl2')
+
 executable('client-ftxui',
            ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-ftxui.cpp'],
            install : true,
@@ -37,6 +44,6 @@ executable('client-cli',
 executable('client-lvgl-sdl',
            ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h'],
           install : true,
-      dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep],
+      dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, sdl2_dep],
       cpp_args : '-DLV_CONF_PATH=/home/peter/projects/home/toon-ha/client/src/lv_conf.h'
       )
