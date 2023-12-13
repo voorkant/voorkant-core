@@ -21,7 +21,6 @@ cmake = import('cmake')
 
 lvgl_proj = cmake.subproject('lvgl')
 lvgl_dep = lvgl_proj.dependency('lvgl')
-#lvgl_dep = dependency(
 
 executable('client-ftxui',
            ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-ftxui.cpp'],
