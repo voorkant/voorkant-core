@@ -4,6 +4,8 @@ project('client', 'cpp',
 
 cpp = meson.get_compiler('cpp')
 
+add_global_arguments('-DLV_CONF_PATH=/home/peter/projects/home/toon-ha/client/src/lv_conf.h', language : 'c')
+
 json_dep = dependency('nlohmann_json')
 
 thread_dep = dependency('threads')
