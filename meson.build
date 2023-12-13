@@ -15,6 +15,12 @@ ftxui_component_dep = dependency('ftxui-component')
 curl_dep = dependency('curl')
 
 
+cmake = import('cmake')
+
+lvgl_proj = cmake.subproject('lvgl')
+lvgl_dep = lvgl_proj.dependency('lvgl')
+#lvgl_dep = dependency(
+
 executable('client-ftxui',
            ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-ftxui.cpp'],
            install : true,
@@ -25,4 +31,11 @@ executable('client-cli',
            ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-cli.cpp'],
            install : true,
       dependencies : [json_dep, thread_dep, curl_dep]
+      )
+
+executable('client-lvgl-sdl',
+           ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h'],
+          install : true,
+      dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep],
+      cpp_args : '-DLV_CONF_PATH=/home/peter/projects/home/toon-ha/client/src/lv_conf.h'
       )

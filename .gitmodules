@@ -1,3 +1,6 @@
 [submodule "src/argparse"]
 	path = src/ext/argparse
 	url = https://github.com/p-ranav/argparse.git
+[submodule "src/ext/lvgl"]
+	path = subprojects/lvgl
+	url = https://github.com/lvgl/lvgl
