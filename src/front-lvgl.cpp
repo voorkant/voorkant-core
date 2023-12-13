@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include <lvgl.h>
+#include "sdl/sdl.h"
 
 using std::string;
 // using std::map;
@@ -21,6 +22,7 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
 {
     cerr<<"calling lv_init"<<endl;
     lv_init();
+    sdl_init();
     cerr<<"called lv_init"<<endl;
 
 
