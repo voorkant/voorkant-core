@@ -1,12 +1,16 @@
 #!/bin/sh
 
-# curl 'http://localhost:8123/api/onboarding/users' --compressed -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0' -H 'Accept: */*' -H 'Accept-Language: en-GB,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Content-Type: text/plain;charset=UTF-8' -H 'Origin: http://localhost:8123' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-origin' -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' --data-raw '{"client_id":"http://localhost:8123/","name":"voorkant","username":"voorkant","password":"v00rk4nt","language":"en-GB"}'
-# curl 'http://localhost:8123/auth/token' --compressed -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0' -H 'Accept: */*' -H 'Accept-Language: en-GB,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Content-Type: multipart/form-data; boundary=---------------------------17021111414770891651736042355' -H 'Origin: http://localhost:8123' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-origin' -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' --data-binary $'-----------------------------17021111414770891651736042355\r\nContent-Disposition: form-data; name="client_id"\r\n\r\nhttp://localhost:8123/\r\n-----------------------------17021111414770891651736042355\r\nContent-Disposition: form-data; name="code"\r\n\r\n8d2b963e2fd54a918407deb57cbadb0f\r\n-----------------------------17021111414770891651736042355\r\nContent-Disposition: form-data; name="grant_type"\r\n\r\nauthorization_code\r\n-----------------------------17021111414770891651736042355--\r\n'
-# curl 'http://localhost:8123/api/onboarding/core_config' --compressed -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0' -H 'Accept: */*' -H 'Accept-Language: en-GB,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Origin: http://localhost:8123' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-origin' -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI5MjkwZDllNjc0Zjg0YzMzOWFmYTNkYTkyZWMxNTllNCIsImlhdCI6MTcwMjUwMTA5OSwiZXhwIjoxNzAyNTAyODk5fQ.TPP9oV9LGTVfJKZOgJVMpgdGXfbWYlsLeAVCOAQQga8' -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -H 'Content-Length: 0'
-# curl 'http://localhost:8123/api/onboarding/analytics' --compressed -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0' -H 'Accept: */*' -H 'Accept-Language: en-GB,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Origin: http://localhost:8123' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-origin' -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI5MjkwZDllNjc0Zjg0YzMzOWFmYTNkYTkyZWMxNTllNCIsImlhdCI6MTcwMjUwMTA5OSwiZXhwIjoxNzAyNTAyODk5fQ.TPP9oV9LGTVfJKZOgJVMpgdGXfbWYlsLeAVCOAQQga8' -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -H 'Content-Length: 0'
-
-# -H 'Origin: http://localhost:8123'
 # Create voorkant user
 curl 'http://localhost:8123/api/onboarding/users' -X POST  --data-raw '{"client_id":"http://localhost:8123/","name":"voorkant","username":"voorkant","password":"v00rk4nt","language":"en-GB"}' > auth_code.json
 CODE=`jq -r '.auth_code' auth_code.json`
-curl 'http://localhost:8123/auth/token' -X POST --trace trace.txt -F "grant_type=authorization_code" -F "code=$CODE" -F "client_id=http://localhost:8123/" > token.json
+curl 'http://localhost:8123/auth/token' -X POST --trace trace.txt -F "grant_type=authorization_code" -F "code=${CODE}" -F "client_id=http://localhost:8123/" > token.json
+TOKEN=`jq -r '.access_token' token.json`
+
+
+# To complete setup, you have to set some other stuff. For whatever reason (might be because demo mode) these requests are empty in our capture.
+curl 'http://localhost:8123/api/onboarding/core_config' -X POST -H "authorization: Bearer ${TOKEN}"
+curl 'http://localhost:8123/api/onboarding/analytics' -X POST -H "authorization: Bearer ${TOKEN}"
+curl 'http://localhost:8123/api/onboarding/integration'  -X POST -H "authorization: Bearer ${TOKEN}"
+
+# rm auth_code.json
+# rm token.json
