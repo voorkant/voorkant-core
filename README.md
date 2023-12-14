@@ -4,7 +4,7 @@ These instructions are for Debian 12 (bookworm).
 On Debian 11 (bullseye), you need meson from backports.
 
 ```
-$ sudo apt install build-essential meson ninja-build nlohmann-json3-dev pkg-config libssl-dev
+$ sudo apt install build-essential cmake meson ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev
 $ meson setup build
 $ ninja -C build
 ```
