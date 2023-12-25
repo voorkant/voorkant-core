@@ -20,6 +20,7 @@ using std::cerr;
 using std::endl;
 using std::flush;
 
+static uint32_t c=0;
 void uithread(WSConn & /* wc */, int argc, char* argv[])
 {
     cerr<<"calling lv_init"<<endl;
@@ -68,7 +69,7 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
 
 
     while(true) {
-        uint32_t c = rand();
+        // uint32_t c = rand();
         lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(c), LV_PART_MAIN);
         sleep(1);
         lv_tick_inc(1000);
@@ -85,6 +86,15 @@ void uithread_refresh(std::vector<std::string> whatchanged) // would be cool if 
     cerr<<whatchanged.size()<<endl;
     for(const auto &changed : whatchanged) {
         cout<<"state for "<<changed<<" is "<<states[changed]->getInfo()<<endl;
+        auto attrs = states[changed]->getJsonState()["attributes"];
+        cout<<attrs<<endl;
+        if(attrs.count("rgb_color")) {
+            auto rgb = attrs["rgb_color"];
+            cout<<"RGB "<<rgb;
+            uint32_t color = (rgb[0].get<int>() << 16) + (rgb[1].get<int>() << 8) + (rgb[2].get<int>());
+            cout<<" "<<color;
+            c=color;
+        }
         for(const auto &attr : states[changed]->attrVector()) {
             cout<<"  " << attr <<endl;
         }

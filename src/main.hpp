@@ -76,6 +76,10 @@ public:
     return state["state"];
   }
 
+  json getJsonState(void) {
+    return state;
+  }
+
   std::string getInfo(void) {
     std::ostringstream ret;
 
