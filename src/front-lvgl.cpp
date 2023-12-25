@@ -4,6 +4,7 @@
 #include "src/argparse.hpp"
 
 #include <iostream>
+#include <sdl/sdl_common.h>
 #include <string>
 #include <unistd.h>
 
@@ -23,8 +24,21 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
     cerr<<"calling lv_init"<<endl;
     lv_init();
     sdl_init();
-    cerr<<"called lv_init"<<endl;
+    cerr<<"called lv_init and sdl_init"<<endl;
 
+#define MY_DISP_HOR_RES 480
+    /*Create a display buffer*/
+    static lv_disp_draw_buf_t disp_buf;
+    static lv_color_t buf_1[MY_DISP_HOR_RES * 10];
+    static lv_color_t buf_2[MY_DISP_HOR_RES * 10];
+    lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, MY_DISP_HOR_RES*10);
+
+    lv_disp_drv_t disp_drv;                 /*A variable to hold the drivers. Can be local variable*/
+    lv_disp_drv_init(&disp_drv);            /*Basic initialization*/
+    disp_drv.draw_buf = &disp_buf;            /*Set an initialized buffer*/
+    disp_drv.flush_cb = sdl_display_flush;        /*Set a flush callback to draw to the display*/
+    lv_disp_t * disp;
+    disp = lv_disp_drv_register(&disp_drv); /*Register the driver and save the created display objects*/
 
     argparse::ArgumentParser program("client-cli");
 
