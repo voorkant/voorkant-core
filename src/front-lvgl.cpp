@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 #include <lvgl.h>
+#include <src/core/lv_disp.h>
 #include "sdl/sdl.h"
 
 using std::string;
@@ -64,6 +65,8 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
     else {
         cerr << "no command given" << endl;
     }
+
+    lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(0x803a57), LV_PART_MAIN);
 
     while(true) {
         sleep(1);
