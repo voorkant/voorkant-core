@@ -66,9 +66,10 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
         cerr << "no command given" << endl;
     }
 
-    lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(0x803a57), LV_PART_MAIN);
 
     while(true) {
+        uint32_t c = rand();
+        lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(c), LV_PART_MAIN);
         sleep(1);
         lv_tick_inc(1000);
         lv_task_handler();
