@@ -34,3 +34,7 @@ fi
 
 # rm auth_code.json
 # rm token.json
+
+echo
+echo
+echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}"
