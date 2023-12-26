@@ -90,10 +90,12 @@ void uithread_refresh(std::vector<std::string> whatchanged) // would be cool if 
         cout<<attrs<<endl;
         if(attrs.count("rgb_color")) {
             auto rgb = attrs["rgb_color"];
-            cout<<"RGB "<<rgb;
-            uint32_t color = (rgb[0].get<int>() << 16) + (rgb[1].get<int>() << 8) + (rgb[2].get<int>());
-            cout<<" "<<color;
-            c=color;
+            cout<<"RGB "<<rgb<<endl;
+            if (rgb.size() == 3) {
+                uint32_t color = (rgb[0].get<int>() << 16) + (rgb[1].get<int>() << 8) + (rgb[2].get<int>());
+                cout<<" "<<color;
+                c=color;
+            }
         }
         for(const auto &attr : states[changed]->attrVector()) {
             cout<<"  " << attr <<endl;
