@@ -5,8 +5,8 @@ project('client', 'cpp',
 cpp = meson.get_compiler('cpp')
 
 # this is terrible
-add_global_arguments(['-DLV_CONF_PATH=/home/peter/projects/home/toon-ha/client/src/lv_conf.h', '-DLV_CONF_INCLUDE_SIMPLE', '-DLV_LVGL_H_INCLUDE_SIMPLE', '-I/home/peter/projects/home/toon-ha/client/src/', '-I/home/peter/projects/home/toon-ha/client/subprojects/lvgl'], language : 'c')
-add_global_arguments(['-DLV_CONF_PATH=/home/peter/projects/home/toon-ha/client/src/lv_conf.h', '-DLV_CONF_INCLUDE_SIMPLE', '-DLV_LVGL_H_INCLUDE_SIMPLE', '-I/home/peter/projects/home/toon-ha/client/src/', '-I/home/peter/projects/home/toon-ha/client/subprojects/lvgl'], language : 'cpp')
+#add_global_arguments(['-DLV_CONF_PATH=/home/cyclops/dev/voorkant-tmp/src/lv_conf.h', '-DLV_CONF_INCLUDE_SIMPLE', '-DLV_LVGL_H_INCLUDE_SIMPLE', '-I/home/cyclops/dev/voorkant-tmp/src/', '-I/home/cyclops/dev/voorkant-tmp/subprojects/lvgl'], language : 'c')
+#add_global_arguments(['-DLV_CONF_PATH=/home/cyclops/dev/voorkant-tmp/src/lv_conf.h', '-DLV_CONF_INCLUDE_SIMPLE', '-DLV_LVGL_H_INCLUDE_SIMPLE', '-I/home/cyclops/dev/voorkant-tmp/src/', '-I/home/cyclops/dev/voorkant-tmp/subprojects/lvgl'], language : 'cpp')
 
 json_dep = dependency('nlohmann_json')
 
@@ -20,14 +20,30 @@ curl_dep = dependency('curl')
 
 
 cmake = import('cmake')
+cmake_options = cmake.subproject_options()
+#cmake_options.add_cmake_defines({'LV_CONF_PATH': '/home/cyclops/dev/voorkant-tmp/src/lv_conf.h'})
+cmake_options.append_compile_args('c', 
+  '-DLV_CONF_INCLUDE_SIMPLE', 
+  '-DLV_LVGL_H_INCLUDE_SIMPLE',
+  '-DLV_CONF_PATH=' + meson.current_build_dir() +'/../src/lv_conf.h',
+  '-I'+meson.current_build_dir()+'/../src', '-I'+meson.current_build_dir()+'/../subprojects/lvgl'
+  )
+cmake_options.append_compile_args('cpp', 
+  '-DLV_CONF_INCLUDE_SIMPLE', 
+  '-DLV_LVGL_H_INCLUDE_SIMPLE',
+  '-DLV_CONF_PATH=' + meson.current_build_dir() +'/../src/lv_conf.h',
+  '-I'+meson.current_build_dir()+'/../src', '-I'+meson.current_build_dir()+'/../subprojects/lvgl'
+  )
 
-lvgl_proj = cmake.subproject('lvgl')
+lvgl_proj = cmake.subproject('lvgl', options: cmake_options)
 lvgl_dep = lvgl_proj.dependency('lvgl')
 
-lvgl_drivers_proj = cmake.subproject('lv_drivers')
+lvgl_drivers_proj = cmake.subproject('lv_drivers', options: cmake_options)
 lvgl_drivers_dep = lvgl_drivers_proj.dependency('lv_drivers')
 
+
 sdl2_dep = dependency('sdl2')
+incdir = include_directories('./src/')
 
 executable('client-ftxui',
            ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-ftxui.cpp'],
@@ -45,5 +61,6 @@ executable('client-lvgl-sdl',
            ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h'],
           install : true,
       dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, sdl2_dep],
-      cpp_args : '-DLV_CONF_PATH=/home/peter/projects/home/toon-ha/client/src/lv_conf.h'
-      )
+      include_directories: incdir,
+      cpp_args : '-DLV_CONF_PATH='+meson.current_build_dir()+'/../src/lv_conf.h'
+)
