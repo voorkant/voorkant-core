@@ -31,12 +31,14 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
 #define MY_DISP_HOR_RES 480
     /*Create a display buffer*/
     static lv_disp_draw_buf_t disp_buf;
-    static lv_color_t buf_1[MY_DISP_HOR_RES * 10];
-    static lv_color_t buf_2[MY_DISP_HOR_RES * 10];
-    lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, MY_DISP_HOR_RES*10);
+    static lv_color_t buf_1[SDL_HOR_RES * SDL_VER_RES];
+    static lv_color_t buf_2[SDL_HOR_RES * SDL_VER_RES];
+    lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, SDL_HOR_RES * SDL_VER_RES);
 
     lv_disp_drv_t disp_drv;                 /*A variable to hold the drivers. Can be local variable*/
     lv_disp_drv_init(&disp_drv);            /*Basic initialization*/
+    disp_drv.hor_res = SDL_HOR_RES;
+    disp_drv.ver_res = SDL_VER_RES;
     disp_drv.draw_buf = &disp_buf;            /*Set an initialized buffer*/
     disp_drv.flush_cb = sdl_display_flush;        /*Set a flush callback to draw to the display*/
     lv_disp_t * disp;
