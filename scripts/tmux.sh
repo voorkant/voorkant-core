@@ -1,7 +1,7 @@
 #!/bin/sh -x
 
 PWD=`pwd`
-ROOT=`dirname ${PWD}`
+ROOT=`dirname $0`/..
 
 
 SESSIONNAME="VOORKANT"
