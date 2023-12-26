@@ -5,6 +5,9 @@ ROOT=`dirname $0`/..
 
 
 SESSIONNAME="VOORKANT"
+
+docker pull ghcr.io/home-assistant/home-assistant:stable
+
 tmux has-session -t $SESSIONNAME
 
 if [ $? != 0 ] 
