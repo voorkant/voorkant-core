@@ -4,10 +4,6 @@ project('client', 'cpp',
 
 cpp = meson.get_compiler('cpp')
 
-# this is terrible
-#add_global_arguments(['-DLV_CONF_PATH=/home/cyclops/dev/voorkant-tmp/src/lv_conf.h', '-DLV_CONF_INCLUDE_SIMPLE', '-DLV_LVGL_H_INCLUDE_SIMPLE', '-I/home/cyclops/dev/voorkant-tmp/src/', '-I/home/cyclops/dev/voorkant-tmp/subprojects/lvgl'], language : 'c')
-#add_global_arguments(['-DLV_CONF_PATH=/home/cyclops/dev/voorkant-tmp/src/lv_conf.h', '-DLV_CONF_INCLUDE_SIMPLE', '-DLV_LVGL_H_INCLUDE_SIMPLE', '-I/home/cyclops/dev/voorkant-tmp/src/', '-I/home/cyclops/dev/voorkant-tmp/subprojects/lvgl'], language : 'cpp')
-
 json_dep = dependency('nlohmann_json')
 
 thread_dep = dependency('threads')
@@ -21,7 +17,6 @@ curl_dep = dependency('curl')
 
 cmake = import('cmake')
 cmake_options = cmake.subproject_options()
-#cmake_options.add_cmake_defines({'LV_CONF_PATH': '/home/cyclops/dev/voorkant-tmp/src/lv_conf.h'})
 cmake_options.append_compile_args('c', 
   '-DLV_CONF_INCLUDE_SIMPLE', 
   '-DLV_LVGL_H_INCLUDE_SIMPLE',
