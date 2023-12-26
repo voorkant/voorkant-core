@@ -68,13 +68,17 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
     }
 
 
+    int i = 0;
     while(true) {
         // uint32_t c = rand();
         lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(c), LV_PART_MAIN);
-        sleep(1);
-        lv_tick_inc(1000);
+        usleep(5*1000); // 5000 usec = 5 ms
+        lv_tick_inc(5); // 5 ms
         lv_task_handler();
-        cerr<<"."<<flush;
+        if (i++ == (1000/5)) {
+            cerr<<"."<<flush;
+            i = 0;
+        }
     }
 }
 
