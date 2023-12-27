@@ -17,14 +17,14 @@ curl_dep = dependency('curl')
 
 cmake = import('cmake')
 cmake_options = cmake.subproject_options()
-cmake_options.append_compile_args('c', 
-  '-DLV_CONF_INCLUDE_SIMPLE', 
+cmake_options.append_compile_args('c',
+  '-DLV_CONF_INCLUDE_SIMPLE',
   '-DLV_LVGL_H_INCLUDE_SIMPLE',
   '-DLV_CONF_PATH=' + meson.current_build_dir() +'/../src/lv_conf.h',
   '-I'+meson.current_build_dir()+'/../src', '-I'+meson.current_build_dir()+'/../subprojects/lvgl'
   )
-cmake_options.append_compile_args('cpp', 
-  '-DLV_CONF_INCLUDE_SIMPLE', 
+cmake_options.append_compile_args('cpp',
+  '-DLV_CONF_INCLUDE_SIMPLE',
   '-DLV_LVGL_H_INCLUDE_SIMPLE',
   '-DLV_CONF_PATH=' + meson.current_build_dir() +'/../src/lv_conf.h',
   '-I'+meson.current_build_dir()+'/../src', '-I'+meson.current_build_dir()+'/../subprojects/lvgl'
