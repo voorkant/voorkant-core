@@ -20,22 +20,40 @@ using std::cerr;
 using std::endl;
 using std::flush;
 
+static uint32_t intFromRGB(json attrs)
+{
+    if(attrs.count("rgb_color")) {
+        auto rgb = attrs["rgb_color"];
+        // cout<<"RGB "<<rgb<<endl;
+        if (rgb.size() == 3) {
+            uint32_t color = (rgb[0].get<int>() << 16) + (rgb[1].get<int>() << 8) + (rgb[2].get<int>());
+            // cout<<" "<<color;
+            return color;
+        }
+    }
+}
+
+static uint32_t c=0;
+static string current_light; // FIXME: THIS NEEDS A MUTEX
+static bool toggle = false;
+
 static void btn_event_cb(lv_event_t * e)
 {
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t * btn = lv_event_get_target(e);
     if(code == LV_EVENT_CLICKED) {
-        static uint8_t cnt = 0;
-        cnt++;
+        toggle = true;
+        // static uint32_t cnt = 0;
+        // cnt++;
 
-        /*Get the first child of the button which is the label and change its text*/
-        lv_obj_t * label = lv_obj_get_child(btn, 0);
-        lv_label_set_text_fmt(label, "Button: %d", cnt);
+        // /*Get the first child of the button which is the label and change its text*/
+        // lv_obj_t * label = lv_obj_get_child(btn, 0);
+        // lv_label_set_text_fmt(label, "Button: %d", cnt);
+        // cerr<<"cnt="<<cnt<<endl;
     }
 }
 
-static uint32_t c=0;
-void uithread(WSConn & /* wc */, int argc, char* argv[])
+void uithread(WSConn & wc, int argc, char* argv[])
 {
     cerr<<"calling lv_init"<<endl;
     lv_init();
@@ -71,7 +89,7 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
 // START BUTTON EXAMPLE
     lv_obj_t * btn = lv_btn_create(lv_scr_act());     /*Add a button the current screen*/
     lv_obj_set_pos(btn, 10, 10);                            /*Set its position*/
-    lv_obj_set_size(btn, 120, 50);                          /*Set its size*/
+    lv_obj_set_size(btn, 240, 50);                          /*Set its size*/
     lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL);           /*Assign a callback to the button*/
 
     lv_obj_t * label = lv_label_create(btn);          /*Add a label to the button*/
@@ -107,8 +125,21 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
 
     int i = 0;
     while(true) {
+        if (toggle) {
+            json cmd;
+
+            cmd["type"]="call_service";
+            cmd["domain"]=states[current_light]->getDomain();
+            cmd["service"]="toggle";
+            cmd["target"]["entity_id"]=current_light;
+
+            wc.send(cmd);
+
+            toggle = false;
+        }
         // uint32_t c = rand();
-        lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(c), LV_PART_MAIN);
+        lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(states[current_light]->getJsonState()["attributes"])), LV_PART_MAIN);
+        lv_label_set_text(label, states[current_light]->getJsonState()["attributes"]["friendly_name"].get<string>().c_str());
         usleep(5*1000); // 5000 usec = 5 ms
         lv_tick_inc(5); // 5 ms
         lv_task_handler();
@@ -129,15 +160,18 @@ void uithread_refresh(std::vector<std::string> whatchanged) // would be cool if 
         cout<<"state for "<<changed<<" is "<<states[changed]->getInfo()<<endl;
         auto attrs = states[changed]->getJsonState()["attributes"];
         cout<<attrs<<endl;
-        if(attrs.count("rgb_color")) {
-            auto rgb = attrs["rgb_color"];
-            cout<<"RGB "<<rgb<<endl;
-            if (rgb.size() == 3) {
-                uint32_t color = (rgb[0].get<int>() << 16) + (rgb[1].get<int>() << 8) + (rgb[2].get<int>());
-                cout<<" "<<color;
-                c=color;
-            }
+        if (states[changed]->getDomain() == "light") {
+            current_light = changed;
         }
+        // if(attrs.count("rgb_color")) {
+        //     auto rgb = attrs["rgb_color"];
+        //     cout<<"RGB "<<rgb<<endl;
+        //     if (rgb.size() == 3) {
+        //         uint32_t color = (rgb[0].get<int>() << 16) + (rgb[1].get<int>() << 8) + (rgb[2].get<int>());
+        //         cout<<" "<<color;
+        //         c=color;
+        //     }
+        // }
         for(const auto &attr : states[changed]->attrVector()) {
             cout<<"  " << attr <<endl;
         }
