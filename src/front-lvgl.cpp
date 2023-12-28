@@ -10,6 +10,7 @@
 
 #include <lvgl.h>
 #include <src/core/lv_disp.h>
+#include <utility>
 #include "sdl/sdl.h"
 
 using std::string;
@@ -50,6 +51,21 @@ static void btn_event_cb(lv_event_t * e)
         // lv_obj_t * label = lv_obj_get_child(btn, 0);
         // lv_label_set_text_fmt(label, "Button: %d", cnt);
         // cerr<<"cnt="<<cnt<<endl;
+    }
+}
+
+static std::array<std::pair<lv_obj_t *, lv_obj_t *>, 3> rgbsliders; // first is slider, second is label for slider
+
+static void slider_event_cb(lv_event_t * e)
+{
+    lv_obj_t * slider = lv_event_get_target(e);
+
+    for(const auto & rgbslider : rgbsliders) {
+        if (rgbslider.first == slider) {
+            /*Refresh the text*/
+            lv_label_set_text_fmt(rgbslider.second, "%" LV_PRId32, lv_slider_get_value(slider));
+            lv_obj_align_to(rgbslider.second, slider, LV_ALIGN_OUT_TOP_MID, 0, -15);    /*Align top of the slider*/
+        }
     }
 }
 
@@ -97,6 +113,22 @@ void uithread(WSConn & wc, int argc, char* argv[])
     lv_obj_center(label);
 // END BUTTON EXAMPLE
 
+    for(int i=0; i<3; i++) {
+        /*Create a slider in the center of the display*/
+        lv_obj_t * slider = lv_slider_create(lv_scr_act());
+        lv_slider_set_range(slider, 0, 255);
+        lv_obj_set_width(slider, 200);                          /*Set the width*/
+        lv_obj_set_pos(slider, 40, i*70 + 120);                                  /*Align to the center of the parent (screen)*/
+        lv_obj_add_event_cb(slider, slider_event_cb, LV_EVENT_VALUE_CHANGED, NULL);     /*Assign an event function*/
+
+        /*Create a label above the slider*/
+        lv_obj_t * slabel = lv_label_create(lv_scr_act());
+        lv_label_set_text(slabel, "0");
+        lv_obj_align_to(slabel, slider, LV_ALIGN_OUT_TOP_MID, 0, -15);    /*Align top of the slider*/
+
+        rgbsliders[i] = std::make_pair(slider, slabel);
+    }
+
     argparse::ArgumentParser program("client-cli");
 
     argparse::ArgumentParser subscribe_command("subscribe");
@@ -138,7 +170,23 @@ void uithread(WSConn & wc, int argc, char* argv[])
             toggle = false;
         }
         // uint32_t c = rand();
-        lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(states[current_light]->getJsonState()["attributes"])), LV_PART_MAIN);
+        auto attrs = states[current_light]->getJsonState()["attributes"];
+        if(attrs.count("rgb_color")) {
+            auto rgb = attrs["rgb_color"];
+            // cout<<"RGB "<<rgb<<endl;
+            if (rgb.size() == 3) {
+                for (int i=0; i<3; i++) {
+                    lv_slider_set_value(rgbsliders[i].first, rgb[i], LV_ANIM_OFF);
+
+                    // HACK
+                    lv_event_t event;
+                    event.target = rgbsliders[i].first;
+                    slider_event_cb(&event);
+                }
+            }
+        }
+
+        lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(attrs)), LV_PART_MAIN);
         lv_label_set_text(label, states[current_light]->getJsonState()["attributes"]["friendly_name"].get<string>().c_str());
         usleep(5*1000); // 5000 usec = 5 ms
         lv_tick_inc(5); // 5 ms
