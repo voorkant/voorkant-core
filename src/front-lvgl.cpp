@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <sdl/sdl_common.h>
+#include <src/widgets/lv_slider.h>
 #include <string>
 #include <unistd.h>
 
@@ -37,6 +38,7 @@ static uint32_t intFromRGB(json attrs)
 static uint32_t c=0;
 static string current_light; // FIXME: THIS NEEDS A MUTEX
 static bool toggle = false;
+static bool newcolor = false;
 
 static void btn_event_cb(lv_event_t * e)
 {
@@ -66,6 +68,7 @@ static void slider_event_cb(lv_event_t * e)
             lv_label_set_text_fmt(rgbslider.second, "%" LV_PRId32, lv_slider_get_value(slider));
             lv_obj_align_to(rgbslider.second, slider, LV_ALIGN_OUT_TOP_MID, 0, -15);    /*Align top of the slider*/
         }
+        newcolor = true;
     }
 }
 
@@ -169,25 +172,46 @@ void uithread(WSConn & wc, int argc, char* argv[])
 
             toggle = false;
         }
-        // uint32_t c = rand();
-        auto attrs = states[current_light]->getJsonState()["attributes"];
-        if(attrs.count("rgb_color")) {
-            auto rgb = attrs["rgb_color"];
-            // cout<<"RGB "<<rgb<<endl;
-            if (rgb.size() == 3) {
-                for (int i=0; i<3; i++) {
-                    lv_slider_set_value(rgbsliders[i].first, rgb[i], LV_ANIM_OFF);
 
-                    // HACK
-                    lv_event_t event;
-                    event.target = rgbsliders[i].first;
-                    slider_event_cb(&event);
+        if (newcolor) {
+            json cmd;
+            json rgb;
+
+            rgb = {0,0,0};
+
+            for(int i=0; i<3; i++) {
+                rgb[i]=lv_slider_get_value(rgbsliders[i].first);
+            }
+
+            cmd["type"]="call_service";
+            cmd["domain"]=states[current_light]->getDomain();
+            cmd["service"]="turn_on";
+            cmd["target"]["entity_id"]=current_light;
+            cmd["service_data"]["rgb_color"] = rgb;
+
+            wc.send(cmd);
+
+            newcolor = false;
+        }
+        else {
+            // uint32_t c = rand();
+            auto attrs = states[current_light]->getJsonState()["attributes"];
+            if(attrs.count("rgb_color")) {
+                auto rgb = attrs["rgb_color"];
+                // cout<<"RGB "<<rgb<<endl;
+                if (rgb.size() == 3) {
+                    for (int i=0; i<3; i++) {
+                        lv_slider_set_value(rgbsliders[i].first, rgb[i], LV_ANIM_OFF);
+
+                        lv_label_set_text_fmt(rgbsliders[i].second, "%" LV_PRId32, rgb[i].get<int>());
+                        lv_obj_align_to(rgbsliders[i].second, rgbsliders[i].first, LV_ALIGN_OUT_TOP_MID, 0, -15);    /*Align top of the slider*/
+                    }
                 }
             }
+            lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(attrs)), LV_PART_MAIN);
+            lv_label_set_text(label, states[current_light]->getJsonState()["attributes"]["friendly_name"].get<string>().c_str());
         }
 
-        lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(attrs)), LV_PART_MAIN);
-        lv_label_set_text(label, states[current_light]->getJsonState()["attributes"]["friendly_name"].get<string>().c_str());
         usleep(5*1000); // 5000 usec = 5 ms
         lv_tick_inc(5); // 5 ms
         lv_task_handler();
