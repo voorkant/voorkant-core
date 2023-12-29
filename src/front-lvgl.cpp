@@ -203,6 +203,8 @@ void uithread(WSConn & wc, int argc, char* argv[])
                     for (int i=0; i<3; i++) {
                         lv_slider_set_value(rgbsliders[i].first, rgb[i], LV_ANIM_OFF);
 
+                        // this label setting code is duplicated from slider_event_cb, because LV_EVENT_VALUE_CHANGED does not fire when -we- change it (https://docs.lvgl.io/latest/en/html/widgets/slider.html)
+                        // and we don't want to pass the old value back to HA (which slider_event_cb would happily do for us), because that causes a super fun oscillation
                         lv_label_set_text_fmt(rgbsliders[i].second, "%" LV_PRId32, rgb[i].get<int>());
                         lv_obj_align_to(rgbsliders[i].second, rgbsliders[i].first, LV_ALIGN_OUT_TOP_MID, 0, -15);    /*Align top of the slider*/
                     }
