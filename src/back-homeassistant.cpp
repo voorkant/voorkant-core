@@ -62,34 +62,28 @@ void hathread(WSConn& wc) {
 
   // cerr<<wc.recv()<<endl; // FIXME assert auth_ok
 
-  json subscribe;
-
-  subscribe["type"] = "subscribe_events";
-
-  wc.send(subscribe);
 
 
-  // json call;
 
+  // example of calling a service
   // call["type"]="call_service";
   // call["domain"]="light";
   // call["service"]="toggle";
   // call["target"]["entity_id"]="light.plafondlamp_kantoor_peter_level_light_color_on_off";
-
   // auto jcall = call.dump();
-
   // wc.send(jcall);
 
+
+  json subscribe;
+  subscribe["type"] = "subscribe_events";
+  wc.send(subscribe);
+
   json getstates;
-
   getstates["type"]="get_states";
-
   wc.send(getstates);
 
   json getdomains;
-
   getdomains["type"]="get_services";
-
   wc.send(getdomains);
 
 /* example ID_SUBSCRIPTION message:
@@ -133,7 +127,6 @@ void hathread(WSConn& wc) {
     std::vector<std::string> whatchanged;
     {
       std::scoped_lock lk(stateslock);
-
       if (j["id"] == getstates["id"]) {
         // response for initial getstates call
         for (auto evd : j["result"]) {
@@ -186,9 +179,12 @@ void hathread(WSConn& wc) {
         if (event_type == "state_changed") {
           states[entity_id] = std::make_shared<HAEntity>(new_state);
           whatchanged.push_back(entity_id);
+        } else {
+          cerr<<"Event type received that we didn't expect: "<<event_type<<endl;
         }
       }
       else {
+        cerr<<"Received message we don't expect: "<<j["type"]<<endl;
         // not a message we were expecting
         continue;
       }
