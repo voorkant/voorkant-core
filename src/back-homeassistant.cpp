@@ -7,6 +7,7 @@
 // FIXME: logging should be centralised
 #include <iostream>
 using std::cerr;
+using std::cout;
 using std::endl;
 // </FIXME>
 
@@ -45,20 +46,19 @@ std::vector<std::string> getServicesForDomain(std::string domain) {
 
 void hathread(WSConn& wc) {
   auto welcome = wc.recv();
-
   auto jwelcome = json::parse(welcome);
 
-  // cerr<<"got welcome: "<<welcome<<endl; // FIXME check that it is the expected auth_required message
-
   json auth;
-
   auth["type"] = "auth";
   auth["access_token"] = GetEnv("HA_API_TOKEN");
-
-  // cerr<<auth.dump()<<endl;
-
-  // cerr<<jauth<<endl;
   wc.send(auth);
+
+  json authresponse = json::parse(wc.recv());
+  if (authresponse["type"] != "auth_ok") {
+    cerr<<"Authentication failed, please check your HA_API_TOKEN"<<endl;
+    return;
+  }
+
 
   // cerr<<wc.recv()<<endl; // FIXME assert auth_ok
 

@@ -119,7 +119,9 @@ void WSConn::send(std::string& msg) {
 
 int main(int argc, char* argv[])
 {
-  auto wc = WSConn(GetEnv("HA_WS_URL"));
+  string HA_URL = GetEnv("HA_WS_URL");
+  cout<<"Using "<<HA_URL<<endl;
+  auto wc = WSConn(HA_URL);
 
   // these two really want a reference to eachother, instead of a shared ref to wc
   // python threading object would be nice here
