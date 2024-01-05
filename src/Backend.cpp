@@ -44,6 +44,7 @@ void HABackend::Start()
     cerr<<"In start"<<endl;
     std::thread ha(&HABackend::hathread, this);
     cerr<<"Thred started"<<endl;
+    ha.join();
     // this should runt he HAthread that builds up the state, etc.
 };
 
