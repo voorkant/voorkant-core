@@ -16,9 +16,8 @@ using std::cout;
 using std::endl;
 using std::string;
 
-// static const uint32_t ID_SUBSCRIPTION = 1;
-// static const uint32_t ID_GETSTATES = 2;
-// static const uint32_t ID_START = 100;
+
+extern void uithread(HABackend &backend, int /* argc */, char* []/* argv[] */);
 
 std::string GetEnv(std::string key)
 {
@@ -42,18 +41,10 @@ int main(int argc, char *argv[])
   if (backend.Connect(HA_URL, GetEnv("HA_API_TOKEN")))
   {
     cout<<"Connect succesful. Starting."<<endl;
-    string token = backend.CreateLongToken("ruben");
-    cout<<"Received long lived token:" <<token<<endl;
+
+    std::thread ui(uithread, std::ref(backend), argc, argv);
+    ui.join();
   }
 
-  // Wait for backend to end?
-
-
-  // these two really want a reference to eachother, instead of a shared ref to wc
-  // python threading object would be nice here
-  // std::thread ui(uithread, std::ref(wc), argc, argv);
-  // std::thread ha(hathread, std::ref(wc));
-
-  // ha.detach();
-  // ui.join();
 }
+

@@ -1,8 +1,24 @@
+
 #include "HAEntity.hpp"
+using std::cerr;
+using std::endl;
 
 HAEntity::HAEntity(json _state)
 {
+    cerr << _state.dump();
+
     state = _state;
+
+    id = state["entity_id"];
+    if (state.contains("attributes") && state["attributes"].contains("friendly_name"))
+    {
+        name = state["attributes"]["friendly_name"];
+    }
+    else
+    {
+        name = state["entity_id"];
+    }
+    //   name = state["attributes"]["friendly_name"];
 }
 
 void HAEntity::update(json _state)

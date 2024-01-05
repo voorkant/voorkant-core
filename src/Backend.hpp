@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <map>
+#include <thread>
 #include "HAEntity.hpp"
 #include "WSConn.hpp"
 

@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <string>
 #include <thread>
@@ -129,7 +127,7 @@ void HABackend::threadrunner()
             if (j["id"] == getstates["id"])
             {
                 // response for initial getstates call
-                for (auto evd : j["result"])
+                for (auto evd : j["result"])    
                 {
                     // cerr<<evd.dump()<<endl;
                     auto entity_id = evd["entity_id"];
@@ -140,16 +138,10 @@ void HABackend::threadrunner()
             }
             else if (j["id"] == getdomains["id"])
             {
-                // response for initial getdomains call
                 // cerr<<j.dump()<<endl;
                 for (auto &[domain, _services] : j["result"].items())
                 {
                     // cerr<<service.dump()<<endl;
-
-                    // cout << "entity_id=" << entity_id << ", ";
-                    // cout << "state=" << evd["state"];
-                    // cout << endl;
-
                     domains[domain] = std::make_shared<HADomain>(_services);
                     // cerr<<"got services for domain "<<domain<<endl;
                 }
@@ -157,6 +149,8 @@ void HABackend::threadrunner()
             }
             else if (j["type"] == "event")
             {
+                cout<<"FULL EVENT"<<endl;
+                cout<<j.dump()<<endl;
                 // something happened!
                 auto event = j["event"];
                 auto event_type = event["event_type"];
@@ -166,10 +160,6 @@ void HABackend::threadrunner()
                 auto old_state = evd["old_state"];
                 auto new_state = evd["new_state"];
 
-                // cout << "event_type=" << event_type << ", ";
-                // cout << "entity_id=" << entity_id << ", ";
-                // cout << "state=" << new_state["state"];
-                // cout << endl;
 
                 if (event_type == "state_changed")
                 {
