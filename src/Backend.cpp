@@ -133,14 +133,6 @@ void HABackend::threadrunner()
                 {
                     // cerr<<evd.dump()<<endl;
                     auto entity_id = evd["entity_id"];
-
-                    auto old_state = evd["old_state"];
-                    auto new_state = evd["new_state"];
-
-                    // cout << "entity_id=" << entity_id << ", ";
-                    // cout << "state=" << evd["state"];
-                    // cout << endl;
-
                     states[entity_id] = std::make_shared<HAEntity>(evd);
                     whatchanged.push_back(entity_id);
                 }
