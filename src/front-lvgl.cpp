@@ -72,8 +72,10 @@ static void slider_event_cb(lv_event_t * e)
     }
 }
 
-void uithread(WSConn & wc, int argc, char* argv[])
+void uithread(HABackend & backend, int argc, char* argv[])
 {
+    backend.Start();
+
     cerr<<"calling lv_init"<<endl;
     lv_init();
     sdl_init();
@@ -164,11 +166,11 @@ void uithread(WSConn & wc, int argc, char* argv[])
             json cmd;
 
             cmd["type"]="call_service";
-            cmd["domain"]=states[current_light]->getDomain();
+            cmd["domain"]=backend.GetState(current_light)->getDomain();
             cmd["service"]="toggle";
             cmd["target"]["entity_id"]=current_light;
 
-            wc.send(cmd);
+            backend.WSConnSend(cmd);
 
             toggle = false;
         }
@@ -184,18 +186,18 @@ void uithread(WSConn & wc, int argc, char* argv[])
             }
 
             cmd["type"]="call_service";
-            cmd["domain"]=states[current_light]->getDomain();
+            cmd["domain"]=backend.GetState(current_light)->getDomain();
             cmd["service"]="turn_on";
             cmd["target"]["entity_id"]=current_light;
             cmd["service_data"]["rgb_color"] = rgb;
 
-            wc.send(cmd);
+            backend.WSConnSend(cmd);
 
             newcolor = false;
         }
         else {
             // uint32_t c = rand();
-            auto attrs = states[current_light]->getJsonState()["attributes"];
+            auto attrs = backend.GetState(current_light)->getJsonState()["attributes"];
             if(attrs.count("rgb_color")) {
                 auto rgb = attrs["rgb_color"];
                 // cout<<"RGB "<<rgb<<endl;
@@ -211,7 +213,7 @@ void uithread(WSConn & wc, int argc, char* argv[])
                 }
             }
             lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(attrs)), LV_PART_MAIN);
-            lv_label_set_text(label, states[current_light]->getJsonState()["attributes"]["friendly_name"].get<string>().c_str());
+            lv_label_set_text(label, backend.GetState(current_light)->getJsonState()["attributes"]["friendly_name"].get<string>().c_str());
         }
 
         usleep(5*1000); // 5000 usec = 5 ms
@@ -224,17 +226,18 @@ void uithread(WSConn & wc, int argc, char* argv[])
     }
 }
 
-void uithread_refresh(std::vector<std::string> whatchanged) // would be cool if this got told what changed
+void uithread_refresh(HABackend *backend, std::vector<std::string> whatchanged) // would be cool if this got told what changed
 {
     // return;
-    std::scoped_lock lk(entrieslock, stateslock, domainslock);
+    // std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
     cerr<<whatchanged.size()<<endl;
     for(const auto &changed : whatchanged) {
-        cout<<"state for "<<changed<<" is "<<states[changed]->getInfo()<<endl;
-        auto attrs = states[changed]->getJsonState()["attributes"];
+        auto state = backend->GetState(changed);
+        cout<<"state for "<<changed<<" is "<<state->getInfo()<<endl;
+        auto attrs = state->getJsonState()["attributes"];
         cout<<attrs<<endl;
-        if (states[changed]->getDomain() == "light") {
+        if (state->getDomain() == "light") {
             current_light = changed;
         }
         // if(attrs.count("rgb_color")) {
@@ -246,7 +249,7 @@ void uithread_refresh(std::vector<std::string> whatchanged) // would be cool if 
         //         c=color;
         //     }
         // }
-        for(const auto &attr : states[changed]->attrVector()) {
+        for(const auto &attr : state->attrVector()) {
             cout<<"  " << attr <<endl;
         }
     }
