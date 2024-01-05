@@ -21,8 +21,9 @@ std::string GetEnv(std::string key);
 
 
 
-extern void uithread(WSConn& wc, int argc=0, char* argv[] = nullptr);
-extern void hathread(WSConn& wc);
-extern void uithread_refresh(std::vector<std::string> whatchanged); // FIXME: I think the UI should be an object on which this is just a method?
+//extern void uithread(WSConn& wc, int argc=0, char* argv[] = nullptr);
 
-extern std::vector<std::string> getServicesForDomain(std::string domain); // REMOVE
+//extern void uithread_refresh(std::vector<std::string> whatchanged); // FIXME: I think the UI should be an object on which this is just a method?
+
+
+///extern std::vector<std::string> getServicesForDomain(std::string domain); // REMOVE

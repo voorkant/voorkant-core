@@ -1,6 +1,9 @@
 
 #include "WSConn.hpp"
+#include <iostream>
 
+using std::cout;
+using std::endl;
  
 
 WSConn::WSConn(std::string url) {
@@ -73,7 +76,7 @@ void WSConn::send(json& msg) {
   }
 
   auto jmsg = msg.dump();
-
+  cout<<"SEnding:"<<jmsg<<endl;
   sendString(jmsg);
 }
 

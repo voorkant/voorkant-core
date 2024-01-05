@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
   HABackend backend;
   if (backend.Connect(HA_URL, GetEnv("HA_API_TOKEN")))
   {
+    cout<<"Connect succesful. Starting."<<endl;
     backend.Start();
   }
 
