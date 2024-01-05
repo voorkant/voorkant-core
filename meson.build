@@ -40,11 +40,11 @@ lvgl_drivers_dep = lvgl_drivers_proj.dependency('lv_drivers')
 sdl2_dep = dependency('sdl2')
 incdir = include_directories('./src/')
 
-# executable('client-ftxui',
-#            ['src/main.cpp', 'src/Backend.cpp', 'HAEntity.cpp','WSConn.cpp','src/front-ftxui.cpp'],
-#            install : true,
-#      dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep]
-#      )
+executable('client-ftxui',
+           ['src/main.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-ftxui.cpp'],
+           install : true,
+     dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep]
+     )
 
  executable('client-cli',
             ['src/main.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp'],

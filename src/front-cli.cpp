@@ -62,3 +62,14 @@ void uithread(HABackend &backend, int argc, char *argv[])
         cerr << "no command given" << endl;
     }
 }
+
+void uithread_refresh(HABackend *backend, std::vector<std::string> whatchanged)
+{
+    for(const auto &changed : whatchanged) {
+        auto state = backend->GetState(changed);
+        cout<<"state for "<<changed<<" is "<<state->getInfo()<<endl;
+        for(const auto &attr : state->attrVector()) {
+            cout<<"  " << attr <<endl;
+        }
+     }
+ }

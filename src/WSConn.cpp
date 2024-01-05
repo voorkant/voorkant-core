@@ -79,8 +79,6 @@ void WSConn::send(json& msg) {
   sendString(jmsg);
 }
 
-
-  // call with wshandlelock held
 void WSConn::sendString(std::string& msg) {
   std::scoped_lock lk(wshandlelock);
   size_t sent;

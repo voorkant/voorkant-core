@@ -8,6 +8,8 @@
 
 #include "main.hpp"
 
+#include "Backend.hpp"
+
 #include <string>
 
 using std::string;
@@ -16,9 +18,11 @@ using std::map;
 ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FitComponent();
 
 
-void uithread(WSConn& wc, int /* argc */, char* []/* argv[] */) {
+void uithread(HABackend &backend, int /* argc */, char* []/* argv[] */) {
 
   using namespace ftxui;
+
+  backend.Start();
 
   int selected;
   int selected2;
@@ -28,6 +32,8 @@ void uithread(WSConn& wc, int /* argc */, char* []/* argv[] */) {
   entries2.push_back("hoi");
   entries2.push_back("hoi2");
 
+  std::vector<std::string> entries;
+
   auto radiobox = Menu(&entries, &selected);
   auto radiobox2 = Menu(&entries2, &selected2);
 
@@ -36,8 +42,9 @@ void uithread(WSConn& wc, int /* argc */, char* []/* argv[] */) {
   string pressed;
 
   auto renderer = Renderer(uirenderer, [&] {
-    std::scoped_lock lk(entrieslock, stateslock, domainslock);
+    // std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
+    entries = backend.GetEntries();
     // for(auto &[k,v] : domains) {
     //   cerr<<"domain "<<k<<"exists"<<endl;
     // }
@@ -45,7 +52,7 @@ void uithread(WSConn& wc, int /* argc */, char* []/* argv[] */) {
     // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
     if (selected >= 0 && entries.size() > 0) {
       // cerr<<"getting services"<<endl;
-      services = getServicesForDomain(states.at(entries.at(selected))->getDomain());
+      services = backend.GetServicesForDomain(backend.GetState(entries.at(selected))->getDomain());
     }
 
     std::vector<Component> buttons;
@@ -53,17 +60,17 @@ void uithread(WSConn& wc, int /* argc */, char* []/* argv[] */) {
       auto entity = entries.at(selected);
 
       // cerr<<service<<endl;
-      buttons.push_back(Button(service, [&selected, &wc, service] {
+      buttons.push_back(Button(service, [&selected, &backend, &entries, service] {
         // cout<<"PUSHED: "<< entries.at(selected) << service<<endl;
 
         json cmd;
 
         cmd["type"]="call_service";
-        cmd["domain"]=states.at(entries.at(selected))->getDomain();
+        cmd["domain"]=backend.GetState(entries.at(selected))->getDomain();
         cmd["service"]=service;
         cmd["target"]["entity_id"]=entries.at(selected);
 
-        wc.send(cmd);
+        backend.WSConnSend(cmd);
 
       })); // FIXME: this use of entries.at is gross, should centralise the empty-entries-list fallback
     }
@@ -80,14 +87,14 @@ void uithread(WSConn& wc, int /* argc */, char* []/* argv[] */) {
 
     std::vector<Element> attrs;
     if (selected >= 0 && entries.size() > 0) {
-      for(const auto &attr : states.at(entries.at(selected))->attrVector()) {
+      for(const auto &attr : backend.GetState(entries.at(selected))->attrVector()) {
         attrs.push_back(text(attr));
       }
     }
 
     return vbox(
               hbox(text("selected = "), text(selected >=0 && entries.size() ? entries.at(selected) : "")),
-              text(selected >= 0 && entries.size() > 0 ? states.at(entries.at(selected))->getInfo() : "no info"),
+              text(selected >= 0 && entries.size() > 0 ? backend.GetState(entries.at(selected))->getInfo() : "no info"),
               text(pressed),
                         // text("hi"),
             // hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
@@ -125,7 +132,7 @@ void uithread(WSConn& wc, int /* argc */, char* []/* argv[] */) {
   screen.Loop(renderer);
 }
 
-void uithread_refresh(std::vector<std::string> whatchanged)
+void uithread_refresh(HABackend* /* backend */, std::vector<std::string> /* whatchanged */)
 {
   screen.PostEvent(ftxui::Event::Custom); // REMOVE
 }

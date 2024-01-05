@@ -3,6 +3,7 @@
 #include <thread>
 #include "Backend.hpp"
 #include "HAEntity.hpp"
+#include "main.hpp"
 
 using std::cerr;
 using std::cout;
@@ -43,7 +44,7 @@ bool HABackend::Start()
     cerr<<"In start"<<endl;
     ha = std::thread(&HABackend::threadrunner, this);
     cerr<<"Thred started"<<endl;
-    ha.join();
+    ha.detach();
     return true;
 };
 
@@ -194,10 +195,37 @@ void HABackend::threadrunner()
             }
         }
 
-
-        for (auto val : whatchanged)
-        {
-            cout << "What CHanged: " << val << endl;
-        }
+        uithread_refresh(this, whatchanged);
     }
+}
+
+std::vector<std::string> HABackend::GetEntries()
+{
+    std::scoped_lock lk(entrieslock);
+
+    return entries;
+}
+
+std::shared_ptr<HAEntity> HABackend::GetState(const std::string &name)
+{
+    std::scoped_lock lk(stateslock);
+
+    return states.at(name);
+}
+
+std::vector<std::string> HABackend::GetServicesForDomain(const std::string &domain) 
+{
+  std::scoped_lock lk(domainslock);
+
+  if (domains.count(domain)) {
+    return domains[domain]->getServices();
+  }
+  else {
+    return {};
+  }
+}
+
+void HABackend::WSConnSend(json& msg)
+{
+    wc->send(msg);
 }
