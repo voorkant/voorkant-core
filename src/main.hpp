@@ -9,6 +9,7 @@
 #include <curl/easy.h>
 
 #include <nlohmann/json.hpp>
+#include "WSConn.hpp"
 
 using std::string;
 using std::map;
@@ -18,27 +19,6 @@ using json = nlohmann::json;
 std::string GetEnv(std::string key);
 // void backToFrontPing();
 
-class WSConn
-{
-public:
-  WSConn(std::string url);
-  ~WSConn() {
-        // FIXME clean up here
-  }
-
-  std::string recv(void);
-  void send(json& msg);
-
-  std::mutex wshandlelock;
-  CURL* wshandle;
-
-  std::mutex msgidlock;
-  int msgid = 0;
-
-private:
-  // call with wshandlelock held
-  void send(std::string& msg);
-};
 
 class HAEntity
 {
