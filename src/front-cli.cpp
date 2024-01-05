@@ -50,12 +50,12 @@ void uithread(WSConn & /* wc */, int argc, char* argv[])
 
 void uithread_refresh(std::vector<std::string> whatchanged) // would be cool if this got told what changed
 {
-    std::scoped_lock lk(entrieslock, stateslock, domainslock);
+    // std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
-    for(const auto &changed : whatchanged) {
-        cout<<"state for "<<changed<<" is "<<states[changed]->getInfo()<<endl;
-        for(const auto &attr : states[changed]->attrVector()) {
-            cout<<"  " << attr <<endl;
-        }
-    }
+    // for(const auto &changed : whatchanged) {
+    //     cout<<"state for "<<changed<<" is "<<states[changed]->getInfo()<<endl;
+    //     for(const auto &attr : states[changed]->attrVector()) {
+    //         cout<<"  " << attr <<endl;
+    //     }
+    // }
 }

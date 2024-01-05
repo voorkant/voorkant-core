@@ -8,6 +8,8 @@
 
 #include "main.hpp"
 #include "WSConn.hpp"
+#include "Backend.hpp"
+#include "HAEntity.hpp"
 
 using std::cerr;
 using std::cout;
@@ -22,27 +24,34 @@ std::string GetEnv(std::string key)
 {
   auto value = getenv(key.c_str());
 
-  if (value == nullptr) {
-    throw std::runtime_error("environment variable "+key+" not set, exiting");
+  if (value == nullptr)
+  {
+    throw std::runtime_error("environment variable " + key + " not set, exiting");
   }
 
   return value;
 }
 
-
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
   string HA_URL = GetEnv("HA_WS_URL");
-  cout<<"Using "<<HA_URL<<endl;
+  cout << "Using " << HA_URL << endl;
   auto wc = WSConn(HA_URL);
+
+  HABackend backend;
+  if (backend.Connect(HA_URL, GetEnv("HA_API_TOKEN")))
+  {
+    backend.Start();
+  }
+
+  // Wait for backend to end?
+
 
   // these two really want a reference to eachother, instead of a shared ref to wc
   // python threading object would be nice here
-  //std::thread ui(uithread, std::ref(wc), argc, argv);
-  //std::thread ha(hathread, std::ref(wc));
+  // std::thread ui(uithread, std::ref(wc), argc, argv);
+  // std::thread ha(hathread, std::ref(wc));
 
-  ha.detach();
-  ui.join();
+  // ha.detach();
+  // ui.join();
 }
-

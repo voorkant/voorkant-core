@@ -1,3 +1,6 @@
+#ifndef BACKEND_HPP
+#define BACKEND_HPP
+
 #include <nlohmann/json.hpp>
 #include <sstream>
 
@@ -11,11 +14,14 @@ class Backend {
 
 class HABackend : Backend {
     public:
-        HABackend(string url);
+        HABackend();
+        bool Connect(string url, string token);
+        void Start();
 
 private:
+    WSConn *wc = nullptr;
     void hathread();
-    WSConn wc;
 };
 
 
+#endif

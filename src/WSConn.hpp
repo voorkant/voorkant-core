@@ -1,3 +1,6 @@
+#ifndef WSCONN_HPP
+#define WSCONN_HPP
+
 #include <string>
 #include <mutex>
 #include <poll.h>
@@ -18,13 +21,7 @@ public:
 
   std::string recv(void);
   void send(json& msg);
-
-  std::mutex wshandlelock;
-  CURL* wshandle;
-
-  std::mutex msgidlock;
-  int msgid = 0;
-
+  
 private:
   // call with wshandlelock held
   void sendString(std::string& msg);
@@ -36,3 +33,6 @@ private:
   int msgid = 0;
 
 };
+
+
+#endif

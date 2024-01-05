@@ -40,22 +40,22 @@ lvgl_drivers_dep = lvgl_drivers_proj.dependency('lv_drivers')
 sdl2_dep = dependency('sdl2')
 incdir = include_directories('./src/')
 
-executable('client-ftxui',
-           ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-ftxui.cpp'],
-           install : true,
-     dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep]
-     )
+# executable('client-ftxui',
+#            ['src/main.cpp', 'src/Backend.cpp', 'HAEntity.cpp','WSConn.cpp','src/front-ftxui.cpp'],
+#            install : true,
+#      dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep]
+#      )
 
-executable('client-cli',
-           ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-cli.cpp'],
-           install : true,
-      dependencies : [json_dep, thread_dep, curl_dep]
-      )
+ executable('client-cli',
+            ['src/main.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp'],
+            install : true,
+       dependencies : [json_dep, thread_dep, curl_dep]
+       )
 
-executable('client-lvgl-sdl',
-           ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h'],
-          install : true,
-      dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, sdl2_dep],
-      include_directories: incdir,
-      cpp_args : '-DLV_CONF_PATH='+meson.current_build_dir()+'/../src/lv_conf.h'
-)
+# executable('client-lvgl-sdl',
+#            ['src/main.cpp', 'src/back-homeassistant.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h'],
+#           install : true,
+#       dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, sdl2_dep],
+#       include_directories: incdir,
+#       cpp_args : '-DLV_CONF_PATH='+meson.current_build_dir()+'/../src/lv_conf.h'
+# )
