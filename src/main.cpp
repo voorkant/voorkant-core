@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
   if (backend.Connect(HA_URL, GetEnv("HA_API_TOKEN")))
   {
     cout<<"Connect succesful. Starting."<<endl;
-    backend.Start();
+    string token = backend.CreateLongToken("ruben");
+    cout<<"Received long lived token:" <<token<<endl;
   }
 
   // Wait for backend to end?

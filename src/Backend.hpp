@@ -18,11 +18,13 @@ class HABackend : Backend
 public:
     HABackend();
     bool Connect(string url, string token);
-    void Start();
+    bool Start();
+    string CreateLongToken(string name);
 
 private:
     WSConn *wc = nullptr;
-    void hathread();
+    std::thread ha;
+    void threadrunner();
 
     std::vector<std::string> entries;
     std::mutex entrieslock;

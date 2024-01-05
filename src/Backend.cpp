@@ -35,22 +35,43 @@ bool HABackend::Connect(string url, string token)
     return true;
 };
 
-void HABackend::Start()
+bool HABackend::Start()
 {
     if (wc == nullptr)
     {
         cerr << "Do a damned connect first" << endl;
+        return false;
     }
     cerr<<"In start"<<endl;
-    std::thread ha(&HABackend::hathread, this);
+    ha = std::thread(&HABackend::threadrunner, this);
     cerr<<"Thred started"<<endl;
     ha.join();
-    // this should runt he HAthread that builds up the state, etc.
+    return true;
 };
 
-void HABackend::hathread()
+
+string HABackend::CreateLongToken(string name) {
+    json tokenrequest;
+    tokenrequest["type"] = "auth/long_lived_access_token";
+    tokenrequest["client_name"] = name;
+    tokenrequest["lifespan"] = 365;
+
+    wc->send(tokenrequest);
+
+    // TODO: should probably using a ref to fill the response and use bool as return type
+    //{"id":1,"type":"result","success":true, "result":"TOKEN_HERE"}
+    string response = wc->recv();
+    json jresponse = json::parse(response);
+    if (jresponse["success"] == true) {
+        return jresponse["result"];
+    }
+    cerr<<"Failed to create token: "<<response<<endl;
+    return "NO_TOKEN";
+
+}
+
+void HABackend::threadrunner()
 {
-    cerr<<"Doing HAthread."<<endl;
     json subscribe;
     subscribe["type"] = "subscribe_events";
     wc->send(subscribe);

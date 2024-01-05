@@ -76,7 +76,6 @@ void WSConn::send(json& msg) {
   }
 
   auto jmsg = msg.dump();
-  cout<<"SEnding:"<<jmsg<<endl;
   sendString(jmsg);
 }
 
@@ -85,6 +84,5 @@ void WSConn::send(json& msg) {
 void WSConn::sendString(std::string& msg) {
   std::scoped_lock lk(wshandlelock);
   size_t sent;
-  // cerr<<"sending: "<<msg<<endl;
   curl_ws_send(wshandle, msg.c_str(), msg.length(), &sent, 0, CURLWS_TEXT);
 }
