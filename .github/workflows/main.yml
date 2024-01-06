@@ -35,7 +35,8 @@ jobs:
         with:
           python-version: '3.x'
       - run: brew install gcc
-      - run: pip install meson ninja
+      - run: brew install meson
+      - run: brew install nlohmann-json
       - run: meson setup ${{github.workspace}}/build
         env:
           CC: gcc
