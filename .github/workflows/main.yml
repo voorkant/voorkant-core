@@ -30,13 +30,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-
-      - uses: actions/setup-python@v1
-        with:
-          python-version: '3.x'
-      - run: brew install gcc
-      - run: brew install meson
-      - run: brew install nlohmann-json
+      - run: brew install gcc meson
+      - run: brew install nlohmann-json sdl2
       - run: meson setup ${{github.workspace}}/build
         env:
           CC: gcc
