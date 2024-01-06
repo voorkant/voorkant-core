@@ -17,6 +17,7 @@ using std::map;
 
 ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FitComponent();
 
+void uithread_prepare(void) {}
 
 void uithread(HABackend &backend, int /* argc */, char* []/* argv[] */) {
 

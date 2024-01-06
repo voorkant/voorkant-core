@@ -74,14 +74,19 @@ static void slider_event_cb(lv_event_t *e)
     }
 }
 
+void uithread_prepare(void) {
+  cerr << "calling lv_init..";
+  lv_init();
+  cerr << "done" << endl;
+  cerr << "calling sdl_init..";
+  sdl_init();
+  cerr << "done" << endl;
+}
+
 void uithread(HABackend &backend, int argc, char *argv[])
 {
     backend.Start();
-
-    cerr << "calling lv_init" << endl;
-    lv_init();
-    sdl_init();
-    cerr << "called lv_init and sdl_init" << endl;
+    sleep(1); // HACK (otherwise current_light may be an empty string, which causes crashes)
 
 #define MY_DISP_HOR_RES 480
 

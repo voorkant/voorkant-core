@@ -15,6 +15,8 @@ using std::cout;
 using std::endl;
 using std::flush;
 
+void uithread_prepare(void) {}
+
 void uithread(HABackend &backend, int argc, char *argv[])
 {
     argparse::ArgumentParser program("client-cli");

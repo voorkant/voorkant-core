@@ -16,7 +16,7 @@ using std::cout;
 using std::endl;
 using std::string;
 
-
+extern void uithread_prepare(void); // this, just like uithread and uithread_refresh, wants to be a method on some UI object
 extern void uithread(HABackend &backend, int /* argc */, char* []/* argv[] */);
 
 std::string GetEnv(std::string key)
@@ -41,6 +41,8 @@ int main(int argc, char *argv[])
   if (backend.Connect(HA_URL, GetEnv("HA_API_TOKEN")))
   {
     cout<<"Connect succesful. Starting."<<endl;
+
+    uithread_prepare();
 
     std::thread ui(uithread, std::ref(backend), argc, argv);
     ui.join();
