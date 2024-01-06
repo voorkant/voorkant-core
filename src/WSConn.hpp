@@ -8,20 +8,20 @@
 #include <curl/easy.h>
 #include <nlohmann/json.hpp>
 
-
 using json = nlohmann::json;
 
 class WSConn
 {
 public:
   WSConn(std::string url);
-  ~WSConn() {
-        // FIXME clean up here
+  ~WSConn()
+  {
+    // FIXME clean up here
   }
 
   std::string recv(void);
   void send(json& msg);
-  
+
 private:
   // call with wshandlelock held
   void sendString(std::string& msg);
@@ -31,8 +31,6 @@ private:
 
   std::mutex msgidlock;
   int msgid = 0;
-
 };
-
 
 #endif

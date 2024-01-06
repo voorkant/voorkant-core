@@ -17,26 +17,26 @@ class Backend
 class HABackend : Backend
 {
 public:
-    HABackend();
-    bool Connect(string url, string token);
-    bool Start();
-    string CreateLongToken(string name);
-    std::vector<std::string> GetEntries();
-    std::shared_ptr<HAEntity> GetState(const std::string &name);
-    std::vector<std::string> GetServicesForDomain(const std::string &domain);
-    void WSConnSend(json& msg);    
+  HABackend();
+  bool Connect(string url, string token);
+  bool Start();
+  string CreateLongToken(string name);
+  std::vector<std::string> GetEntries();
+  std::shared_ptr<HAEntity> GetState(const std::string& name);
+  std::vector<std::string> GetServicesForDomain(const std::string& domain);
+  void WSConnSend(json& msg);
 
 private:
-    WSConn *wc = nullptr;
-    std::thread ha;
-    void threadrunner();
+  WSConn* wc = nullptr;
+  std::thread ha;
+  void threadrunner();
 
-    std::vector<std::string> entries;
-    std::mutex entrieslock;
-    map<string, std::shared_ptr<HAEntity>> states; //FIXME: should this be called entities?
-    std::mutex stateslock;
-    map<string, std::shared_ptr<HADomain>> domains;
-    std::mutex domainslock;
+  std::vector<std::string> entries;
+  std::mutex entrieslock;
+  map<string, std::shared_ptr<HAEntity>> states; // FIXME: should this be called entities?
+  std::mutex stateslock;
+  map<string, std::shared_ptr<HADomain>> domains;
+  std::mutex domainslock;
 };
 
 #endif
