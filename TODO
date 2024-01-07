@@ -1,16 +1,16 @@
 - screen brightness management
 - figure out usage with nabu casa remote access
-- figure out crash when an entity has too many buttons (is this the reason? climate crashes on a big terminal too)
+- figure out FTXUI crash when an entity has too many buttons (is this the reason? climate crashes on a big terminal too)
 - when a thread segfaults, exit everything, don't go into a tight loop
 - valgrind is unhappy even before the crash, clean this up
 
-- entity list scrolls back to top when i focus buttons
+- (FTXUI) entity list scrolls back to top when i focus buttons
 
-- finally got a state-related crash. With voorkant focused on the "new devices discovered" thing, dismissing that notification in HA crashes voorkant. Dismissing it while not sitting on it delays the crash until you scroll past the now-gone entity.
+- (FTXUI) finally got a state-related crash. With voorkant focused on the "new devices discovered" thing, dismissing that notification in HA crashes voorkant. Dismissing it while not sitting on it delays the crash until you scroll past the now-gone entity.
 
 - after sitting idle for an hour, pushing a button causes a crash, presumably because HA has timed out the WS connection. need to add reconnection logic, maybe pings
 
-- after sitting idle for some time, sometimes the menu jumps to a different entity - usually nearby, but sometimes many pages back
+- (FTXUI) after sitting idle for some time, sometimes the menu jumps to a different entity - usually nearby, but sometimes many pages back
 
 - had a crash in `json::parse(msg)` (currently line 452 of main.cpp) where msg appears to have been empty
 
