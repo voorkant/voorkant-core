@@ -15,6 +15,8 @@ using std::cout;
 using std::endl;
 using std::flush;
 
+static bool uithread_refresh_print_updates = false;
+
 void uithread(HABackend& backend, int argc, char* argv[])
 {
   argparse::ArgumentParser program("client-cli");
@@ -28,6 +30,9 @@ void uithread(HABackend& backend, int argc, char* argv[])
   token_command.add_argument("name").help("Name of the token").default_value("voorkant");
   program.add_subparser(token_command);
 
+  argparse::ArgumentParser list_entities_command("list-entities");
+  program.add_subparser(list_entities_command);
+
   try {
     program.parse_args(argc, argv);
   }
@@ -40,6 +45,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
   if (program.is_subcommand_used(subscribe_command)) {
     // FIXME: now actually use the argument
     cout << "should subscribe to " << subscribe_command.get<string>("pattern") << endl;
+    uithread_refresh_print_updates = true;
     backend.Start();
     cout << "Backend thread started..." << endl;
     while (true) {
@@ -51,6 +57,13 @@ void uithread(HABackend& backend, int argc, char* argv[])
     string token = backend.CreateLongToken(token_command.get<string>("name"));
     cout << token << endl;
   }
+  else if (program.is_subcommand_used(list_entities_command)) {
+    backend.Start();
+    sleep(1); // hack, should find out if the backend really got populated
+    for (const auto& entity : backend.GetEntries()) {
+      cout << entity << endl;
+    }
+  }
   else {
     cerr << "no command given" << endl;
   }
@@ -58,11 +71,13 @@ void uithread(HABackend& backend, int argc, char* argv[])
 
 void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged)
 {
-  for (const auto& changed : whatchanged) {
-    auto state = backend->GetState(changed);
-    cout << "state for " << changed << " is " << state->getInfo() << endl;
-    for (const auto& attr : state->attrVector()) {
-      cout << "  " << attr << endl;
+  if (uithread_refresh_print_updates) {
+    for (const auto& changed : whatchanged) {
+      auto state = backend->GetState(changed);
+      cout << "state for " << changed << " is " << state->getInfo() << endl;
+      for (const auto& attr : state->attrVector()) {
+        cout << "  " << attr << endl;
+      }
     }
   }
 }
