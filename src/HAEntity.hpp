@@ -4,6 +4,8 @@
 
 #include <nlohmann/json.hpp>
 #include <iostream>
+#include <string>
+#include <sstream>
 
 using std::map;
 using std::string;

@@ -15,19 +15,31 @@ ftxui_component_dep = dependency('ftxui-component')
 curl_dep = dependency('curl')
 
 
+brew_prefix='/opt/homebrew/include'
+brew = find_program('brew', required: false)
+if brew.found()
+  cmd_brew_prefix = run_command('brew', '--prefix', check:false)
+  if cmd_brew_prefix.returncode() == 0
+    brew_prefix = cmd_brew_prefix.stdout().strip()
+  endif
+endif
+
+
 cmake = import('cmake')
 cmake_options = cmake.subproject_options()
 cmake_options.append_compile_args('c',
   '-DLV_CONF_INCLUDE_SIMPLE',
   '-DLV_LVGL_H_INCLUDE_SIMPLE',
   '-DLV_CONF_PATH=' + meson.current_build_dir() +'/../src/lv_conf.h',
-  '-I'+meson.current_build_dir()+'/../src', '-I'+meson.current_build_dir()+'/../subprojects/lvgl'
+  '-I'+meson.current_build_dir()+'/../src', '-I'+meson.current_build_dir()+'/../subprojects/lvgl',
+  '-I/'+brew_prefix+'/include'
   )
 cmake_options.append_compile_args('cpp',
   '-DLV_CONF_INCLUDE_SIMPLE',
   '-DLV_LVGL_H_INCLUDE_SIMPLE',
   '-DLV_CONF_PATH=' + meson.current_build_dir() +'/../src/lv_conf.h',
-  '-I'+meson.current_build_dir()+'/../src', '-I'+meson.current_build_dir()+'/../subprojects/lvgl'
+  '-I'+meson.current_build_dir()+'/../src', '-I'+meson.current_build_dir()+'/../subprojects/lvgl',
+  '-I/'+brew_prefix+'/include'
   )
 
 lvgl_proj = cmake.subproject('lvgl', options: cmake_options)

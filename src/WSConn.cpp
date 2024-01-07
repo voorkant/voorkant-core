@@ -19,7 +19,7 @@ WSConn::WSConn(std::string url)
 std::string WSConn::recv(void)
 {
   size_t recv;
-  struct curl_ws_frame* meta;
+  const struct curl_ws_frame* meta;
   struct pollfd pfd;
 
   char buffer[8192];
@@ -27,7 +27,8 @@ std::string WSConn::recv(void)
   std::string result;
 
   pfd.events = POLLIN;
-  /* cerr<< */ curl_easy_getinfo(wshandle, CURLINFO_ACTIVESOCKET, &pfd.fd) /* <<endl */;
+  /* cerr<< */ curl_easy_getinfo(wshandle, CURLINFO_ACTIVESOCKET,
+                                 &pfd.fd) /* <<endl */;
 
   CURLcode ret;
 
@@ -52,7 +53,9 @@ std::string WSConn::recv(void)
       poll(&pfd, 1, 1000);
     }
     else {
-      throw std::runtime_error("got error from curl_ws_recv: " + std::string(curl_easy_strerror(ret))); // FIXME: does not hold wshandlelock, might even print the wrong error in theory
+      throw std::runtime_error(
+        "got error from curl_ws_recv: " + std::string(curl_easy_strerror(ret))); // FIXME: does not hold wshandlelock, might even print the
+                                                                                 // wrong error in theory
     }
   }
   // cerr<<"ret="<<ret<<endl;
