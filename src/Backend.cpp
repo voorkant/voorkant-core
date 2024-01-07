@@ -15,7 +15,7 @@ HABackend::HABackend(){};
 
 bool HABackend::Connect(string url, string token)
 {
-  // This should connect the WSConn and do the auth
+  cerr << "[HABackend] Connecting to " << url << endl;
   wc = new WSConn(url);
   auto welcome = wc->recv();
   auto jwelcome = json::parse(welcome);

@@ -31,12 +31,8 @@ std::string GetEnv(std::string key)
 
 int main(int argc, char* argv[])
 {
-  string HA_URL = GetEnv("HA_WS_URL");
-  cout << "Using " << HA_URL << endl;
-  auto wc = WSConn(HA_URL);
-
   HABackend backend;
-  if (backend.Connect(HA_URL, GetEnv("HA_API_TOKEN"))) {
+  if (backend.Connect(GetEnv("HA_WS_URL"), GetEnv("HA_API_TOKEN"))) {
     cout << "Connect succesful. Starting." << endl;
 
     std::thread ui(uithread, std::ref(backend), argc, argv);
