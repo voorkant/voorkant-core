@@ -5,8 +5,6 @@
 - somebody on #homeassistant suggested that a web frontend -without- JS would be useful in some situations
   - once we have LVGL, perhaps we can even emit useful PNGs via HTTP?
 
-- oauth setup flow instead of somehow getting an API key and URL?
-
 - current storage is a few maps, turned into sorted-by-name integer indexes for FTXUI
   - maybe boost multi index can simplify our life here?
   - perhaps different UI frontends have very different needs (depending on, say, how much state they store internally) - so perhaps the UI frontend should get to decide the storage model? we could have a few base classes that make sense for different frontends
