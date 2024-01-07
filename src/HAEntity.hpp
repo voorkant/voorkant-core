@@ -14,10 +14,10 @@ class HAEntity
 {
 public:
   string name;
-  string id; 
+  string id;
   HAEntity(void); // do we need this?
   HAEntity(json _state);
-  ~HAEntity() {};
+  ~HAEntity(){};
   void update(json _state);
   std::string toString(void);
 
@@ -25,8 +25,7 @@ public:
   {
     std::vector<std::string> ret;
 
-    for (const auto &[k, v] : state["attributes"].items())
-    {
+    for (const auto& [k, v] : state["attributes"].items()) {
       ret.push_back(k + std::string(": ") + v.dump());
     }
 
@@ -60,13 +59,13 @@ public:
     // FIXME: boost::split might be nice here, check if its header only?
     auto pos = id.find(".");
 
-    if (pos == std::string::npos)
-    {
+    if (pos == std::string::npos) {
       throw std::runtime_error("entity ID [" + id + "] contains no period, has no domain?");
     }
 
     return id.substr(0, pos);
   }
+
 private:
   json state;
 };
@@ -76,7 +75,7 @@ class HADomain
 public:
   HADomain(void);
   HADomain(json _state);
-  ~HADomain() {};
+  ~HADomain(){};
 
   void update(json _state);
   std::string toString(void);
@@ -93,13 +92,13 @@ public:
     std::vector<std::string> ret;
 
     // cerr<<state.dump()<<endl;
-    for (auto &[service, info] : state.items())
-    {
+    for (auto& [service, info] : state.items()) {
       ret.push_back(service);
     }
 
     return ret;
   }
+
 private:
   json state;
 };
