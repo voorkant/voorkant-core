@@ -33,4 +33,17 @@ jobs:
         env:
           CC: gcc
       - run: meson compile -C ${{github.workspace}}/build -v
-      
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Install various apt dependencies
+      run: sudo apt-get install build-essential cmake meson ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev
+    - name: Configure Meson
+      run: meson setup ${{github.workspace}}/build
+    - name: Format
+      run: ninja -C ${{github.workspace}}/build clang-format
+    - name: Check for formatting disagreements
+      run: git diff --exit-code
