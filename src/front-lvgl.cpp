@@ -71,6 +71,32 @@ static void slider_event_cb(lv_event_t* e)
 
 void uithread(HABackend& backend, int argc, char* argv[])
 {
+  argparse::ArgumentParser program("client-cli");
+
+  argparse::ArgumentParser entity_command("entity");
+  entity_command.add_argument("name")
+    .help("what entity to render");
+
+  program.add_subparser(entity_command);
+
+  try {
+    program.parse_args(argc, argv);
+  }
+  catch (const std::runtime_error& err) {
+    cerr << err.what() << endl;
+    cerr << program;
+    return;
+  }
+
+  if (program.is_subcommand_used(entity_command)) {
+    // FIXME: now actually use the argument
+    current_light = entity_command.get<string>("name");
+    cerr << "should render " << current_light << endl;
+  }
+  else {
+    cerr << "no command given" << endl;
+  }
+
   backend.Start();
 
   cerr << "calling lv_init" << endl;
@@ -129,30 +155,6 @@ void uithread(HABackend& backend, int argc, char* argv[])
     lv_obj_align_to(slabel, slider, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
 
     rgbsliders[i] = std::make_pair(slider, slabel);
-  }
-  argparse::ArgumentParser program("client-cli");
-
-  argparse::ArgumentParser subscribe_command("subscribe");
-  subscribe_command.add_argument("pattern")
-    .help("specific state name, or *"); // maybe .remaining() so you can subscribe multiple?
-
-  program.add_subparser(subscribe_command);
-
-  try {
-    program.parse_args(argc, argv);
-  }
-  catch (const std::runtime_error& err) {
-    cerr << err.what() << endl;
-    cerr << program;
-    return;
-  }
-
-  if (program.is_subcommand_used(subscribe_command)) {
-    // FIXME: now actually use the argument
-    cerr << "should subscribe to " << subscribe_command.get<string>("pattern") << endl;
-  }
-  else {
-    cerr << "no command given" << endl;
   }
 
   int i = 0;
@@ -233,7 +235,7 @@ void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged) 
     auto attrs = state->getJsonState()["attributes"];
     cout << attrs << endl;
     if (state->getDomain() == "light") {
-      current_light = changed;
+      // current_light = changed;  moved to a command line flag for now
     }
     // if(attrs.count("rgb_color")) {
     //     auto rgb = attrs["rgb_color"];
