@@ -34,14 +34,6 @@ fi
 rm auth_code.json
 rm token.json
 
-if [ ! -x "build/client-cli" ]
-then
-    echo "Compiling meson to get client-cli"
-    cd ../../
-    meson setup build
-    meson compile -C build
-fi
-
 if [ -x "build/client-cli" ]
 then
     HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}" LD_LIBRARY_PATH=build/subprojects/curl-8.5.0/build/lib/.libs/ build/client-cli ha-get-token 1>longtoken.txt
