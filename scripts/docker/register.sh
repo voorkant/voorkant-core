@@ -47,9 +47,10 @@ fi
 if [ -x "build/client-cli" ]
 then
     HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}" LD_LIBRARY_PATH=build/subprojects/curl-8.5.0/build/lib/.libs/ build/client-cli ha-get-token 1>longtoken.txt
+    echo "Providing long lived token"
     echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="`cat longtoken.txt`"
     rm longtoken.txt
 else
-    echo "WARNING - compile of client-cli failed, providing SHORT LIVED TOKEN"
+    echo "WARNING - Providing SHORT lived token"
     echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}"
 fi
