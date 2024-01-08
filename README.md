@@ -5,9 +5,14 @@ On Debian 11 (bullseye), you need meson from backports.
 
 ```
 $ sudo apt install build-essential cmake meson ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev
-$ meson setup build
-$ ninja -C build
+$ meson setup build/
+$ meson compile -C build/
 ```
+
+# Dev environment
+
+In the `scripts/` directory, there's a `tmux.sh` file that can be used to start up a HA docker container and complete the registration steps. It then spits out the HA_WS_URL and HA_API_TOKEN.
+
 
 # Prepare HA
 
@@ -21,7 +26,7 @@ Don't forget to save it - I keep it in a file called `.secrets` that I can sourc
 $ export HA_WS_URL=ws://homeassistant.local:8123/api/websocket
 $ export HA_API_TOKEN=xxxx
 $ # or run `. .secrets` if you put those lines in there
-$ LD_LIBRARY_PATH=build/subprojects/curl-8.0.1/build/lib/.libs/ build/client-ftxui
+$ LD_LIBRARY_PATH=build/subprojects/curl-8.5.0/build/lib/.libs/ build/client-ftxui
 ```
 
 Push q or ctrl-C to exit.
