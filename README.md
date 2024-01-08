@@ -26,7 +26,7 @@ Don't forget to save it - I keep it in a file called `.secrets` that I can sourc
 $ export HA_WS_URL=ws://homeassistant.local:8123/api/websocket
 $ export HA_API_TOKEN=xxxx
 $ # or run `. .secrets` if you put those lines in there
-$ LD_LIBRARY_PATH=build/subprojects/curl-8.0.1/build/lib/.libs/ build/client-ftxui
+$ LD_LIBRARY_PATH=build/subprojects/curl-8.5.0/build/lib/.libs/ build/client-ftxui
 ```
 
 Push q or ctrl-C to exit.
