@@ -5,9 +5,14 @@ On Debian 11 (bullseye), you need meson from backports.
 
 ```
 $ sudo apt install build-essential cmake meson ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev
-$ meson setup build
-$ ninja -C build
+$ meson setup build/
+$ meson compile -C build/
 ```
+
+# Dev environment
+
+In the `scripts/` directory, there's a `tmux.sh` file that can be used to start up a HA docker container and complete the registration steps. It then spits out the HA_WS_URL and HA_API_TOKEN.
+
 
 # Prepare HA
 
