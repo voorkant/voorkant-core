@@ -1,7 +1,5 @@
 #!/bin/sh
 
-
-
 CHECK_COUNT=0
 curl 'http://localhost:8123/'
 while [ $? -ne 0 ]
@@ -51,6 +49,6 @@ then
     echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="`cat longtoken.txt`"
     rm longtoken.txt
 else
-    echo "WARNING - Providing SHORT lived token"
+    echo "WARNING - could not find build/client-cli. Providing SHORT lived token"
     echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}"
 fi
