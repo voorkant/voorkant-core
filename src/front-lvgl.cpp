@@ -30,9 +30,10 @@ static uint32_t intFromRGB(json attrs)
       return color;
     }
   }
+
+  return 0; // black. Should we return white? Some middle ground?
 }
 
-static uint32_t c = 0;
 static string current_light; // FIXME: THIS NEEDS A MUTEX
 static bool toggle = false;
 static bool newcolor = false;
@@ -40,7 +41,7 @@ static bool newcolor = false;
 static void btn_event_cb(lv_event_t* e)
 {
   lv_event_code_t code = lv_event_get_code(e);
-  lv_obj_t* btn = lv_event_get_target(e);
+  // lv_obj_t* btn = lv_event_get_target(e);
   if (code == LV_EVENT_CLICKED) {
     toggle = true;
     // static uint32_t cnt = 0;
@@ -118,14 +119,14 @@ void uithread(HABackend& backend, int argc, char* argv[])
   disp_drv.ver_res = SDL_VER_RES;
   disp_drv.draw_buf = &disp_buf; /*Set an initialized buffer*/
   disp_drv.flush_cb = sdl_display_flush; /*Set a flush callback to draw to the display*/
-  lv_disp_t* disp;
-  disp = lv_disp_drv_register(&disp_drv); /*Register the driver and save the created display objects*/
+  /*lv_disp_t* disp;*/
+  /*disp = */ lv_disp_drv_register(&disp_drv); /*Register the driver and save the created display objects*/
 
   lv_indev_drv_t enc_drv;
   lv_indev_drv_init(&enc_drv);
   enc_drv.type = LV_INDEV_TYPE_POINTER;
   enc_drv.read_cb = sdl_mouse_read;
-  lv_indev_t* enc_indev = lv_indev_drv_register(&enc_drv);
+  /*lv_indev_t* enc_indev = */ lv_indev_drv_register(&enc_drv);
   // lv_indev_set_group(enc_indev, g);
   lv_group_t* g = lv_group_create();
   lv_group_set_default(g);
@@ -146,7 +147,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
     lv_obj_t* slider = lv_slider_create(lv_scr_act());
     lv_slider_set_range(slider, 0, 255);
     lv_obj_set_width(slider, 200); /*Set the width*/
-    lv_obj_set_pos(slider, 40, i * 70 + 120); /*Align to the center of the parent (screen)*/
+    lv_obj_set_pos(slider, 40, i * 70 + 120);
     lv_obj_add_event_cb(slider, slider_event_cb, LV_EVENT_VALUE_CHANGED, NULL); /*Assign an event function*/
 
     /*Create a label above the slider*/
