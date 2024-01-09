@@ -1,7 +1,7 @@
 #!/bin/sh
 
 CHECK_COUNT=0
-curl 'http://localhost:8123/'
+curl -s 'http://localhost:8123/' 1>/dev/null
 while [ $? -ne 0 ]
 do
     if [ $CHECK_COUNT -gt 10 ]; then
@@ -14,7 +14,7 @@ do
     CHECK_COUNT=$((CHECK_COUNT+1))
 
     # Keep on the last line because of exit status check
-    curl 'http://localhost:8123'
+    curl -s 'http://localhost:8123' 1>/dev/null
 done
 
 
@@ -29,18 +29,26 @@ if [ "${MSG}" != "User step already done" ]; then
     curl 'http://localhost:8123/api/onboarding/core_config' -s -X POST -H "authorization: Bearer ${TOKEN}" > /dev/null
     curl 'http://localhost:8123/api/onboarding/analytics' -s -X POST -H "authorization: Bearer ${TOKEN}" > /dev/null
     curl 'http://localhost:8123/api/onboarding/integration'  -s -X POST -H "authorization: Bearer ${TOKEN}" -d '{"client_id":"http://localhost:8123/","redirect_uri":"http://localhost:8123/?auth_callback=1"}' > /dev/null
-fi
 
-rm auth_code.json
-rm token.json
+    rm auth_code.json
+    rm token.json
 
-if [ -x "build/client-cli" ]
-then
-    HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}" LD_LIBRARY_PATH=build/subprojects/curl-8.5.0/build/lib/.libs/ build/client-cli ha-get-token 1>longtoken.txt
-    echo "Providing long lived token"
-    echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="`cat longtoken.txt`"
-    rm longtoken.txt
+    if [ -x "../../build/client-cli" ]
+    then
+        HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}" LD_LIBRARY_PATH=../../build/subprojects/curl-8.5.0/build/lib/.libs/ ../../build/client-cli ha-get-token 1>longtoken.txt
+        echo "Providing long lived token"
+        echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="`cat longtoken.txt`"
+    else
+        echo "WARNING - could not find build/client-cli. Providing SHORT lived token"
+        echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}"
+    fi
 else
-    echo "WARNING - could not find build/client-cli. Providing SHORT lived token"
-    echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}"
+    if [ -e "longtoken.txt" ]
+    then
+        echo "Registration in HA was already completed, but found old long lived token."
+        echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="`cat longtoken.txt`"
+    else
+        echo "Registration in HA has already been completed, can't provide a token."
+        echo HA_WS_URL=ws://localhost:8123/api/websocket
+    fi
 fi
