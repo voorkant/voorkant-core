@@ -12,7 +12,6 @@
 #include "HAEntity.hpp"
 
 using std::cerr;
-using std::cout;
 using std::endl;
 using std::string;
 
@@ -33,8 +32,7 @@ int main(int argc, char* argv[])
 {
   HABackend backend;
   if (backend.Connect(GetEnv("HA_WS_URL"), GetEnv("HA_API_TOKEN"))) {
-    cout << "Connect succesful. Starting." << endl;
-
+    cerr << "Connect succesful. Starting." << endl;
     std::thread ui(uithread, std::ref(backend), argc, argv);
     ui.join();
   }
