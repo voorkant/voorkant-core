@@ -210,7 +210,9 @@ void uithread(HABackend& backend, int argc, char* argv[])
         }
       }
       lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(attrs)), LV_PART_MAIN);
-      lv_label_set_text(label, backend.GetState(current_light)->getJsonState()["attributes"]["friendly_name"].get<string>().c_str());
+      auto state = backend.GetState(current_light);
+      auto labeltext = state->getJsonState()["attributes"]["friendly_name"].get<string>() + " (" + state->getState() + ")";
+      lv_label_set_text(label, labeltext.c_str());
     }
 
     usleep(5 * 1000); // 5000 usec = 5 ms
