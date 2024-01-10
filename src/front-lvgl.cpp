@@ -153,7 +153,14 @@ void uithread(HABackend& backend, int argc, char* argv[])
     /*Create a label above the slider*/
     lv_obj_t* slabel = lv_label_create(lv_scr_act());
     lv_label_set_text(slabel, "0");
-    lv_obj_align_to(slabel, slider, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
+    lv_obj_align_to(slabel, slider, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/ // we stupidly cannot just change this because we copied it in three places
+
+    /* and a label left of the slider*/
+    lv_obj_t* llabel = lv_label_create(lv_scr_act());
+    const std::vector<std::string> rgb = {"R", "G", "B"};
+    lv_label_set_text(llabel, rgb[i].c_str());
+    // lv_obj_set_pos(llabel, 20, i * 70 + 120 - 5);
+    lv_obj_align_to(llabel, slider, LV_ALIGN_OUT_LEFT_MID, -15, 0);
 
     rgbsliders[i] = std::make_pair(slider, slabel);
   }
