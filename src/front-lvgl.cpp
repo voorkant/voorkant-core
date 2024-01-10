@@ -54,17 +54,17 @@ static void btn_event_cb(lv_event_t* e)
   }
 }
 
-static std::array<std::pair<lv_obj_t*, lv_obj_t*>, 3> rgbsliders; // first is slider, second is label for slider
+static std::vector<std::pair<lv_obj_t*, lv_obj_t*>> colorsliders; // first is slider, second is label for slider
 
 static void slider_event_cb(lv_event_t* e)
 {
   lv_obj_t* slider = lv_event_get_target(e);
 
-  for (const auto& rgbslider : rgbsliders) {
-    if (rgbslider.first == slider) {
+  for (const auto& colorslider : colorsliders) {
+    if (colorslider.first == slider) {
       /*Refresh the text*/
-      lv_label_set_text_fmt(rgbslider.second, "%" LV_PRId32, lv_slider_get_value(slider));
-      lv_obj_align_to(rgbslider.second, slider, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
+      lv_label_set_text_fmt(colorslider.second, "%" LV_PRId32, lv_slider_get_value(slider));
+      // lv_obj_align_to(colorslider.second, slider, LV_ALIGN_OUT_RIGHT_MID, 15, 0); /*Align top of the slider*/
     }
     newcolor = true;
   }
@@ -142,27 +142,28 @@ void uithread(HABackend& backend, int argc, char* argv[])
   lv_obj_center(label);
   // END BUTTON EXAMPLE
 
-  for (int i = 0; i < 3; i++) {
+  std::string colormode = "RGB";
+  for (size_t i = 0; i < colormode.length(); i++) {
     /*Create a slider in the center of the display*/
     lv_obj_t* slider = lv_slider_create(lv_scr_act());
     lv_slider_set_range(slider, 0, 255);
     lv_obj_set_width(slider, 200); /*Set the width*/
-    lv_obj_set_pos(slider, 40, i * 70 + 120);
+    lv_obj_set_pos(slider, 40, i * 40 + 80);
     lv_obj_add_event_cb(slider, slider_event_cb, LV_EVENT_VALUE_CHANGED, NULL); /*Assign an event function*/
 
     /*Create a label above the slider*/
     lv_obj_t* slabel = lv_label_create(lv_scr_act());
     lv_label_set_text(slabel, "0");
-    lv_obj_align_to(slabel, slider, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/ // we stupidly cannot just change this because we copied it in three places
+    lv_obj_align_to(slabel, slider, LV_ALIGN_OUT_RIGHT_MID, 15, 0); /*Align top of the slider*/ // we stupidly cannot just change this because we copied it in three places
 
     /* and a label left of the slider*/
     lv_obj_t* llabel = lv_label_create(lv_scr_act());
-    const std::vector<std::string> rgb = {"R", "G", "B"};
-    lv_label_set_text(llabel, rgb[i].c_str());
+    // const std::vector<std::string> rgb = {"R", "G", "B"};
+    lv_label_set_text(llabel, colormode.substr(i, 1).c_str());
     // lv_obj_set_pos(llabel, 20, i * 70 + 120 - 5);
     lv_obj_align_to(llabel, slider, LV_ALIGN_OUT_LEFT_MID, -15, 0);
 
-    rgbsliders[i] = std::make_pair(slider, slabel);
+    colorsliders.push_back(std::make_pair(slider, slabel));
   }
 
   int i = 0;
@@ -187,7 +188,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
       rgb = {0, 0, 0};
 
       for (int i = 0; i < 3; i++) {
-        rgb[i] = lv_slider_get_value(rgbsliders[i].first);
+        rgb[i] = lv_slider_get_value(colorsliders[i].first);
       }
 
       cmd["type"] = "call_service";
@@ -208,12 +209,12 @@ void uithread(HABackend& backend, int argc, char* argv[])
         // cout<<"RGB "<<rgb<<endl;
         if (rgb.size() == 3) {
           for (int i = 0; i < 3; i++) {
-            lv_slider_set_value(rgbsliders[i].first, rgb[i], LV_ANIM_OFF);
+            lv_slider_set_value(colorsliders[i].first, rgb[i], LV_ANIM_OFF);
 
             // this label setting code is duplicated from slider_event_cb, because LV_EVENT_VALUE_CHANGED does not fire when -we- change it (https://docs.lvgl.io/latest/en/html/widgets/slider.html)
             // and we don't want to pass the old value back to HA (which slider_event_cb would happily do for us), because that causes a super fun oscillation
-            lv_label_set_text_fmt(rgbsliders[i].second, "%" LV_PRId32, rgb[i].get<int>());
-            lv_obj_align_to(rgbsliders[i].second, rgbsliders[i].first, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
+            lv_label_set_text_fmt(colorsliders[i].second, "%" LV_PRId32, rgb[i].get<int>());
+            // lv_obj_align_to(colorsliders[i].second, colorsliders[i].first, LV_ALIGN_OUT_RIGHT_MID, 15, 0); /*Align top of the slider*/
           }
         }
       }
