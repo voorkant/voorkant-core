@@ -69,6 +69,7 @@ std::string WSConn::recv(void)
 
 void WSConn::send(json& msg)
 {
+  std::cerr<<"WSConn::send: "<< msg.dump() << endl;
   {
     std::scoped_lock lk(msgidlock);
 

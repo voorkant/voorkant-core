@@ -142,7 +142,10 @@ void uithread(HABackend& backend, int argc, char* argv[])
   lv_obj_center(label);
   // END BUTTON EXAMPLE
 
-  std::string colormode = "RGB";
+  auto state = backend.GetState(current_light);
+  std::string colormode = state->getJsonState()["attributes"]["color_mode"];
+  cout<<"colormode="<<colormode<<endl;
+
   for (size_t i = 0; i < colormode.length(); i++) {
     /*Create a slider in the center of the display*/
     lv_obj_t* slider = lv_slider_create(lv_scr_act());
@@ -166,6 +169,8 @@ void uithread(HABackend& backend, int argc, char* argv[])
     colorsliders.push_back(std::make_pair(slider, slabel));
   }
 
+  auto colormodemode = colormode + "_color";
+
   int i = 0;
   while (true) {
     if (toggle) {
@@ -183,19 +188,19 @@ void uithread(HABackend& backend, int argc, char* argv[])
 
     if (newcolor) {
       json cmd;
-      json rgb;
+      json color;
 
-      rgb = {0, 0, 0};
+      color = {};
 
-      for (int i = 0; i < 3; i++) {
-        rgb[i] = lv_slider_get_value(colorsliders[i].first);
+      for (size_t i = 0; i < colorsliders.size(); i++) {
+        color[i] = lv_slider_get_value(colorsliders[i].first);
       }
 
       cmd["type"] = "call_service";
       cmd["domain"] = backend.GetState(current_light)->getDomain();
       cmd["service"] = "turn_on";
       cmd["target"]["entity_id"] = current_light;
-      cmd["service_data"]["rgb_color"] = rgb;
+      cmd["service_data"][colormodemode] = color;
 
       backend.WSConnSend(cmd);
 
@@ -204,19 +209,20 @@ void uithread(HABackend& backend, int argc, char* argv[])
     else {
       // uint32_t c = rand();
       auto attrs = backend.GetState(current_light)->getJsonState()["attributes"];
-      if (attrs.count("rgb_color")) {
-        auto rgb = attrs["rgb_color"];
+      auto colormodemode = colormode + "_mode";
+      if (attrs.count(colormodemode)) {
+        auto color = attrs[colormodemode];
         // cout<<"RGB "<<rgb<<endl;
-        if (rgb.size() == 3) {
-          for (int i = 0; i < 3; i++) {
-            lv_slider_set_value(colorsliders[i].first, rgb[i], LV_ANIM_OFF);
+        // if (rgb.size() == 3) {
+          for (int i = 0; i < color.size(); i++) {
+            lv_slider_set_value(colorsliders[i].first, color[i], LV_ANIM_OFF);
 
             // this label setting code is duplicated from slider_event_cb, because LV_EVENT_VALUE_CHANGED does not fire when -we- change it (https://docs.lvgl.io/latest/en/html/widgets/slider.html)
             // and we don't want to pass the old value back to HA (which slider_event_cb would happily do for us), because that causes a super fun oscillation
-            lv_label_set_text_fmt(colorsliders[i].second, "%" LV_PRId32, rgb[i].get<int>());
+            lv_label_set_text_fmt(colorsliders[i].second, "%" LV_PRId32, color[i].get<int>());
             // lv_obj_align_to(colorsliders[i].second, colorsliders[i].first, LV_ALIGN_OUT_RIGHT_MID, 15, 0); /*Align top of the slider*/
           }
-        }
+        // }
       }
       lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(attrs)), LV_PART_MAIN);
       auto state = backend.GetState(current_light);

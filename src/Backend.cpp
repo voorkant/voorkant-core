@@ -158,10 +158,13 @@ void HABackend::threadrunner()
         }
         else {
           cerr << "Event type received that we didn't expect: " << event_type << endl;
+
         }
       }
       else {
         cerr << "Received message we don't expect: " << j["type"] << endl;
+        cerr << "FULL MESSAGE ";
+        cerr << j.dump() <<endl;
         // not a message we were expecting
         continue;
       }
