@@ -6,16 +6,27 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include "magic_enum_all.hpp"
 
 using std::map;
 using std::string;
 
 using json = nlohmann::json;
 
+// TODO: we need to generate this to keep this in sync with HA.
+enum class EntityType
+{
+  light,
+  Switch,
+  climate,
+  OTHER
+};
+
 class HAEntity
 {
 public:
   string name;
+  EntityType domain;
   string id;
   HAEntity(void); // do we need this?
   HAEntity(json _state);
@@ -49,26 +60,14 @@ public:
     std::ostringstream ret;
 
     ret << "state=" << getState() << "  ";
-    ret << "domain=" << getDomain() << "  ";
+    ret << "domain=" << magic_enum::enum_name(this->domain) << "  ";
     // ret<<""
     return ret.str();
   }
 
-  std::string getDomain(void)
-  {
-    auto id = state["entity_id"].get<std::string>();
-
-    // FIXME: boost::split might be nice here, check if its header only?
-    auto pos = id.find(".");
-
-    if (pos == std::string::npos) {
-      throw std::runtime_error("entity ID [" + id + "] contains no period, has no domain?");
-    }
-
-    return id.substr(0, pos);
-  }
-
 private:
+  EntityType getDomainFromState();
+  std::string getNameFromState();
   json state;
 };
 

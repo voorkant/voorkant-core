@@ -9,6 +9,7 @@
 #include "main.hpp"
 
 #include "Backend.hpp"
+#include "magic_enum_all.hpp"
 
 #include <string>
 
@@ -52,7 +53,9 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
     // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
     if (selected >= 0 && entries.size() > 0) {
       // cerr<<"getting services"<<endl;
-      services = backend.GetServicesForDomain(backend.GetState(entries.at(selected))->getDomain());
+      auto domainEnum = backend.GetState(entries.at(selected))->domain;
+      auto what = magic_enum::enum_name(domainEnum);
+      services = backend.GetServicesForDomain(std::string(what).c_str());
     }
 
     std::vector<Component> buttons;
@@ -66,7 +69,7 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
         json cmd;
 
         cmd["type"] = "call_service";
-        cmd["domain"] = backend.GetState(entries.at(selected))->getDomain();
+        cmd["domain"] = backend.GetState(entries.at(selected))->domain;
         cmd["service"] = service;
         cmd["target"]["entity_id"] = entries.at(selected);
 

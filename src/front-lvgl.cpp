@@ -141,8 +141,8 @@ void uithread(HABackend& backend, int argc, char* argv[])
   lv_label_set_text(label, "Button"); /*Set the labels text*/
   lv_obj_center(label);
   // END BUTTON EXAMPLE
-
   for (int i = 0; i < 3; i++) {
+
     /*Create a slider in the center of the display*/
     lv_obj_t* slider = lv_slider_create(lv_scr_act());
     lv_slider_set_range(slider, 0, 255);
@@ -164,7 +164,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
       json cmd;
 
       cmd["type"] = "call_service";
-      cmd["domain"] = backend.GetState(current_light)->getDomain();
+      cmd["domain"] = backend.GetState(current_light)->domain;
       cmd["service"] = "toggle";
       cmd["target"]["entity_id"] = current_light;
 
@@ -184,7 +184,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
       }
 
       cmd["type"] = "call_service";
-      cmd["domain"] = backend.GetState(current_light)->getDomain();
+      cmd["domain"] = backend.GetState(current_light)->domain;
       cmd["service"] = "turn_on";
       cmd["target"]["entity_id"] = current_light;
       cmd["service_data"]["rgb_color"] = rgb;
@@ -237,7 +237,7 @@ void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged) 
     cout << "state for " << changed << " is " << state->getInfo() << endl;
     auto attrs = state->getJsonState()["attributes"];
     cout << attrs << endl;
-    if (state->getDomain() == "light") {
+    if (state->domain == EntityType::light) {
       // current_light = changed;  moved to a command line flag for now
     }
     // if(attrs.count("rgb_color")) {
