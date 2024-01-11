@@ -96,6 +96,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
   }
   else {
     cerr << "no command given" << endl;
+    return;
   }
 
   backend.Start();
