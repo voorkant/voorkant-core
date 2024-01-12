@@ -71,6 +71,16 @@ private:
   json state;
 };
 
+class HAService
+{
+public:
+  string description;
+  string name;
+  string systemname;
+  HAService(json _service);
+  ~HAService(){};
+};
+
 class HADomain
 {
 public:
@@ -83,6 +93,7 @@ public:
   std::vector<std::string> getServices(void);
 
 private:
+  std::vector<std::shared_ptr<HAService>> _services;
   json state;
 };
 

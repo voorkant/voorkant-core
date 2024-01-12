@@ -51,6 +51,10 @@ std::string HAEntity::getNameFromState(void)
 HADomain::HADomain(json _state)
 {
   state = _state;
+  for (auto& [service, info] : state.items()) {
+    auto haservice = std::make_shared<HAService>(info);
+    _services.push_back(haservice);
+  }
 }
 
 void HADomain::update(json _state)
@@ -73,4 +77,15 @@ std::vector<std::string> HADomain::getServices(void)
   }
 
   return ret;
+}
+
+HAService::HAService(json _services)
+{
+  if (_services.contains("name")) {
+    this->name = _services["name"].get<string>();
+  }
+
+  if (_services.contains("description")) {
+    this->description = _services["description"].get<string>();
+  }
 }
