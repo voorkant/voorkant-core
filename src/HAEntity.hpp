@@ -80,25 +80,7 @@ public:
 
   void update(json _state);
   std::string toString(void);
-
-  /*
-    std::string getState(void)
-    {
-      return state["state"];
-    }
-  */
-
-  std::vector<std::string> getServices(void)
-  {
-    std::vector<std::string> ret;
-
-    // cerr<<state.dump()<<endl;
-    for (auto& [service, info] : state.items()) {
-      ret.push_back(service);
-    }
-
-    return ret;
-  }
+  std::vector<std::string> getServices(void);
 
 private:
   json state;

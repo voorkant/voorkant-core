@@ -53,9 +53,7 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
     // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
     if (selected >= 0 && entries.size() > 0) {
       // cerr<<"getting services"<<endl;
-      auto domainEnum = backend.GetState(entries.at(selected))->domain;
-      auto what = magic_enum::enum_name(domainEnum);
-      services = backend.GetServicesForDomain(std::string(what).c_str());
+      services = backend.GetServicesForDomain(backend.GetState(entries.at(selected))->domain);
     }
 
     std::vector<Component> buttons;

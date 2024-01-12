@@ -135,7 +135,8 @@ void HABackend::threadrunner()
         // cerr<<j.dump()<<endl;
         for (auto& [domain, _services] : j["result"].items()) {
           // cerr<<service.dump()<<endl;
-          domains[domain] = std::make_shared<HADomain>(_services);
+          auto entityType = magic_enum::enum_cast<EntityType>(domain, magic_enum::case_insensitive).value_or(EntityType::OTHER);
+          domains[entityType] = std::make_shared<HADomain>(_services);
           // cerr<<"got services for domain "<<domain<<endl;
         }
         // exit(1);
@@ -199,7 +200,7 @@ std::shared_ptr<HAEntity> HABackend::GetState(const std::string& name)
   return states.at(name);
 }
 
-std::vector<std::string> HABackend::GetServicesForDomain(const std::string& domain)
+std::vector<std::string> HABackend::GetServicesForDomain(const EntityType& domain)
 {
   std::scoped_lock lk(domainslock);
 

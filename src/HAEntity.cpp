@@ -62,3 +62,15 @@ std::string HADomain::toString(void)
 {
   return state.dump(2);
 }
+
+std::vector<std::string> HADomain::getServices(void)
+{
+  std::vector<std::string> ret;
+
+  // cerr<<state.dump()<<endl;
+  for (auto& [service, info] : state.items()) {
+    ret.push_back(service);
+  }
+
+  return ret;
+}
