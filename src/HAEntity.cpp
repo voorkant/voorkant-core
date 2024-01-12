@@ -4,13 +4,14 @@
 using std::cerr;
 using std::endl;
 
-HAEntity::HAEntity(json _state)
+HAEntity::HAEntity(json _state, std::shared_ptr<HADomain> _hadomain)
 {
   state = _state;
 
   id = state["entity_id"];
   name = this->getNameFromState();
   domain = this->getDomainFromState();
+  hadomain = _hadomain;
 }
 
 void HAEntity::update(json _state)
@@ -23,7 +24,12 @@ std::string HAEntity::toString(void)
   return state.dump(2);
 }
 
-EntityType HAEntity::getDomainFromState(void)
+EntityType HAEntity::getEntityType(void)
+{
+  return magic_enum::enum_cast<EntityType>(domain, magic_enum::case_insensitive).value_or(EntityType::OTHER);
+}
+
+std::string HAEntity::getDomainFromState(void)
 {
   auto id = state["entity_id"].get<std::string>();
 
@@ -34,8 +40,7 @@ EntityType HAEntity::getDomainFromState(void)
     throw std::runtime_error("entity ID [" + id + "] contains no period, has no domain?");
   }
 
-  string domain = id.substr(0, pos);
-  return magic_enum::enum_cast<EntityType>(domain, magic_enum::case_insensitive).value_or(EntityType::OTHER);
+  return id.substr(0, pos);
 }
 
 std::string HAEntity::getNameFromState(void)
@@ -48,18 +53,14 @@ std::string HAEntity::getNameFromState(void)
   }
 }
 
-HADomain::HADomain(json _state)
+HADomain::HADomain(std::string _name, json _state)
 {
   state = _state;
+  name = _name;
   for (auto& [service, info] : state.items()) {
     auto haservice = std::make_shared<HAService>(info);
     _services.push_back(haservice);
   }
-}
-
-void HADomain::update(json _state)
-{
-  state = _state;
 }
 
 std::string HADomain::toString(void)

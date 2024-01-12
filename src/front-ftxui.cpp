@@ -13,6 +13,8 @@
 
 #include <string>
 
+using std::cerr;
+using std::endl;
 using std::map;
 using std::string;
 
@@ -49,15 +51,19 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
     // for(auto &[k,v] : domains) {
     //   cerr<<"domain "<<k<<"exists"<<endl;
     // }
+
+    cerr << "before gestate" << endl;
     std::vector<std::shared_ptr<HAService>> services;
     // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
+    cerr << "Entries size:" << entries.size() << endl;
     if (selected >= 0 && entries.size() > 0) {
-      // cerr<<"getting services"<<endl;
-      services = backend.GetServicesForDomain(backend.GetState(entries.at(selected))->domain);
+      services = backend.GetState(entries.at(selected))->hadomain->getServices();
     }
 
+    cerr << "After gestate" << endl;
     std::vector<Component> buttons;
     for (const auto& service : services) {
+      cerr << "SERVICE: " << service->name << endl;
       auto entity = entries.at(selected);
 
       // cerr<<service<<endl;

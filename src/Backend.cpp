@@ -68,6 +68,22 @@ string HABackend::CreateLongToken(string name)
 
 void HABackend::threadrunner()
 {
+  json getdomains;
+  getdomains["type"] = "get_services";
+  wc->send(getdomains);
+
+  auto msg = wc->recv();
+  json getdomainjson = json::parse(msg);
+  if (getdomainjson["id"] != getdomains["id"]) {
+    throw std::runtime_error("Didn't receive response to getDomains while we expected it");
+  }
+  for (auto& [domain, services] : getdomainjson["result"].items()) {
+    {
+      std::scoped_lock lk(domainslock);
+      domains[domain] = std::make_shared<HADomain>(domain, services);
+    }
+  }
+
   json subscribe;
   subscribe["type"] = "subscribe_events";
   wc->send(subscribe);
@@ -75,42 +91,6 @@ void HABackend::threadrunner()
   json getstates;
   getstates["type"] = "get_states";
   wc->send(getstates);
-
-  json getdomains;
-  getdomains["type"] = "get_services";
-  wc->send(getdomains);
-
-  /* example ID_SUBSCRIPTION message:
-  {
-    "id": 1,
-    "type": "event",
-    "event": {
-      "event_type": "state_changed",
-      "data": {
-        "entity_id": "sensor.shellyplug_s_bc6aa8_power",
-        "old_state": {
-  ...
-        },
-        "new_state": {
-          "entity_id": "sensor.shellyplug_s_bc6aa8_power",
-          "state": "9.89",
-  ...
-   */
-
-  /* example ID_GETSTATES message:
-  {
-    "id": 2,
-    "type": "result",
-    "success": true,
-    "result": [
-      {
-        "entity_id": "light.plafondlamp_kantoor_peter_level_light_color_on_off",
-        "state": "on",
-        "attributes": {
-          "min_color_temp_kelvin": 2000,
-          "max_color_temp_kelvin": 6535,
-
-  */
 
   while (true) {
     auto msg = wc->recv();
@@ -120,41 +100,37 @@ void HABackend::threadrunner()
 
     std::vector<std::string> whatchanged;
     {
-      std::scoped_lock lk(stateslock);
+
       if (j["id"] == getstates["id"]) {
+        std::scoped_lock lk(stateslock);
         // response for initial getstates call
         for (auto evd : j["result"]) {
-          // cerr<<evd.dump()<<endl;
-          auto entity_id = evd["entity_id"];
-          states[entity_id] = std::make_shared<HAEntity>(evd);
+          auto entity_id = evd["entity_id"].get<std::string>();
+          // FIXME: boost::split might be nice here, check if its header only?
+          auto pos = entity_id.find(".");
+          if (pos == std::string::npos) {
+            throw std::runtime_error("entity ID [" + entity_id + "] contains no period, has no domain?");
+          }
+
+          auto domain = entity_id.substr(0, pos);
+
+          // FIXME: we should check if the domain actually exists before just calling for it.
+          states[entity_id] = std::make_shared<HAEntity>(evd, domains[domain]);
           whatchanged.push_back(entity_id);
         }
-        // exit(1);
-      }
-      else if (j["id"] == getdomains["id"]) {
-        // cerr<<j.dump()<<endl;
-        for (auto& [domain, _services] : j["result"].items()) {
-          // cerr<<service.dump()<<endl;
-          auto entityType = magic_enum::enum_cast<EntityType>(domain, magic_enum::case_insensitive).value_or(EntityType::OTHER);
-          domains[entityType] = std::make_shared<HADomain>(_services);
-          // cerr<<"got services for domain "<<domain<<endl;
-        }
-        // exit(1);
       }
       else if (j["type"] == "event") {
-        cout << "FULL EVENT" << endl;
-        cout << j.dump() << endl;
+        std::scoped_lock lk(stateslock);
         // something happened!
         auto event = j["event"];
         auto event_type = event["event_type"];
         auto evd = event["data"];
         auto entity_id = evd["entity_id"];
-
         auto old_state = evd["old_state"];
         auto new_state = evd["new_state"];
 
         if (event_type == "state_changed") {
-          states[entity_id] = std::make_shared<HAEntity>(new_state);
+          states[entity_id]->update(new_state);
           whatchanged.push_back(entity_id);
         }
         else {
@@ -189,7 +165,6 @@ void HABackend::threadrunner()
 std::vector<std::string> HABackend::GetEntries()
 {
   std::scoped_lock lk(entrieslock);
-
   return entries;
 }
 
@@ -200,16 +175,15 @@ std::shared_ptr<HAEntity> HABackend::GetState(const std::string& name)
   return states.at(name);
 }
 
-std::vector<std::shared_ptr<HAService>> HABackend::GetServicesForDomain(const EntityType& domain)
+std::vector<std::shared_ptr<HAService>> HABackend::GetServicesForDomain(const string& domain)
 {
   std::scoped_lock lk(domainslock);
 
   if (domains.count(domain)) {
     return domains[domain]->getServices();
   }
-  else {
-    return {};
-  }
+
+  throw std::runtime_error("Couldn't retrieve services for domain " + domain + " as domain does not exist");
 }
 
 void HABackend::WSConnSend(json& msg)

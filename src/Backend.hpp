@@ -23,7 +23,7 @@ public:
   string CreateLongToken(string name);
   std::vector<std::string> GetEntries();
   std::shared_ptr<HAEntity> GetState(const std::string& name);
-  std::vector<std::shared_ptr<HAService>> GetServicesForDomain(const EntityType& domain);
+  std::vector<std::shared_ptr<HAService>> GetServicesForDomain(const std::string& domain);
   void WSConnSend(json& msg);
 
 private:
@@ -35,7 +35,7 @@ private:
   std::mutex entrieslock;
   map<string, std::shared_ptr<HAEntity>> states; // FIXME: should this be called entities?
   std::mutex stateslock;
-  map<EntityType, std::shared_ptr<HADomain>> domains;
+  map<string, std::shared_ptr<HADomain>> domains;
   std::mutex domainslock;
 };
 

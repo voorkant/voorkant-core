@@ -17,22 +17,48 @@ using json = nlohmann::json;
 enum class EntityType
 {
   Light,
-  Switch,
-  Climate,
   OTHER,
+};
+
+class HAService
+{
+public:
+  string description;
+  string name;
+  HAService(json _service);
+  ~HAService(){};
+};
+
+class HADomain
+{
+public:
+  std::string name;
+  HADomain(void);
+  HADomain(std::string _name, json _state);
+  ~HADomain(){};
+
+  std::string toString(void);
+  std::vector<std::shared_ptr<HAService>> getServices(void);
+
+private:
+  std::vector<std::shared_ptr<HAService>> _services;
+  json state;
 };
 
 class HAEntity
 {
 public:
   string name;
-  EntityType domain;
+  string domain;
   string id;
+  std::shared_ptr<HADomain> hadomain;
+
   HAEntity(void); // do we need this?
-  HAEntity(json _state);
+  HAEntity(json _state, std::shared_ptr<HADomain> hadomain);
   ~HAEntity(){};
-  void update(json _state);
+  void update(json _state); // FIXME: we're assuming that the domain stays the same.
   std::string toString(void);
+  EntityType getEntityType(void);
 
   std::vector<std::string> attrVector(void)
   {
@@ -60,40 +86,15 @@ public:
     std::ostringstream ret;
 
     ret << "state=" << getState() << "  ";
-    ret << "domain=" << magic_enum::enum_name(this->domain) << "  ";
+    ret << "domain=" << domain << "  ";
+    ret << "entitytype=" << magic_enum::enum_name(getEntityType());
     // ret<<""
     return ret.str();
   }
 
 private:
-  EntityType getDomainFromState();
+  std::string getDomainFromState();
   std::string getNameFromState();
-  json state;
-};
-
-class HAService
-{
-public:
-  string description;
-  string name;
-  string systemname;
-  HAService(json _service);
-  ~HAService(){};
-};
-
-class HADomain
-{
-public:
-  HADomain(void);
-  HADomain(json _state);
-  ~HADomain(){};
-
-  void update(json _state);
-  std::string toString(void);
-  std::vector<std::shared_ptr<HAService>> getServices(void);
-
-private:
-  std::vector<std::shared_ptr<HAService>> _services;
   json state;
 };
 
