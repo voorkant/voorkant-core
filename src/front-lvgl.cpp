@@ -4,7 +4,7 @@
 #include <src/widgets/lv_slider.h>
 #include <string>
 #include <unistd.h>
-#include "argparse.hpp"
+#include "ext/argparse/include/argparse/argparse.hpp"
 
 #include <lvgl.h>
 #include <src/core/lv_disp.h>

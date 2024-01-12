@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include "magic_enum_all.hpp"
+#include "ext/magic_enum/include/magic_enum/magic_enum_all.hpp"
 
 using std::map;
 using std::string;
