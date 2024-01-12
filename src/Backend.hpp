@@ -23,7 +23,7 @@ public:
   string CreateLongToken(string name);
   std::vector<std::string> GetEntries();
   std::shared_ptr<HAEntity> GetState(const std::string& name);
-  std::vector<std::string> GetServicesForDomain(const EntityType& domain);
+  std::vector<std::shared_ptr<HAService>> GetServicesForDomain(const EntityType& domain);
   void WSConnSend(json& msg);
 
 private:

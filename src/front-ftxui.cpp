@@ -49,7 +49,7 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
     // for(auto &[k,v] : domains) {
     //   cerr<<"domain "<<k<<"exists"<<endl;
     // }
-    std::vector<std::string> services;
+    std::vector<std::shared_ptr<HAService>> services;
     // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
     if (selected >= 0 && entries.size() > 0) {
       // cerr<<"getting services"<<endl;
@@ -61,14 +61,14 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
       auto entity = entries.at(selected);
 
       // cerr<<service<<endl;
-      buttons.push_back(Button(service, [&selected, &backend, &entries, service] {
+      buttons.push_back(Button(service->name, [&selected, &backend, &entries, service] {
         // cout<<"PUSHED: "<< entries.at(selected) << service<<endl;
 
         json cmd;
 
         cmd["type"] = "call_service";
         cmd["domain"] = backend.GetState(entries.at(selected))->domain;
-        cmd["service"] = service;
+        cmd["service"] = service->name;
         cmd["target"]["entity_id"] = entries.at(selected);
 
         backend.WSConnSend(cmd);

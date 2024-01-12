@@ -90,7 +90,7 @@ public:
 
   void update(json _state);
   std::string toString(void);
-  std::vector<std::string> getServices(void);
+  std::vector<std::shared_ptr<HAService>> getServices(void);
 
 private:
   std::vector<std::shared_ptr<HAService>> _services;

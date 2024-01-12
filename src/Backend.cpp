@@ -200,7 +200,7 @@ std::shared_ptr<HAEntity> HABackend::GetState(const std::string& name)
   return states.at(name);
 }
 
-std::vector<std::string> HABackend::GetServicesForDomain(const EntityType& domain)
+std::vector<std::shared_ptr<HAService>> HABackend::GetServicesForDomain(const EntityType& domain)
 {
   std::scoped_lock lk(domainslock);
 
