@@ -36,11 +36,7 @@ EntityType HAEntity::getDomainFromState(void)
   }
 
   string domain = id.substr(0, pos);
-  auto domainEnum = magic_enum::enum_cast<EntityType>(domain);
-  if (domainEnum.has_value()) {
-    return domainEnum.value();
-  }
-  return EntityType::OTHER;
+  return magic_enum::enum_cast<EntityType>(domain, magic_enum::case_insensitive).value_or(EntityType::OTHER);
 }
 
 std::string HAEntity::getNameFromState(void)
