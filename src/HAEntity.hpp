@@ -16,10 +16,10 @@ using json = nlohmann::json;
 // TODO: we need to generate this to keep this in sync with HA.
 enum class EntityType
 {
-  light,
+  Light,
   Switch,
-  climate,
-  OTHER
+  Climate,
+  OTHER,
 };
 
 class HAEntity
