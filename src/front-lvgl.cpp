@@ -238,7 +238,7 @@ void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged) 
     cout << "state for " << changed << " is " << state->getInfo() << endl;
     auto attrs = state->getJsonState()["attributes"];
     cout << attrs << endl;
-    if (state->domain == EntityType::light) {
+    if (state->domain == EntityType::Light) {
       // current_light = changed;  moved to a command line flag for now
     }
     // if(attrs.count("rgb_color")) {
