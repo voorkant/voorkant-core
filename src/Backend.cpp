@@ -132,7 +132,7 @@ void HABackend::threadrunner()
         load_cv.notify_all();
       }
       else if (j["type"] == "event") {
-        // std::scoped_lock lk(stateslock);
+        std::scoped_lock lk(stateslock);
         //  something happened!
         auto event = j["event"];
         auto event_type = event["event_type"];
@@ -142,7 +142,7 @@ void HABackend::threadrunner()
         auto new_state = evd["new_state"];
 
         if (event_type == "state_changed") {
-          // states[entity_id]->update(new_state);
+          states[entity_id]->update(new_state);
           whatchanged.push_back(entity_id);
         }
         else {
@@ -185,17 +185,6 @@ std::shared_ptr<HAEntity> HABackend::GetState(const std::string& name)
   std::scoped_lock lk(stateslock);
 
   return states.at(name);
-}
-
-std::vector<std::shared_ptr<HAService>> HABackend::GetServicesForDomain(const string& domain)
-{
-  std::scoped_lock lk(domainslock);
-
-  if (domains.count(domain)) {
-    return domains[domain]->services;
-  }
-
-  throw std::runtime_error("Couldn't retrieve services for domain " + domain + " as domain does not exist");
 }
 
 void HABackend::WSConnSend(json& msg)
