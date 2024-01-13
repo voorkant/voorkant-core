@@ -71,9 +71,10 @@ string HABackend::CreateLongToken(string name)
   return "NO_TOKEN";
 }
 
-json HABackend::DoCommand(const string& command)
+json HABackend::DoCommand(const string& command, const json& data)
 {
   json request;
+  request = data;
   request["type"] = command;
   wc->send(request);
   auto response = wc->recv();
