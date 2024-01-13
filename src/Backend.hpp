@@ -36,8 +36,8 @@ private:
   std::thread ha;
   void threadrunner();
 
-  map<string, std::shared_ptr<HAEntity>> states; // FIXME: should this be called entities?
-  std::mutex stateslock;
+  map<string, std::shared_ptr<HAEntity>> entities;
+  std::mutex entitieslock;
   map<string, std::shared_ptr<HADomain>> domains;
   std::mutex domainslock;
 };

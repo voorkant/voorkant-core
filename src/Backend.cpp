@@ -107,7 +107,7 @@ void HABackend::threadrunner()
     {
 
       if (j["id"] == getstates["id"]) {
-        std::scoped_lock lk(stateslock);
+        std::scoped_lock lk(entitieslock);
         // response for initial getstates call
         for (auto evd : j["result"]) {
           auto entity_id = evd["entity_id"].get<std::string>();
@@ -120,7 +120,7 @@ void HABackend::threadrunner()
           auto domain = entity_id.substr(0, pos);
 
           // FIXME: we should check if the domain actually exists before just calling for it.
-          states[entity_id] = std::make_shared<HAEntity>(evd, domains[domain]);
+          entities[entity_id] = std::make_shared<HAEntity>(evd, domains[domain]);
           whatchanged.push_back(entity_id);
         }
         std::unique_lock<std::mutex> lck(load_lock);
@@ -128,7 +128,7 @@ void HABackend::threadrunner()
         load_cv.notify_all();
       }
       else if (j["type"] == "event") {
-        std::scoped_lock lk(stateslock);
+        std::scoped_lock lk(entitieslock);
         //  something happened!
         auto event = j["event"];
         auto event_type = event["event_type"];
@@ -138,7 +138,7 @@ void HABackend::threadrunner()
         auto new_state = evd["new_state"];
 
         if (event_type == "state_changed") {
-          states[entity_id]->update(new_state);
+          entities[entity_id]->update(new_state);
           whatchanged.push_back(entity_id);
         }
         else {
@@ -158,14 +158,14 @@ void HABackend::threadrunner()
 
 map<string, std::shared_ptr<HAEntity>> HABackend::GetEntities()
 {
-  return states;
+  return entities;
 }
 
 std::shared_ptr<HAEntity> HABackend::GetEntityByName(const std::string& name)
 {
-  std::scoped_lock lk(stateslock);
+  std::scoped_lock lk(entitieslock);
 
-  return states.at(name);
+  return entities.at(name);
 }
 
 void HABackend::WSConnSend(json& msg)
