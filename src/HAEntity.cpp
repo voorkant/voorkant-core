@@ -1,4 +1,3 @@
-
 #include "HAEntity.hpp"
 
 using std::cerr;
@@ -14,8 +13,8 @@ HAEntity::HAEntity(json _state, std::shared_ptr<HADomain> _hadomain)
   state = _state;
 
   id = state["entity_id"];
-  name = this->getNameFromState();
-  domain = this->getDomainFromState();
+  name = getNameFromState();
+  domain = getDomainFromState();
   hadomain = _hadomain;
 }
 
@@ -89,10 +88,10 @@ std::string HADomain::toString(void)
 HAService::HAService(json _service)
 {
   if (_service.contains("name")) {
-    this->name = _service["name"].get<string>();
+    name = _service["name"].get<string>();
   }
 
   if (_service.contains("description")) {
-    this->description = _service["description"].get<string>();
+    description = _service["description"].get<string>();
   }
 }
