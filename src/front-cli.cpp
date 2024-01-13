@@ -33,6 +33,10 @@ void uithread(HABackend& backend, int argc, char* argv[])
   argparse::ArgumentParser list_entities_command("list-entities");
   program.add_subparser(list_entities_command);
 
+  argparse::ArgumentParser dump_command("dump-command");
+  dump_command.add_argument("command").help("the command to execute");
+  program.add_subparser(dump_command);
+
   try {
     program.parse_args(argc, argv);
   }
@@ -62,6 +66,10 @@ void uithread(HABackend& backend, int argc, char* argv[])
     for (const auto& [entityname, entity] : backend.GetEntities()) {
       cout << entityname << endl;
     }
+  }
+  else if (program.is_subcommand_used(dump_command)) {
+    json res = backend.DoCommand(dump_command.get<string>("command"));
+    cout << res.dump(2) << endl;
   }
   else {
     cerr << "no command given" << endl;

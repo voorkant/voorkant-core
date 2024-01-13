@@ -71,6 +71,20 @@ string HABackend::CreateLongToken(string name)
   return "NO_TOKEN";
 }
 
+json HABackend::DoCommand(const string& command)
+{
+  json request;
+  request["type"] = command;
+  wc->send(request);
+  auto response = wc->recv();
+
+  json jsonresponse = json::parse(response);
+  if (jsonresponse["id"] != request["id"]) {
+    throw std::runtime_error("Send out a command, but received something with a different ID.");
+  }
+  return jsonresponse;
+}
+
 void HABackend::threadrunner()
 {
   json getdomains;
