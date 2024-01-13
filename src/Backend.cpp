@@ -45,8 +45,8 @@ bool HABackend::Start()
   ha = std::thread(&HABackend::threadrunner, this);
   ha.detach();
   while (!loaded) {
-    load_cv.wait(lck);
     usleep(200);
+    load_cv.wait(lck);
   };
   return true;
 };

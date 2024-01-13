@@ -59,7 +59,6 @@ void uithread(HABackend& backend, int argc, char* argv[])
   }
   else if (program.is_subcommand_used(list_entities_command)) {
     backend.Start();
-    sleep(1); // hack, should find out if the backend really got populated
     for (const auto& [entityname, entity] : backend.GetEntities()) {
       cout << entityname << endl;
     }
