@@ -16,6 +16,7 @@ HABackend::HABackend(){};
 bool HABackend::Connect(string url, string token)
 {
   cerr << "[HABackend] Connecting to " << url << endl;
+
   wc = new WSConn(url);
   auto welcome = wc->recv();
   auto jwelcome = json::parse(welcome);
@@ -36,13 +37,20 @@ bool HABackend::Connect(string url, string token)
 bool HABackend::Start()
 {
   if (wc == nullptr) {
-    cerr << "Do a damned connect first" << endl;
+    cerr << "We expect that you'd do a Connect() first." << endl;
     return false;
   }
-  cerr << "In start" << endl;
+  loaded = false;
+  std::unique_lock<std::mutex> lck(load_lock);
   ha = std::thread(&HABackend::threadrunner, this);
-  cerr << "Thred started" << endl;
   ha.detach();
+  cerr << "GOING TO WAIT" << endl;
+  while (!loaded) {
+    load_cv.wait(lck);
+    usleep(200);
+    cerr << "THIS IS BORING" << endl;
+  };
+  cerr << "START COMPLETED" << endl;
   return true;
 };
 
@@ -78,11 +86,12 @@ void HABackend::threadrunner()
     throw std::runtime_error("Didn't receive response to getDomains while we expected it");
   }
   for (auto& [domain, services] : getdomainjson["result"].items()) {
-    {
-      std::scoped_lock lk(domainslock);
-      domains[domain] = std::make_shared<HADomain>(domain, services);
-    }
+
+    std::scoped_lock lk(domainslock);
+    cerr << "Adding domain: " << domain << endl;
+    domains[domain] = std::make_shared<HADomain>(domain, services);
   }
+  cerr << "We have " << domains.size() << "domains " << endl;
 
   json subscribe;
   subscribe["type"] = "subscribe_events";
@@ -118,10 +127,13 @@ void HABackend::threadrunner()
           states[entity_id] = std::make_shared<HAEntity>(evd, domains[domain]);
           whatchanged.push_back(entity_id);
         }
+        std::unique_lock<std::mutex> lck(load_lock);
+        loaded = true;
+        load_cv.notify_all();
       }
       else if (j["type"] == "event") {
-        std::scoped_lock lk(stateslock);
-        // something happened!
+        // std::scoped_lock lk(stateslock);
+        //  something happened!
         auto event = j["event"];
         auto event_type = event["event_type"];
         auto evd = event["data"];
@@ -130,7 +142,7 @@ void HABackend::threadrunner()
         auto new_state = evd["new_state"];
 
         if (event_type == "state_changed") {
-          states[entity_id]->update(new_state);
+          // states[entity_id]->update(new_state);
           whatchanged.push_back(entity_id);
         }
         else {
@@ -175,7 +187,7 @@ std::shared_ptr<HAEntity> HABackend::GetState(const std::string& name)
   return states.at(name);
 }
 
-std::vector<std::shared_ptr<HAService>> HABackend::GetServicesForDomain(const string& domain)
+std::vector<HAService> HABackend::GetServicesForDomain(const string& domain)
 {
   std::scoped_lock lk(domainslock);
 

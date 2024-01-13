@@ -4,7 +4,10 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <map>
+#include <condition_variable>
 #include <thread>
+
+#include <unistd.h>
 #include "HAEntity.hpp"
 #include "WSConn.hpp"
 
@@ -23,10 +26,13 @@ public:
   string CreateLongToken(string name);
   std::vector<std::string> GetEntries();
   std::shared_ptr<HAEntity> GetState(const std::string& name);
-  std::vector<std::shared_ptr<HAService>> GetServicesForDomain(const std::string& domain);
+  std::vector<HAService> GetServicesForDomain(const std::string& domain);
   void WSConnSend(json& msg);
 
 private:
+  bool loaded;
+  std::mutex load_lock;
+  std::condition_variable load_cv;
   WSConn* wc = nullptr;
   std::thread ha;
   void threadrunner();

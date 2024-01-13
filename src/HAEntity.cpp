@@ -58,9 +58,10 @@ HADomain::HADomain(std::string _name, json _state)
   state = _state;
   name = _name;
   for (auto& [service, info] : state.items()) {
-    auto haservice = std::make_shared<HAService>(info);
-    _services.push_back(haservice);
+    auto haservice = HAService(info);
+    services.push_back(haservice);
   }
+  cerr << "We have " << services.size() << " services" << endl;
 }
 
 std::string HADomain::toString(void)
@@ -68,18 +69,19 @@ std::string HADomain::toString(void)
   return state.dump(2);
 }
 
-std::vector<std::shared_ptr<HAService>> HADomain::getServices(void)
+std::vector<HAService> HADomain::getServices(void)
 {
-  return _services;
+  cerr << "Nr of services:" << services.empty() << endl;
+  return services;
 }
 
-HAService::HAService(json _services)
+HAService::HAService(json _service)
 {
-  if (_services.contains("name")) {
-    this->name = _services["name"].get<string>();
+  if (_service.contains("name")) {
+    this->name = _service["name"].get<string>();
   }
 
-  if (_services.contains("description")) {
-    this->description = _services["description"].get<string>();
+  if (_service.contains("description")) {
+    this->description = _service["description"].get<string>();
   }
 }

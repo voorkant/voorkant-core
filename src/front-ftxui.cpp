@@ -53,28 +53,33 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
     // }
 
     cerr << "before gestate" << endl;
-    std::vector<std::shared_ptr<HAService>> services;
+    std::vector<HAService> services;
     // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
     cerr << "Entries size:" << entries.size() << endl;
     if (selected >= 0 && entries.size() > 0) {
-      services = backend.GetState(entries.at(selected))->hadomain->getServices();
+      string entity = entries.at(selected);
+      std::shared_ptr<HAEntity> haent = backend.GetState(entity);
+      cerr << "========== We are doing something for " << haent->domain << endl;
+      std::shared_ptr<HADomain> dom = haent->hadomain;
+      cerr << "===========We are getting something for domain:" << dom->name << endl;
+      services = dom->getServices();
     }
 
     cerr << "After gestate" << endl;
     std::vector<Component> buttons;
     for (const auto& service : services) {
-      cerr << "SERVICE: " << service->name << endl;
+      cerr << "SERVICE: " << service.name << endl;
       auto entity = entries.at(selected);
 
       // cerr<<service<<endl;
-      buttons.push_back(Button(service->name, [&selected, &backend, &entries, service] {
+      buttons.push_back(Button(service.name, [&selected, &backend, &entries, service] {
         // cout<<"PUSHED: "<< entries.at(selected) << service<<endl;
 
         json cmd;
 
         cmd["type"] = "call_service";
         cmd["domain"] = backend.GetState(entries.at(selected))->domain;
-        cmd["service"] = service->name;
+        cmd["service"] = service.name;
         cmd["target"]["entity_id"] = entries.at(selected);
 
         backend.WSConnSend(cmd);

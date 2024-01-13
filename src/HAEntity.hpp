@@ -38,10 +38,10 @@ public:
   ~HADomain(){};
 
   std::string toString(void);
-  std::vector<std::shared_ptr<HAService>> getServices(void);
+  std::vector<HAService> getServices(void);
+  std::vector<HAService> services;
 
 private:
-  std::vector<std::shared_ptr<HAService>> _services;
   json state;
 };
 
