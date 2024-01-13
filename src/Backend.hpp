@@ -23,6 +23,7 @@ public:
   HABackend();
   bool Connect(string url, string token);
   bool Start();
+  json DoCommand(const std::string& command);
   string CreateLongToken(string name);
   std::shared_ptr<HAEntity> GetEntityByName(const std::string& name);
   map<string, std::shared_ptr<HAEntity>> GetEntities();
