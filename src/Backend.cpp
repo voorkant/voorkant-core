@@ -44,13 +44,10 @@ bool HABackend::Start()
   std::unique_lock<std::mutex> lck(load_lock);
   ha = std::thread(&HABackend::threadrunner, this);
   ha.detach();
-  cerr << "GOING TO WAIT" << endl;
   while (!loaded) {
     load_cv.wait(lck);
     usleep(200);
-    cerr << "THIS IS BORING" << endl;
   };
-  cerr << "START COMPLETED" << endl;
   return true;
 };
 
@@ -88,7 +85,6 @@ void HABackend::threadrunner()
   for (auto& [domain, services] : getdomainjson["result"].items()) {
 
     std::scoped_lock lk(domainslock);
-    cerr << "Adding domain: " << domain << endl;
     domains[domain] = std::make_shared<HADomain>(domain, services);
   }
   cerr << "We have " << domains.size() << "domains " << endl;
@@ -155,32 +151,17 @@ void HABackend::threadrunner()
         continue;
       }
     }
-    // cerr<<"\033[2Jhave "<<states.size()<< " states" << endl;
-    // cerr<<"selected = "<<selected<<endl;
-    // cerr<<endl;
-    // for (auto &[k,v] : states) {
-    //   cout<<k<<"="<<v->getState()<<endl;
-    // }
-    {
-      std::scoped_lock lk(entrieslock);
-      entries.clear();
-
-      for (auto& [k, v] : states) {
-        entries.push_back(k); // +":"+v->getState());
-      }
-    }
 
     uithread_refresh(this, whatchanged);
   }
 }
 
-std::vector<std::string> HABackend::GetEntries()
+map<string, std::shared_ptr<HAEntity>> HABackend::GetEntities()
 {
-  std::scoped_lock lk(entrieslock);
-  return entries;
+  return states;
 }
 
-std::shared_ptr<HAEntity> HABackend::GetState(const std::string& name)
+std::shared_ptr<HAEntity> HABackend::GetEntityByName(const std::string& name)
 {
   std::scoped_lock lk(stateslock);
 

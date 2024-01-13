@@ -165,7 +165,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
       json cmd;
 
       cmd["type"] = "call_service";
-      cmd["domain"] = backend.GetState(current_light)->domain;
+      cmd["domain"] = backend.GetEntityByName(current_light)->domain;
       cmd["service"] = "toggle";
       cmd["target"]["entity_id"] = current_light;
 
@@ -185,7 +185,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
       }
 
       cmd["type"] = "call_service";
-      cmd["domain"] = backend.GetState(current_light)->domain;
+      cmd["domain"] = backend.GetEntityByName(current_light)->domain;
       cmd["service"] = "turn_on";
       cmd["target"]["entity_id"] = current_light;
       cmd["service_data"]["rgb_color"] = rgb;
@@ -196,7 +196,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
     }
     else {
       // uint32_t c = rand();
-      auto attrs = backend.GetState(current_light)->getJsonState()["attributes"];
+      auto attrs = backend.GetEntityByName(current_light)->getJsonState()["attributes"];
       if (attrs.count("rgb_color")) {
         auto rgb = attrs["rgb_color"];
         // cout<<"RGB "<<rgb<<endl;
@@ -212,7 +212,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
         }
       }
       lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(attrs)), LV_PART_MAIN);
-      auto state = backend.GetState(current_light);
+      auto state = backend.GetEntityByName(current_light);
       auto labeltext = state->getJsonState()["attributes"]["friendly_name"].get<string>() + " (" + state->getState() + ")";
       lv_label_set_text(label, labeltext.c_str());
     }
@@ -234,7 +234,7 @@ void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged) 
 
   cerr << whatchanged.size() << endl;
   for (const auto& changed : whatchanged) {
-    auto state = backend->GetState(changed);
+    auto state = backend->GetEntityByName(changed);
     cout << "state for " << changed << " is " << state->getInfo() << endl;
     auto attrs = state->getJsonState()["attributes"];
     cout << attrs << endl;

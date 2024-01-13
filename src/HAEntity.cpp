@@ -79,7 +79,6 @@ HADomain::HADomain(std::string _name, json _state)
     auto haservice = std::make_shared<HAService>(info);
     services.push_back(haservice);
   }
-  cerr << "We have " << services.size() << " services" << endl;
 }
 
 std::string HADomain::toString(void)

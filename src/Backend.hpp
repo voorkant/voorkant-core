@@ -24,8 +24,8 @@ public:
   bool Connect(string url, string token);
   bool Start();
   string CreateLongToken(string name);
-  std::vector<std::string> GetEntries();
-  std::shared_ptr<HAEntity> GetState(const std::string& name);
+  std::shared_ptr<HAEntity> GetEntityByName(const std::string& name);
+  map<string, std::shared_ptr<HAEntity>> GetEntities();
   void WSConnSend(json& msg);
 
 private:
@@ -36,8 +36,6 @@ private:
   std::thread ha;
   void threadrunner();
 
-  std::vector<std::string> entries;
-  std::mutex entrieslock;
   map<string, std::shared_ptr<HAEntity>> states; // FIXME: should this be called entities?
   std::mutex stateslock;
   map<string, std::shared_ptr<HADomain>> domains;
