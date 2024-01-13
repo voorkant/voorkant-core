@@ -4,6 +4,11 @@
 using std::cerr;
 using std::endl;
 
+HAEntity::HAEntity(json _state)
+{
+  HAEntity(_state, nullptr);
+}
+
 HAEntity::HAEntity(json _state, std::shared_ptr<HADomain> _hadomain)
 {
   state = _state;
@@ -17,6 +22,19 @@ HAEntity::HAEntity(json _state, std::shared_ptr<HADomain> _hadomain)
 void HAEntity::update(json _state)
 {
   state = _state;
+}
+
+std::vector<std::shared_ptr<HAService>> HAEntity::getServices()
+{
+  std::vector<std::shared_ptr<HAService>> ret;
+  if (hadomain != nullptr) {
+    if (hadomain->services.size())
+      for (auto& service : hadomain->services) {
+        ret.push_back(service);
+      }
+  }
+
+  return ret;
 }
 
 std::string HAEntity::toString(void)
@@ -58,7 +76,7 @@ HADomain::HADomain(std::string _name, json _state)
   state = _state;
   name = _name;
   for (auto& [service, info] : state.items()) {
-    auto haservice = HAService(info);
+    auto haservice = std::make_shared<HAService>(info);
     services.push_back(haservice);
   }
   cerr << "We have " << services.size() << " services" << endl;
@@ -67,12 +85,6 @@ HADomain::HADomain(std::string _name, json _state)
 std::string HADomain::toString(void)
 {
   return state.dump(2);
-}
-
-std::vector<HAService> HADomain::getServices(void)
-{
-  cerr << "Nr of services:" << services.empty() << endl;
-  return services;
 }
 
 HAService::HAService(json _service)

@@ -38,8 +38,7 @@ public:
   ~HADomain(){};
 
   std::string toString(void);
-  std::vector<HAService> getServices(void);
-  std::vector<HAService> services;
+  std::vector<std::shared_ptr<HAService>> services;
 
 private:
   json state;
@@ -51,11 +50,11 @@ public:
   string name;
   string domain;
   string id;
-  std::shared_ptr<HADomain> hadomain;
 
-  HAEntity(void); // do we need this?
+  HAEntity(json _state);
   HAEntity(json _state, std::shared_ptr<HADomain> hadomain);
   ~HAEntity(){};
+  std::vector<std::shared_ptr<HAService>> getServices();
   void update(json _state); // FIXME: we're assuming that the domain stays the same.
   std::string toString(void);
   EntityType getEntityType(void);
@@ -93,6 +92,7 @@ public:
   }
 
 private:
+  std::shared_ptr<HADomain> hadomain;
   std::string getDomainFromState();
   std::string getNameFromState();
   json state;

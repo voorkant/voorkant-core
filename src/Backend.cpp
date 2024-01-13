@@ -187,12 +187,12 @@ std::shared_ptr<HAEntity> HABackend::GetState(const std::string& name)
   return states.at(name);
 }
 
-std::vector<HAService> HABackend::GetServicesForDomain(const string& domain)
+std::vector<std::shared_ptr<HAService>> HABackend::GetServicesForDomain(const string& domain)
 {
   std::scoped_lock lk(domainslock);
 
   if (domains.count(domain)) {
-    return domains[domain]->getServices();
+    return domains[domain]->services;
   }
 
   throw std::runtime_error("Couldn't retrieve services for domain " + domain + " as domain does not exist");
