@@ -4,7 +4,10 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <map>
+#include <condition_variable>
 #include <thread>
+
+#include <unistd.h>
 #include "HAEntity.hpp"
 #include "WSConn.hpp"
 
@@ -21,20 +24,20 @@ public:
   bool Connect(string url, string token);
   bool Start();
   string CreateLongToken(string name);
-  std::vector<std::string> GetEntries();
-  std::shared_ptr<HAEntity> GetState(const std::string& name);
-  std::vector<std::string> GetServicesForDomain(const std::string& domain);
+  std::shared_ptr<HAEntity> GetEntityByName(const std::string& name);
+  map<string, std::shared_ptr<HAEntity>> GetEntities();
   void WSConnSend(json& msg);
 
 private:
+  bool loaded;
+  std::mutex load_lock;
+  std::condition_variable load_cv;
   WSConn* wc = nullptr;
   std::thread ha;
   void threadrunner();
 
-  std::vector<std::string> entries;
-  std::mutex entrieslock;
-  map<string, std::shared_ptr<HAEntity>> states; // FIXME: should this be called entities?
-  std::mutex stateslock;
+  map<string, std::shared_ptr<HAEntity>> entities;
+  std::mutex entitieslock;
   map<string, std::shared_ptr<HADomain>> domains;
   std::mutex domainslock;
 };

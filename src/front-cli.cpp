@@ -1,6 +1,6 @@
 #include "main.hpp"
 
-#include "argparse.hpp"
+#include "ext/argparse/include/argparse/argparse.hpp"
 
 #include <iostream>
 #include <string>
@@ -59,9 +59,8 @@ void uithread(HABackend& backend, int argc, char* argv[])
   }
   else if (program.is_subcommand_used(list_entities_command)) {
     backend.Start();
-    sleep(1); // hack, should find out if the backend really got populated
-    for (const auto& entity : backend.GetEntries()) {
-      cout << entity << endl;
+    for (const auto& [entityname, entity] : backend.GetEntities()) {
+      cout << entityname << endl;
     }
   }
   else {
@@ -73,7 +72,7 @@ void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged)
 {
   if (uithread_refresh_print_updates) {
     for (const auto& changed : whatchanged) {
-      auto state = backend->GetState(changed);
+      auto state = backend->GetEntityByName(changed);
       cout << "state for " << changed << " is " << state->getInfo() << endl;
       for (const auto& attr : state->attrVector()) {
         cout << "  " << attr << endl;

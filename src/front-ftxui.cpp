@@ -9,9 +9,12 @@
 #include "main.hpp"
 
 #include "Backend.hpp"
+#include "ext/magic_enum/include/magic_enum/magic_enum_all.hpp"
 
 #include <string>
 
+using std::cerr;
+using std::endl;
 using std::map;
 using std::string;
 
@@ -25,17 +28,11 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
   backend.Start();
 
   int selected;
-  int selected2;
   int selectedbutton;
-
-  std::vector<std::string> entries2;
-  entries2.push_back("hoi");
-  entries2.push_back("hoi2");
 
   std::vector<std::string> entries;
 
   auto radiobox = Menu(&entries, &selected);
-  auto radiobox2 = Menu(&entries2, &selected2);
 
   auto uirenderer = Container::Horizontal({});
 
@@ -44,15 +41,18 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
   auto renderer = Renderer(uirenderer, [&] {
     // std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
-    entries = backend.GetEntries();
-    // for(auto &[k,v] : domains) {
-    //   cerr<<"domain "<<k<<"exists"<<endl;
-    // }
-    std::vector<std::string> services;
+    auto entities = backend.GetEntities();
+    entries.clear();
+    for (auto& [name, entity] : entities) {
+      entries.push_back(name);
+    }
+
+    std::vector<std::shared_ptr<HAService>> services;
     // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
     if (selected >= 0 && entries.size() > 0) {
-      // cerr<<"getting services"<<endl;
-      services = backend.GetServicesForDomain(backend.GetState(entries.at(selected))->getDomain());
+      string entity = entries.at(selected);
+      std::shared_ptr<HAEntity> haent = backend.GetEntityByName(entity);
+      services = haent->getServices();
     }
 
     std::vector<Component> buttons;
@@ -60,14 +60,14 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
       auto entity = entries.at(selected);
 
       // cerr<<service<<endl;
-      buttons.push_back(Button(service, [&selected, &backend, &entries, service] {
+      buttons.push_back(Button(service->name, [&selected, &backend, &entries, service] {
         // cout<<"PUSHED: "<< entries.at(selected) << service<<endl;
 
         json cmd;
 
         cmd["type"] = "call_service";
-        cmd["domain"] = backend.GetState(entries.at(selected))->getDomain();
-        cmd["service"] = service;
+        cmd["domain"] = backend.GetEntityByName(entries.at(selected))->domain;
+        cmd["service"] = service->name;
         cmd["target"]["entity_id"] = entries.at(selected);
 
         backend.WSConnSend(cmd);
@@ -86,31 +86,16 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
 
     std::vector<Element> attrs;
     if (selected >= 0 && entries.size() > 0) {
-      for (const auto& attr : backend.GetState(entries.at(selected))->attrVector()) {
+      for (const auto& attr : backend.GetEntityByName(entries.at(selected))->attrVector()) {
         attrs.push_back(text(attr));
       }
     }
 
     return vbox(
       hbox(text("selected = "), text(selected >= 0 && entries.size() ? entries.at(selected) : "")),
-      text(selected >= 0 && entries.size() > 0 ? backend.GetState(entries.at(selected))->getInfo() : "no info"),
+      text(selected >= 0 && entries.size() > 0 ? backend.GetEntityByName(entries.at(selected))->getInfo() : "no info"),
       text(pressed),
-      // text("hi"),
-      // hbox(text("selected2 = "), text(selected2 >=0 && entries2.size() ? entries2.at(selected2) : "")),
-      // vbox(
-      // {
-      // hbox(
-      //   {
-      //     // text("test") | border,
-      //     // paragraph(selected >= 0 && domains.size()>0 ? domains.at(states.at(entries.at(selected))->getDomain())->getServices()[0] : "")
-      //     // paragraph(selected >= 0 && entries.size() > 0 ? getServicesForDomain(states.at(entries.at(selected))->getDomain() )[0] : "")
-      //   }
-      // ),
-      hbox({uirenderer->Render(),
-            vbox(attrs)})
-      // }
-      // )
-    );
+      hbox({uirenderer->Render(), vbox(attrs)}));
   });
 
   renderer |= CatchEvent([&](Event event) {

@@ -6,22 +6,58 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include "ext/magic_enum/include/magic_enum/magic_enum_all.hpp"
 
 using std::map;
 using std::string;
 
 using json = nlohmann::json;
 
+// TODO: we need to generate this to keep this in sync with HA.
+enum class EntityType
+{
+  Light,
+  OTHER,
+};
+
+class HAService
+{
+public:
+  string description;
+  string name;
+  HAService(json _service);
+  ~HAService(){};
+};
+
+class HADomain
+{
+public:
+  std::string name;
+  HADomain(void);
+  HADomain(std::string _name, json _state);
+  ~HADomain(){};
+
+  std::string toString(void);
+  std::vector<std::shared_ptr<HAService>> services;
+
+private:
+  json state;
+};
+
 class HAEntity
 {
 public:
   string name;
+  string domain;
   string id;
-  HAEntity(void); // do we need this?
+
   HAEntity(json _state);
+  HAEntity(json _state, std::shared_ptr<HADomain> hadomain);
   ~HAEntity(){};
-  void update(json _state);
+  std::vector<std::shared_ptr<HAService>> getServices();
+  void update(json _state); // FIXME: we're assuming that the domain stays the same.
   std::string toString(void);
+  EntityType getEntityType(void);
 
   std::vector<std::string> attrVector(void)
   {
@@ -49,59 +85,16 @@ public:
     std::ostringstream ret;
 
     ret << "state=" << getState() << "  ";
-    ret << "domain=" << getDomain() << "  ";
+    ret << "domain=" << domain << "  ";
+    ret << "entitytype=" << magic_enum::enum_name(getEntityType());
     // ret<<""
     return ret.str();
   }
 
-  std::string getDomain(void)
-  {
-    auto id = state["entity_id"].get<std::string>();
-
-    // FIXME: boost::split might be nice here, check if its header only?
-    auto pos = id.find(".");
-
-    if (pos == std::string::npos) {
-      throw std::runtime_error("entity ID [" + id + "] contains no period, has no domain?");
-    }
-
-    return id.substr(0, pos);
-  }
-
 private:
-  json state;
-};
-
-class HADomain
-{
-public:
-  HADomain(void);
-  HADomain(json _state);
-  ~HADomain(){};
-
-  void update(json _state);
-  std::string toString(void);
-
-  /*
-    std::string getState(void)
-    {
-      return state["state"];
-    }
-  */
-
-  std::vector<std::string> getServices(void)
-  {
-    std::vector<std::string> ret;
-
-    // cerr<<state.dump()<<endl;
-    for (auto& [service, info] : state.items()) {
-      ret.push_back(service);
-    }
-
-    return ret;
-  }
-
-private:
+  std::shared_ptr<HADomain> hadomain;
+  std::string getDomainFromState();
+  std::string getNameFromState();
   json state;
 };
 
