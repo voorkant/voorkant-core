@@ -10,7 +10,7 @@ namespace HADomains
 {% for domain, services in result.items() %}
 // START HEADER FOR {{ domain | title }}
 
-class {{ domain | title }}
+class {{ domain | title }} : HAEntity
 {
 {%- for name, desc in services.items() %}
   // {{ desc.name }}

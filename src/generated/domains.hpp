@@ -10,7 +10,7 @@ namespace HADomains
 
 // START HEADER FOR Alarm_control_panel
 
-class Alarm_control_panel
+class Alarm_control_panel : HAEntity
 {
   // Arm away
   // Sets the alarm to: _armed, no one home_.
@@ -71,7 +71,7 @@ class Alarm_control_panel
 
 // START HEADER FOR Automation
 
-class Automation
+class Automation : HAEntity
 {
   // Reload
   // Reloads the automation configuration.
@@ -113,7 +113,7 @@ class Automation
 
 // START HEADER FOR Backup
 
-class Backup
+class Backup : HAEntity
 {
   // Create backup
   // Creates a new backup.
@@ -125,7 +125,7 @@ class Backup
 
 // START HEADER FOR Button
 
-class Button
+class Button : HAEntity
 {
   // Press
   // Press the button entity.
@@ -137,7 +137,7 @@ class Button
 
 // START HEADER FOR Calendar
 
-class Calendar
+class Calendar : HAEntity
 {
   // Create event
   // Adds a new calendar event.
@@ -177,7 +177,7 @@ class Calendar
 
 // START HEADER FOR Camera
 
-class Camera
+class Camera : HAEntity
 {
   // Disable motion detection
   // Disables the motion detection.
@@ -237,7 +237,7 @@ class Camera
 
 // START HEADER FOR Climate
 
-class Climate
+class Climate : HAEntity
 {
   // Turn on/off auxiliary heater
   // Turns auxiliary heater on/off.
@@ -315,7 +315,7 @@ class Climate
 
 // START HEADER FOR Cloud
 
-class Cloud
+class Cloud : HAEntity
 {
   // Remote connect
   // Makes the instance UI accessible from outside of the local network by using Home Assistant Cloud.
@@ -334,7 +334,7 @@ class Cloud
 
 // START HEADER FOR Conversation
 
-class Conversation
+class Conversation : HAEntity
 {
   // Process
   // Launches a conversation from a transcribed text.
@@ -358,7 +358,7 @@ class Conversation
 
 // START HEADER FOR Counter
 
-class Counter
+class Counter : HAEntity
 {
   // Decrement
   // Decrements a counter.
@@ -392,7 +392,7 @@ class Counter
 
 // START HEADER FOR Cover
 
-class Cover
+class Cover : HAEntity
 {
   // Close
   // Closes a cover.
@@ -469,7 +469,7 @@ class Cover
 
 // START HEADER FOR Date
 
-class Date
+class Date : HAEntity
 {
   // Set date
   // Sets the date.
@@ -482,7 +482,7 @@ class Date
 
 // START HEADER FOR Datetime
 
-class Datetime
+class Datetime : HAEntity
 {
   // Set date/time
   // Sets the date/time for a datetime entity.
@@ -495,7 +495,7 @@ class Datetime
 
 // START HEADER FOR Demo
 
-class Demo
+class Demo : HAEntity
 {
   // Randomize device tracker data
   // Demonstrates using a device tracker to see where devices are located.
@@ -507,7 +507,7 @@ class Demo
 
 // START HEADER FOR Device_tracker
 
-class Device_tracker
+class Device_tracker : HAEntity
 {
   // See
   // Records a seen tracked device.
@@ -526,7 +526,7 @@ class Device_tracker
 
 // START HEADER FOR Fan
 
-class Fan
+class Fan : HAEntity
 {
   // Decrease speed
   // Decreases the speed of the fan.
@@ -602,7 +602,7 @@ class Fan
 
 // START HEADER FOR Ffmpeg
 
-class Ffmpeg
+class Ffmpeg : HAEntity
 {
   // Restart
   // Sends a restart command to a ffmpeg based sensor.
@@ -631,7 +631,7 @@ class Ffmpeg
 
 // START HEADER FOR Frontend
 
-class Frontend
+class Frontend : HAEntity
 {
   // Reload themes
   // Reloads themes from the YAML-configuration.
@@ -652,7 +652,7 @@ class Frontend
 
 // START HEADER FOR Group
 
-class Group
+class Group : HAEntity
 {
   // Reload
   // Reloads group configuration, entities, and notify services from YAML-configuration.
@@ -686,7 +686,7 @@ class Group
 
 // START HEADER FOR Homeassistant
 
-class Homeassistant
+class Homeassistant : HAEntity
 {
   // Check configuration
   // Checks the Home Assistant YAML-configuration files for errors. Errors will be shown in the Home Assistant logs.
@@ -786,7 +786,7 @@ class Homeassistant
 
 // START HEADER FOR Humidifier
 
-class Humidifier
+class Humidifier : HAEntity
 {
   // Set humidity
   // Sets the target humidity.
@@ -828,7 +828,7 @@ class Humidifier
 
 // START HEADER FOR Image_processing
 
-class Image_processing
+class Image_processing : HAEntity
 {
   // Scan
   // Processes an image immediately.
@@ -840,7 +840,7 @@ class Image_processing
 
 // START HEADER FOR Input_boolean
 
-class Input_boolean
+class Input_boolean : HAEntity
 {
   // Reload
   // Reloads helpers from the YAML-configuration.
@@ -873,7 +873,7 @@ class Input_boolean
 
 // START HEADER FOR Input_button
 
-class Input_button
+class Input_button : HAEntity
 {
   // Press
   // Mimics the physical button press on the device.
@@ -892,7 +892,7 @@ class Input_button
 
 // START HEADER FOR Input_datetime
 
-class Input_datetime
+class Input_datetime : HAEntity
 {
   // Reload
   // Reloads helpers from the YAML-configuration.
@@ -915,7 +915,7 @@ class Input_datetime
 
 // START HEADER FOR Input_number
 
-class Input_number
+class Input_number : HAEntity
 {
   // Decrement
   // Decrements the current value by 1 step.
@@ -949,7 +949,7 @@ class Input_number
 
 // START HEADER FOR Input_select
 
-class Input_select
+class Input_select : HAEntity
 {
   // Reload
   // Reloads helpers from the YAML-configuration.
@@ -1007,7 +1007,7 @@ class Input_select
 
 // START HEADER FOR Input_text
 
-class Input_text
+class Input_text : HAEntity
 {
   // Reload
   // Reloads helpers from the YAML-configuration.
@@ -1027,7 +1027,7 @@ class Input_text
 
 // START HEADER FOR Light
 
-class Light
+class Light : HAEntity
 {
   // Toggle
   // Toggles one or more lights, from on to off, or, off to on, based on their current state.
@@ -1085,7 +1085,7 @@ class Light
 
 // START HEADER FOR Lock
 
-class Lock
+class Lock : HAEntity
 {
   // Lock
   // Locks a lock.
@@ -1114,7 +1114,7 @@ class Lock
 
 // START HEADER FOR Logbook
 
-class Logbook
+class Logbook : HAEntity
 {
   // Log
   // Creates a custom entry in the logbook.
@@ -1130,7 +1130,7 @@ class Logbook
 
 // START HEADER FOR Logger
 
-class Logger
+class Logger : HAEntity
 {
   // Set default level
   // Sets the default log level for integrations.
@@ -1150,7 +1150,7 @@ class Logger
 
 // START HEADER FOR Media_player
 
-class Media_player
+class Media_player : HAEntity
 {
   // Clear playlist
   // Clears the playlist.
@@ -1321,7 +1321,7 @@ class Media_player
 
 // START HEADER FOR Notify
 
-class Notify
+class Notify : HAEntity
 {
   // Send a notification via demo_test_target_name
   // Sends a notification message using the demo_test_target_name integration.
@@ -1358,7 +1358,7 @@ class Notify
 
 // START HEADER FOR Number
 
-class Number
+class Number : HAEntity
 {
   // Set
   // Sets the value of a number.
@@ -1371,7 +1371,7 @@ class Number
 
 // START HEADER FOR Persistent_notification
 
-class Persistent_notification
+class Persistent_notification : HAEntity
 {
   // Create
   // Shows a notification on the **Notifications** panel.
@@ -1401,7 +1401,7 @@ class Persistent_notification
 
 // START HEADER FOR Person
 
-class Person
+class Person : HAEntity
 {
   // Reload
   // Reloads persons from the YAML-configuration.
@@ -1413,7 +1413,7 @@ class Person
 
 // START HEADER FOR Recorder
 
-class Recorder
+class Recorder : HAEntity
 {
   // Disable
   // Stops the recording of events and state changes.
@@ -1452,7 +1452,7 @@ class Recorder
 
 // START HEADER FOR Scene
 
-class Scene
+class Scene : HAEntity
 {
   // Apply
   // Activates a scene with configuration.
@@ -1498,7 +1498,7 @@ class Scene
 
 // START HEADER FOR Schedule
 
-class Schedule
+class Schedule : HAEntity
 {
   // Reload
   // Reloads schedules from the YAML-configuration.
@@ -1510,7 +1510,7 @@ class Schedule
 
 // START HEADER FOR Script
 
-class Script
+class Script : HAEntity
 {
   // Reload
   // Reloads all the available scripts.
@@ -1543,7 +1543,7 @@ class Script
 
 // START HEADER FOR Select
 
-class Select
+class Select : HAEntity
 {
   // First
   // Selects the first option.
@@ -1586,7 +1586,7 @@ class Select
 
 // START HEADER FOR Shopping_list
 
-class Shopping_list
+class Shopping_list : HAEntity
 {
   // Add item
   // Adds an item to the shopping list.
@@ -1652,7 +1652,7 @@ class Shopping_list
 
 // START HEADER FOR Siren
 
-class Siren
+class Siren : HAEntity
 {
   // Toggle
   // Toggles the siren on/off.
@@ -1681,7 +1681,7 @@ class Siren
 
 // START HEADER FOR Switch
 
-class Switch
+class Switch : HAEntity
 {
   // Toggle
   // Toggles a switch on/off.
@@ -1707,7 +1707,7 @@ class Switch
 
 // START HEADER FOR System_log
 
-class System_log
+class System_log : HAEntity
 {
   // Clear all
   // Clears all log entries.
@@ -1729,7 +1729,7 @@ class System_log
 
 // START HEADER FOR Text
 
-class Text
+class Text : HAEntity
 {
   // Set value
   // Sets the value.
@@ -1742,7 +1742,7 @@ class Text
 
 // START HEADER FOR Time
 
-class Time
+class Time : HAEntity
 {
   // Set Time
   // Sets the time.
@@ -1755,7 +1755,7 @@ class Time
 
 // START HEADER FOR Timer
 
-class Timer
+class Timer : HAEntity
 {
   // Cancel
   // Cancels a timer.
@@ -1804,7 +1804,7 @@ class Timer
 
 // START HEADER FOR Todo
 
-class Todo
+class Todo : HAEntity
 {
   // Add to-do list item
   // Add a new to-do list item.
@@ -1856,7 +1856,7 @@ class Todo
 
 // START HEADER FOR Tts
 
-class Tts
+class Tts : HAEntity
 {
   // Clear TTS cache
   // Removes all cached text-to-speech files and purges the memory.
@@ -1892,7 +1892,7 @@ class Tts
 
 // START HEADER FOR Update
 
-class Update
+class Update : HAEntity
 {
   // Clear skipped update
   // Removes the skipped version marker from an update.
@@ -1920,7 +1920,7 @@ class Update
 
 // START HEADER FOR Vacuum
 
-class Vacuum
+class Vacuum : HAEntity
 {
   // Clean spot
   // Tells the vacuum cleaner to do a spot clean-up.
@@ -2012,7 +2012,7 @@ class Vacuum
 
 // START HEADER FOR Water_heater
 
-class Water_heater
+class Water_heater : HAEntity
 {
   // Set away mode
   // Turns away mode on/off.
@@ -2056,7 +2056,7 @@ class Water_heater
 
 // START HEADER FOR Weather
 
-class Weather
+class Weather : HAEntity
 {
   // Get forecast
   // Get weather forecast.
@@ -2077,7 +2077,7 @@ class Weather
 
 // START HEADER FOR Zone
 
-class Zone
+class Zone : HAEntity
 {
   // Reload
   // Reloads zones from the YAML-configuration.
