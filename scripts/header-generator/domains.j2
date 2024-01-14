@@ -18,7 +18,7 @@ namespace HADomains {
       optional<json> {{ field }};
 {%- endfor %}
     };
-    void {{ name }}(const {{ name }}_args& args);
+    void {% if name == 'delete' %}_{% endif %}{{ name }}(const {{ name }}_args& args);
 {% endfor %}
   };
 {% endfor %}
