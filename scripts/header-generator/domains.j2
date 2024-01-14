@@ -36,7 +36,8 @@ class {{ domain | title }} : HAEntity
     optional<json> {{ field }};
 {%- endfor %}
   };
-  void {% if name == 'delete' %}_{% endif %}{{ name }}(const {{ name }}_args& args) {
+  void {% if name == 'delete' %}_{% endif %}{{ name }}(const {{ name }}_args& args)
+  {
     json cmd;
 
     cmd["type"] = "call_service";
@@ -45,7 +46,9 @@ class {{ domain | title }} : HAEntity
     cmd["target"]["entity_id"] = name;
 
 {%- for field in desc.fields.keys() %}
-    if (args.{{ field }}) { cmd["service_data"]["{{ field }}"] = *args.{{ field }}; }
+    if (args.{{ field }}) {
+      cmd["service_data"]["{{ field }}"] = *args.{{ field }};
+    }
 {%- endfor %}
 
     backend->WSConnSend(cmd);

@@ -54,7 +54,7 @@ public:
   string id;
 
   // HAEntity(json _state);
-  HAEntity(json _state, std::shared_ptr<HADomain> _hadomain, HABackend *_backend);
+  HAEntity(json _state, std::shared_ptr<HADomain> _hadomain, HABackend* _backend);
   ~HAEntity(){};
   std::vector<std::shared_ptr<HAService>> getServices();
   void update(json _state); // FIXME: we're assuming that the domain stays the same.
