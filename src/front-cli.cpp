@@ -33,8 +33,13 @@ void uithread(HABackend& backend, int argc, char* argv[])
   argparse::ArgumentParser list_entities_command("list-entities");
   program.add_subparser(list_entities_command);
 
+  /* usage example for dump-command with data:
+   * build/client-cli dump-command call_service '{"domain":"light","service":"toggle","target":{"entity_id":"light.bed_light"}}'
+   */
   argparse::ArgumentParser dump_command("dump-command");
   dump_command.add_argument("command").help("the command to execute");
+  dump_command.add_argument("data").help("optional data to pass with the command").default_value("{}");
+
   program.add_subparser(dump_command);
 
   try {
@@ -68,7 +73,8 @@ void uithread(HABackend& backend, int argc, char* argv[])
     }
   }
   else if (program.is_subcommand_used(dump_command)) {
-    json res = backend.DoCommand(dump_command.get<string>("command"));
+    json data = json::parse(dump_command.get<string>("data"));
+    json res = backend.DoCommand(dump_command.get<string>("command"), data);
     cout << res.dump(2) << endl;
   }
   else {
