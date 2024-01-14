@@ -5,21 +5,24 @@
 using json = nlohmann::json;
 using std::optional;
 
-namespace HADomains {
+namespace HADomains
+{
 {% for domain, services in result.items() %}
 // START HEADER FOR {{ domain | title }}
 
-  class {{ domain | title }} {
+class {{ domain | title }}
+{
 {%- for name, desc in services.items() %}
-    // {{ desc.name }}
-    // {{ desc.description }}
-    class {{ name }}_args {
+  // {{ desc.name }}
+  // {{ desc.description }}
+  class {{ name }}_args
+  {
 {%- for field in desc.fields.keys() %}
-      optional<json> {{ field }};
+    optional<json> {{ field }};
 {%- endfor %}
-    };
-    void {% if name == 'delete' %}_{% endif %}{{ name }}(const {{ name }}_args& args);
-{% endfor %}
   };
+  void {% if name == 'delete' %}_{% endif %}{{ name }}(const {{ name }}_args& args);
+{% endfor -%}
+};
 {% endfor %}
 }
