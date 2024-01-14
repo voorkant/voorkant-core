@@ -1,9 +1,23 @@
+#pragma once
+
 #include <optional>
 
 #include <nlohmann/json.hpp>
 
+#include "../HAEntity.hpp"
+
 using json = nlohmann::json;
 using std::optional;
+
+#if 0
+enum class EntityType
+{
+{%- for domain in result.keys() %}
+  {{ domain | title }},
+{%- endfor %}
+  OTHER,
+};
+#endif
 
 namespace HADomains
 {
@@ -12,6 +26,7 @@ namespace HADomains
 
 class {{ domain | title }} : HAEntity
 {
+  // const EntityType __domain = EntityType::{{ domain | title }};
 {%- for name, desc in services.items() %}
   // {{ desc.name }}
   // {{ desc.description }}

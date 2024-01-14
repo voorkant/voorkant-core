@@ -1,9 +1,76 @@
+#pragma once
+
 #include <optional>
 
 #include <nlohmann/json.hpp>
 
+#include "../HAEntity.hpp"
+
 using json = nlohmann::json;
 using std::optional;
+
+#if 0
+enum class EntityType
+{
+  Alarm_control_panel,
+  Automation,
+  Backup,
+  Button,
+  Calendar,
+  Camera,
+  Climate,
+  Cloud,
+  Conversation,
+  Counter,
+  Cover,
+  Date,
+  Datetime,
+  Demo,
+  Device_tracker,
+  Fan,
+  Ffmpeg,
+  Frontend,
+  Group,
+  Homeassistant,
+  Humidifier,
+  Image_processing,
+  Input_boolean,
+  Input_button,
+  Input_datetime,
+  Input_number,
+  Input_select,
+  Input_text,
+  Light,
+  Lock,
+  Logbook,
+  Logger,
+  Media_player,
+  Notify,
+  Number,
+  Persistent_notification,
+  Person,
+  Recorder,
+  Scene,
+  Schedule,
+  Script,
+  Select,
+  Shopping_list,
+  Siren,
+  Switch,
+  System_log,
+  Text,
+  Time,
+  Timer,
+  Todo,
+  Tts,
+  Update,
+  Vacuum,
+  Water_heater,
+  Weather,
+  Zone,
+  OTHER,
+};
+#endif
 
 namespace HADomains
 {
@@ -12,6 +79,7 @@ namespace HADomains
 
 class Alarm_control_panel : HAEntity
 {
+  // const EntityType __domain = EntityType::Alarm_control_panel;
   // Arm away
   // Sets the alarm to: _armed, no one home_.
   class alarm_arm_away_args
@@ -73,6 +141,7 @@ class Alarm_control_panel : HAEntity
 
 class Automation : HAEntity
 {
+  // const EntityType __domain = EntityType::Automation;
   // Reload
   // Reloads the automation configuration.
   class reload_args
@@ -115,6 +184,7 @@ class Automation : HAEntity
 
 class Backup : HAEntity
 {
+  // const EntityType __domain = EntityType::Backup;
   // Create backup
   // Creates a new backup.
   class create_args
@@ -127,6 +197,7 @@ class Backup : HAEntity
 
 class Button : HAEntity
 {
+  // const EntityType __domain = EntityType::Button;
   // Press
   // Press the button entity.
   class press_args
@@ -139,6 +210,7 @@ class Button : HAEntity
 
 class Calendar : HAEntity
 {
+  // const EntityType __domain = EntityType::Calendar;
   // Create event
   // Adds a new calendar event.
   class create_event_args
@@ -179,6 +251,7 @@ class Calendar : HAEntity
 
 class Camera : HAEntity
 {
+  // const EntityType __domain = EntityType::Camera;
   // Disable motion detection
   // Disables the motion detection.
   class disable_motion_detection_args
@@ -239,6 +312,7 @@ class Camera : HAEntity
 
 class Climate : HAEntity
 {
+  // const EntityType __domain = EntityType::Climate;
   // Turn on/off auxiliary heater
   // Turns auxiliary heater on/off.
   class set_aux_heat_args
@@ -317,6 +391,7 @@ class Climate : HAEntity
 
 class Cloud : HAEntity
 {
+  // const EntityType __domain = EntityType::Cloud;
   // Remote connect
   // Makes the instance UI accessible from outside of the local network by using Home Assistant Cloud.
   class remote_connect_args
@@ -336,6 +411,7 @@ class Cloud : HAEntity
 
 class Conversation : HAEntity
 {
+  // const EntityType __domain = EntityType::Conversation;
   // Process
   // Launches a conversation from a transcribed text.
   class process_args
@@ -360,6 +436,7 @@ class Conversation : HAEntity
 
 class Counter : HAEntity
 {
+  // const EntityType __domain = EntityType::Counter;
   // Decrement
   // Decrements a counter.
   class decrement_args
@@ -394,6 +471,7 @@ class Counter : HAEntity
 
 class Cover : HAEntity
 {
+  // const EntityType __domain = EntityType::Cover;
   // Close
   // Closes a cover.
   class close_cover_args
@@ -471,6 +549,7 @@ class Cover : HAEntity
 
 class Date : HAEntity
 {
+  // const EntityType __domain = EntityType::Date;
   // Set date
   // Sets the date.
   class set_value_args
@@ -484,6 +563,7 @@ class Date : HAEntity
 
 class Datetime : HAEntity
 {
+  // const EntityType __domain = EntityType::Datetime;
   // Set date/time
   // Sets the date/time for a datetime entity.
   class set_value_args
@@ -497,6 +577,7 @@ class Datetime : HAEntity
 
 class Demo : HAEntity
 {
+  // const EntityType __domain = EntityType::Demo;
   // Randomize device tracker data
   // Demonstrates using a device tracker to see where devices are located.
   class randomize_device_tracker_data_args
@@ -509,6 +590,7 @@ class Demo : HAEntity
 
 class Device_tracker : HAEntity
 {
+  // const EntityType __domain = EntityType::Device_tracker;
   // See
   // Records a seen tracked device.
   class see_args
@@ -528,6 +610,7 @@ class Device_tracker : HAEntity
 
 class Fan : HAEntity
 {
+  // const EntityType __domain = EntityType::Fan;
   // Decrease speed
   // Decreases the speed of the fan.
   class decrease_speed_args
@@ -604,6 +687,7 @@ class Fan : HAEntity
 
 class Ffmpeg : HAEntity
 {
+  // const EntityType __domain = EntityType::Ffmpeg;
   // Restart
   // Sends a restart command to a ffmpeg based sensor.
   class restart_args
@@ -633,6 +717,7 @@ class Ffmpeg : HAEntity
 
 class Frontend : HAEntity
 {
+  // const EntityType __domain = EntityType::Frontend;
   // Reload themes
   // Reloads themes from the YAML-configuration.
   class reload_themes_args
@@ -654,6 +739,7 @@ class Frontend : HAEntity
 
 class Group : HAEntity
 {
+  // const EntityType __domain = EntityType::Group;
   // Reload
   // Reloads group configuration, entities, and notify services from YAML-configuration.
   class reload_args
@@ -688,6 +774,7 @@ class Group : HAEntity
 
 class Homeassistant : HAEntity
 {
+  // const EntityType __domain = EntityType::Homeassistant;
   // Check configuration
   // Checks the Home Assistant YAML-configuration files for errors. Errors will be shown in the Home Assistant logs.
   class check_config_args
@@ -788,6 +875,7 @@ class Homeassistant : HAEntity
 
 class Humidifier : HAEntity
 {
+  // const EntityType __domain = EntityType::Humidifier;
   // Set humidity
   // Sets the target humidity.
   class set_humidity_args
@@ -830,6 +918,7 @@ class Humidifier : HAEntity
 
 class Image_processing : HAEntity
 {
+  // const EntityType __domain = EntityType::Image_processing;
   // Scan
   // Processes an image immediately.
   class scan_args
@@ -842,6 +931,7 @@ class Image_processing : HAEntity
 
 class Input_boolean : HAEntity
 {
+  // const EntityType __domain = EntityType::Input_boolean;
   // Reload
   // Reloads helpers from the YAML-configuration.
   class reload_args
@@ -875,6 +965,7 @@ class Input_boolean : HAEntity
 
 class Input_button : HAEntity
 {
+  // const EntityType __domain = EntityType::Input_button;
   // Press
   // Mimics the physical button press on the device.
   class press_args
@@ -894,6 +985,7 @@ class Input_button : HAEntity
 
 class Input_datetime : HAEntity
 {
+  // const EntityType __domain = EntityType::Input_datetime;
   // Reload
   // Reloads helpers from the YAML-configuration.
   class reload_args
@@ -917,6 +1009,7 @@ class Input_datetime : HAEntity
 
 class Input_number : HAEntity
 {
+  // const EntityType __domain = EntityType::Input_number;
   // Decrement
   // Decrements the current value by 1 step.
   class decrement_args
@@ -951,6 +1044,7 @@ class Input_number : HAEntity
 
 class Input_select : HAEntity
 {
+  // const EntityType __domain = EntityType::Input_select;
   // Reload
   // Reloads helpers from the YAML-configuration.
   class reload_args
@@ -1009,6 +1103,7 @@ class Input_select : HAEntity
 
 class Input_text : HAEntity
 {
+  // const EntityType __domain = EntityType::Input_text;
   // Reload
   // Reloads helpers from the YAML-configuration.
   class reload_args
@@ -1029,6 +1124,7 @@ class Input_text : HAEntity
 
 class Light : HAEntity
 {
+  // const EntityType __domain = EntityType::Light;
   // Toggle
   // Toggles one or more lights, from on to off, or, off to on, based on their current state.
   class toggle_args
@@ -1087,6 +1183,7 @@ class Light : HAEntity
 
 class Lock : HAEntity
 {
+  // const EntityType __domain = EntityType::Lock;
   // Lock
   // Locks a lock.
   class lock_args
@@ -1116,6 +1213,7 @@ class Lock : HAEntity
 
 class Logbook : HAEntity
 {
+  // const EntityType __domain = EntityType::Logbook;
   // Log
   // Creates a custom entry in the logbook.
   class log_args
@@ -1132,6 +1230,7 @@ class Logbook : HAEntity
 
 class Logger : HAEntity
 {
+  // const EntityType __domain = EntityType::Logger;
   // Set default level
   // Sets the default log level for integrations.
   class set_default_level_args
@@ -1152,6 +1251,7 @@ class Logger : HAEntity
 
 class Media_player : HAEntity
 {
+  // const EntityType __domain = EntityType::Media_player;
   // Clear playlist
   // Clears the playlist.
   class clear_playlist_args
@@ -1323,6 +1423,7 @@ class Media_player : HAEntity
 
 class Notify : HAEntity
 {
+  // const EntityType __domain = EntityType::Notify;
   // Send a notification via demo_test_target_name
   // Sends a notification message using the demo_test_target_name integration.
   class demo_test_target_name_args
@@ -1360,6 +1461,7 @@ class Notify : HAEntity
 
 class Number : HAEntity
 {
+  // const EntityType __domain = EntityType::Number;
   // Set
   // Sets the value of a number.
   class set_value_args
@@ -1373,6 +1475,7 @@ class Number : HAEntity
 
 class Persistent_notification : HAEntity
 {
+  // const EntityType __domain = EntityType::Persistent_notification;
   // Create
   // Shows a notification on the **Notifications** panel.
   class create_args
@@ -1403,6 +1506,7 @@ class Persistent_notification : HAEntity
 
 class Person : HAEntity
 {
+  // const EntityType __domain = EntityType::Person;
   // Reload
   // Reloads persons from the YAML-configuration.
   class reload_args
@@ -1415,6 +1519,7 @@ class Person : HAEntity
 
 class Recorder : HAEntity
 {
+  // const EntityType __domain = EntityType::Recorder;
   // Disable
   // Stops the recording of events and state changes.
   class disable_args
@@ -1454,6 +1559,7 @@ class Recorder : HAEntity
 
 class Scene : HAEntity
 {
+  // const EntityType __domain = EntityType::Scene;
   // Apply
   // Activates a scene with configuration.
   class apply_args
@@ -1500,6 +1606,7 @@ class Scene : HAEntity
 
 class Schedule : HAEntity
 {
+  // const EntityType __domain = EntityType::Schedule;
   // Reload
   // Reloads schedules from the YAML-configuration.
   class reload_args
@@ -1512,6 +1619,7 @@ class Schedule : HAEntity
 
 class Script : HAEntity
 {
+  // const EntityType __domain = EntityType::Script;
   // Reload
   // Reloads all the available scripts.
   class reload_args
@@ -1545,6 +1653,7 @@ class Script : HAEntity
 
 class Select : HAEntity
 {
+  // const EntityType __domain = EntityType::Select;
   // First
   // Selects the first option.
   class select_first_args
@@ -1588,6 +1697,7 @@ class Select : HAEntity
 
 class Shopping_list : HAEntity
 {
+  // const EntityType __domain = EntityType::Shopping_list;
   // Add item
   // Adds an item to the shopping list.
   class add_item_args
@@ -1654,6 +1764,7 @@ class Shopping_list : HAEntity
 
 class Siren : HAEntity
 {
+  // const EntityType __domain = EntityType::Siren;
   // Toggle
   // Toggles the siren on/off.
   class toggle_args
@@ -1683,6 +1794,7 @@ class Siren : HAEntity
 
 class Switch : HAEntity
 {
+  // const EntityType __domain = EntityType::Switch;
   // Toggle
   // Toggles a switch on/off.
   class toggle_args
@@ -1709,6 +1821,7 @@ class Switch : HAEntity
 
 class System_log : HAEntity
 {
+  // const EntityType __domain = EntityType::System_log;
   // Clear all
   // Clears all log entries.
   class clear_args
@@ -1731,6 +1844,7 @@ class System_log : HAEntity
 
 class Text : HAEntity
 {
+  // const EntityType __domain = EntityType::Text;
   // Set value
   // Sets the value.
   class set_value_args
@@ -1744,6 +1858,7 @@ class Text : HAEntity
 
 class Time : HAEntity
 {
+  // const EntityType __domain = EntityType::Time;
   // Set Time
   // Sets the time.
   class set_value_args
@@ -1757,6 +1872,7 @@ class Time : HAEntity
 
 class Timer : HAEntity
 {
+  // const EntityType __domain = EntityType::Timer;
   // Cancel
   // Cancels a timer.
   class cancel_args
@@ -1806,6 +1922,7 @@ class Timer : HAEntity
 
 class Todo : HAEntity
 {
+  // const EntityType __domain = EntityType::Todo;
   // Add to-do list item
   // Add a new to-do list item.
   class add_item_args
@@ -1858,6 +1975,7 @@ class Todo : HAEntity
 
 class Tts : HAEntity
 {
+  // const EntityType __domain = EntityType::Tts;
   // Clear TTS cache
   // Removes all cached text-to-speech files and purges the memory.
   class clear_cache_args
@@ -1894,6 +2012,7 @@ class Tts : HAEntity
 
 class Update : HAEntity
 {
+  // const EntityType __domain = EntityType::Update;
   // Clear skipped update
   // Removes the skipped version marker from an update.
   class clear_skipped_args
@@ -1922,6 +2041,7 @@ class Update : HAEntity
 
 class Vacuum : HAEntity
 {
+  // const EntityType __domain = EntityType::Vacuum;
   // Clean spot
   // Tells the vacuum cleaner to do a spot clean-up.
   class clean_spot_args
@@ -2014,6 +2134,7 @@ class Vacuum : HAEntity
 
 class Water_heater : HAEntity
 {
+  // const EntityType __domain = EntityType::Water_heater;
   // Set away mode
   // Turns away mode on/off.
   class set_away_mode_args
@@ -2058,6 +2179,7 @@ class Water_heater : HAEntity
 
 class Weather : HAEntity
 {
+  // const EntityType __domain = EntityType::Weather;
   // Get forecast
   // Get weather forecast.
   class get_forecast_args
@@ -2079,6 +2201,7 @@ class Weather : HAEntity
 
 class Zone : HAEntity
 {
+  // const EntityType __domain = EntityType::Zone;
   // Reload
   // Reloads zones from the YAML-configuration.
   class reload_args
