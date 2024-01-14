@@ -3,6 +3,7 @@
 #include <thread>
 #include "Backend.hpp"
 #include "HAEntity.hpp"
+#include "generated/domains.hpp"
 #include "main.hpp"
 
 using std::cerr;
