@@ -44,6 +44,8 @@ private:
   json state;
 };
 
+class HABackend; // so we can have a pointer to it
+
 class HAEntity
 {
 public:
@@ -51,8 +53,8 @@ public:
   string domain;
   string id;
 
-  HAEntity(json _state);
-  HAEntity(json _state, std::shared_ptr<HADomain> hadomain);
+  // HAEntity(json _state);
+  HAEntity(json _state, std::shared_ptr<HADomain> _hadomain, HABackend* _backend);
   ~HAEntity(){};
   std::vector<std::shared_ptr<HAService>> getServices();
   void update(json _state); // FIXME: we're assuming that the domain stays the same.
@@ -90,6 +92,9 @@ public:
     // ret<<""
     return ret.str();
   }
+
+protected:
+  HABackend* backend;
 
 private:
   std::shared_ptr<HADomain> hadomain;

@@ -3,12 +3,12 @@
 using std::cerr;
 using std::endl;
 
-HAEntity::HAEntity(json _state)
-{
-  HAEntity(_state, nullptr);
-}
+// HAEntity::HAEntity(json _state)
+// {
+//   HAEntity(_state, nullptr);
+// }
 
-HAEntity::HAEntity(json _state, std::shared_ptr<HADomain> _hadomain)
+HAEntity::HAEntity(json _state, std::shared_ptr<HADomain> _hadomain, HABackend* _backend)
 {
   state = _state;
 
@@ -16,6 +16,7 @@ HAEntity::HAEntity(json _state, std::shared_ptr<HADomain> _hadomain)
   name = getNameFromState();
   domain = getDomainFromState();
   hadomain = _hadomain;
+  backend = _backend;
 }
 
 void HAEntity::update(json _state)
