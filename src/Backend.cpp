@@ -135,7 +135,7 @@ void HABackend::threadrunner()
           auto domain = entity_id.substr(0, pos);
 
           // FIXME: we should check if the domain actually exists before just calling for it.
-          entities[entity_id] = std::make_shared<HAEntity>(evd, domains[domain]);
+          entities[entity_id] = std::make_shared<HAEntity>(evd, domains[domain], this); // FIXME: we share `this` entirely unprotected from threading mistakes here
           whatchanged.push_back(entity_id);
         }
         std::unique_lock<std::mutex> lck(load_lock);
