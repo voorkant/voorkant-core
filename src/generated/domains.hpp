@@ -77,8 +77,12 @@ namespace HADomains
 
 // START HEADER FOR Alarm_control_panel
 
-class Alarm_control_panel : HAEntity
+class Alarm_control_panel
 {
+public:
+  Alarm_control_panel(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Alarm_control_panel;
   // Arm away
   // Sets the alarm to: _armed, no one home_.
@@ -93,12 +97,12 @@ class Alarm_control_panel : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_arm_away";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.code) {
       cmd["service_data"]["code"] = *args.code;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Arm with custom bypass
@@ -114,12 +118,12 @@ class Alarm_control_panel : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_arm_custom_bypass";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.code) {
       cmd["service_data"]["code"] = *args.code;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Arm home
@@ -135,12 +139,12 @@ class Alarm_control_panel : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_arm_home";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.code) {
       cmd["service_data"]["code"] = *args.code;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Arm night
@@ -156,12 +160,12 @@ class Alarm_control_panel : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_arm_night";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.code) {
       cmd["service_data"]["code"] = *args.code;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Arm vacation
@@ -177,12 +181,12 @@ class Alarm_control_panel : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_arm_vacation";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.code) {
       cmd["service_data"]["code"] = *args.code;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Disarm
@@ -198,12 +202,12 @@ class Alarm_control_panel : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_disarm";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.code) {
       cmd["service_data"]["code"] = *args.code;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Trigger
@@ -219,19 +223,26 @@ class Alarm_control_panel : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_trigger";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.code) {
       cmd["service_data"]["code"] = *args.code;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Automation
 
-class Automation : HAEntity
+class Automation
 {
+public:
+  Automation(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Automation;
   // Reload
   // Reloads the automation configuration.
@@ -245,9 +256,9 @@ class Automation : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "automation";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Toggle
@@ -262,9 +273,9 @@ class Automation : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "automation";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Trigger
@@ -280,12 +291,12 @@ class Automation : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "automation";
     cmd["service"] = "trigger";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.skip_condition) {
       cmd["service_data"]["skip_condition"] = *args.skip_condition;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -301,12 +312,12 @@ class Automation : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "automation";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.stop_actions) {
       cmd["service_data"]["stop_actions"] = *args.stop_actions;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -321,16 +332,23 @@ class Automation : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "automation";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Backup
 
-class Backup : HAEntity
+class Backup
 {
+public:
+  Backup(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Backup;
   // Create backup
   // Creates a new backup.
@@ -344,16 +362,23 @@ class Backup : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "backup";
     cmd["service"] = "create";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Button
 
-class Button : HAEntity
+class Button
 {
+public:
+  Button(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Button;
   // Press
   // Press the button entity.
@@ -367,16 +392,23 @@ class Button : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "button";
     cmd["service"] = "press";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Calendar
 
-class Calendar : HAEntity
+class Calendar
 {
+public:
+  Calendar(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Calendar;
   // Create event
   // Adds a new calendar event.
@@ -398,7 +430,7 @@ class Calendar : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "calendar";
     cmd["service"] = "create_event";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.description) {
       cmd["service_data"]["description"] = *args.description;
     }
@@ -424,7 +456,7 @@ class Calendar : HAEntity
       cmd["service_data"]["summary"] = *args.summary;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Get events
@@ -442,7 +474,7 @@ class Calendar : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "calendar";
     cmd["service"] = "get_events";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.duration) {
       cmd["service_data"]["duration"] = *args.duration;
     }
@@ -453,7 +485,7 @@ class Calendar : HAEntity
       cmd["service_data"]["start_date_time"] = *args.start_date_time;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // List event
@@ -471,7 +503,7 @@ class Calendar : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "calendar";
     cmd["service"] = "list_events";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.duration) {
       cmd["service_data"]["duration"] = *args.duration;
     }
@@ -482,14 +514,21 @@ class Calendar : HAEntity
       cmd["service_data"]["start_date_time"] = *args.start_date_time;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Camera
 
-class Camera : HAEntity
+class Camera
 {
+public:
+  Camera(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Camera;
   // Disable motion detection
   // Disables the motion detection.
@@ -503,9 +542,9 @@ class Camera : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "camera";
     cmd["service"] = "disable_motion_detection";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Enable motion detection
@@ -520,9 +559,9 @@ class Camera : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "camera";
     cmd["service"] = "enable_motion_detection";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Play stream
@@ -539,7 +578,7 @@ class Camera : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "camera";
     cmd["service"] = "play_stream";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.format) {
       cmd["service_data"]["format"] = *args.format;
     }
@@ -547,7 +586,7 @@ class Camera : HAEntity
       cmd["service_data"]["media_player"] = *args.media_player;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Record
@@ -565,7 +604,7 @@ class Camera : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "camera";
     cmd["service"] = "record";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.duration) {
       cmd["service_data"]["duration"] = *args.duration;
     }
@@ -576,7 +615,7 @@ class Camera : HAEntity
       cmd["service_data"]["lookback"] = *args.lookback;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Take snapshot
@@ -592,12 +631,12 @@ class Camera : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "camera";
     cmd["service"] = "snapshot";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.filename) {
       cmd["service_data"]["filename"] = *args.filename;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -612,9 +651,9 @@ class Camera : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "camera";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -629,16 +668,23 @@ class Camera : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "camera";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Climate
 
-class Climate : HAEntity
+class Climate
 {
+public:
+  Climate(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Climate;
   // Turn on/off auxiliary heater
   // Turns auxiliary heater on/off.
@@ -653,12 +699,12 @@ class Climate : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "climate";
     cmd["service"] = "set_aux_heat";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.aux_heat) {
       cmd["service_data"]["aux_heat"] = *args.aux_heat;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set fan mode
@@ -674,12 +720,12 @@ class Climate : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "climate";
     cmd["service"] = "set_fan_mode";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.fan_mode) {
       cmd["service_data"]["fan_mode"] = *args.fan_mode;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set target humidity
@@ -695,12 +741,12 @@ class Climate : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "climate";
     cmd["service"] = "set_humidity";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.humidity) {
       cmd["service_data"]["humidity"] = *args.humidity;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set HVAC mode
@@ -716,12 +762,12 @@ class Climate : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "climate";
     cmd["service"] = "set_hvac_mode";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.hvac_mode) {
       cmd["service_data"]["hvac_mode"] = *args.hvac_mode;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set preset mode
@@ -737,12 +783,12 @@ class Climate : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "climate";
     cmd["service"] = "set_preset_mode";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.preset_mode) {
       cmd["service_data"]["preset_mode"] = *args.preset_mode;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set swing mode
@@ -758,12 +804,12 @@ class Climate : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "climate";
     cmd["service"] = "set_swing_mode";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.swing_mode) {
       cmd["service_data"]["swing_mode"] = *args.swing_mode;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set target temperature
@@ -782,7 +828,7 @@ class Climate : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "climate";
     cmd["service"] = "set_temperature";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.hvac_mode) {
       cmd["service_data"]["hvac_mode"] = *args.hvac_mode;
     }
@@ -796,7 +842,7 @@ class Climate : HAEntity
       cmd["service_data"]["temperature"] = *args.temperature;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -811,9 +857,9 @@ class Climate : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "climate";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -828,16 +874,23 @@ class Climate : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "climate";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Cloud
 
-class Cloud : HAEntity
+class Cloud
 {
+public:
+  Cloud(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Cloud;
   // Remote connect
   // Makes the instance UI accessible from outside of the local network by using Home Assistant Cloud.
@@ -851,9 +904,9 @@ class Cloud : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cloud";
     cmd["service"] = "remote_connect";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Remote disconnect
@@ -868,16 +921,23 @@ class Cloud : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cloud";
     cmd["service"] = "remote_disconnect";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Conversation
 
-class Conversation : HAEntity
+class Conversation
 {
+public:
+  Conversation(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Conversation;
   // Process
   // Launches a conversation from a transcribed text.
@@ -894,7 +954,7 @@ class Conversation : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "conversation";
     cmd["service"] = "process";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.agent_id) {
       cmd["service_data"]["agent_id"] = *args.agent_id;
     }
@@ -905,7 +965,7 @@ class Conversation : HAEntity
       cmd["service_data"]["text"] = *args.text;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Reload
@@ -922,7 +982,7 @@ class Conversation : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "conversation";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.agent_id) {
       cmd["service_data"]["agent_id"] = *args.agent_id;
     }
@@ -930,14 +990,21 @@ class Conversation : HAEntity
       cmd["service_data"]["language"] = *args.language;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Counter
 
-class Counter : HAEntity
+class Counter
 {
+public:
+  Counter(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Counter;
   // Decrement
   // Decrements a counter.
@@ -951,9 +1018,9 @@ class Counter : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "counter";
     cmd["service"] = "decrement";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Increment
@@ -968,9 +1035,9 @@ class Counter : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "counter";
     cmd["service"] = "increment";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Reset
@@ -985,9 +1052,9 @@ class Counter : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "counter";
     cmd["service"] = "reset";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set
@@ -1003,19 +1070,26 @@ class Counter : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "counter";
     cmd["service"] = "set_value";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.value) {
       cmd["service_data"]["value"] = *args.value;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Cover
 
-class Cover : HAEntity
+class Cover
 {
+public:
+  Cover(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Cover;
   // Close
   // Closes a cover.
@@ -1029,9 +1103,9 @@ class Cover : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cover";
     cmd["service"] = "close_cover";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Close tilt
@@ -1046,9 +1120,9 @@ class Cover : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cover";
     cmd["service"] = "close_cover_tilt";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Open
@@ -1063,9 +1137,9 @@ class Cover : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cover";
     cmd["service"] = "open_cover";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Open tilt
@@ -1080,9 +1154,9 @@ class Cover : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cover";
     cmd["service"] = "open_cover_tilt";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set position
@@ -1098,12 +1172,12 @@ class Cover : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cover";
     cmd["service"] = "set_cover_position";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.position) {
       cmd["service_data"]["position"] = *args.position;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set tilt position
@@ -1119,12 +1193,12 @@ class Cover : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cover";
     cmd["service"] = "set_cover_tilt_position";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.tilt_position) {
       cmd["service_data"]["tilt_position"] = *args.tilt_position;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Stop
@@ -1139,9 +1213,9 @@ class Cover : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cover";
     cmd["service"] = "stop_cover";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Stop tilt
@@ -1156,9 +1230,9 @@ class Cover : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cover";
     cmd["service"] = "stop_cover_tilt";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Toggle
@@ -1173,9 +1247,9 @@ class Cover : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cover";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Toggle tilt
@@ -1190,16 +1264,23 @@ class Cover : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "cover";
     cmd["service"] = "toggle_cover_tilt";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Date
 
-class Date : HAEntity
+class Date
 {
+public:
+  Date(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Date;
   // Set date
   // Sets the date.
@@ -1214,19 +1295,26 @@ class Date : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "date";
     cmd["service"] = "set_value";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.date) {
       cmd["service_data"]["date"] = *args.date;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Datetime
 
-class Datetime : HAEntity
+class Datetime
 {
+public:
+  Datetime(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Datetime;
   // Set date/time
   // Sets the date/time for a datetime entity.
@@ -1241,19 +1329,26 @@ class Datetime : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "datetime";
     cmd["service"] = "set_value";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.datetime) {
       cmd["service_data"]["datetime"] = *args.datetime;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Demo
 
-class Demo : HAEntity
+class Demo
 {
+public:
+  Demo(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Demo;
   // Randomize device tracker data
   // Demonstrates using a device tracker to see where devices are located.
@@ -1267,16 +1362,23 @@ class Demo : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "demo";
     cmd["service"] = "randomize_device_tracker_data";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Device_tracker
 
-class Device_tracker : HAEntity
+class Device_tracker
 {
+public:
+  Device_tracker(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Device_tracker;
   // See
   // Records a seen tracked device.
@@ -1297,7 +1399,7 @@ class Device_tracker : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "device_tracker";
     cmd["service"] = "see";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.battery) {
       cmd["service_data"]["battery"] = *args.battery;
     }
@@ -1320,14 +1422,21 @@ class Device_tracker : HAEntity
       cmd["service_data"]["mac"] = *args.mac;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Fan
 
-class Fan : HAEntity
+class Fan
 {
+public:
+  Fan(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Fan;
   // Decrease speed
   // Decreases the speed of the fan.
@@ -1342,12 +1451,12 @@ class Fan : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "fan";
     cmd["service"] = "decrease_speed";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.percentage_step) {
       cmd["service_data"]["percentage_step"] = *args.percentage_step;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Increase speed
@@ -1363,12 +1472,12 @@ class Fan : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "fan";
     cmd["service"] = "increase_speed";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.percentage_step) {
       cmd["service_data"]["percentage_step"] = *args.percentage_step;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Oscillate
@@ -1384,12 +1493,12 @@ class Fan : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "fan";
     cmd["service"] = "oscillate";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.oscillating) {
       cmd["service_data"]["oscillating"] = *args.oscillating;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set direction
@@ -1405,12 +1514,12 @@ class Fan : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "fan";
     cmd["service"] = "set_direction";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.direction) {
       cmd["service_data"]["direction"] = *args.direction;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set speed
@@ -1426,12 +1535,12 @@ class Fan : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "fan";
     cmd["service"] = "set_percentage";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.percentage) {
       cmd["service_data"]["percentage"] = *args.percentage;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set preset mode
@@ -1447,12 +1556,12 @@ class Fan : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "fan";
     cmd["service"] = "set_preset_mode";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.preset_mode) {
       cmd["service_data"]["preset_mode"] = *args.preset_mode;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Toggle
@@ -1467,9 +1576,9 @@ class Fan : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "fan";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -1484,9 +1593,9 @@ class Fan : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "fan";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -1503,7 +1612,7 @@ class Fan : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "fan";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.percentage) {
       cmd["service_data"]["percentage"] = *args.percentage;
     }
@@ -1511,14 +1620,21 @@ class Fan : HAEntity
       cmd["service_data"]["preset_mode"] = *args.preset_mode;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Ffmpeg
 
-class Ffmpeg : HAEntity
+class Ffmpeg
 {
+public:
+  Ffmpeg(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Ffmpeg;
   // Restart
   // Sends a restart command to a ffmpeg based sensor.
@@ -1533,12 +1649,12 @@ class Ffmpeg : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "ffmpeg";
     cmd["service"] = "restart";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.entity_id) {
       cmd["service_data"]["entity_id"] = *args.entity_id;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Start
@@ -1554,12 +1670,12 @@ class Ffmpeg : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "ffmpeg";
     cmd["service"] = "start";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.entity_id) {
       cmd["service_data"]["entity_id"] = *args.entity_id;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Stop
@@ -1575,19 +1691,26 @@ class Ffmpeg : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "ffmpeg";
     cmd["service"] = "stop";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.entity_id) {
       cmd["service_data"]["entity_id"] = *args.entity_id;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Frontend
 
-class Frontend : HAEntity
+class Frontend
 {
+public:
+  Frontend(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Frontend;
   // Reload themes
   // Reloads themes from the YAML-configuration.
@@ -1601,9 +1724,9 @@ class Frontend : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "frontend";
     cmd["service"] = "reload_themes";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set the default theme
@@ -1620,7 +1743,7 @@ class Frontend : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "frontend";
     cmd["service"] = "set_theme";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.mode) {
       cmd["service_data"]["mode"] = *args.mode;
     }
@@ -1628,14 +1751,21 @@ class Frontend : HAEntity
       cmd["service_data"]["name"] = *args.name;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Group
 
-class Group : HAEntity
+class Group
 {
+public:
+  Group(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Group;
   // Reload
   // Reloads group configuration, entities, and notify services from YAML-configuration.
@@ -1649,9 +1779,9 @@ class Group : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "group";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Remove
@@ -1667,12 +1797,12 @@ class Group : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "group";
     cmd["service"] = "remove";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.object_id) {
       cmd["service_data"]["object_id"] = *args.object_id;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set
@@ -1694,7 +1824,7 @@ class Group : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "group";
     cmd["service"] = "set";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.add_entities) {
       cmd["service_data"]["add_entities"] = *args.add_entities;
     }
@@ -1717,14 +1847,21 @@ class Group : HAEntity
       cmd["service_data"]["remove_entities"] = *args.remove_entities;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Homeassistant
 
-class Homeassistant : HAEntity
+class Homeassistant
 {
+public:
+  Homeassistant(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Homeassistant;
   // Check configuration
   // Checks the Home Assistant YAML-configuration files for errors. Errors will be shown in the Home Assistant logs.
@@ -1738,9 +1875,9 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "check_config";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Reload all
@@ -1755,9 +1892,9 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "reload_all";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Reload config entry
@@ -1773,12 +1910,12 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "reload_config_entry";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.entry_id) {
       cmd["service_data"]["entry_id"] = *args.entry_id;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Reload core configuration
@@ -1793,9 +1930,9 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "reload_core_config";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Reload custom Jinja2 templates
@@ -1810,9 +1947,9 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "reload_custom_templates";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Restart
@@ -1827,9 +1964,9 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "restart";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Save persistent states
@@ -1844,9 +1981,9 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "save_persistent_states";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set location
@@ -1864,7 +2001,7 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "set_location";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.elevation) {
       cmd["service_data"]["elevation"] = *args.elevation;
     }
@@ -1875,7 +2012,7 @@ class Homeassistant : HAEntity
       cmd["service_data"]["longitude"] = *args.longitude;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Stop
@@ -1890,9 +2027,9 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "stop";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Generic toggle
@@ -1907,9 +2044,9 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Generic turn off
@@ -1924,9 +2061,9 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Generic turn on
@@ -1941,9 +2078,9 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Update entity
@@ -1958,16 +2095,23 @@ class Homeassistant : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "homeassistant";
     cmd["service"] = "update_entity";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Humidifier
 
-class Humidifier : HAEntity
+class Humidifier
 {
+public:
+  Humidifier(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Humidifier;
   // Set humidity
   // Sets the target humidity.
@@ -1982,12 +2126,12 @@ class Humidifier : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "humidifier";
     cmd["service"] = "set_humidity";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.humidity) {
       cmd["service_data"]["humidity"] = *args.humidity;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set mode
@@ -2003,12 +2147,12 @@ class Humidifier : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "humidifier";
     cmd["service"] = "set_mode";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.mode) {
       cmd["service_data"]["mode"] = *args.mode;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Toggle
@@ -2023,9 +2167,9 @@ class Humidifier : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "humidifier";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -2040,9 +2184,9 @@ class Humidifier : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "humidifier";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -2057,16 +2201,23 @@ class Humidifier : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "humidifier";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Image_processing
 
-class Image_processing : HAEntity
+class Image_processing
 {
+public:
+  Image_processing(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Image_processing;
   // Scan
   // Processes an image immediately.
@@ -2080,16 +2231,23 @@ class Image_processing : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "image_processing";
     cmd["service"] = "scan";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Input_boolean
 
-class Input_boolean : HAEntity
+class Input_boolean
 {
+public:
+  Input_boolean(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Input_boolean;
   // Reload
   // Reloads helpers from the YAML-configuration.
@@ -2103,9 +2261,9 @@ class Input_boolean : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_boolean";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Toggle
@@ -2120,9 +2278,9 @@ class Input_boolean : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_boolean";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -2137,9 +2295,9 @@ class Input_boolean : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_boolean";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -2154,16 +2312,23 @@ class Input_boolean : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_boolean";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Input_button
 
-class Input_button : HAEntity
+class Input_button
 {
+public:
+  Input_button(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Input_button;
   // Press
   // Mimics the physical button press on the device.
@@ -2177,9 +2342,9 @@ class Input_button : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_button";
     cmd["service"] = "press";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Reload
@@ -2194,16 +2359,23 @@ class Input_button : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_button";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Input_datetime
 
-class Input_datetime : HAEntity
+class Input_datetime
 {
+public:
+  Input_datetime(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Input_datetime;
   // Reload
   // Reloads helpers from the YAML-configuration.
@@ -2217,9 +2389,9 @@ class Input_datetime : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_datetime";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set
@@ -2238,7 +2410,7 @@ class Input_datetime : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_datetime";
     cmd["service"] = "set_datetime";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.date) {
       cmd["service_data"]["date"] = *args.date;
     }
@@ -2252,14 +2424,21 @@ class Input_datetime : HAEntity
       cmd["service_data"]["timestamp"] = *args.timestamp;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Input_number
 
-class Input_number : HAEntity
+class Input_number
 {
+public:
+  Input_number(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Input_number;
   // Decrement
   // Decrements the current value by 1 step.
@@ -2273,9 +2452,9 @@ class Input_number : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_number";
     cmd["service"] = "decrement";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Increment
@@ -2290,9 +2469,9 @@ class Input_number : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_number";
     cmd["service"] = "increment";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Reload
@@ -2307,9 +2486,9 @@ class Input_number : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_number";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set
@@ -2325,19 +2504,26 @@ class Input_number : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_number";
     cmd["service"] = "set_value";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.value) {
       cmd["service_data"]["value"] = *args.value;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Input_select
 
-class Input_select : HAEntity
+class Input_select
 {
+public:
+  Input_select(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Input_select;
   // Reload
   // Reloads helpers from the YAML-configuration.
@@ -2351,9 +2537,9 @@ class Input_select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_select";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // First
@@ -2368,9 +2554,9 @@ class Input_select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_select";
     cmd["service"] = "select_first";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Last
@@ -2385,9 +2571,9 @@ class Input_select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_select";
     cmd["service"] = "select_last";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Next
@@ -2403,12 +2589,12 @@ class Input_select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_select";
     cmd["service"] = "select_next";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.cycle) {
       cmd["service_data"]["cycle"] = *args.cycle;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Select
@@ -2424,12 +2610,12 @@ class Input_select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_select";
     cmd["service"] = "select_option";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.option) {
       cmd["service_data"]["option"] = *args.option;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Previous
@@ -2445,12 +2631,12 @@ class Input_select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_select";
     cmd["service"] = "select_previous";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.cycle) {
       cmd["service_data"]["cycle"] = *args.cycle;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set options
@@ -2466,19 +2652,26 @@ class Input_select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_select";
     cmd["service"] = "set_options";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.options) {
       cmd["service_data"]["options"] = *args.options;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Input_text
 
-class Input_text : HAEntity
+class Input_text
 {
+public:
+  Input_text(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Input_text;
   // Reload
   // Reloads helpers from the YAML-configuration.
@@ -2492,9 +2685,9 @@ class Input_text : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_text";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set
@@ -2510,19 +2703,26 @@ class Input_text : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "input_text";
     cmd["service"] = "set_value";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.value) {
       cmd["service_data"]["value"] = *args.value;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Light
 
-class Light : HAEntity
+class Light
 {
+public:
+  Light(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Light;
   // Toggle
   // Toggles one or more lights, from on to off, or, off to on, based on their current state.
@@ -2549,7 +2749,7 @@ class Light : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "light";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.brightness) {
       cmd["service_data"]["brightness"] = *args.brightness;
     }
@@ -2590,7 +2790,7 @@ class Light : HAEntity
       cmd["service_data"]["xy_color"] = *args.xy_color;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -2607,7 +2807,7 @@ class Light : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "light";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.flash) {
       cmd["service_data"]["flash"] = *args.flash;
     }
@@ -2615,7 +2815,7 @@ class Light : HAEntity
       cmd["service_data"]["transition"] = *args.transition;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -2647,7 +2847,7 @@ class Light : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "light";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.brightness) {
       cmd["service_data"]["brightness"] = *args.brightness;
     }
@@ -2700,14 +2900,21 @@ class Light : HAEntity
       cmd["service_data"]["xy_color"] = *args.xy_color;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Lock
 
-class Lock : HAEntity
+class Lock
 {
+public:
+  Lock(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Lock;
   // Lock
   // Locks a lock.
@@ -2722,12 +2929,12 @@ class Lock : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "lock";
     cmd["service"] = "lock";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.code) {
       cmd["service_data"]["code"] = *args.code;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Open
@@ -2743,12 +2950,12 @@ class Lock : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "lock";
     cmd["service"] = "open";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.code) {
       cmd["service_data"]["code"] = *args.code;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Unlock
@@ -2764,19 +2971,26 @@ class Lock : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "lock";
     cmd["service"] = "unlock";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.code) {
       cmd["service_data"]["code"] = *args.code;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Logbook
 
-class Logbook : HAEntity
+class Logbook
 {
+public:
+  Logbook(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Logbook;
   // Log
   // Creates a custom entry in the logbook.
@@ -2794,7 +3008,7 @@ class Logbook : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "logbook";
     cmd["service"] = "log";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.domain) {
       cmd["service_data"]["domain"] = *args.domain;
     }
@@ -2808,14 +3022,21 @@ class Logbook : HAEntity
       cmd["service_data"]["name"] = *args.name;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Logger
 
-class Logger : HAEntity
+class Logger
 {
+public:
+  Logger(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Logger;
   // Set default level
   // Sets the default log level for integrations.
@@ -2830,12 +3051,12 @@ class Logger : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "logger";
     cmd["service"] = "set_default_level";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.level) {
       cmd["service_data"]["level"] = *args.level;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set level
@@ -2850,16 +3071,23 @@ class Logger : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "logger";
     cmd["service"] = "set_level";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Media_player
 
-class Media_player : HAEntity
+class Media_player
 {
+public:
+  Media_player(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Media_player;
   // Clear playlist
   // Clears the playlist.
@@ -2873,9 +3101,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "clear_playlist";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Join
@@ -2891,12 +3119,12 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "join";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.group_members) {
       cmd["service_data"]["group_members"] = *args.group_members;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Next
@@ -2911,9 +3139,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "media_next_track";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Pause
@@ -2928,9 +3156,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "media_pause";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Play
@@ -2945,9 +3173,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "media_play";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Play/Pause
@@ -2962,9 +3190,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "media_play_pause";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Previous
@@ -2979,9 +3207,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "media_previous_track";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Seek
@@ -2997,12 +3225,12 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "media_seek";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.seek_position) {
       cmd["service_data"]["seek_position"] = *args.seek_position;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Stop
@@ -3017,9 +3245,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "media_stop";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Play media
@@ -3038,7 +3266,7 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "play_media";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.announce) {
       cmd["service_data"]["announce"] = *args.announce;
     }
@@ -3052,7 +3280,7 @@ class Media_player : HAEntity
       cmd["service_data"]["media_content_type"] = *args.media_content_type;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Repeat
@@ -3068,12 +3296,12 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "repeat_set";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.repeat) {
       cmd["service_data"]["repeat"] = *args.repeat;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Select sound mode
@@ -3089,12 +3317,12 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "select_sound_mode";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.sound_mode) {
       cmd["service_data"]["sound_mode"] = *args.sound_mode;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Select source
@@ -3110,12 +3338,12 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "select_source";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.source) {
       cmd["service_data"]["source"] = *args.source;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Shuffle
@@ -3131,12 +3359,12 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "shuffle_set";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.shuffle) {
       cmd["service_data"]["shuffle"] = *args.shuffle;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Toggle
@@ -3151,9 +3379,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -3168,9 +3396,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -3185,9 +3413,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Unjoin
@@ -3202,9 +3430,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "unjoin";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn down volume
@@ -3219,9 +3447,9 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "volume_down";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Mute/unmute volume
@@ -3237,12 +3465,12 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "volume_mute";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.is_volume_muted) {
       cmd["service_data"]["is_volume_muted"] = *args.is_volume_muted;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set volume
@@ -3258,12 +3486,12 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "volume_set";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.volume_level) {
       cmd["service_data"]["volume_level"] = *args.volume_level;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn up volume
@@ -3278,16 +3506,23 @@ class Media_player : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "media_player";
     cmd["service"] = "volume_up";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Notify
 
-class Notify : HAEntity
+class Notify
 {
+public:
+  Notify(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Notify;
   // Send a notification via demo_test_target_name
   // Sends a notification message using the demo_test_target_name integration.
@@ -3305,7 +3540,7 @@ class Notify : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "notify";
     cmd["service"] = "demo_test_target_name";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.data) {
       cmd["service_data"]["data"] = *args.data;
     }
@@ -3319,7 +3554,7 @@ class Notify : HAEntity
       cmd["service_data"]["title"] = *args.title;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Send a notification with notify
@@ -3338,7 +3573,7 @@ class Notify : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "notify";
     cmd["service"] = "notify";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.data) {
       cmd["service_data"]["data"] = *args.data;
     }
@@ -3352,7 +3587,7 @@ class Notify : HAEntity
       cmd["service_data"]["title"] = *args.title;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Send a persistent notification
@@ -3370,7 +3605,7 @@ class Notify : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "notify";
     cmd["service"] = "persistent_notification";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.data) {
       cmd["service_data"]["data"] = *args.data;
     }
@@ -3381,14 +3616,21 @@ class Notify : HAEntity
       cmd["service_data"]["title"] = *args.title;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Number
 
-class Number : HAEntity
+class Number
 {
+public:
+  Number(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Number;
   // Set
   // Sets the value of a number.
@@ -3403,19 +3645,26 @@ class Number : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "number";
     cmd["service"] = "set_value";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.value) {
       cmd["service_data"]["value"] = *args.value;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Persistent_notification
 
-class Persistent_notification : HAEntity
+class Persistent_notification
 {
+public:
+  Persistent_notification(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Persistent_notification;
   // Create
   // Shows a notification on the **Notifications** panel.
@@ -3432,7 +3681,7 @@ class Persistent_notification : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "persistent_notification";
     cmd["service"] = "create";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.message) {
       cmd["service_data"]["message"] = *args.message;
     }
@@ -3443,7 +3692,7 @@ class Persistent_notification : HAEntity
       cmd["service_data"]["title"] = *args.title;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Dismiss
@@ -3459,12 +3708,12 @@ class Persistent_notification : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "persistent_notification";
     cmd["service"] = "dismiss";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.notification_id) {
       cmd["service_data"]["notification_id"] = *args.notification_id;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Dismiss all
@@ -3479,16 +3728,23 @@ class Persistent_notification : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "persistent_notification";
     cmd["service"] = "dismiss_all";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Person
 
-class Person : HAEntity
+class Person
 {
+public:
+  Person(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Person;
   // Reload
   // Reloads persons from the YAML-configuration.
@@ -3502,16 +3758,23 @@ class Person : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "person";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Recorder
 
-class Recorder : HAEntity
+class Recorder
 {
+public:
+  Recorder(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Recorder;
   // Disable
   // Stops the recording of events and state changes.
@@ -3525,9 +3788,9 @@ class Recorder : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "recorder";
     cmd["service"] = "disable";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Enable
@@ -3542,9 +3805,9 @@ class Recorder : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "recorder";
     cmd["service"] = "enable";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Purge
@@ -3562,7 +3825,7 @@ class Recorder : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "recorder";
     cmd["service"] = "purge";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.apply_filter) {
       cmd["service_data"]["apply_filter"] = *args.apply_filter;
     }
@@ -3573,7 +3836,7 @@ class Recorder : HAEntity
       cmd["service_data"]["repack"] = *args.repack;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Purge entities
@@ -3591,7 +3854,7 @@ class Recorder : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "recorder";
     cmd["service"] = "purge_entities";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.domains) {
       cmd["service_data"]["domains"] = *args.domains;
     }
@@ -3602,14 +3865,21 @@ class Recorder : HAEntity
       cmd["service_data"]["keep_days"] = *args.keep_days;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Scene
 
-class Scene : HAEntity
+class Scene
 {
+public:
+  Scene(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Scene;
   // Apply
   // Activates a scene with configuration.
@@ -3625,7 +3895,7 @@ class Scene : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "scene";
     cmd["service"] = "apply";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.entities) {
       cmd["service_data"]["entities"] = *args.entities;
     }
@@ -3633,7 +3903,7 @@ class Scene : HAEntity
       cmd["service_data"]["transition"] = *args.transition;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Create
@@ -3651,7 +3921,7 @@ class Scene : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "scene";
     cmd["service"] = "create";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.entities) {
       cmd["service_data"]["entities"] = *args.entities;
     }
@@ -3662,7 +3932,7 @@ class Scene : HAEntity
       cmd["service_data"]["snapshot_entities"] = *args.snapshot_entities;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Delete
@@ -3677,9 +3947,9 @@ class Scene : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "scene";
     cmd["service"] = "delete";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Reload
@@ -3694,9 +3964,9 @@ class Scene : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "scene";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Activate
@@ -3712,19 +3982,26 @@ class Scene : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "scene";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.transition) {
       cmd["service_data"]["transition"] = *args.transition;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Schedule
 
-class Schedule : HAEntity
+class Schedule
 {
+public:
+  Schedule(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Schedule;
   // Reload
   // Reloads schedules from the YAML-configuration.
@@ -3738,16 +4015,23 @@ class Schedule : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "schedule";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Script
 
-class Script : HAEntity
+class Script
 {
+public:
+  Script(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Script;
   // Reload
   // Reloads all the available scripts.
@@ -3761,9 +4045,9 @@ class Script : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "script";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Toggle
@@ -3778,9 +4062,9 @@ class Script : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "script";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -3795,9 +4079,9 @@ class Script : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "script";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -3812,16 +4096,23 @@ class Script : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "script";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Select
 
-class Select : HAEntity
+class Select
 {
+public:
+  Select(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Select;
   // First
   // Selects the first option.
@@ -3835,9 +4126,9 @@ class Select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "select";
     cmd["service"] = "select_first";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Last
@@ -3852,9 +4143,9 @@ class Select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "select";
     cmd["service"] = "select_last";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Next
@@ -3870,12 +4161,12 @@ class Select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "select";
     cmd["service"] = "select_next";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.cycle) {
       cmd["service_data"]["cycle"] = *args.cycle;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Select
@@ -3891,12 +4182,12 @@ class Select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "select";
     cmd["service"] = "select_option";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.option) {
       cmd["service_data"]["option"] = *args.option;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Previous
@@ -3912,19 +4203,26 @@ class Select : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "select";
     cmd["service"] = "select_previous";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.cycle) {
       cmd["service_data"]["cycle"] = *args.cycle;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Shopping_list
 
-class Shopping_list : HAEntity
+class Shopping_list
 {
+public:
+  Shopping_list(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Shopping_list;
   // Add item
   // Adds an item to the shopping list.
@@ -3939,12 +4237,12 @@ class Shopping_list : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "shopping_list";
     cmd["service"] = "add_item";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.name) {
       cmd["service_data"]["name"] = *args.name;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Clear completed items
@@ -3959,9 +4257,9 @@ class Shopping_list : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "shopping_list";
     cmd["service"] = "clear_completed_items";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Complete all
@@ -3976,9 +4274,9 @@ class Shopping_list : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "shopping_list";
     cmd["service"] = "complete_all";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Complete item
@@ -3994,12 +4292,12 @@ class Shopping_list : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "shopping_list";
     cmd["service"] = "complete_item";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.name) {
       cmd["service_data"]["name"] = *args.name;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Incomplete all
@@ -4014,9 +4312,9 @@ class Shopping_list : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "shopping_list";
     cmd["service"] = "incomplete_all";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Incomplete item
@@ -4032,12 +4330,12 @@ class Shopping_list : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "shopping_list";
     cmd["service"] = "incomplete_item";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.name) {
       cmd["service_data"]["name"] = *args.name;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Remove item
@@ -4053,12 +4351,12 @@ class Shopping_list : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "shopping_list";
     cmd["service"] = "remove_item";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.name) {
       cmd["service_data"]["name"] = *args.name;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Sort all items
@@ -4074,19 +4372,26 @@ class Shopping_list : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "shopping_list";
     cmd["service"] = "sort";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.reverse) {
       cmd["service_data"]["reverse"] = *args.reverse;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Siren
 
-class Siren : HAEntity
+class Siren
 {
+public:
+  Siren(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Siren;
   // Toggle
   // Toggles the siren on/off.
@@ -4100,9 +4405,9 @@ class Siren : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "siren";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -4117,9 +4422,9 @@ class Siren : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "siren";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -4137,7 +4442,7 @@ class Siren : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "siren";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.duration) {
       cmd["service_data"]["duration"] = *args.duration;
     }
@@ -4148,14 +4453,21 @@ class Siren : HAEntity
       cmd["service_data"]["volume_level"] = *args.volume_level;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Switch
 
-class Switch : HAEntity
+class Switch
 {
+public:
+  Switch(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Switch;
   // Toggle
   // Toggles a switch on/off.
@@ -4169,9 +4481,9 @@ class Switch : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "switch";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -4186,9 +4498,9 @@ class Switch : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "switch";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -4203,16 +4515,23 @@ class Switch : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "switch";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR System_log
 
-class System_log : HAEntity
+class System_log
 {
+public:
+  System_log(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::System_log;
   // Clear all
   // Clears all log entries.
@@ -4226,9 +4545,9 @@ class System_log : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "system_log";
     cmd["service"] = "clear";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Write
@@ -4246,7 +4565,7 @@ class System_log : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "system_log";
     cmd["service"] = "write";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.level) {
       cmd["service_data"]["level"] = *args.level;
     }
@@ -4257,14 +4576,21 @@ class System_log : HAEntity
       cmd["service_data"]["message"] = *args.message;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Text
 
-class Text : HAEntity
+class Text
 {
+public:
+  Text(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Text;
   // Set value
   // Sets the value.
@@ -4279,19 +4605,26 @@ class Text : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "text";
     cmd["service"] = "set_value";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.value) {
       cmd["service_data"]["value"] = *args.value;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Time
 
-class Time : HAEntity
+class Time
 {
+public:
+  Time(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Time;
   // Set Time
   // Sets the time.
@@ -4306,19 +4639,26 @@ class Time : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "time";
     cmd["service"] = "set_value";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.time) {
       cmd["service_data"]["time"] = *args.time;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Timer
 
-class Timer : HAEntity
+class Timer
 {
+public:
+  Timer(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Timer;
   // Cancel
   // Cancels a timer.
@@ -4332,9 +4672,9 @@ class Timer : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "timer";
     cmd["service"] = "cancel";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Change
@@ -4350,12 +4690,12 @@ class Timer : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "timer";
     cmd["service"] = "change";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.duration) {
       cmd["service_data"]["duration"] = *args.duration;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Finish
@@ -4370,9 +4710,9 @@ class Timer : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "timer";
     cmd["service"] = "finish";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Pause
@@ -4387,9 +4727,9 @@ class Timer : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "timer";
     cmd["service"] = "pause";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Reload
@@ -4404,9 +4744,9 @@ class Timer : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "timer";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Start
@@ -4422,19 +4762,26 @@ class Timer : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "timer";
     cmd["service"] = "start";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.duration) {
       cmd["service_data"]["duration"] = *args.duration;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Todo
 
-class Todo : HAEntity
+class Todo
 {
+public:
+  Todo(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Todo;
   // Add to-do list item
   // Add a new to-do list item.
@@ -4452,7 +4799,7 @@ class Todo : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "todo";
     cmd["service"] = "add_item";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.description) {
       cmd["service_data"]["description"] = *args.description;
     }
@@ -4466,7 +4813,7 @@ class Todo : HAEntity
       cmd["service_data"]["item"] = *args.item;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Get to-do list items
@@ -4482,12 +4829,12 @@ class Todo : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "todo";
     cmd["service"] = "get_items";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.status) {
       cmd["service_data"]["status"] = *args.status;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Remove all completed to-do list items
@@ -4502,9 +4849,9 @@ class Todo : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "todo";
     cmd["service"] = "remove_completed_items";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Remove a to-do list item
@@ -4520,12 +4867,12 @@ class Todo : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "todo";
     cmd["service"] = "remove_item";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.item) {
       cmd["service_data"]["item"] = *args.item;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Update to-do list item
@@ -4546,7 +4893,7 @@ class Todo : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "todo";
     cmd["service"] = "update_item";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.description) {
       cmd["service_data"]["description"] = *args.description;
     }
@@ -4566,14 +4913,21 @@ class Todo : HAEntity
       cmd["service_data"]["status"] = *args.status;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Tts
 
-class Tts : HAEntity
+class Tts
 {
+public:
+  Tts(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Tts;
   // Clear TTS cache
   // Removes all cached text-to-speech files and purges the memory.
@@ -4587,9 +4941,9 @@ class Tts : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "tts";
     cmd["service"] = "clear_cache";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Say a TTS message with demo
@@ -4609,7 +4963,7 @@ class Tts : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "tts";
     cmd["service"] = "demo_say";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.cache) {
       cmd["service_data"]["cache"] = *args.cache;
     }
@@ -4626,7 +4980,7 @@ class Tts : HAEntity
       cmd["service_data"]["options"] = *args.options;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Speak
@@ -4646,7 +5000,7 @@ class Tts : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "tts";
     cmd["service"] = "speak";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.cache) {
       cmd["service_data"]["cache"] = *args.cache;
     }
@@ -4663,14 +5017,21 @@ class Tts : HAEntity
       cmd["service_data"]["options"] = *args.options;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Update
 
-class Update : HAEntity
+class Update
 {
+public:
+  Update(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Update;
   // Clear skipped update
   // Removes the skipped version marker from an update.
@@ -4684,9 +5045,9 @@ class Update : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "update";
     cmd["service"] = "clear_skipped";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Install update
@@ -4703,7 +5064,7 @@ class Update : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "update";
     cmd["service"] = "install";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.backup) {
       cmd["service_data"]["backup"] = *args.backup;
     }
@@ -4711,7 +5072,7 @@ class Update : HAEntity
       cmd["service_data"]["version"] = *args.version;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Skip update
@@ -4726,16 +5087,23 @@ class Update : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "update";
     cmd["service"] = "skip";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Vacuum
 
-class Vacuum : HAEntity
+class Vacuum
 {
+public:
+  Vacuum(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Vacuum;
   // Clean spot
   // Tells the vacuum cleaner to do a spot clean-up.
@@ -4749,9 +5117,9 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "clean_spot";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Locate
@@ -4766,9 +5134,9 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "locate";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Pause
@@ -4783,9 +5151,9 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "pause";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Return to dock
@@ -4800,9 +5168,9 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "return_to_base";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Send command
@@ -4819,7 +5187,7 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "send_command";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.command) {
       cmd["service_data"]["command"] = *args.command;
     }
@@ -4827,7 +5195,7 @@ class Vacuum : HAEntity
       cmd["service_data"]["params"] = *args.params;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set fan speed
@@ -4843,12 +5211,12 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "set_fan_speed";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.fan_speed) {
       cmd["service_data"]["fan_speed"] = *args.fan_speed;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Start
@@ -4863,9 +5231,9 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "start";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Start/pause
@@ -4880,9 +5248,9 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "start_pause";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Stop
@@ -4897,9 +5265,9 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "stop";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Toggle
@@ -4914,9 +5282,9 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "toggle";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -4931,9 +5299,9 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -4948,16 +5316,23 @@ class Vacuum : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "vacuum";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Water_heater
 
-class Water_heater : HAEntity
+class Water_heater
 {
+public:
+  Water_heater(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Water_heater;
   // Set away mode
   // Turns away mode on/off.
@@ -4972,12 +5347,12 @@ class Water_heater : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "water_heater";
     cmd["service"] = "set_away_mode";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.away_mode) {
       cmd["service_data"]["away_mode"] = *args.away_mode;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set operation mode
@@ -4993,12 +5368,12 @@ class Water_heater : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "water_heater";
     cmd["service"] = "set_operation_mode";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.operation_mode) {
       cmd["service_data"]["operation_mode"] = *args.operation_mode;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Set temperature
@@ -5015,7 +5390,7 @@ class Water_heater : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "water_heater";
     cmd["service"] = "set_temperature";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.operation_mode) {
       cmd["service_data"]["operation_mode"] = *args.operation_mode;
     }
@@ -5023,7 +5398,7 @@ class Water_heater : HAEntity
       cmd["service_data"]["temperature"] = *args.temperature;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn off
@@ -5038,9 +5413,9 @@ class Water_heater : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "water_heater";
     cmd["service"] = "turn_off";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Turn on
@@ -5055,16 +5430,23 @@ class Water_heater : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "water_heater";
     cmd["service"] = "turn_on";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Weather
 
-class Weather : HAEntity
+class Weather
 {
+public:
+  Weather(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Weather;
   // Get forecast
   // Get weather forecast.
@@ -5079,12 +5461,12 @@ class Weather : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "weather";
     cmd["service"] = "get_forecast";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.type) {
       cmd["service_data"]["type"] = *args.type;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
 
   // Get forecasts
@@ -5100,19 +5482,26 @@ class Weather : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "weather";
     cmd["service"] = "get_forecasts";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
     if (args.type) {
       cmd["service_data"]["type"] = *args.type;
     }
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 // START HEADER FOR Zone
 
-class Zone : HAEntity
+class Zone
 {
+public:
+  Zone(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::Zone;
   // Reload
   // Reloads zones from the YAML-configuration.
@@ -5126,10 +5515,13 @@ class Zone : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "zone";
     cmd["service"] = "reload";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
+
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 
 }

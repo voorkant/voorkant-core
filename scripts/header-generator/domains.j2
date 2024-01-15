@@ -24,8 +24,12 @@ namespace HADomains
 {% for domain, services in result.items() %}
 // START HEADER FOR {{ domain | title }}
 
-class {{ domain | title }} : HAEntity
+class {{ domain | title }}
 {
+public:
+  {{ domain | title }}(std::shared_ptr<HAEntity> entity) :
+    entity(entity) {}
+
   // const EntityType __domain = EntityType::{{ domain | title }};
 {%- for name, desc in services.items() %}
   // {{ desc.name }}
@@ -43,7 +47,7 @@ class {{ domain | title }} : HAEntity
     cmd["type"] = "call_service";
     cmd["domain"] = "{{ domain }}";
     cmd["service"] = "{{ name }}";
-    cmd["target"]["entity_id"] = name;
+    cmd["target"]["entity_id"] = entity->id;
 
 {%- for field in desc.fields.keys() %}
     if (args.{{ field }}) {
@@ -51,9 +55,11 @@ class {{ domain | title }} : HAEntity
     }
 {%- endfor %}
 
-    backend->WSConnSend(cmd);
+    entity->WSConnSend(cmd);
   }
-{% endfor -%}
+{% endfor %}
+private:
+  std::shared_ptr<HAEntity> entity;
 };
 {% endfor %}
 }

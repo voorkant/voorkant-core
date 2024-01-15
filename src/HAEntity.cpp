@@ -1,4 +1,5 @@
 #include "HAEntity.hpp"
+#include "Backend.hpp"
 
 using std::cerr;
 using std::endl;
@@ -69,6 +70,11 @@ std::string HAEntity::getNameFromState(void)
   else {
     return "UNKNOWN_" + state["entity_id"].get<string>();
   }
+}
+
+void HAEntity::WSConnSend(json& msg) // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
+{
+  backend->WSConnSend(msg);
 }
 
 HADomain::HADomain(std::string _name, json _state)

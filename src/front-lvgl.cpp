@@ -11,6 +11,8 @@
 #include <utility>
 #include "sdl/sdl.h"
 
+#include <generated/domains.hpp>
+
 using std::string;
 // using std::map;
 
@@ -164,12 +166,10 @@ void uithread(HABackend& backend, int argc, char* argv[])
     if (toggle) {
       json cmd;
 
-      cmd["type"] = "call_service";
-      cmd["domain"] = backend.GetEntityByName(current_light)->domain;
-      cmd["service"] = "toggle";
-      cmd["target"]["entity_id"] = current_light;
+      auto entity = backend.GetEntityByName(current_light);
+      HADomains::Light light(entity);
 
-      backend.WSConnSend(cmd);
+      light.toggle({});
 
       toggle = false;
     }
