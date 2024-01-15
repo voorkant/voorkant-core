@@ -86,7 +86,7 @@ class Alarm_control_panel : HAEntity
   {
     optional<json> code;
   };
-  void alarm_arm_away(const alarm_arm_away_args& args)
+  void alarm_arm_away([[maybe_unused]] const alarm_arm_away_args& args)
   {
     json cmd;
 
@@ -107,7 +107,7 @@ class Alarm_control_panel : HAEntity
   {
     optional<json> code;
   };
-  void alarm_arm_custom_bypass(const alarm_arm_custom_bypass_args& args)
+  void alarm_arm_custom_bypass([[maybe_unused]] const alarm_arm_custom_bypass_args& args)
   {
     json cmd;
 
@@ -128,7 +128,7 @@ class Alarm_control_panel : HAEntity
   {
     optional<json> code;
   };
-  void alarm_arm_home(const alarm_arm_home_args& args)
+  void alarm_arm_home([[maybe_unused]] const alarm_arm_home_args& args)
   {
     json cmd;
 
@@ -149,7 +149,7 @@ class Alarm_control_panel : HAEntity
   {
     optional<json> code;
   };
-  void alarm_arm_night(const alarm_arm_night_args& args)
+  void alarm_arm_night([[maybe_unused]] const alarm_arm_night_args& args)
   {
     json cmd;
 
@@ -170,7 +170,7 @@ class Alarm_control_panel : HAEntity
   {
     optional<json> code;
   };
-  void alarm_arm_vacation(const alarm_arm_vacation_args& args)
+  void alarm_arm_vacation([[maybe_unused]] const alarm_arm_vacation_args& args)
   {
     json cmd;
 
@@ -191,7 +191,7 @@ class Alarm_control_panel : HAEntity
   {
     optional<json> code;
   };
-  void alarm_disarm(const alarm_disarm_args& args)
+  void alarm_disarm([[maybe_unused]] const alarm_disarm_args& args)
   {
     json cmd;
 
@@ -212,7 +212,7 @@ class Alarm_control_panel : HAEntity
   {
     optional<json> code;
   };
-  void alarm_trigger(const alarm_trigger_args& args)
+  void alarm_trigger([[maybe_unused]] const alarm_trigger_args& args)
   {
     json cmd;
 
@@ -238,7 +238,7 @@ class Automation : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -255,7 +255,7 @@ class Automation : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -273,7 +273,7 @@ class Automation : HAEntity
   {
     optional<json> skip_condition;
   };
-  void trigger(const trigger_args& args)
+  void trigger([[maybe_unused]] const trigger_args& args)
   {
     json cmd;
 
@@ -294,7 +294,7 @@ class Automation : HAEntity
   {
     optional<json> stop_actions;
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -314,7 +314,7 @@ class Automation : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -337,7 +337,7 @@ class Backup : HAEntity
   struct create_args
   {
   };
-  void create(const create_args& args)
+  void create([[maybe_unused]] const create_args& args)
   {
     json cmd;
 
@@ -360,7 +360,7 @@ class Button : HAEntity
   struct press_args
   {
   };
-  void press(const press_args& args)
+  void press([[maybe_unused]] const press_args& args)
   {
     json cmd;
 
@@ -391,7 +391,7 @@ class Calendar : HAEntity
     optional<json> start_date_time;
     optional<json> summary;
   };
-  void create_event(const create_event_args& args)
+  void create_event([[maybe_unused]] const create_event_args& args)
   {
     json cmd;
 
@@ -435,7 +435,7 @@ class Calendar : HAEntity
     optional<json> end_date_time;
     optional<json> start_date_time;
   };
-  void get_events(const get_events_args& args)
+  void get_events([[maybe_unused]] const get_events_args& args)
   {
     json cmd;
 
@@ -464,7 +464,7 @@ class Calendar : HAEntity
     optional<json> end_date_time;
     optional<json> start_date_time;
   };
-  void list_events(const list_events_args& args)
+  void list_events([[maybe_unused]] const list_events_args& args)
   {
     json cmd;
 
@@ -496,7 +496,7 @@ class Camera : HAEntity
   struct disable_motion_detection_args
   {
   };
-  void disable_motion_detection(const disable_motion_detection_args& args)
+  void disable_motion_detection([[maybe_unused]] const disable_motion_detection_args& args)
   {
     json cmd;
 
@@ -513,7 +513,7 @@ class Camera : HAEntity
   struct enable_motion_detection_args
   {
   };
-  void enable_motion_detection(const enable_motion_detection_args& args)
+  void enable_motion_detection([[maybe_unused]] const enable_motion_detection_args& args)
   {
     json cmd;
 
@@ -532,7 +532,7 @@ class Camera : HAEntity
     optional<json> format;
     optional<json> media_player;
   };
-  void play_stream(const play_stream_args& args)
+  void play_stream([[maybe_unused]] const play_stream_args& args)
   {
     json cmd;
 
@@ -558,7 +558,7 @@ class Camera : HAEntity
     optional<json> filename;
     optional<json> lookback;
   };
-  void record(const record_args& args)
+  void record([[maybe_unused]] const record_args& args)
   {
     json cmd;
 
@@ -585,7 +585,7 @@ class Camera : HAEntity
   {
     optional<json> filename;
   };
-  void snapshot(const snapshot_args& args)
+  void snapshot([[maybe_unused]] const snapshot_args& args)
   {
     json cmd;
 
@@ -605,7 +605,7 @@ class Camera : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -622,7 +622,7 @@ class Camera : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -646,7 +646,7 @@ class Climate : HAEntity
   {
     optional<json> aux_heat;
   };
-  void set_aux_heat(const set_aux_heat_args& args)
+  void set_aux_heat([[maybe_unused]] const set_aux_heat_args& args)
   {
     json cmd;
 
@@ -667,7 +667,7 @@ class Climate : HAEntity
   {
     optional<json> fan_mode;
   };
-  void set_fan_mode(const set_fan_mode_args& args)
+  void set_fan_mode([[maybe_unused]] const set_fan_mode_args& args)
   {
     json cmd;
 
@@ -688,7 +688,7 @@ class Climate : HAEntity
   {
     optional<json> humidity;
   };
-  void set_humidity(const set_humidity_args& args)
+  void set_humidity([[maybe_unused]] const set_humidity_args& args)
   {
     json cmd;
 
@@ -709,7 +709,7 @@ class Climate : HAEntity
   {
     optional<json> hvac_mode;
   };
-  void set_hvac_mode(const set_hvac_mode_args& args)
+  void set_hvac_mode([[maybe_unused]] const set_hvac_mode_args& args)
   {
     json cmd;
 
@@ -730,7 +730,7 @@ class Climate : HAEntity
   {
     optional<json> preset_mode;
   };
-  void set_preset_mode(const set_preset_mode_args& args)
+  void set_preset_mode([[maybe_unused]] const set_preset_mode_args& args)
   {
     json cmd;
 
@@ -751,7 +751,7 @@ class Climate : HAEntity
   {
     optional<json> swing_mode;
   };
-  void set_swing_mode(const set_swing_mode_args& args)
+  void set_swing_mode([[maybe_unused]] const set_swing_mode_args& args)
   {
     json cmd;
 
@@ -775,7 +775,7 @@ class Climate : HAEntity
     optional<json> target_temp_low;
     optional<json> temperature;
   };
-  void set_temperature(const set_temperature_args& args)
+  void set_temperature([[maybe_unused]] const set_temperature_args& args)
   {
     json cmd;
 
@@ -804,7 +804,7 @@ class Climate : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -821,7 +821,7 @@ class Climate : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -844,7 +844,7 @@ class Cloud : HAEntity
   struct remote_connect_args
   {
   };
-  void remote_connect(const remote_connect_args& args)
+  void remote_connect([[maybe_unused]] const remote_connect_args& args)
   {
     json cmd;
 
@@ -861,7 +861,7 @@ class Cloud : HAEntity
   struct remote_disconnect_args
   {
   };
-  void remote_disconnect(const remote_disconnect_args& args)
+  void remote_disconnect([[maybe_unused]] const remote_disconnect_args& args)
   {
     json cmd;
 
@@ -887,7 +887,7 @@ class Conversation : HAEntity
     optional<json> language;
     optional<json> text;
   };
-  void process(const process_args& args)
+  void process([[maybe_unused]] const process_args& args)
   {
     json cmd;
 
@@ -915,7 +915,7 @@ class Conversation : HAEntity
     optional<json> agent_id;
     optional<json> language;
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -944,7 +944,7 @@ class Counter : HAEntity
   struct decrement_args
   {
   };
-  void decrement(const decrement_args& args)
+  void decrement([[maybe_unused]] const decrement_args& args)
   {
     json cmd;
 
@@ -961,7 +961,7 @@ class Counter : HAEntity
   struct increment_args
   {
   };
-  void increment(const increment_args& args)
+  void increment([[maybe_unused]] const increment_args& args)
   {
     json cmd;
 
@@ -978,7 +978,7 @@ class Counter : HAEntity
   struct reset_args
   {
   };
-  void reset(const reset_args& args)
+  void reset([[maybe_unused]] const reset_args& args)
   {
     json cmd;
 
@@ -996,7 +996,7 @@ class Counter : HAEntity
   {
     optional<json> value;
   };
-  void set_value(const set_value_args& args)
+  void set_value([[maybe_unused]] const set_value_args& args)
   {
     json cmd;
 
@@ -1022,7 +1022,7 @@ class Cover : HAEntity
   struct close_cover_args
   {
   };
-  void close_cover(const close_cover_args& args)
+  void close_cover([[maybe_unused]] const close_cover_args& args)
   {
     json cmd;
 
@@ -1039,7 +1039,7 @@ class Cover : HAEntity
   struct close_cover_tilt_args
   {
   };
-  void close_cover_tilt(const close_cover_tilt_args& args)
+  void close_cover_tilt([[maybe_unused]] const close_cover_tilt_args& args)
   {
     json cmd;
 
@@ -1056,7 +1056,7 @@ class Cover : HAEntity
   struct open_cover_args
   {
   };
-  void open_cover(const open_cover_args& args)
+  void open_cover([[maybe_unused]] const open_cover_args& args)
   {
     json cmd;
 
@@ -1073,7 +1073,7 @@ class Cover : HAEntity
   struct open_cover_tilt_args
   {
   };
-  void open_cover_tilt(const open_cover_tilt_args& args)
+  void open_cover_tilt([[maybe_unused]] const open_cover_tilt_args& args)
   {
     json cmd;
 
@@ -1091,7 +1091,7 @@ class Cover : HAEntity
   {
     optional<json> position;
   };
-  void set_cover_position(const set_cover_position_args& args)
+  void set_cover_position([[maybe_unused]] const set_cover_position_args& args)
   {
     json cmd;
 
@@ -1112,7 +1112,7 @@ class Cover : HAEntity
   {
     optional<json> tilt_position;
   };
-  void set_cover_tilt_position(const set_cover_tilt_position_args& args)
+  void set_cover_tilt_position([[maybe_unused]] const set_cover_tilt_position_args& args)
   {
     json cmd;
 
@@ -1132,7 +1132,7 @@ class Cover : HAEntity
   struct stop_cover_args
   {
   };
-  void stop_cover(const stop_cover_args& args)
+  void stop_cover([[maybe_unused]] const stop_cover_args& args)
   {
     json cmd;
 
@@ -1149,7 +1149,7 @@ class Cover : HAEntity
   struct stop_cover_tilt_args
   {
   };
-  void stop_cover_tilt(const stop_cover_tilt_args& args)
+  void stop_cover_tilt([[maybe_unused]] const stop_cover_tilt_args& args)
   {
     json cmd;
 
@@ -1166,7 +1166,7 @@ class Cover : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -1183,7 +1183,7 @@ class Cover : HAEntity
   struct toggle_cover_tilt_args
   {
   };
-  void toggle_cover_tilt(const toggle_cover_tilt_args& args)
+  void toggle_cover_tilt([[maybe_unused]] const toggle_cover_tilt_args& args)
   {
     json cmd;
 
@@ -1207,7 +1207,7 @@ class Date : HAEntity
   {
     optional<json> date;
   };
-  void set_value(const set_value_args& args)
+  void set_value([[maybe_unused]] const set_value_args& args)
   {
     json cmd;
 
@@ -1234,7 +1234,7 @@ class Datetime : HAEntity
   {
     optional<json> datetime;
   };
-  void set_value(const set_value_args& args)
+  void set_value([[maybe_unused]] const set_value_args& args)
   {
     json cmd;
 
@@ -1260,7 +1260,7 @@ class Demo : HAEntity
   struct randomize_device_tracker_data_args
   {
   };
-  void randomize_device_tracker_data(const randomize_device_tracker_data_args& args)
+  void randomize_device_tracker_data([[maybe_unused]] const randomize_device_tracker_data_args& args)
   {
     json cmd;
 
@@ -1290,7 +1290,7 @@ class Device_tracker : HAEntity
     optional<json> location_name;
     optional<json> mac;
   };
-  void see(const see_args& args)
+  void see([[maybe_unused]] const see_args& args)
   {
     json cmd;
 
@@ -1335,7 +1335,7 @@ class Fan : HAEntity
   {
     optional<json> percentage_step;
   };
-  void decrease_speed(const decrease_speed_args& args)
+  void decrease_speed([[maybe_unused]] const decrease_speed_args& args)
   {
     json cmd;
 
@@ -1356,7 +1356,7 @@ class Fan : HAEntity
   {
     optional<json> percentage_step;
   };
-  void increase_speed(const increase_speed_args& args)
+  void increase_speed([[maybe_unused]] const increase_speed_args& args)
   {
     json cmd;
 
@@ -1377,7 +1377,7 @@ class Fan : HAEntity
   {
     optional<json> oscillating;
   };
-  void oscillate(const oscillate_args& args)
+  void oscillate([[maybe_unused]] const oscillate_args& args)
   {
     json cmd;
 
@@ -1398,7 +1398,7 @@ class Fan : HAEntity
   {
     optional<json> direction;
   };
-  void set_direction(const set_direction_args& args)
+  void set_direction([[maybe_unused]] const set_direction_args& args)
   {
     json cmd;
 
@@ -1419,7 +1419,7 @@ class Fan : HAEntity
   {
     optional<json> percentage;
   };
-  void set_percentage(const set_percentage_args& args)
+  void set_percentage([[maybe_unused]] const set_percentage_args& args)
   {
     json cmd;
 
@@ -1440,7 +1440,7 @@ class Fan : HAEntity
   {
     optional<json> preset_mode;
   };
-  void set_preset_mode(const set_preset_mode_args& args)
+  void set_preset_mode([[maybe_unused]] const set_preset_mode_args& args)
   {
     json cmd;
 
@@ -1460,7 +1460,7 @@ class Fan : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -1477,7 +1477,7 @@ class Fan : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -1496,7 +1496,7 @@ class Fan : HAEntity
     optional<json> percentage;
     optional<json> preset_mode;
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -1526,7 +1526,7 @@ class Ffmpeg : HAEntity
   {
     optional<json> entity_id;
   };
-  void restart(const restart_args& args)
+  void restart([[maybe_unused]] const restart_args& args)
   {
     json cmd;
 
@@ -1547,7 +1547,7 @@ class Ffmpeg : HAEntity
   {
     optional<json> entity_id;
   };
-  void start(const start_args& args)
+  void start([[maybe_unused]] const start_args& args)
   {
     json cmd;
 
@@ -1568,7 +1568,7 @@ class Ffmpeg : HAEntity
   {
     optional<json> entity_id;
   };
-  void stop(const stop_args& args)
+  void stop([[maybe_unused]] const stop_args& args)
   {
     json cmd;
 
@@ -1594,7 +1594,7 @@ class Frontend : HAEntity
   struct reload_themes_args
   {
   };
-  void reload_themes(const reload_themes_args& args)
+  void reload_themes([[maybe_unused]] const reload_themes_args& args)
   {
     json cmd;
 
@@ -1613,7 +1613,7 @@ class Frontend : HAEntity
     optional<json> mode;
     optional<json> name;
   };
-  void set_theme(const set_theme_args& args)
+  void set_theme([[maybe_unused]] const set_theme_args& args)
   {
     json cmd;
 
@@ -1642,7 +1642,7 @@ class Group : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -1660,7 +1660,7 @@ class Group : HAEntity
   {
     optional<json> object_id;
   };
-  void remove(const remove_args& args)
+  void remove([[maybe_unused]] const remove_args& args)
   {
     json cmd;
 
@@ -1687,7 +1687,7 @@ class Group : HAEntity
     optional<json> object_id;
     optional<json> remove_entities;
   };
-  void set(const set_args& args)
+  void set([[maybe_unused]] const set_args& args)
   {
     json cmd;
 
@@ -1731,7 +1731,7 @@ class Homeassistant : HAEntity
   struct check_config_args
   {
   };
-  void check_config(const check_config_args& args)
+  void check_config([[maybe_unused]] const check_config_args& args)
   {
     json cmd;
 
@@ -1748,7 +1748,7 @@ class Homeassistant : HAEntity
   struct reload_all_args
   {
   };
-  void reload_all(const reload_all_args& args)
+  void reload_all([[maybe_unused]] const reload_all_args& args)
   {
     json cmd;
 
@@ -1766,7 +1766,7 @@ class Homeassistant : HAEntity
   {
     optional<json> entry_id;
   };
-  void reload_config_entry(const reload_config_entry_args& args)
+  void reload_config_entry([[maybe_unused]] const reload_config_entry_args& args)
   {
     json cmd;
 
@@ -1786,7 +1786,7 @@ class Homeassistant : HAEntity
   struct reload_core_config_args
   {
   };
-  void reload_core_config(const reload_core_config_args& args)
+  void reload_core_config([[maybe_unused]] const reload_core_config_args& args)
   {
     json cmd;
 
@@ -1803,7 +1803,7 @@ class Homeassistant : HAEntity
   struct reload_custom_templates_args
   {
   };
-  void reload_custom_templates(const reload_custom_templates_args& args)
+  void reload_custom_templates([[maybe_unused]] const reload_custom_templates_args& args)
   {
     json cmd;
 
@@ -1820,7 +1820,7 @@ class Homeassistant : HAEntity
   struct restart_args
   {
   };
-  void restart(const restart_args& args)
+  void restart([[maybe_unused]] const restart_args& args)
   {
     json cmd;
 
@@ -1837,7 +1837,7 @@ class Homeassistant : HAEntity
   struct save_persistent_states_args
   {
   };
-  void save_persistent_states(const save_persistent_states_args& args)
+  void save_persistent_states([[maybe_unused]] const save_persistent_states_args& args)
   {
     json cmd;
 
@@ -1857,7 +1857,7 @@ class Homeassistant : HAEntity
     optional<json> latitude;
     optional<json> longitude;
   };
-  void set_location(const set_location_args& args)
+  void set_location([[maybe_unused]] const set_location_args& args)
   {
     json cmd;
 
@@ -1883,7 +1883,7 @@ class Homeassistant : HAEntity
   struct stop_args
   {
   };
-  void stop(const stop_args& args)
+  void stop([[maybe_unused]] const stop_args& args)
   {
     json cmd;
 
@@ -1900,7 +1900,7 @@ class Homeassistant : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -1917,7 +1917,7 @@ class Homeassistant : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -1934,7 +1934,7 @@ class Homeassistant : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -1951,7 +1951,7 @@ class Homeassistant : HAEntity
   struct update_entity_args
   {
   };
-  void update_entity(const update_entity_args& args)
+  void update_entity([[maybe_unused]] const update_entity_args& args)
   {
     json cmd;
 
@@ -1975,7 +1975,7 @@ class Humidifier : HAEntity
   {
     optional<json> humidity;
   };
-  void set_humidity(const set_humidity_args& args)
+  void set_humidity([[maybe_unused]] const set_humidity_args& args)
   {
     json cmd;
 
@@ -1996,7 +1996,7 @@ class Humidifier : HAEntity
   {
     optional<json> mode;
   };
-  void set_mode(const set_mode_args& args)
+  void set_mode([[maybe_unused]] const set_mode_args& args)
   {
     json cmd;
 
@@ -2016,7 +2016,7 @@ class Humidifier : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -2033,7 +2033,7 @@ class Humidifier : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -2050,7 +2050,7 @@ class Humidifier : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -2073,7 +2073,7 @@ class Image_processing : HAEntity
   struct scan_args
   {
   };
-  void scan(const scan_args& args)
+  void scan([[maybe_unused]] const scan_args& args)
   {
     json cmd;
 
@@ -2096,7 +2096,7 @@ class Input_boolean : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -2113,7 +2113,7 @@ class Input_boolean : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -2130,7 +2130,7 @@ class Input_boolean : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -2147,7 +2147,7 @@ class Input_boolean : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -2170,7 +2170,7 @@ class Input_button : HAEntity
   struct press_args
   {
   };
-  void press(const press_args& args)
+  void press([[maybe_unused]] const press_args& args)
   {
     json cmd;
 
@@ -2187,7 +2187,7 @@ class Input_button : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -2210,7 +2210,7 @@ class Input_datetime : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -2231,7 +2231,7 @@ class Input_datetime : HAEntity
     optional<json> time;
     optional<json> timestamp;
   };
-  void set_datetime(const set_datetime_args& args)
+  void set_datetime([[maybe_unused]] const set_datetime_args& args)
   {
     json cmd;
 
@@ -2266,7 +2266,7 @@ class Input_number : HAEntity
   struct decrement_args
   {
   };
-  void decrement(const decrement_args& args)
+  void decrement([[maybe_unused]] const decrement_args& args)
   {
     json cmd;
 
@@ -2283,7 +2283,7 @@ class Input_number : HAEntity
   struct increment_args
   {
   };
-  void increment(const increment_args& args)
+  void increment([[maybe_unused]] const increment_args& args)
   {
     json cmd;
 
@@ -2300,7 +2300,7 @@ class Input_number : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -2318,7 +2318,7 @@ class Input_number : HAEntity
   {
     optional<json> value;
   };
-  void set_value(const set_value_args& args)
+  void set_value([[maybe_unused]] const set_value_args& args)
   {
     json cmd;
 
@@ -2344,7 +2344,7 @@ class Input_select : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -2361,7 +2361,7 @@ class Input_select : HAEntity
   struct select_first_args
   {
   };
-  void select_first(const select_first_args& args)
+  void select_first([[maybe_unused]] const select_first_args& args)
   {
     json cmd;
 
@@ -2378,7 +2378,7 @@ class Input_select : HAEntity
   struct select_last_args
   {
   };
-  void select_last(const select_last_args& args)
+  void select_last([[maybe_unused]] const select_last_args& args)
   {
     json cmd;
 
@@ -2396,7 +2396,7 @@ class Input_select : HAEntity
   {
     optional<json> cycle;
   };
-  void select_next(const select_next_args& args)
+  void select_next([[maybe_unused]] const select_next_args& args)
   {
     json cmd;
 
@@ -2417,7 +2417,7 @@ class Input_select : HAEntity
   {
     optional<json> option;
   };
-  void select_option(const select_option_args& args)
+  void select_option([[maybe_unused]] const select_option_args& args)
   {
     json cmd;
 
@@ -2438,7 +2438,7 @@ class Input_select : HAEntity
   {
     optional<json> cycle;
   };
-  void select_previous(const select_previous_args& args)
+  void select_previous([[maybe_unused]] const select_previous_args& args)
   {
     json cmd;
 
@@ -2459,7 +2459,7 @@ class Input_select : HAEntity
   {
     optional<json> options;
   };
-  void set_options(const set_options_args& args)
+  void set_options([[maybe_unused]] const set_options_args& args)
   {
     json cmd;
 
@@ -2485,7 +2485,7 @@ class Input_text : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -2503,7 +2503,7 @@ class Input_text : HAEntity
   {
     optional<json> value;
   };
-  void set_value(const set_value_args& args)
+  void set_value([[maybe_unused]] const set_value_args& args)
   {
     json cmd;
 
@@ -2542,7 +2542,7 @@ class Light : HAEntity
     optional<json> white;
     optional<json> xy_color;
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -2600,7 +2600,7 @@ class Light : HAEntity
     optional<json> flash;
     optional<json> transition;
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -2640,7 +2640,7 @@ class Light : HAEntity
     optional<json> white;
     optional<json> xy_color;
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -2715,7 +2715,7 @@ class Lock : HAEntity
   {
     optional<json> code;
   };
-  void lock(const lock_args& args)
+  void lock([[maybe_unused]] const lock_args& args)
   {
     json cmd;
 
@@ -2736,7 +2736,7 @@ class Lock : HAEntity
   {
     optional<json> code;
   };
-  void open(const open_args& args)
+  void open([[maybe_unused]] const open_args& args)
   {
     json cmd;
 
@@ -2757,7 +2757,7 @@ class Lock : HAEntity
   {
     optional<json> code;
   };
-  void unlock(const unlock_args& args)
+  void unlock([[maybe_unused]] const unlock_args& args)
   {
     json cmd;
 
@@ -2787,7 +2787,7 @@ class Logbook : HAEntity
     optional<json> message;
     optional<json> name;
   };
-  void log(const log_args& args)
+  void log([[maybe_unused]] const log_args& args)
   {
     json cmd;
 
@@ -2823,7 +2823,7 @@ class Logger : HAEntity
   {
     optional<json> level;
   };
-  void set_default_level(const set_default_level_args& args)
+  void set_default_level([[maybe_unused]] const set_default_level_args& args)
   {
     json cmd;
 
@@ -2843,7 +2843,7 @@ class Logger : HAEntity
   struct set_level_args
   {
   };
-  void set_level(const set_level_args& args)
+  void set_level([[maybe_unused]] const set_level_args& args)
   {
     json cmd;
 
@@ -2866,7 +2866,7 @@ class Media_player : HAEntity
   struct clear_playlist_args
   {
   };
-  void clear_playlist(const clear_playlist_args& args)
+  void clear_playlist([[maybe_unused]] const clear_playlist_args& args)
   {
     json cmd;
 
@@ -2884,7 +2884,7 @@ class Media_player : HAEntity
   {
     optional<json> group_members;
   };
-  void join(const join_args& args)
+  void join([[maybe_unused]] const join_args& args)
   {
     json cmd;
 
@@ -2904,7 +2904,7 @@ class Media_player : HAEntity
   struct media_next_track_args
   {
   };
-  void media_next_track(const media_next_track_args& args)
+  void media_next_track([[maybe_unused]] const media_next_track_args& args)
   {
     json cmd;
 
@@ -2921,7 +2921,7 @@ class Media_player : HAEntity
   struct media_pause_args
   {
   };
-  void media_pause(const media_pause_args& args)
+  void media_pause([[maybe_unused]] const media_pause_args& args)
   {
     json cmd;
 
@@ -2938,7 +2938,7 @@ class Media_player : HAEntity
   struct media_play_args
   {
   };
-  void media_play(const media_play_args& args)
+  void media_play([[maybe_unused]] const media_play_args& args)
   {
     json cmd;
 
@@ -2955,7 +2955,7 @@ class Media_player : HAEntity
   struct media_play_pause_args
   {
   };
-  void media_play_pause(const media_play_pause_args& args)
+  void media_play_pause([[maybe_unused]] const media_play_pause_args& args)
   {
     json cmd;
 
@@ -2972,7 +2972,7 @@ class Media_player : HAEntity
   struct media_previous_track_args
   {
   };
-  void media_previous_track(const media_previous_track_args& args)
+  void media_previous_track([[maybe_unused]] const media_previous_track_args& args)
   {
     json cmd;
 
@@ -2990,7 +2990,7 @@ class Media_player : HAEntity
   {
     optional<json> seek_position;
   };
-  void media_seek(const media_seek_args& args)
+  void media_seek([[maybe_unused]] const media_seek_args& args)
   {
     json cmd;
 
@@ -3010,7 +3010,7 @@ class Media_player : HAEntity
   struct media_stop_args
   {
   };
-  void media_stop(const media_stop_args& args)
+  void media_stop([[maybe_unused]] const media_stop_args& args)
   {
     json cmd;
 
@@ -3031,7 +3031,7 @@ class Media_player : HAEntity
     optional<json> media_content_id;
     optional<json> media_content_type;
   };
-  void play_media(const play_media_args& args)
+  void play_media([[maybe_unused]] const play_media_args& args)
   {
     json cmd;
 
@@ -3061,7 +3061,7 @@ class Media_player : HAEntity
   {
     optional<json> repeat;
   };
-  void repeat_set(const repeat_set_args& args)
+  void repeat_set([[maybe_unused]] const repeat_set_args& args)
   {
     json cmd;
 
@@ -3082,7 +3082,7 @@ class Media_player : HAEntity
   {
     optional<json> sound_mode;
   };
-  void select_sound_mode(const select_sound_mode_args& args)
+  void select_sound_mode([[maybe_unused]] const select_sound_mode_args& args)
   {
     json cmd;
 
@@ -3103,7 +3103,7 @@ class Media_player : HAEntity
   {
     optional<json> source;
   };
-  void select_source(const select_source_args& args)
+  void select_source([[maybe_unused]] const select_source_args& args)
   {
     json cmd;
 
@@ -3124,7 +3124,7 @@ class Media_player : HAEntity
   {
     optional<json> shuffle;
   };
-  void shuffle_set(const shuffle_set_args& args)
+  void shuffle_set([[maybe_unused]] const shuffle_set_args& args)
   {
     json cmd;
 
@@ -3144,7 +3144,7 @@ class Media_player : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -3161,7 +3161,7 @@ class Media_player : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -3178,7 +3178,7 @@ class Media_player : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -3195,7 +3195,7 @@ class Media_player : HAEntity
   struct unjoin_args
   {
   };
-  void unjoin(const unjoin_args& args)
+  void unjoin([[maybe_unused]] const unjoin_args& args)
   {
     json cmd;
 
@@ -3212,7 +3212,7 @@ class Media_player : HAEntity
   struct volume_down_args
   {
   };
-  void volume_down(const volume_down_args& args)
+  void volume_down([[maybe_unused]] const volume_down_args& args)
   {
     json cmd;
 
@@ -3230,7 +3230,7 @@ class Media_player : HAEntity
   {
     optional<json> is_volume_muted;
   };
-  void volume_mute(const volume_mute_args& args)
+  void volume_mute([[maybe_unused]] const volume_mute_args& args)
   {
     json cmd;
 
@@ -3251,7 +3251,7 @@ class Media_player : HAEntity
   {
     optional<json> volume_level;
   };
-  void volume_set(const volume_set_args& args)
+  void volume_set([[maybe_unused]] const volume_set_args& args)
   {
     json cmd;
 
@@ -3271,7 +3271,7 @@ class Media_player : HAEntity
   struct volume_up_args
   {
   };
-  void volume_up(const volume_up_args& args)
+  void volume_up([[maybe_unused]] const volume_up_args& args)
   {
     json cmd;
 
@@ -3298,7 +3298,7 @@ class Notify : HAEntity
     optional<json> target;
     optional<json> title;
   };
-  void demo_test_target_name(const demo_test_target_name_args& args)
+  void demo_test_target_name([[maybe_unused]] const demo_test_target_name_args& args)
   {
     json cmd;
 
@@ -3331,7 +3331,7 @@ class Notify : HAEntity
     optional<json> target;
     optional<json> title;
   };
-  void notify(const notify_args& args)
+  void notify([[maybe_unused]] const notify_args& args)
   {
     json cmd;
 
@@ -3363,7 +3363,7 @@ class Notify : HAEntity
     optional<json> message;
     optional<json> title;
   };
-  void persistent_notification(const persistent_notification_args& args)
+  void persistent_notification([[maybe_unused]] const persistent_notification_args& args)
   {
     json cmd;
 
@@ -3396,7 +3396,7 @@ class Number : HAEntity
   {
     optional<json> value;
   };
-  void set_value(const set_value_args& args)
+  void set_value([[maybe_unused]] const set_value_args& args)
   {
     json cmd;
 
@@ -3425,7 +3425,7 @@ class Persistent_notification : HAEntity
     optional<json> notification_id;
     optional<json> title;
   };
-  void create(const create_args& args)
+  void create([[maybe_unused]] const create_args& args)
   {
     json cmd;
 
@@ -3452,7 +3452,7 @@ class Persistent_notification : HAEntity
   {
     optional<json> notification_id;
   };
-  void dismiss(const dismiss_args& args)
+  void dismiss([[maybe_unused]] const dismiss_args& args)
   {
     json cmd;
 
@@ -3472,7 +3472,7 @@ class Persistent_notification : HAEntity
   struct dismiss_all_args
   {
   };
-  void dismiss_all(const dismiss_all_args& args)
+  void dismiss_all([[maybe_unused]] const dismiss_all_args& args)
   {
     json cmd;
 
@@ -3495,7 +3495,7 @@ class Person : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -3518,7 +3518,7 @@ class Recorder : HAEntity
   struct disable_args
   {
   };
-  void disable(const disable_args& args)
+  void disable([[maybe_unused]] const disable_args& args)
   {
     json cmd;
 
@@ -3535,7 +3535,7 @@ class Recorder : HAEntity
   struct enable_args
   {
   };
-  void enable(const enable_args& args)
+  void enable([[maybe_unused]] const enable_args& args)
   {
     json cmd;
 
@@ -3555,7 +3555,7 @@ class Recorder : HAEntity
     optional<json> keep_days;
     optional<json> repack;
   };
-  void purge(const purge_args& args)
+  void purge([[maybe_unused]] const purge_args& args)
   {
     json cmd;
 
@@ -3584,7 +3584,7 @@ class Recorder : HAEntity
     optional<json> entity_globs;
     optional<json> keep_days;
   };
-  void purge_entities(const purge_entities_args& args)
+  void purge_entities([[maybe_unused]] const purge_entities_args& args)
   {
     json cmd;
 
@@ -3618,7 +3618,7 @@ class Scene : HAEntity
     optional<json> entities;
     optional<json> transition;
   };
-  void apply(const apply_args& args)
+  void apply([[maybe_unused]] const apply_args& args)
   {
     json cmd;
 
@@ -3644,7 +3644,7 @@ class Scene : HAEntity
     optional<json> scene_id;
     optional<json> snapshot_entities;
   };
-  void create(const create_args& args)
+  void create([[maybe_unused]] const create_args& args)
   {
     json cmd;
 
@@ -3670,7 +3670,7 @@ class Scene : HAEntity
   struct delete_args
   {
   };
-  void _delete(const delete_args& args)
+  void _delete([[maybe_unused]] const delete_args& args)
   {
     json cmd;
 
@@ -3687,7 +3687,7 @@ class Scene : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -3705,7 +3705,7 @@ class Scene : HAEntity
   {
     optional<json> transition;
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -3731,7 +3731,7 @@ class Schedule : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -3754,7 +3754,7 @@ class Script : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -3771,7 +3771,7 @@ class Script : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -3788,7 +3788,7 @@ class Script : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -3805,7 +3805,7 @@ class Script : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -3828,7 +3828,7 @@ class Select : HAEntity
   struct select_first_args
   {
   };
-  void select_first(const select_first_args& args)
+  void select_first([[maybe_unused]] const select_first_args& args)
   {
     json cmd;
 
@@ -3845,7 +3845,7 @@ class Select : HAEntity
   struct select_last_args
   {
   };
-  void select_last(const select_last_args& args)
+  void select_last([[maybe_unused]] const select_last_args& args)
   {
     json cmd;
 
@@ -3863,7 +3863,7 @@ class Select : HAEntity
   {
     optional<json> cycle;
   };
-  void select_next(const select_next_args& args)
+  void select_next([[maybe_unused]] const select_next_args& args)
   {
     json cmd;
 
@@ -3884,7 +3884,7 @@ class Select : HAEntity
   {
     optional<json> option;
   };
-  void select_option(const select_option_args& args)
+  void select_option([[maybe_unused]] const select_option_args& args)
   {
     json cmd;
 
@@ -3905,7 +3905,7 @@ class Select : HAEntity
   {
     optional<json> cycle;
   };
-  void select_previous(const select_previous_args& args)
+  void select_previous([[maybe_unused]] const select_previous_args& args)
   {
     json cmd;
 
@@ -3932,7 +3932,7 @@ class Shopping_list : HAEntity
   {
     optional<json> name;
   };
-  void add_item(const add_item_args& args)
+  void add_item([[maybe_unused]] const add_item_args& args)
   {
     json cmd;
 
@@ -3952,7 +3952,7 @@ class Shopping_list : HAEntity
   struct clear_completed_items_args
   {
   };
-  void clear_completed_items(const clear_completed_items_args& args)
+  void clear_completed_items([[maybe_unused]] const clear_completed_items_args& args)
   {
     json cmd;
 
@@ -3969,7 +3969,7 @@ class Shopping_list : HAEntity
   struct complete_all_args
   {
   };
-  void complete_all(const complete_all_args& args)
+  void complete_all([[maybe_unused]] const complete_all_args& args)
   {
     json cmd;
 
@@ -3987,7 +3987,7 @@ class Shopping_list : HAEntity
   {
     optional<json> name;
   };
-  void complete_item(const complete_item_args& args)
+  void complete_item([[maybe_unused]] const complete_item_args& args)
   {
     json cmd;
 
@@ -4007,7 +4007,7 @@ class Shopping_list : HAEntity
   struct incomplete_all_args
   {
   };
-  void incomplete_all(const incomplete_all_args& args)
+  void incomplete_all([[maybe_unused]] const incomplete_all_args& args)
   {
     json cmd;
 
@@ -4025,7 +4025,7 @@ class Shopping_list : HAEntity
   {
     optional<json> name;
   };
-  void incomplete_item(const incomplete_item_args& args)
+  void incomplete_item([[maybe_unused]] const incomplete_item_args& args)
   {
     json cmd;
 
@@ -4046,7 +4046,7 @@ class Shopping_list : HAEntity
   {
     optional<json> name;
   };
-  void remove_item(const remove_item_args& args)
+  void remove_item([[maybe_unused]] const remove_item_args& args)
   {
     json cmd;
 
@@ -4067,7 +4067,7 @@ class Shopping_list : HAEntity
   {
     optional<json> reverse;
   };
-  void sort(const sort_args& args)
+  void sort([[maybe_unused]] const sort_args& args)
   {
     json cmd;
 
@@ -4093,7 +4093,7 @@ class Siren : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -4110,7 +4110,7 @@ class Siren : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -4130,7 +4130,7 @@ class Siren : HAEntity
     optional<json> tone;
     optional<json> volume_level;
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -4162,7 +4162,7 @@ class Switch : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -4179,7 +4179,7 @@ class Switch : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -4196,7 +4196,7 @@ class Switch : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -4219,7 +4219,7 @@ class System_log : HAEntity
   struct clear_args
   {
   };
-  void clear(const clear_args& args)
+  void clear([[maybe_unused]] const clear_args& args)
   {
     json cmd;
 
@@ -4239,7 +4239,7 @@ class System_log : HAEntity
     optional<json> logger;
     optional<json> message;
   };
-  void write(const write_args& args)
+  void write([[maybe_unused]] const write_args& args)
   {
     json cmd;
 
@@ -4272,7 +4272,7 @@ class Text : HAEntity
   {
     optional<json> value;
   };
-  void set_value(const set_value_args& args)
+  void set_value([[maybe_unused]] const set_value_args& args)
   {
     json cmd;
 
@@ -4299,7 +4299,7 @@ class Time : HAEntity
   {
     optional<json> time;
   };
-  void set_value(const set_value_args& args)
+  void set_value([[maybe_unused]] const set_value_args& args)
   {
     json cmd;
 
@@ -4325,7 +4325,7 @@ class Timer : HAEntity
   struct cancel_args
   {
   };
-  void cancel(const cancel_args& args)
+  void cancel([[maybe_unused]] const cancel_args& args)
   {
     json cmd;
 
@@ -4343,7 +4343,7 @@ class Timer : HAEntity
   {
     optional<json> duration;
   };
-  void change(const change_args& args)
+  void change([[maybe_unused]] const change_args& args)
   {
     json cmd;
 
@@ -4363,7 +4363,7 @@ class Timer : HAEntity
   struct finish_args
   {
   };
-  void finish(const finish_args& args)
+  void finish([[maybe_unused]] const finish_args& args)
   {
     json cmd;
 
@@ -4380,7 +4380,7 @@ class Timer : HAEntity
   struct pause_args
   {
   };
-  void pause(const pause_args& args)
+  void pause([[maybe_unused]] const pause_args& args)
   {
     json cmd;
 
@@ -4397,7 +4397,7 @@ class Timer : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 
@@ -4415,7 +4415,7 @@ class Timer : HAEntity
   {
     optional<json> duration;
   };
-  void start(const start_args& args)
+  void start([[maybe_unused]] const start_args& args)
   {
     json cmd;
 
@@ -4445,7 +4445,7 @@ class Todo : HAEntity
     optional<json> due_datetime;
     optional<json> item;
   };
-  void add_item(const add_item_args& args)
+  void add_item([[maybe_unused]] const add_item_args& args)
   {
     json cmd;
 
@@ -4475,7 +4475,7 @@ class Todo : HAEntity
   {
     optional<json> status;
   };
-  void get_items(const get_items_args& args)
+  void get_items([[maybe_unused]] const get_items_args& args)
   {
     json cmd;
 
@@ -4495,7 +4495,7 @@ class Todo : HAEntity
   struct remove_completed_items_args
   {
   };
-  void remove_completed_items(const remove_completed_items_args& args)
+  void remove_completed_items([[maybe_unused]] const remove_completed_items_args& args)
   {
     json cmd;
 
@@ -4513,7 +4513,7 @@ class Todo : HAEntity
   {
     optional<json> item;
   };
-  void remove_item(const remove_item_args& args)
+  void remove_item([[maybe_unused]] const remove_item_args& args)
   {
     json cmd;
 
@@ -4539,7 +4539,7 @@ class Todo : HAEntity
     optional<json> rename;
     optional<json> status;
   };
-  void update_item(const update_item_args& args)
+  void update_item([[maybe_unused]] const update_item_args& args)
   {
     json cmd;
 
@@ -4580,7 +4580,7 @@ class Tts : HAEntity
   struct clear_cache_args
   {
   };
-  void clear_cache(const clear_cache_args& args)
+  void clear_cache([[maybe_unused]] const clear_cache_args& args)
   {
     json cmd;
 
@@ -4602,7 +4602,7 @@ class Tts : HAEntity
     optional<json> message;
     optional<json> options;
   };
-  void demo_say(const demo_say_args& args)
+  void demo_say([[maybe_unused]] const demo_say_args& args)
   {
     json cmd;
 
@@ -4639,7 +4639,7 @@ class Tts : HAEntity
     optional<json> message;
     optional<json> options;
   };
-  void speak(const speak_args& args)
+  void speak([[maybe_unused]] const speak_args& args)
   {
     json cmd;
 
@@ -4677,7 +4677,7 @@ class Update : HAEntity
   struct clear_skipped_args
   {
   };
-  void clear_skipped(const clear_skipped_args& args)
+  void clear_skipped([[maybe_unused]] const clear_skipped_args& args)
   {
     json cmd;
 
@@ -4696,7 +4696,7 @@ class Update : HAEntity
     optional<json> backup;
     optional<json> version;
   };
-  void install(const install_args& args)
+  void install([[maybe_unused]] const install_args& args)
   {
     json cmd;
 
@@ -4719,7 +4719,7 @@ class Update : HAEntity
   struct skip_args
   {
   };
-  void skip(const skip_args& args)
+  void skip([[maybe_unused]] const skip_args& args)
   {
     json cmd;
 
@@ -4742,7 +4742,7 @@ class Vacuum : HAEntity
   struct clean_spot_args
   {
   };
-  void clean_spot(const clean_spot_args& args)
+  void clean_spot([[maybe_unused]] const clean_spot_args& args)
   {
     json cmd;
 
@@ -4759,7 +4759,7 @@ class Vacuum : HAEntity
   struct locate_args
   {
   };
-  void locate(const locate_args& args)
+  void locate([[maybe_unused]] const locate_args& args)
   {
     json cmd;
 
@@ -4776,7 +4776,7 @@ class Vacuum : HAEntity
   struct pause_args
   {
   };
-  void pause(const pause_args& args)
+  void pause([[maybe_unused]] const pause_args& args)
   {
     json cmd;
 
@@ -4793,7 +4793,7 @@ class Vacuum : HAEntity
   struct return_to_base_args
   {
   };
-  void return_to_base(const return_to_base_args& args)
+  void return_to_base([[maybe_unused]] const return_to_base_args& args)
   {
     json cmd;
 
@@ -4812,7 +4812,7 @@ class Vacuum : HAEntity
     optional<json> command;
     optional<json> params;
   };
-  void send_command(const send_command_args& args)
+  void send_command([[maybe_unused]] const send_command_args& args)
   {
     json cmd;
 
@@ -4836,7 +4836,7 @@ class Vacuum : HAEntity
   {
     optional<json> fan_speed;
   };
-  void set_fan_speed(const set_fan_speed_args& args)
+  void set_fan_speed([[maybe_unused]] const set_fan_speed_args& args)
   {
     json cmd;
 
@@ -4856,7 +4856,7 @@ class Vacuum : HAEntity
   struct start_args
   {
   };
-  void start(const start_args& args)
+  void start([[maybe_unused]] const start_args& args)
   {
     json cmd;
 
@@ -4873,7 +4873,7 @@ class Vacuum : HAEntity
   struct start_pause_args
   {
   };
-  void start_pause(const start_pause_args& args)
+  void start_pause([[maybe_unused]] const start_pause_args& args)
   {
     json cmd;
 
@@ -4890,7 +4890,7 @@ class Vacuum : HAEntity
   struct stop_args
   {
   };
-  void stop(const stop_args& args)
+  void stop([[maybe_unused]] const stop_args& args)
   {
     json cmd;
 
@@ -4907,7 +4907,7 @@ class Vacuum : HAEntity
   struct toggle_args
   {
   };
-  void toggle(const toggle_args& args)
+  void toggle([[maybe_unused]] const toggle_args& args)
   {
     json cmd;
 
@@ -4924,7 +4924,7 @@ class Vacuum : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -4941,7 +4941,7 @@ class Vacuum : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -4965,7 +4965,7 @@ class Water_heater : HAEntity
   {
     optional<json> away_mode;
   };
-  void set_away_mode(const set_away_mode_args& args)
+  void set_away_mode([[maybe_unused]] const set_away_mode_args& args)
   {
     json cmd;
 
@@ -4986,7 +4986,7 @@ class Water_heater : HAEntity
   {
     optional<json> operation_mode;
   };
-  void set_operation_mode(const set_operation_mode_args& args)
+  void set_operation_mode([[maybe_unused]] const set_operation_mode_args& args)
   {
     json cmd;
 
@@ -5008,7 +5008,7 @@ class Water_heater : HAEntity
     optional<json> operation_mode;
     optional<json> temperature;
   };
-  void set_temperature(const set_temperature_args& args)
+  void set_temperature([[maybe_unused]] const set_temperature_args& args)
   {
     json cmd;
 
@@ -5031,7 +5031,7 @@ class Water_heater : HAEntity
   struct turn_off_args
   {
   };
-  void turn_off(const turn_off_args& args)
+  void turn_off([[maybe_unused]] const turn_off_args& args)
   {
     json cmd;
 
@@ -5048,7 +5048,7 @@ class Water_heater : HAEntity
   struct turn_on_args
   {
   };
-  void turn_on(const turn_on_args& args)
+  void turn_on([[maybe_unused]] const turn_on_args& args)
   {
     json cmd;
 
@@ -5072,7 +5072,7 @@ class Weather : HAEntity
   {
     optional<json> type;
   };
-  void get_forecast(const get_forecast_args& args)
+  void get_forecast([[maybe_unused]] const get_forecast_args& args)
   {
     json cmd;
 
@@ -5093,7 +5093,7 @@ class Weather : HAEntity
   {
     optional<json> type;
   };
-  void get_forecasts(const get_forecasts_args& args)
+  void get_forecasts([[maybe_unused]] const get_forecasts_args& args)
   {
     json cmd;
 
@@ -5119,7 +5119,7 @@ class Zone : HAEntity
   struct reload_args
   {
   };
-  void reload(const reload_args& args)
+  void reload([[maybe_unused]] const reload_args& args)
   {
     json cmd;
 

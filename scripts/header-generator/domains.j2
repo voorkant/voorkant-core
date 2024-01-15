@@ -36,7 +36,7 @@ class {{ domain | title }} : HAEntity
     optional<json> {{ field }};
 {%- endfor %}
   };
-  void {% if name == 'delete' %}_{% endif %}{{ name }}(const {{ name }}_args& args)
+  void {% if name == 'delete' %}_{% endif %}{{ name }}([[maybe_unused]] const {{ name }}_args& args)
   {
     json cmd;
 
