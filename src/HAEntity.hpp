@@ -93,6 +93,8 @@ public:
     return ret.str();
   }
 
+  void WSConnSend(json& msg); // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
+
 protected:
   HABackend* backend;
 
