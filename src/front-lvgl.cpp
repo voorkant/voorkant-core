@@ -163,13 +163,24 @@ void uithread(HABackend& backend, int argc, char* argv[])
 
   /*Create a container with ROW flex direction*/
   lv_obj_t* cont_row = lv_obj_create(lv_scr_act());
-  lv_obj_set_size(cont_row, 300, 75);
+  lv_obj_set_size(cont_row, 300, 800);
   lv_obj_align(cont_row, LV_ALIGN_TOP_MID, 0, 5);
   lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_ROW);
 
   auto entities = backend.GetEntitiesByDomain("light");
   for (auto entity : entities) {
     UISwitch(entity, cont_row);
+  }
+
+  int i = 0;
+  while (true) {
+    usleep(5 * 1000); // 5000 usec = 5 ms
+    lv_tick_inc(5); // 5 ms
+    lv_task_handler();
+    if (i++ == (1000 / 5)) {
+      cerr << "." << flush;
+      i = 0;
+    }
   }
 
   // int i = 0;

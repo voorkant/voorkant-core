@@ -31,7 +31,7 @@ public:
     lv_obj_t* btn = lv_btn_create(_parent); /*Add a button the current screen*/
     lv_obj_set_pos(btn, 10, 10); /*Set its position*/
     lv_obj_set_size(btn, 240, 50); /*Set its size*/
-    lv_obj_add_event_cb(btn, UISwitch::btn_press_cb, LV_EVENT_ALL, NULL); /*Assign a callback to the button*/
+    lv_obj_add_event_cb(btn, UISwitch::btn_press_cb, LV_EVENT_ALL, reinterpret_cast<void*>(&_entity)); /*Assign a callback to the button*/
 
     lv_obj_t* label = lv_label_create(btn); /*Add a label to the button*/
     lv_label_set_text(label, _entity->name.c_str()); /*Set the labels text*/
@@ -42,8 +42,10 @@ private:
   static void btn_press_cb(lv_event_t* e)
   {
     lv_event_code_t code = lv_event_get_code(e);
+
+    std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(e->user_data);
     if (code == LV_EVENT_CLICKED) {
-      HADomains::Light light(entity);
+      HADomains::Light light(ent);
       light.toggle({});
     }
   }
