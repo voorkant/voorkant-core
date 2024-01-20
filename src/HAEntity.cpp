@@ -75,11 +75,11 @@ std::string HAEntity::getNameFromState(void)
 
 void HAEntity::attach(IObserver* observer)
 {
-  uientities.push_back(observer);
+  uientities.insert(observer);
 }
 void HAEntity::detach(IObserver* observer)
 {
-  uientities.remove(observer);
+  uientities.erase(observer);
 }
 
 void HAEntity::notify()

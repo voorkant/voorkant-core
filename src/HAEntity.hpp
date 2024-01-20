@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <list>
+#include <set>
 #include "ext/magic_enum/include/magic_enum/magic_enum_all.hpp"
 #include "Observer.hpp"
 
@@ -105,7 +105,7 @@ protected:
   HABackend* backend;
 
 private:
-  std::list<IObserver*> uientities; // FIXME - should be a vector, the Detach() needs work for that.
+  std::set<IObserver*> uientities; // FIXME - should be a vector, the Detach() needs work for that.
   std::shared_ptr<HADomain> hadomain;
   std::string getDomainFromState();
   std::string getNameFromState();
