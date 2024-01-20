@@ -165,11 +165,11 @@ void uithread(HABackend& backend, int argc, char* argv[])
   lv_obj_t* cont_row = lv_obj_create(lv_scr_act());
   lv_obj_set_size(cont_row, 300, 800);
   lv_obj_align(cont_row, LV_ALIGN_TOP_MID, 0, 5);
-  lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_ROW);
+  lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN);
 
   auto entities = backend.GetEntitiesByDomain("light");
   for (auto entity : entities) {
-    UISwitch(entity, cont_row);
+    UIButton(entity, cont_row);
   }
 
   int i = 0;
