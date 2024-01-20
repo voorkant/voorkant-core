@@ -5,15 +5,21 @@
 #include "HAEntity.hpp"
 #include "Backend.hpp"
 #include <lvgl.h>
+#include "Observer.hpp"
 #include "generated/domains.hpp"
 
-class UIEntity
+class UIEntity : public IObserver
 {
 public:
+  ~UIEntity()
+  {
+    entity->detach((IObserver*)this);
+  };
   UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent)
   {
     parentContainer = _parent;
     entity = _entity;
+    entity->attach((IObserver*)this);
   }
 
 protected:
@@ -32,9 +38,10 @@ static void btn_press_cb(lv_event_t* e)
   }
 }
 
-class UIButton : UIEntity
+class UIButton : public UIEntity
 {
 public:
+  ~UIButton(){};
   UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     UIEntity(_entity, _parent)
   {
@@ -50,12 +57,19 @@ public:
     lv_obj_center(label);
   }
 
+  void uiupdate() override
+  {
+    auto state = entity->getJsonState();
+    std::cerr << "STATE IS:" << state << std::endl;
+  }
+
 private:
 };
 
-class UISwitch : UIEntity
+class UISwitch : public UIEntity
 {
 public:
+  ~UISwitch() {}
   UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     UIEntity(_entity, _parent)
   {
@@ -71,6 +85,12 @@ public:
 
     lv_obj_t* label = lv_label_create(switchcontainer); /*Add a label to the button*/
     lv_label_set_text(label, _entity->name.c_str()); /*Set the labels text*/
+  }
+
+  void uiupdate() override
+  {
+    auto state = entity->getJsonState();
+    std::cerr << "STATE IS:" << state << std::endl;
   }
 };
 

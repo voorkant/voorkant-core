@@ -23,6 +23,7 @@ HAEntity::HAEntity(json _state, std::shared_ptr<HADomain> _hadomain, HABackend* 
 void HAEntity::update(json _state)
 {
   state = _state;
+  notify();
 }
 
 std::vector<std::shared_ptr<HAService>> HAEntity::getServices()
@@ -69,6 +70,22 @@ std::string HAEntity::getNameFromState(void)
   }
   else {
     return "UNKNOWN_" + state["entity_id"].get<string>();
+  }
+}
+
+void HAEntity::attach(IObserver* observer)
+{
+  uientities.push_back(observer);
+}
+void HAEntity::detach(IObserver* observer)
+{
+  uientities.remove(observer);
+}
+
+void HAEntity::notify()
+{
+  for (auto uientity : uientities) {
+    uientity->uiupdate();
   }
 }
 

@@ -6,7 +6,9 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <list>
 #include "ext/magic_enum/include/magic_enum/magic_enum_all.hpp"
+#include "Observer.hpp"
 
 using std::map;
 using std::string;
@@ -46,13 +48,14 @@ private:
 
 class HABackend; // so we can have a pointer to it
 
-class HAEntity
+class HAEntity : public ISubject
 {
 public:
   string name;
   string domain;
   string id;
 
+  HAEntity(){}; // FIXME - why do we need this for ISubject?
   // HAEntity(json _state);
   HAEntity(json _state, std::shared_ptr<HADomain> _hadomain, HABackend* _backend);
   ~HAEntity(){};
@@ -95,10 +98,15 @@ public:
 
   void WSConnSend(json& msg); // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
 
+  void attach(IObserver* uientity) override;
+  void detach(IObserver* uientity) override;
+  void notify() override;
+
 protected:
   HABackend* backend;
 
 private:
+  std::list<IObserver*> uientities; // FIXME - should be a vector, the Detach() needs work for that.
   std::shared_ptr<HADomain> hadomain;
   std::string getDomainFromState();
   std::string getNameFromState();
