@@ -167,19 +167,18 @@ void uithread(HABackend& backend, int argc, char* argv[])
   lv_obj_align(cont_row, LV_ALIGN_TOP_MID, 0, 5);
   lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN);
 
-  std::vector<UIEntity*> uielements;
+  std::vector<std::unique_ptr<UIEntity>> uielements;
   int i = 0;
   auto entities = backend.GetEntitiesByDomain("light");
   for (auto entity : entities) {
-    UIEntity* element;
     if (i % 2 == 0) {
-      element = (UIEntity*)new UIButton(entity, cont_row);
+      UIButton btn(entity, cont_row);
+      uielements.push_back(std::unique_ptr<UIEntity>(&btn));
     }
     else {
-
-      element = (UIEntity*)new UISwitch(entity, cont_row);
+      UISwitch sw(entity, cont_row);
+      uielements.push_back(std::unique_ptr<UIEntity>(&sw));
     }
-    uielements.push_back(element);
     i++;
   }
 
