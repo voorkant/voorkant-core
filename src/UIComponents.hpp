@@ -55,7 +55,7 @@ public:
     lv_obj_t* label = lv_label_create(btn); /*Add a label to the button*/
     lv_label_set_text(label, _entity->name.c_str()); /*Set the labels text*/
     lv_obj_center(label);
-    std::cerr << "CREATED button FOR " << entity->name << std::endl;
+    uiupdate();
   }
 
   void uiupdate() override
@@ -94,8 +94,7 @@ public:
 
     lv_obj_t* label = lv_label_create(switchcontainer); /*Add a label to the button*/
     lv_label_set_text(label, _entity->name.c_str()); /*Set the labels text*/
-
-    std::cerr << "CREATED switch FOR " << entity->name << std::endl;
+    uiupdate();
   }
 
   void uiupdate() override

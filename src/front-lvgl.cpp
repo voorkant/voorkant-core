@@ -131,8 +131,8 @@ void uithread(HABackend& backend, int argc, char* argv[])
   enc_drv.read_cb = sdl_mouse_read;
   /*lv_indev_t* enc_indev = */ lv_indev_drv_register(&enc_drv);
   // lv_indev_set_group(enc_indev, g);
-  lv_group_t* g = lv_group_create();
-  lv_group_set_default(g);
+  // lv_group_t* g = lv_group_create();
+  // lv_group_set_default(g);
 
   // // START BUTTON EXAMPLE
   // lv_obj_t* btn = lv_btn_create(lv_scr_act()); /*Add a button the current screen*/
@@ -163,7 +163,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
 
   /*Create a container with ROW flex direction*/
   lv_obj_t* cont_row = lv_obj_create(lv_scr_act());
-  lv_obj_set_size(cont_row, 500, 800);
+  lv_obj_set_size(cont_row, 500, MY_DISP_HOR_RES);
   lv_obj_align(cont_row, LV_ALIGN_TOP_MID, 0, 5);
   lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN);
 
