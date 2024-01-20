@@ -163,19 +163,23 @@ void uithread(HABackend& backend, int argc, char* argv[])
 
   /*Create a container with ROW flex direction*/
   lv_obj_t* cont_row = lv_obj_create(lv_scr_act());
-  lv_obj_set_size(cont_row, 300, 800);
+  lv_obj_set_size(cont_row, 500, 800);
   lv_obj_align(cont_row, LV_ALIGN_TOP_MID, 0, 5);
   lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN);
 
+  std::vector<UIEntity*> uielements;
   int i = 0;
   auto entities = backend.GetEntitiesByDomain("light");
   for (auto entity : entities) {
+    UIEntity* element;
     if (i % 2 == 0) {
-      UIButton(entity, cont_row);
+      element = (UIEntity*)new UIButton(entity, cont_row);
     }
     else {
-      UISwitch(entity, cont_row);
+
+      element = (UIEntity*)new UISwitch(entity, cont_row);
     }
+    uielements.push_back(element);
     i++;
   }
 
@@ -261,15 +265,15 @@ void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged) 
   // return;
   // std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
-  cerr << whatchanged.size() << endl;
+  cout << "Changes: " << whatchanged.size() << endl;
   for (const auto& changed : whatchanged) {
     auto state = backend->GetEntityByName(changed);
     cout << "state for " << changed << " is " << state->getInfo() << endl;
     auto attrs = state->getJsonState()["attributes"];
-    cout << attrs << endl;
-    if (state->getEntityType() == EntityType::Light) {
-      // current_light = changed;  moved to a command line flag for now
-    }
+    //    cout << attrs << endl;
+    //   if (state->getEntityType() == EntityType::Light) {
+    // current_light = changed;  moved to a command line flag for now
+    // }
     // if(attrs.count("rgb_color")) {
     //     auto rgb = attrs["rgb_color"];
     //     cout<<"RGB "<<rgb<<endl;
@@ -279,8 +283,8 @@ void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged) 
     //         c=color;
     //     }
     // }
-    for (const auto& attr : state->attrVector()) {
-      cout << "  " << attr << endl;
-    }
+    // for (const auto& attr : state->attrVector()) {
+    //  cout << "  " << attr << endl;
+    //}
   }
 }

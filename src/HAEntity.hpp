@@ -55,7 +55,6 @@ public:
   string domain;
   string id;
 
-  HAEntity(){}; // FIXME - why do we need this for ISubject?
   // HAEntity(json _state);
   HAEntity(json _state, std::shared_ptr<HADomain> _hadomain, HABackend* _backend);
   ~HAEntity(){};

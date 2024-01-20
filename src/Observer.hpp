@@ -10,17 +10,15 @@ HAEntity to have a direct link to UIEntity. If we do that, then HAEntity would k
 class IObserver
 {
 public:
-  virtual ~IObserver(){};
-  virtual void uiupdate();
+  virtual void uiupdate() = 0;
 };
 
 class ISubject
 {
 public:
-  virtual ~ISubject(){};
-  virtual void attach(IObserver* observer);
-  virtual void detach(IObserver* observer);
-  virtual void notify();
+  virtual void attach(IObserver* observer) = 0;
+  virtual void detach(IObserver* observer) = 0;
+  virtual void notify() = 0;
 };
 
 #endif

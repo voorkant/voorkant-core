@@ -46,24 +46,33 @@ public:
     UIEntity(_entity, _parent)
   {
     // START BUTTON EXAMPLE
-    lv_obj_t* btn = lv_btn_create(_parent); /*Add a button the current screen*/
+    btn = lv_btn_create(_parent); /*Add a button the current screen*/
     lv_obj_set_size(btn, 240, 50);
     lv_obj_center(btn);
     lv_obj_add_flag(btn, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_add_event_cb(btn, btn_press_cb, LV_EVENT_ALL, reinterpret_cast<void*>(&_entity)); /*Assign a callback to the button*/
+    lv_obj_add_event_cb(btn, btn_press_cb, LV_EVENT_ALL, reinterpret_cast<void*>(&entity)); /*Assign a callback to the button*/
 
     lv_obj_t* label = lv_label_create(btn); /*Add a label to the button*/
     lv_label_set_text(label, _entity->name.c_str()); /*Set the labels text*/
     lv_obj_center(label);
+    std::cerr << "CREATED button FOR " << entity->name << std::endl;
   }
 
   void uiupdate() override
   {
     auto state = entity->getJsonState();
-    std::cerr << "STATE IS:" << state << std::endl;
+    if (state["state"] == "on") {
+      lv_obj_add_state(btn, LV_STATE_CHECKED);
+    }
+    else {
+      lv_obj_clear_state(btn, LV_STATE_CHECKED);
+    }
+
+    std::cerr << "uiupdate - STATE IS:" << state << std::endl;
   }
 
 private:
+  lv_obj_t* btn;
 };
 
 class UISwitch : public UIEntity
@@ -78,20 +87,32 @@ public:
     lv_obj_set_size(switchcontainer, 240, 50);
     lv_obj_center(switchcontainer);
 
-    lv_obj_t* sw = lv_switch_create(switchcontainer); /*Add a button the current screen*/
-    lv_obj_add_event_cb(sw, btn_press_cb, LV_EVENT_ALL, reinterpret_cast<void*>(&_entity)); /*Assign a callback to the button*/
+    sw = lv_switch_create(switchcontainer); /*Add a button the current screen*/
+    lv_obj_add_event_cb(sw, btn_press_cb, LV_EVENT_ALL, reinterpret_cast<void*>(&entity)); /*Assign a callback to the button*/
     lv_obj_add_flag(sw, LV_OBJ_FLAG_EVENT_BUBBLE);
     lv_obj_set_align(sw, LV_ALIGN_RIGHT_MID);
 
     lv_obj_t* label = lv_label_create(switchcontainer); /*Add a label to the button*/
     lv_label_set_text(label, _entity->name.c_str()); /*Set the labels text*/
+
+    std::cerr << "CREATED switch FOR " << entity->name << std::endl;
   }
 
   void uiupdate() override
   {
     auto state = entity->getJsonState();
-    std::cerr << "STATE IS:" << state << std::endl;
+    if (state["state"] == "on") {
+      lv_obj_add_state(sw, LV_STATE_CHECKED);
+    }
+    else {
+      lv_obj_clear_state(sw, LV_STATE_CHECKED);
+    }
+
+    std::cerr << "uiupdate - STATE IS:" << state << std::endl;
   }
+
+private:
+  lv_obj_t* sw;
 };
 
 #endif

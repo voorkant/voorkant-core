@@ -103,7 +103,6 @@ void HABackend::threadrunner()
     std::scoped_lock lk(domainslock);
     domains[domain] = std::make_shared<HADomain>(domain, services);
   }
-  cerr << "We have " << domains.size() << "domains " << endl;
 
   json subscribe;
   subscribe["type"] = "subscribe_events";
@@ -163,7 +162,7 @@ void HABackend::threadrunner()
       }
       else {
         cerr << "Received message we don't expect: " << j["type"] << endl;
-        // not a message we were expecting
+        cerr << j.dump(2) << endl;
         continue;
       }
     }
