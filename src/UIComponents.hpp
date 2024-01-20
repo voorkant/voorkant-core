@@ -41,7 +41,6 @@ static void btn_press_cb(lv_event_t* e)
 class UIButton : public UIEntity
 {
 public:
-  ~UIButton(){};
   UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     UIEntity(_entity, _parent)
   {
@@ -67,8 +66,6 @@ public:
     else {
       lv_obj_clear_state(btn, LV_STATE_CHECKED);
     }
-
-    std::cerr << "uiupdate - STATE IS:" << state << std::endl;
   }
 
 private:
@@ -78,7 +75,6 @@ private:
 class UISwitch : public UIEntity
 {
 public:
-  ~UISwitch() {}
   UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     UIEntity(_entity, _parent)
   {
@@ -106,8 +102,6 @@ public:
     else {
       lv_obj_clear_state(sw, LV_STATE_CHECKED);
     }
-
-    std::cerr << "uiupdate - STATE IS:" << state << std::endl;
   }
 
 private:
