@@ -170,13 +170,14 @@ void uithread(HABackend& backend, int argc, char* argv[])
   auto entities = backend.GetEntitiesByDomain("light");
   for (auto entity : entities) {
     if (i % 2 == 0) {
-      UIButton btn(entity, cont_row);
-      uielements.push_back(std::unique_ptr<UIEntity>(&btn));
+      std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
+      uielements.push_back(std::move(btn));
     }
     else {
-      UISwitch sw(entity, cont_row);
-      uielements.push_back(std::unique_ptr<UIEntity>(&sw));
+      std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
+      uielements.push_back(std::move(btn));
     }
+
     i++;
   }
 
