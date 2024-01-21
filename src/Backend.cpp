@@ -153,7 +153,9 @@ void HABackend::threadrunner()
         auto new_state = evd["new_state"];
 
         if (event_type == "state_changed") {
-          entities[entity_id]->update(new_state);
+          auto ent = entities[entity_id];
+          ent->update(new_state);
+          std::cerr << "DID UPDATE() ON " << ent->name << std::endl;
           whatchanged.push_back(entity_id);
         }
         else {

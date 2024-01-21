@@ -2,6 +2,8 @@
 #ifndef OBSERVER_HPP
 #define OBSERVER_HPP
 
+#include "HAEntity.hpp"
+
 /*
 Generally, our UIEntities are observers, and our HAentities are subjects.
 We have this specific "interface" inspired by https://refactoring.guru/design-patterns/observer/cpp/example because we don't want

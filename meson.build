@@ -59,7 +59,7 @@ executable('client-ftxui',
      )
 
  executable('client-cli',
-            ['src/main.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp', 'src/generated/domains.hpp'],
+            ['src/main.cpp', 'src/Backend.cpp', 'src/Observer.hpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp', 'src/generated/domains.hpp'],
             install : true,
        dependencies : [json_dep, thread_dep, curl_dep]
        )

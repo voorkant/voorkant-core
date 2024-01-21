@@ -105,7 +105,7 @@ protected:
   HABackend* backend;
 
 private:
-  std::set<IObserver*> uientities; // FIXME - should be a vector, the Detach() needs work for that.
+  std::set<IObserver*> uientities;
   std::shared_ptr<HADomain> hadomain;
   std::string getDomainFromState();
   std::string getNameFromState();
