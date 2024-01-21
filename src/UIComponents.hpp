@@ -8,17 +8,6 @@
 #include "Observer.hpp"
 #include "generated/domains.hpp"
 
-static void btn_press_cb(lv_event_t* e)
-{
-  lv_event_code_t code = lv_event_get_code(e);
-
-  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(e->user_data);
-  if (code == LV_EVENT_VALUE_CHANGED) {
-    HADomains::Light light(ent);
-    light.toggle({});
-  }
-}
-
 class UIEntity : public IObserver
 {
 public:
@@ -38,6 +27,7 @@ public:
 
 private:
   lv_obj_t* btn;
+  static void btn_press_cb(lv_event_t* e);
 };
 
 class UISwitch : public UIEntity
@@ -49,6 +39,7 @@ public:
 
 private:
   lv_obj_t* sw;
+  static void sw_toggle_cb(lv_event_t* e);
 };
 
 #endif
