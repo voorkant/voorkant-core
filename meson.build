@@ -64,7 +64,7 @@ executable('client-ftxui',
        dependencies : [json_dep, thread_dep, curl_dep]
        )
 
-executable('client-lvgl-sdl',
+executable('client-lvgl',
            ['src/main.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp', 'src/UIComponents.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
           install : true,
       dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, sdl2_dep],

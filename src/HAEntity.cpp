@@ -84,7 +84,7 @@ void HAEntity::detach(IObserver* observer)
 
 void HAEntity::notify()
 {
-  std::cerr << "Performing notify() for " << name << std::endl;
+  std::cerr << "Performing notify() for " << name << " on " << uientities.size() << " uientities" << std::endl;
   for (auto uientity : uientities) {
     uientity->uiupdate();
   }

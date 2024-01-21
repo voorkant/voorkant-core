@@ -74,7 +74,7 @@ static void slider_event_cb(lv_event_t* e)
 
 void uithread(HABackend& backend, int argc, char* argv[])
 {
-  argparse::ArgumentParser program("client-cli");
+  argparse::ArgumentParser program("client-lvgl");
 
   argparse::ArgumentParser entity_command("entity");
   entity_command.add_argument("name")

@@ -19,8 +19,14 @@ using std::flush;
 class SimpleObserver : public IObserver
 {
 public:
+  ~SimpleObserver()
+  {
+    std::cerr << "DE-structor called on SimpleObserver for " << haentity->name << std::endl;
+    haentity->detach((IObserver*)this);
+  }
   SimpleObserver(std::shared_ptr<HAEntity> _entity)
   {
+    std::cerr << "Creating simpleobserver for " << _entity->name << std::endl;
     haentity = _entity;
     haentity->attach((IObserver*)this);
   }
@@ -28,6 +34,10 @@ public:
   {
     std::cout << "Received uiupdate for " << haentity->name << ":" << std::endl;
     std::cout << haentity->getInfo() << std::endl;
+  }
+  void printHAEntity()
+  {
+    std::cout << "SimpleObserver reporting: " << haentity->name << std::endl;
   }
 
 private:
@@ -82,15 +92,25 @@ void uithread(HABackend& backend, int argc, char* argv[])
     }
 
     backend.Start();
+
+    std::vector<SimpleObserver*> observers;
     auto haentities = backend.GetEntitiesByDomain(domain);
-    std::vector<std::unique_ptr<SimpleObserver>> observers;
-    for (auto haentity : haentities) {
+    for (const auto& haentity : haentities) {
       std::cerr << "Registering observer for " << haentity->name << std::endl;
-      SimpleObserver observer(haentity);
-      observers.push_back(std::unique_ptr<SimpleObserver>(&observer));
+      SimpleObserver* obs = new SimpleObserver(haentity);
+
+      observers.push_back(obs);
+      std::cerr << " after push back: " << observers.size() << std::endl;
+      for (auto obs : observers) {
+        obs->printHAEntity();
+      }
     }
     while (true) {
       sleep(10);
+      std::cerr << "Nothing received: " << observers.size() << std::endl;
+      for (auto obs : observers) {
+        obs->printHAEntity();
+      }
     }
   }
   else if (program.is_subcommand_used(token_command)) {
