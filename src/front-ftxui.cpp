@@ -113,8 +113,3 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
   // auto screen = ScreenInteractive::FitComponent();
   screen.Loop(renderer);
 }
-
-void uithread_refresh(HABackend* /* backend */, std::vector<std::string> /* whatchanged */)
-{
-  screen.PostEvent(ftxui::Event::Custom); // REMOVE
-}

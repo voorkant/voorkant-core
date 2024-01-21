@@ -21,12 +21,10 @@ class SimpleObserver : public IObserver
 public:
   ~SimpleObserver()
   {
-    std::cerr << "DE-structor called on SimpleObserver for " << haentity->name << std::endl;
     haentity->detach((IObserver*)this);
   }
   SimpleObserver(std::shared_ptr<HAEntity> _entity)
   {
-    std::cerr << "Creating simpleobserver for " << _entity->name << std::endl;
     haentity = _entity;
     haentity->attach((IObserver*)this);
   }
@@ -35,16 +33,12 @@ public:
     std::cout << "Received uiupdate for " << haentity->name << ":" << std::endl;
     std::cout << haentity->getInfo() << std::endl;
   }
-  void printHAEntity()
-  {
-    std::cout << "SimpleObserver reporting: " << haentity->name << std::endl;
-  }
 
 private:
   std::shared_ptr<HAEntity> haentity;
 };
 
-static bool uithread_refresh_print_updates = false;
+// static bool uithread_refresh_print_updates = false;
 
 void uithread(HABackend& backend, int argc, char* argv[])
 {
@@ -94,21 +88,15 @@ void uithread(HABackend& backend, int argc, char* argv[])
     backend.Start();
 
     auto haentities = backend.GetEntitiesByDomain(domain);
-
     std::vector<std::unique_ptr<SimpleObserver>> observers;
-
     for (const auto& haentity : haentities) {
-      std::cerr << "Registering observer for " << haentity->name << std::endl;
+      std::cerr << "Monitoring entity: " << haentity->name << std::endl;
       std::unique_ptr<SimpleObserver> observer = std::make_unique<SimpleObserver>(haentity);
       observers.push_back(std::move(observer));
     }
 
     while (true) {
       sleep(10);
-      std::cerr << "Nothing received: " << observers.size() << std::endl;
-      for (auto& obs : observers) {
-        obs->printHAEntity();
-      }
     }
   }
   else if (program.is_subcommand_used(token_command)) {
@@ -128,18 +116,5 @@ void uithread(HABackend& backend, int argc, char* argv[])
   }
   else {
     cerr << "no command given" << endl;
-  }
-}
-
-void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged)
-{
-  if (uithread_refresh_print_updates) {
-    for (const auto& changed : whatchanged) {
-      auto state = backend->GetEntityByName(changed);
-      cout << "state for " << changed << " is " << state->getInfo() << endl;
-      for (const auto& attr : state->attrVector()) {
-        cout << "  " << attr << endl;
-      }
-    }
   }
 }

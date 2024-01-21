@@ -118,7 +118,6 @@ void HABackend::threadrunner()
     // cout<<msg<<endl;
     json j = json::parse(msg);
 
-    std::vector<std::string> whatchanged;
     {
 
       if (j["id"] == getstates["id"]) {
@@ -136,7 +135,6 @@ void HABackend::threadrunner()
 
           // FIXME: we should check if the domain actually exists before just calling for it.
           entities[entity_id] = std::make_shared<HAEntity>(evd, domains[domain], this); // FIXME: we share `this` entirely unprotected from threading mistakes here
-          whatchanged.push_back(entity_id);
         }
         std::unique_lock<std::mutex> lck(load_lock);
         loaded = true;
@@ -155,8 +153,6 @@ void HABackend::threadrunner()
         if (event_type == "state_changed") {
           auto ent = entities[entity_id];
           ent->update(new_state);
-          std::cerr << "DID UPDATE() ON " << ent->name << std::endl;
-          whatchanged.push_back(entity_id);
         }
         else {
           cerr << "Event type received that we didn't expect: " << event_type << endl;
@@ -168,8 +164,6 @@ void HABackend::threadrunner()
         continue;
       }
     }
-
-    uithread_refresh(this, whatchanged);
   }
 }
 

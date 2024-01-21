@@ -37,7 +37,6 @@ static uint32_t intFromRGB(json attrs)
 }
 
 static string current_light; // FIXME: THIS NEEDS A MUTEX
-static bool toggle = false;
 static bool newcolor = false;
 
 static void btn_event_cb(lv_event_t* e)
@@ -45,7 +44,6 @@ static void btn_event_cb(lv_event_t* e)
   lv_event_code_t code = lv_event_get_code(e);
   // lv_obj_t* btn = lv_event_get_target(e);
   if (code == LV_EVENT_CLICKED) {
-    toggle = true;
     // static uint32_t cnt = 0;
     // cnt++;
 
@@ -195,17 +193,6 @@ void uithread(HABackend& backend, int argc, char* argv[])
 
   // int i = 0;
   // while (true) {
-  //   if (toggle) {
-  //     json cmd;
-
-  //     auto entity = backend.GetEntityByName(current_light);
-  //     HADomains::Light light(entity);
-
-  //     light.toggle({});
-
-  //     toggle = false;
-  //   }
-
   //   if (newcolor) {
   //     json cmd;
   //     json rgb;
@@ -257,33 +244,4 @@ void uithread(HABackend& backend, int argc, char* argv[])
   //   i = 0;
   // }
   //}
-}
-
-void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged) // would be cool if this got told what changed
-{
-  // return;
-  // std::scoped_lock lk(entrieslock, stateslock, domainslock);
-
-  cout << "Changes: " << whatchanged.size() << endl;
-  for (const auto& changed : whatchanged) {
-    auto state = backend->GetEntityByName(changed);
-    cout << "state for " << changed << " is " << state->getInfo() << endl;
-    auto attrs = state->getJsonState()["attributes"];
-    //    cout << attrs << endl;
-    //   if (state->getEntityType() == EntityType::Light) {
-    // current_light = changed;  moved to a command line flag for now
-    // }
-    // if(attrs.count("rgb_color")) {
-    //     auto rgb = attrs["rgb_color"];
-    //     cout<<"RGB "<<rgb<<endl;
-    //     if (rgb.size() == 3) {
-    //         uint32_t color = (rgb[0].get<int>() << 16) + (rgb[1].get<int>() << 8) + (rgb[2].get<int>());
-    //         cout<<" "<<color;
-    //         c=color;
-    //     }
-    // }
-    // for (const auto& attr : state->attrVector()) {
-    //  cout << "  " << attr << endl;
-    //}
-  }
 }
