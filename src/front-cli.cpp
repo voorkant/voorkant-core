@@ -93,22 +93,20 @@ void uithread(HABackend& backend, int argc, char* argv[])
 
     backend.Start();
 
-    std::vector<SimpleObserver*> observers;
     auto haentities = backend.GetEntitiesByDomain(domain);
+
+    std::vector<std::unique_ptr<SimpleObserver>> observers;
+
     for (const auto& haentity : haentities) {
       std::cerr << "Registering observer for " << haentity->name << std::endl;
-      SimpleObserver* obs = new SimpleObserver(haentity);
-
-      observers.push_back(obs);
-      std::cerr << " after push back: " << observers.size() << std::endl;
-      for (auto obs : observers) {
-        obs->printHAEntity();
-      }
+      std::unique_ptr<SimpleObserver> observer = std::make_unique<SimpleObserver>(haentity);
+      observers.push_back(std::move(observer));
     }
+
     while (true) {
       sleep(10);
       std::cerr << "Nothing received: " << observers.size() << std::endl;
-      for (auto obs : observers) {
+      for (auto& obs : observers) {
         obs->printHAEntity();
       }
     }
