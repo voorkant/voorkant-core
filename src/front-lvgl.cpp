@@ -168,7 +168,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
   std::vector<std::unique_ptr<UIEntity>> uielements;
   int i = 0;
   auto entities = backend.GetEntitiesByDomain("light");
-  for (auto entity : entities) {
+  for (const auto& entity : entities) {
     if (i % 2 == 0) {
       std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
       uielements.push_back(std::move(btn));

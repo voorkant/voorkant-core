@@ -84,8 +84,7 @@ void HAEntity::detach(IObserver* observer)
 
 void HAEntity::notify()
 {
-  std::cerr << "Performing notify() for " << name << " on " << uientities.size() << " uientities" << std::endl;
-  for (auto uientity : uientities) {
+  for (const auto& uientity : uientities) {
     uientity->uiupdate();
   }
 }
@@ -99,7 +98,7 @@ HADomain::HADomain(std::string _name, json _state)
 {
   state = _state;
   name = _name;
-  for (auto& [service, info] : state.items()) {
+  for (const auto& [service, info] : state.items()) {
     auto haservice = std::make_shared<HAService>(info);
     services.push_back(haservice);
   }
