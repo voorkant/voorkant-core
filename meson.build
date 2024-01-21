@@ -59,13 +59,13 @@ executable('client-ftxui',
      )
 
  executable('client-cli',
-            ['src/main.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp', 'src/generated/domains.hpp'],
+            ['src/main.cpp', 'src/Backend.cpp', 'src/Observer.hpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp', 'src/generated/domains.hpp'],
             install : true,
        dependencies : [json_dep, thread_dep, curl_dep]
        )
 
-executable('client-lvgl-sdl',
-           ['src/main.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
+executable('client-lvgl',
+           ['src/main.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp', 'src/UIComponents.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
           install : true,
       dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, sdl2_dep],
       include_directories: incdir,

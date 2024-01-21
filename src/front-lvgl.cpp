@@ -10,7 +10,7 @@
 #include <src/core/lv_disp.h>
 #include <utility>
 #include "sdl/sdl.h"
-
+#include "UIComponents.hpp"
 #include <generated/domains.hpp>
 
 using std::string;
@@ -37,7 +37,6 @@ static uint32_t intFromRGB(json attrs)
 }
 
 static string current_light; // FIXME: THIS NEEDS A MUTEX
-static bool toggle = false;
 static bool newcolor = false;
 
 static void btn_event_cb(lv_event_t* e)
@@ -45,7 +44,6 @@ static void btn_event_cb(lv_event_t* e)
   lv_event_code_t code = lv_event_get_code(e);
   // lv_obj_t* btn = lv_event_get_target(e);
   if (code == LV_EVENT_CLICKED) {
-    toggle = true;
     // static uint32_t cnt = 0;
     // cnt++;
 
@@ -74,7 +72,7 @@ static void slider_event_cb(lv_event_t* e)
 
 void uithread(HABackend& backend, int argc, char* argv[])
 {
-  argparse::ArgumentParser program("client-cli");
+  argparse::ArgumentParser program("client-lvgl");
 
   argparse::ArgumentParser entity_command("entity");
   entity_command.add_argument("name")
@@ -131,92 +129,60 @@ void uithread(HABackend& backend, int argc, char* argv[])
   enc_drv.read_cb = sdl_mouse_read;
   /*lv_indev_t* enc_indev = */ lv_indev_drv_register(&enc_drv);
   // lv_indev_set_group(enc_indev, g);
-  lv_group_t* g = lv_group_create();
-  lv_group_set_default(g);
+  // lv_group_t* g = lv_group_create();
+  // lv_group_set_default(g);
 
-  // START BUTTON EXAMPLE
-  lv_obj_t* btn = lv_btn_create(lv_scr_act()); /*Add a button the current screen*/
-  lv_obj_set_pos(btn, 10, 10); /*Set its position*/
-  lv_obj_set_size(btn, 240, 50); /*Set its size*/
-  lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL); /*Assign a callback to the button*/
+  // // START BUTTON EXAMPLE
+  // lv_obj_t* btn = lv_btn_create(lv_scr_act()); /*Add a button the current screen*/
+  // lv_obj_set_pos(btn, 10, 10); /*Set its position*/
+  // lv_obj_set_size(btn, 240, 50); /*Set its size*/
+  // lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL); /*Assign a callback to the button*/
 
-  lv_obj_t* label = lv_label_create(btn); /*Add a label to the button*/
-  lv_label_set_text(label, "Button"); /*Set the labels text*/
-  lv_obj_center(label);
-  // END BUTTON EXAMPLE
-  for (int i = 0; i < 3; i++) {
+  // lv_obj_t* label = lv_label_create(btn); /*Add a label to the button*/
+  // lv_label_set_text(label, "Button"); /*Set the labels text*/
+  // lv_obj_center(label);
+  // // END BUTTON EXAMPLE
+  // for (int i = 0; i < 3; i++) {
 
-    /*Create a slider in the center of the display*/
-    lv_obj_t* slider = lv_slider_create(lv_scr_act());
-    lv_slider_set_range(slider, 0, 255);
-    lv_obj_set_width(slider, 200); /*Set the width*/
-    lv_obj_set_pos(slider, 40, i * 70 + 120);
-    lv_obj_add_event_cb(slider, slider_event_cb, LV_EVENT_VALUE_CHANGED, NULL); /*Assign an event function*/
+  //   /*Create a slider in the center of the display*/
+  //   lv_obj_t* slider = lv_slider_create(lv_scr_act());
+  //   lv_slider_set_range(slider, 0, 255);
+  //   lv_obj_set_width(slider, 200); /*Set the width*/
+  //   lv_obj_set_pos(slider, 40, i * 70 + 120);
+  //   lv_obj_add_event_cb(slider, slider_event_cb, LV_EVENT_VALUE_CHANGED, NULL); /*Assign an event function*/
 
-    /*Create a label above the slider*/
-    lv_obj_t* slabel = lv_label_create(lv_scr_act());
-    lv_label_set_text(slabel, "0");
-    lv_obj_align_to(slabel, slider, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
+  //   /*Create a label above the slider*/
+  //   lv_obj_t* slabel = lv_label_create(lv_scr_act());
+  //   lv_label_set_text(slabel, "0");
+  //   lv_obj_align_to(slabel, slider, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
 
-    rgbsliders[i] = std::make_pair(slider, slabel);
-  }
+  //   rgbsliders[i] = std::make_pair(slider, slabel);
+  // }
 
+  /*Create a container with ROW flex direction*/
+  lv_obj_t* cont_row = lv_obj_create(lv_scr_act());
+  lv_obj_set_size(cont_row, 500, MY_DISP_HOR_RES);
+  lv_obj_align(cont_row, LV_ALIGN_TOP_MID, 0, 5);
+  lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN);
+
+  std::vector<std::unique_ptr<UIEntity>> uielements;
   int i = 0;
-  while (true) {
-    if (toggle) {
-      json cmd;
-
-      auto entity = backend.GetEntityByName(current_light);
-      HADomains::Light light(entity);
-
-      light.toggle({});
-
-      toggle = false;
-    }
-
-    if (newcolor) {
-      json cmd;
-      json rgb;
-
-      rgb = {0, 0, 0};
-
-      for (int i = 0; i < 3; i++) {
-        rgb[i] = lv_slider_get_value(rgbsliders[i].first);
-      }
-
-      cmd["type"] = "call_service";
-      cmd["domain"] = backend.GetEntityByName(current_light)->domain;
-      cmd["service"] = "turn_on";
-      cmd["target"]["entity_id"] = current_light;
-      cmd["service_data"]["rgb_color"] = rgb;
-
-      backend.WSConnSend(cmd);
-
-      newcolor = false;
+  auto entities = backend.GetEntitiesByDomain("light");
+  for (const auto& entity : entities) {
+    if (i % 2 == 0) {
+      std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
+      uielements.push_back(std::move(btn));
     }
     else {
-      // uint32_t c = rand();
-      auto attrs = backend.GetEntityByName(current_light)->getJsonState()["attributes"];
-      if (attrs.count("rgb_color")) {
-        auto rgb = attrs["rgb_color"];
-        // cout<<"RGB "<<rgb<<endl;
-        if (rgb.size() == 3) {
-          for (int i = 0; i < 3; i++) {
-            lv_slider_set_value(rgbsliders[i].first, rgb[i], LV_ANIM_OFF);
-
-            // this label setting code is duplicated from slider_event_cb, because LV_EVENT_VALUE_CHANGED does not fire when -we- change it (https://docs.lvgl.io/latest/en/html/widgets/slider.html)
-            // and we don't want to pass the old value back to HA (which slider_event_cb would happily do for us), because that causes a super fun oscillation
-            lv_label_set_text_fmt(rgbsliders[i].second, "%" LV_PRId32, rgb[i].get<int>());
-            lv_obj_align_to(rgbsliders[i].second, rgbsliders[i].first, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
-          }
-        }
-      }
-      lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(attrs)), LV_PART_MAIN);
-      auto state = backend.GetEntityByName(current_light);
-      auto labeltext = state->getJsonState()["attributes"]["friendly_name"].get<string>() + " (" + state->getState() + ")";
-      lv_label_set_text(label, labeltext.c_str());
+      std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
+      uielements.push_back(std::move(btn));
     }
 
+    i++;
+  }
+
+  i = 0;
+  while (true) {
     usleep(5 * 1000); // 5000 usec = 5 ms
     lv_tick_inc(5); // 5 ms
     lv_task_handler();
@@ -225,33 +191,58 @@ void uithread(HABackend& backend, int argc, char* argv[])
       i = 0;
     }
   }
-}
 
-void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged) // would be cool if this got told what changed
-{
-  // return;
-  // std::scoped_lock lk(entrieslock, stateslock, domainslock);
+  // int i = 0;
+  // while (true) {
+  //   if (newcolor) {
+  //     json cmd;
+  //     json rgb;
 
-  cerr << whatchanged.size() << endl;
-  for (const auto& changed : whatchanged) {
-    auto state = backend->GetEntityByName(changed);
-    cout << "state for " << changed << " is " << state->getInfo() << endl;
-    auto attrs = state->getJsonState()["attributes"];
-    cout << attrs << endl;
-    if (state->getEntityType() == EntityType::Light) {
-      // current_light = changed;  moved to a command line flag for now
-    }
-    // if(attrs.count("rgb_color")) {
-    //     auto rgb = attrs["rgb_color"];
-    //     cout<<"RGB "<<rgb<<endl;
-    //     if (rgb.size() == 3) {
-    //         uint32_t color = (rgb[0].get<int>() << 16) + (rgb[1].get<int>() << 8) + (rgb[2].get<int>());
-    //         cout<<" "<<color;
-    //         c=color;
-    //     }
-    // }
-    for (const auto& attr : state->attrVector()) {
-      cout << "  " << attr << endl;
-    }
-  }
+  //     rgb = {0, 0, 0};
+
+  //     for (int i = 0; i < 3; i++) {
+  //       rgb[i] = lv_slider_get_value(rgbsliders[i].first);
+  //     }
+
+  //     cmd["type"] = "call_service";
+  //     cmd["domain"] = backend.GetEntityByName(current_light)->domain;
+  //     cmd["service"] = "turn_on";
+  //     cmd["target"]["entity_id"] = current_light;
+  //     cmd["service_data"]["rgb_color"] = rgb;
+
+  //     backend.WSConnSend(cmd);
+
+  //     newcolor = false;
+  //   }
+  //   else {
+  //     // uint32_t c = rand();
+  //     auto attrs = backend.GetEntityByName(current_light)->getJsonState()["attributes"];
+  //     if (attrs.count("rgb_color")) {
+  //       auto rgb = attrs["rgb_color"];
+  //       // cout<<"RGB "<<rgb<<endl;
+  //       if (rgb.size() == 3) {
+  //         for (int i = 0; i < 3; i++) {
+  //           lv_slider_set_value(rgbsliders[i].first, rgb[i], LV_ANIM_OFF);
+
+  //           // this label setting code is duplicated from slider_event_cb, because LV_EVENT_VALUE_CHANGED does not fire when -we- change it (https://docs.lvgl.io/latest/en/html/widgets/slider.html)
+  //           // and we don't want to pass the old value back to HA (which slider_event_cb would happily do for us), because that causes a super fun oscillation
+  //           lv_label_set_text_fmt(rgbsliders[i].second, "%" LV_PRId32, rgb[i].get<int>());
+  //           lv_obj_align_to(rgbsliders[i].second, rgbsliders[i].first, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
+  //         }
+  //       }
+  //     }
+  //     lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(attrs)), LV_PART_MAIN);
+  //     auto state = backend.GetEntityByName(current_light);
+  //     auto labeltext = state->getJsonState()["attributes"]["friendly_name"].get<string>() + " (" + state->getState() + ")";
+  //     lv_label_set_text(label, labeltext.c_str());
+  //   }
+
+  // usleep(5 * 1000); // 5000 usec = 5 ms
+  // lv_tick_inc(5); // 5 ms
+  // lv_task_handler();
+  // if (i++ == (1000 / 5)) {
+  //   cerr << "." << flush;
+  //   i = 0;
+  // }
+  //}
 }

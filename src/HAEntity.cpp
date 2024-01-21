@@ -23,6 +23,7 @@ HAEntity::HAEntity(json _state, std::shared_ptr<HADomain> _hadomain, HABackend* 
 void HAEntity::update(json _state)
 {
   state = _state;
+  notify();
 }
 
 std::vector<std::shared_ptr<HAService>> HAEntity::getServices()
@@ -72,6 +73,22 @@ std::string HAEntity::getNameFromState(void)
   }
 }
 
+void HAEntity::attach(IObserver* observer)
+{
+  uientities.insert(observer);
+}
+void HAEntity::detach(IObserver* observer)
+{
+  uientities.erase(observer);
+}
+
+void HAEntity::notify()
+{
+  for (const auto& uientity : uientities) {
+    uientity->uiupdate();
+  }
+}
+
 void HAEntity::WSConnSend(json& msg) // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
 {
   backend->WSConnSend(msg);
@@ -81,7 +98,7 @@ HADomain::HADomain(std::string _name, json _state)
 {
   state = _state;
   name = _name;
-  for (auto& [service, info] : state.items()) {
+  for (const auto& [service, info] : state.items()) {
     auto haservice = std::make_shared<HAService>(info);
     services.push_back(haservice);
   }

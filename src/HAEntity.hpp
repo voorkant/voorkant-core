@@ -6,7 +6,9 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <set>
 #include "ext/magic_enum/include/magic_enum/magic_enum_all.hpp"
+#include "Observer.hpp"
 
 using std::map;
 using std::string;
@@ -46,7 +48,7 @@ private:
 
 class HABackend; // so we can have a pointer to it
 
-class HAEntity
+class HAEntity : public ISubject
 {
 public:
   string name;
@@ -95,10 +97,15 @@ public:
 
   void WSConnSend(json& msg); // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
 
+  void attach(IObserver* uientity) override;
+  void detach(IObserver* uientity) override;
+  void notify() override;
+
 protected:
   HABackend* backend;
 
 private:
+  std::set<IObserver*> uientities;
   std::shared_ptr<HADomain> hadomain;
   std::string getDomainFromState();
   std::string getNameFromState();

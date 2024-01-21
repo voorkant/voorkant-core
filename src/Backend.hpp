@@ -26,6 +26,7 @@ public:
   json DoCommand(const std::string& command, const json& data);
   string CreateLongToken(string name);
   std::shared_ptr<HAEntity> GetEntityByName(const std::string& name);
+  std::vector<std::shared_ptr<HAEntity>> GetEntitiesByDomain(const std::string& domain);
   map<string, std::shared_ptr<HAEntity>> GetEntities();
   void WSConnSend(json& msg);
 

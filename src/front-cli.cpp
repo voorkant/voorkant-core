@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "Backend.hpp"
+#include "Observer.hpp"
 
 using std::string;
 
@@ -15,14 +16,36 @@ using std::cout;
 using std::endl;
 using std::flush;
 
-static bool uithread_refresh_print_updates = false;
+class SimpleObserver : public IObserver
+{
+public:
+  ~SimpleObserver()
+  {
+    haentity->detach((IObserver*)this);
+  }
+  SimpleObserver(std::shared_ptr<HAEntity> _entity)
+  {
+    haentity = _entity;
+    haentity->attach((IObserver*)this);
+  }
+  void uiupdate() override
+  {
+    std::cout << "Received uiupdate for " << haentity->name << ":" << std::endl;
+    std::cout << haentity->getInfo() << std::endl;
+  }
+
+private:
+  std::shared_ptr<HAEntity> haentity;
+};
+
+// static bool uithread_refresh_print_updates = false;
 
 void uithread(HABackend& backend, int argc, char* argv[])
 {
   argparse::ArgumentParser program("client-cli");
   argparse::ArgumentParser subscribe_command("subscribe");
-  subscribe_command.add_argument("pattern")
-    .help("specific state name, or *"); // maybe .remaining() so you can subscribe multiple?
+  subscribe_command.add_argument("domain")
+    .help("specific a HA domain"); // maybe .remaining() so you can subscribe multiple?
 
   program.add_subparser(subscribe_command);
 
@@ -53,13 +76,27 @@ void uithread(HABackend& backend, int argc, char* argv[])
 
   if (program.is_subcommand_used(subscribe_command)) {
     // FIXME: now actually use the argument
-    cout << "should subscribe to " << subscribe_command.get<string>("pattern") << endl;
-    uithread_refresh_print_updates = true;
+    string domain = subscribe_command.get<string>("domain");
+    if (!domain.empty()) {
+      cout << "should subscribe to " << subscribe_command.get<string>("domain") << endl;
+    }
+    else {
+      cerr << "No domain provided!" << endl;
+      return;
+    }
+
     backend.Start();
-    cout << "Backend thread started..." << endl;
+
+    auto haentities = backend.GetEntitiesByDomain(domain);
+    std::vector<std::unique_ptr<SimpleObserver>> observers;
+    for (const auto& haentity : haentities) {
+      std::cerr << "Monitoring entity: " << haentity->name << std::endl;
+      std::unique_ptr<SimpleObserver> observer = std::make_unique<SimpleObserver>(haentity);
+      observers.push_back(std::move(observer));
+    }
+
     while (true) {
-      sleep(1);
-      cerr << "." << flush;
+      sleep(10);
     }
   }
   else if (program.is_subcommand_used(token_command)) {
@@ -79,18 +116,5 @@ void uithread(HABackend& backend, int argc, char* argv[])
   }
   else {
     cerr << "no command given" << endl;
-  }
-}
-
-void uithread_refresh(HABackend* backend, std::vector<std::string> whatchanged)
-{
-  if (uithread_refresh_print_updates) {
-    for (const auto& changed : whatchanged) {
-      auto state = backend->GetEntityByName(changed);
-      cout << "state for " << changed << " is " << state->getInfo() << endl;
-      for (const auto& attr : state->attrVector()) {
-        cout << "  " << attr << endl;
-      }
-    }
   }
 }

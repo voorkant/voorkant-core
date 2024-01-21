@@ -103,7 +103,6 @@ void HABackend::threadrunner()
     std::scoped_lock lk(domainslock);
     domains[domain] = std::make_shared<HADomain>(domain, services);
   }
-  cerr << "We have " << domains.size() << "domains " << endl;
 
   json subscribe;
   subscribe["type"] = "subscribe_events";
@@ -119,7 +118,6 @@ void HABackend::threadrunner()
     // cout<<msg<<endl;
     json j = json::parse(msg);
 
-    std::vector<std::string> whatchanged;
     {
 
       if (j["id"] == getstates["id"]) {
@@ -137,7 +135,6 @@ void HABackend::threadrunner()
 
           // FIXME: we should check if the domain actually exists before just calling for it.
           entities[entity_id] = std::make_shared<HAEntity>(evd, domains[domain], this); // FIXME: we share `this` entirely unprotected from threading mistakes here
-          whatchanged.push_back(entity_id);
         }
         std::unique_lock<std::mutex> lck(load_lock);
         loaded = true;
@@ -154,8 +151,8 @@ void HABackend::threadrunner()
         auto new_state = evd["new_state"];
 
         if (event_type == "state_changed") {
-          entities[entity_id]->update(new_state);
-          whatchanged.push_back(entity_id);
+          auto ent = entities[entity_id];
+          ent->update(new_state);
         }
         else {
           cerr << "Event type received that we didn't expect: " << event_type << endl;
@@ -163,18 +160,27 @@ void HABackend::threadrunner()
       }
       else {
         cerr << "Received message we don't expect: " << j["type"] << endl;
-        // not a message we were expecting
+        cerr << j.dump(2) << endl;
         continue;
       }
     }
-
-    uithread_refresh(this, whatchanged);
   }
 }
 
 map<string, std::shared_ptr<HAEntity>> HABackend::GetEntities()
 {
   return entities;
+}
+
+std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByDomain(const std::string& domain)
+{
+  std::vector<std::shared_ptr<HAEntity>> ret;
+  for (auto& [id, entity] : entities) {
+    if (entity->domain == domain) {
+      ret.push_back(entity);
+    }
+  }
+  return ret;
 }
 
 std::shared_ptr<HAEntity> HABackend::GetEntityByName(const std::string& name)
