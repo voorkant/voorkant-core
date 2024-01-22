@@ -20,7 +20,7 @@ UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_size(btn, 240, 50);
   lv_obj_center(btn);
   lv_obj_add_flag(btn, LV_OBJ_FLAG_CHECKABLE);
-  lv_obj_add_event_cb(btn, UIButton::btn_press_cb, LV_EVENT_ALL, reinterpret_cast<void*>(&entity));
+  lv_obj_add_event_cb(btn, UIButton::btn_press_cb, LV_EVENT_ALL, reinterpret_cast<void*>(&entity)); // FIXME: put this magic (reinterpret_cast etc.) somewhere central
   lv_obj_t* label = lv_label_create(btn);
   lv_label_set_text(label, _entity->name.c_str());
   lv_obj_center(label);
