@@ -15,7 +15,7 @@ UIEntity::UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent)
 UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
 {
-  // This code is duplicated in UISwitch, consider this after another few UIentities
+  // FIXME: This code is duplicated in UISwitch, consider this after another few UIentities
   btn = lv_btn_create(_parent);
   lv_obj_set_size(btn, 240, 50);
   lv_obj_center(btn);
