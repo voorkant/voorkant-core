@@ -105,7 +105,7 @@ protected:
   HABackend* backend;
 
 private:
-  std::set<IObserver*> uientities;
+  std::set<IObserver*> observers;
   std::shared_ptr<HADomain> hadomain;
   std::string getDomainFromState();
   std::string getNameFromState();
