@@ -35,7 +35,7 @@ jobs:
     - name: Check for token
       run: cat scripts/docker/longtoken.txt
     - name: test client-cli
-      run: HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN=$(cat scripts/docker/longtoken.txt) build/client-cli list-entities
+      run: LD_LIBRARY_PATH=./build/subprojects/curl-8.5.0/build/lib/.libs/ HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN=$(cat scripts/docker/longtoken.txt) build/client-cli list-entities
     - uses: actions/upload-artifact@v4
       with:
         name: ubuntu-build
