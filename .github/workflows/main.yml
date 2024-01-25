@@ -26,6 +26,8 @@ jobs:
       run: meson setup ${{github.workspace}}/build 
     - name: Build
       run: meson compile -C ${{github.workspace}}/build
+    - name: Check for token
+      run: cat scripts/docker/longtoken.txt
     - uses: actions/upload-artifact@v4
       with:
         name: ubuntu-build
