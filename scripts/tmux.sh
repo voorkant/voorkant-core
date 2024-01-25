@@ -20,4 +20,4 @@ then
     tmux send-keys -t $SESSIONNAME "cd ${ROOT}/scripts/docker && ./register.sh" C-m
 fi
 
-tmux attach -t $SESSIONNAME
+#tmux attach -t $SESSIONNAME
