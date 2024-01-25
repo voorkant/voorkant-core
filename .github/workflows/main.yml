@@ -33,11 +33,9 @@ jobs:
         with:
           submodules: recursive
       - name: Install dependencies (brew)
-        run: brew install gcc meson nlohmann-json sdl2 curl
+        run: brew install meson nlohmann-json sdl2 curl
       - name: Meson setup
         run: PKG_CONFIG_PATH="/usr/local/opt/curl/lib/pkgconfig" meson setup ${{github.workspace}}/build
-        env:
-          CC: gcc
       - run: meson compile -C ${{github.workspace}}/build -v
       - uses: actions/upload-artifact@v4
         with:
