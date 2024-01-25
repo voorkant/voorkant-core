@@ -20,7 +20,9 @@
 #include <lvgl.h>
 #include <src/core/lv_disp.h>
 #include <utility>
-#include "UIComponents.hpp"
+#include "sdl/sdl.h"
+#include "uicomponents/UIComponents.hpp"
+#include "uicomponents/uirgblight.hpp"
 #include <generated/domains.hpp>
 
 using std::string;
@@ -210,8 +212,13 @@ void uithread(HABackend& backend, int argc, char* argv[])
       uielements.push_back(std::move(btn));
     }
     else {
-      std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
-      uielements.push_back(std::move(btn));
+      std::unique_ptr<UIEntity> sw = std::make_unique<UISwitch>(entity, cont_row);
+      uielements.push_back(std::move(sw));
+    }
+    if (i == 2) {
+
+      std::unique_ptr<UIEntity> rgb = std::make_unique<UIRGBLight>(entity, cont_row);
+      uielements.push_back(std::move(rgb));
     }
 
     i++;
