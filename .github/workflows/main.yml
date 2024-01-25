@@ -30,6 +30,8 @@ jobs:
       run: meson compile -C ${{github.workspace}}/build
     - name: Show docker compose logs
       run: cd scripts/docker && docker compose logs
+    - name: register
+      run: cd scripts/docker && ./register.sh
     - name: Check for token
       run: cat scripts/docker/longtoken.txt
     - uses: actions/upload-artifact@v4
