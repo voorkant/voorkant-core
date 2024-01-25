@@ -11,6 +11,10 @@ class IObserver
 {
 public:
   virtual void uiupdate() = 0;
+
+protected:
+  IObserver(){};
+  ~IObserver(){};
 };
 
 class ISubject
@@ -19,6 +23,10 @@ public:
   virtual void attach(IObserver* observer) = 0;
   virtual void detach(IObserver* observer) = 0;
   virtual void notify() = 0;
+
+protected:
+  ISubject(){};
+  ~ISubject(){};
 };
 
 #endif
