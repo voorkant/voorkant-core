@@ -15,7 +15,9 @@ jobs:
       with:
         submodules: recursive
     - name: start HA in the background
-      run: scripts/tmux.sh
+      run: |
+        cp -r scripts/docker/config scripts/docker/ha-config
+        cd scripts/docker && docker compose up -d
     - name: Update apt indexes
       run: sudo apt-get update
     - name: Install various apt dependencies
