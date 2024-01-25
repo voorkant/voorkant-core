@@ -44,5 +44,8 @@ int main(int argc, char* argv[])
 
     // running the uithread in the main thread makes LVGL/SDL work on macOS
     uithread(backend, argc, argv);
+    return 0;
   }
+
+  return 1;
 }
