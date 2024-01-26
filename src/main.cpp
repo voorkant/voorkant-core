@@ -33,7 +33,11 @@ int main(int argc, char* argv[])
   HABackend backend;
   if (backend.Connect(GetEnv("HA_WS_URL"), GetEnv("HA_API_TOKEN"))) {
     cerr << "Connect succesful. Starting." << endl;
-    std::thread ui(uithread, std::ref(backend), argc, argv);
-    ui.join();
+    // we used to do this, which actually is quite pointless if main does nothing besides this (after connecting HA)
+    //    std::thread ui(uithread, std::ref(backend), argc, argv);
+    //    ui.join();
+
+    // running the uithread in the main thread makes LVGL/SDL work on macOS
+    uithread(backend, argc, argv);
   }
 }
