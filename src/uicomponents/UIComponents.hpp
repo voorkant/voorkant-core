@@ -15,8 +15,12 @@ public:
   UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
 
 protected:
+  lv_obj_t* createLabel(lv_obj_t* parent, std::string text);
+
   std::shared_ptr<HAEntity> entity;
   lv_obj_t* parentContainer;
+  const uint uiEntityWidth = 250;
+  const lv_label_long_mode_t labelLongMode = LV_LABEL_LONG_SCROLL;
 };
 
 class UIButton : public UIEntity

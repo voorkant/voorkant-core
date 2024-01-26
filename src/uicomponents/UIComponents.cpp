@@ -5,6 +5,15 @@ UIEntity::~UIEntity()
   entity->detach((IObserver*)this);
 };
 
+lv_obj_t* UIEntity::createLabel(lv_obj_t* _parent, std::string text)
+{
+  lv_obj_t* label = lv_label_create(_parent);
+  lv_label_set_text(label, text.c_str());
+  lv_label_set_long_mode(label, labelLongMode);
+
+  return label;
+}
+
 UIEntity::UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent)
 {
   parentContainer = _parent;
@@ -17,13 +26,16 @@ UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 {
   // FIXME: This code is duplicated in UISwitch, consider this after another few UIentities
   btn = lv_btn_create(_parent);
-  lv_obj_set_size(btn, 240, 50);
+  lv_obj_set_size(btn, uiEntityWidth, 50);
   lv_obj_center(btn);
+  lv_obj_set_style_pad_all(btn, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_add_flag(btn, LV_OBJ_FLAG_CHECKABLE);
   lv_obj_add_event_cb(btn, UIButton::btn_press_cb, LV_EVENT_ALL, reinterpret_cast<void*>(&entity)); // FIXME: put this magic (reinterpret_cast etc.) somewhere central
-  lv_obj_t* label = lv_label_create(btn);
-  lv_label_set_text(label, _entity->name.c_str());
-  lv_obj_center(label);
+
+  lv_obj_t* label = createLabel(btn, _entity->name);
+  lv_obj_set_width(label, LV_PCT(100));
+  lv_obj_set_align(label, LV_ALIGN_CENTER);
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
   uiupdate();
 };
 
@@ -54,15 +66,29 @@ UISwitch::UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 {
   // This code is duplicated in UISwitch, consider this after another few UIentities
   lv_obj_t* switchcontainer = lv_obj_create(_parent);
-  lv_obj_set_size(switchcontainer, 240, 50);
-  lv_obj_center(switchcontainer);
+  lv_obj_set_width(switchcontainer, uiEntityWidth);
+  lv_obj_set_height(switchcontainer, 50);
+  lv_obj_clear_flag(switchcontainer, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_set_style_pad_all(switchcontainer, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
 
   sw = lv_switch_create(switchcontainer);
+  lv_obj_set_width(sw, 50);
   lv_obj_add_event_cb(sw, UISwitch::sw_toggle_cb, LV_EVENT_ALL, reinterpret_cast<void*>(&entity));
   lv_obj_set_align(sw, LV_ALIGN_RIGHT_MID);
 
-  lv_obj_t* label = lv_label_create(switchcontainer);
-  lv_label_set_text(label, _entity->name.c_str());
+  lv_obj_t* label = createLabel(switchcontainer, _entity->name);
+  lv_obj_set_align(label, LV_ALIGN_LEFT_MID);
+  lv_obj_set_width(label, uiEntityWidth - 65); // 50 + padding == switch width
+
+  lv_obj_update_layout(switchcontainer);
+  lv_obj_update_layout(sw);
+  lv_obj_update_layout(label);
+  lv_obj_update_layout(_parent);
+
+  std::cerr << "LABEL: " << lv_obj_get_width(label) << "x" << lv_obj_get_height(label) << std::endl;
+  std::cerr << "SWITCH: " << lv_obj_get_width(sw) << "x" << lv_obj_get_height(sw) << std::endl;
+  std::cerr << "switchcontainer: " << lv_obj_get_width(switchcontainer) << "x" << lv_obj_get_height(switchcontainer) << std::endl;
+  std::cerr << "parent: " << lv_obj_get_width(_parent) << "x" << lv_obj_get_height(_parent) << std::endl;
   uiupdate();
 };
 

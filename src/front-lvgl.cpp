@@ -197,11 +197,15 @@ void uithread(HABackend& backend, int argc, char* argv[])
   //   rgbsliders[i] = std::make_pair(slider, slabel);
   // }
 
-  /*Create a container with ROW flex direction*/
+  /*Create a container with ROW flex direction that wraps.
+  This is our MAIN box that we put everything in.
+  TODO: figure out if we really need this, you can also set your screen to be a flexbox.
+
+  */
   lv_obj_t* cont_row = lv_obj_create(lv_scr_act());
-  lv_obj_set_size(cont_row, 500, MY_DISP_HOR_RES);
-  lv_obj_align(cont_row, LV_ALIGN_TOP_MID, 0, 5);
-  lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN);
+  lv_obj_remove_style_all(cont_row);
+  lv_obj_set_size(cont_row, SDL_HOR_RES, SDL_VER_RES);
+  lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN_WRAP);
 
   std::vector<std::unique_ptr<UIEntity>> uielements;
   int i = 0;
