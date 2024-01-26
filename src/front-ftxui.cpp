@@ -27,7 +27,7 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
 
   backend.Start();
 
-  int selected;
+  int selected = 0;
   int selectedbutton;
 
   std::vector<std::string> entries;
