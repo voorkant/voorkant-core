@@ -11,11 +11,25 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
   lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
 
-  cw = lv_colorwheel_create(flowpanel, true);
   auto widthheight = uiEntityWidth - 50;
+
+  lv_obj_t* label = createLabel(flowpanel, entity->name);
+  lv_obj_set_width(label, LV_PCT(100));
+  lv_obj_set_align(label, LV_ALIGN_CENTER);
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+
+  cw = lv_colorwheel_create(flowpanel, true);
   lv_obj_set_size(cw, widthheight, widthheight);
   lv_obj_set_align(cw, LV_ALIGN_CENTER);
   lv_obj_add_event_cb(cw, UIRGBLight::colorwheel_move_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
+
+  lv_obj_set_style_arc_width(cw, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+  lv_obj_set_style_border_color(cw, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
+  lv_obj_set_style_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+  lv_obj_set_style_border_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+  lv_obj_set_style_border_width(cw, 3, LV_PART_KNOB | LV_STATE_DEFAULT);
+  lv_obj_set_style_pad_all(cw, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
   sw = lv_switch_create(flowpanel);
   lv_obj_set_width(sw, 50);
