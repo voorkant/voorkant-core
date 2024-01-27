@@ -147,7 +147,6 @@ void HABackend::threadrunner()
         auto event_type = event["event_type"];
         auto evd = event["data"];
         auto entity_id = evd["entity_id"];
-        auto old_state = evd["old_state"];
         auto new_state = evd["new_state"];
 
         if (event_type == "state_changed") {
