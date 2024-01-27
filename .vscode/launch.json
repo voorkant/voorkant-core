@@ -9,9 +9,9 @@
         "name": "Voorkant LVGL",
         "request": "launch",
         "type": "cppdbg",
-        "linux": {
-          "MIMode": "gdb",
-        },
+        "MIMode": "gdb",
+        "miDebuggerPath": "/usr/bin/gdb",
+        "miDebuggerArgs": "--cd=${workspaceFolder}",
         "args": [
             "entity",
             "light"
