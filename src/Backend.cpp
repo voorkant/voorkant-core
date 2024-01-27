@@ -179,6 +179,7 @@ map<string, std::shared_ptr<HAEntity>> HABackend::GetEntities()
 
 std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByDomain(const std::string& domain)
 {
+  std::scoped_lock lk(entitieslock);
   std::vector<std::shared_ptr<HAEntity>> ret;
   for (auto& [id, entity] : entities) {
     if (entity->domain == domain) {
