@@ -49,25 +49,29 @@ lvgl_drivers_proj = cmake.subproject('lv_drivers', options: cmake_options)
 lvgl_drivers_dep = lvgl_drivers_proj.dependency('lv_drivers')
 
 
-sdl2_dep = dependency('sdl2')
+# sdl2_dep = dependency('sdl2')
 incdir = include_directories('./src/')
+
+openssl_dep = dependency('openssl')
+zlib_dep = dependency('zlib')
+
 
 executable('client-ftxui',
            ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-ftxui.cpp', 'src/generated/domains.hpp'],
            install : true,
-     dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep]
+     dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep, openssl_dep, zlib_dep]
      )
 
  executable('client-cli',
             ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/Observer.hpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp', 'src/generated/domains.hpp'],
             install : true,
-       dependencies : [json_dep, thread_dep, curl_dep]
+       dependencies : [json_dep, thread_dep, curl_dep, openssl_dep, zlib_dep]
        )
 
 executable('client-lvgl',
            ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp', 'src/UIComponents.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
           install : true,
-      dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, sdl2_dep],
+      dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, openssl_dep, zlib_dep],
       include_directories: incdir,
       cpp_args : '-DLV_CONF_PATH='+meson.current_build_dir()+'/../src/lv_conf.h'
 )
