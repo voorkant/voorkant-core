@@ -147,12 +147,16 @@ void HABackend::threadrunner()
         auto event_type = event["event_type"];
         auto evd = event["data"];
         auto entity_id = evd["entity_id"];
-        auto old_state = evd["old_state"];
         auto new_state = evd["new_state"];
 
         if (event_type == "state_changed") {
-          auto ent = entities[entity_id];
-          ent->update(new_state);
+          if (entities.count(entity_id) == 1) {
+            auto ent = entities[entity_id];
+            ent->update(new_state);
+          }
+          else {
+            std::cerr << "Ignoring state change from " << entity_id << ". We have not received initial state yet." << std::endl;
+          }
         }
         else {
           cerr << "Event type received that we didn't expect: " << event_type << endl;
@@ -174,6 +178,7 @@ map<string, std::shared_ptr<HAEntity>> HABackend::GetEntities()
 
 std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByDomain(const std::string& domain)
 {
+  std::scoped_lock lk(entitieslock);
   std::vector<std::shared_ptr<HAEntity>> ret;
   for (auto& [id, entity] : entities) {
     if (entity->domain == domain) {
