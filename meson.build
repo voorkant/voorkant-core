@@ -55,23 +55,31 @@ incdir = include_directories('./src/')
 openssl_dep = dependency('openssl')
 zlib_dep = dependency('zlib')
 
+if cpp.links('''int main(int argc, char **argv) { return 0; }''',
+            args : '-latomic',
+            name : 'libatomic')
+        libatomic = declare_dependency(link_args : '-latomic')
+else
+        libatomic = []
+endif
+
 
 executable('client-ftxui',
            ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-ftxui.cpp', 'src/generated/domains.hpp'],
            install : true,
-     dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep, openssl_dep, zlib_dep]
+     dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep, openssl_dep, zlib_dep, libatomic]
      )
 
  executable('client-cli',
             ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/Observer.hpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp', 'src/generated/domains.hpp'],
             install : true,
-       dependencies : [json_dep, thread_dep, curl_dep, openssl_dep, zlib_dep]
+       dependencies : [json_dep, thread_dep, curl_dep, openssl_dep, zlib_dep, libatomic]
        )
 
 executable('client-lvgl',
            ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp', 'src/UIComponents.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
           install : true,
-      dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, openssl_dep, zlib_dep],
+      dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, openssl_dep, zlib_dep, libatomic],
       include_directories: incdir,
       cpp_args : '-DLV_CONF_PATH='+meson.current_build_dir()+'/../src/lv_conf.h'
 )
