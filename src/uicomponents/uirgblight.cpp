@@ -3,6 +3,8 @@
 UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
 {
+
+  // TODO: we need to get 'supported_color_modes' to render the UI properly?
   lv_obj_t* flowpanel = lv_obj_create(_parent);
   lv_obj_set_width(flowpanel, uiEntityWidth);
   lv_obj_set_height(flowpanel, 400);

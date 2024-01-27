@@ -11,8 +11,8 @@
 class UIEntity : public IObserver
 {
 public:
-  ~UIEntity();
   UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
+  ~UIEntity();
 
 protected:
   lv_obj_t* createLabel(lv_obj_t* parent, std::string text);
