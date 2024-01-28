@@ -53,19 +53,19 @@ sdl2_dep = dependency('sdl2')
 incdir = include_directories('./src/')
 
 executable('client-ftxui',
-           ['src/main.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-ftxui.cpp', 'src/generated/domains.hpp'],
+           ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-ftxui.cpp', 'src/generated/domains.hpp'],
            install : true,
      dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep]
      )
 
  executable('client-cli',
-            ['src/main.cpp', 'src/Backend.cpp', 'src/Observer.hpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp', 'src/generated/domains.hpp'],
+            ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/Observer.hpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp', 'src/generated/domains.hpp'],
             install : true,
        dependencies : [json_dep, thread_dep, curl_dep]
        )
 
 executable('client-lvgl',
-           ['src/main.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp', 'src/UIComponents.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
+           ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp', 'src/UIComponents.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
           install : true,
       dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, sdl2_dep],
       include_directories: incdir,
