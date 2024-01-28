@@ -11,11 +11,15 @@ CheckOptions:
   - key: readability-identifier-naming.StructCase
     value: CamelCase
   - key: readability-identifier-naming.FunctionCase
-    value: lower_case
+    value: camelBack
+  - key: readability-identifier-naming.ClassMemberCase
+    value: camelBack
+  - key: readability-identifier-naming.ClassMethodCase
+    value: camelBack
   - key: readability-identifier-naming.VariableCase
-    value: lower_case
+    value: camelBack
   - key: readability-identifier-naming.GlobalConstantCase
-    value: lower_case
+    value: CamelCase
   - key: readability-identifier-naming.GlobalConstantPrefix
     value: g_
   - key: bugprone-string-constructor.LargeLengthThreshold
