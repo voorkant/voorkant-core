@@ -8,7 +8,6 @@
 #include <curl/easy.h>
 #include <nlohmann/json.hpp>
 
-
 using json = nlohmann::json;
 
 class WSConn
@@ -33,5 +32,4 @@ private:
   std::mutex msgidlock;
   int msgid = 0;
 };
-
 #endif
