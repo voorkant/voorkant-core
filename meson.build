@@ -1,6 +1,6 @@
 project('client', 'cpp',
   version : '0.1',
-  default_options : ['warning_level=3', 'cpp_std=c++17'])
+  default_options : ['warning_level=3', 'cpp_std=c++20'])
 
 cpp = meson.get_compiler('cpp')
 
@@ -19,7 +19,7 @@ brew_prefix='/opt/homebrew/include'
 brew = find_program('brew', required: false)
 if brew.found()
   cmd_brew_prefix = run_command('brew', '--prefix', check:false)
-  if cmd_brew_prefix.returncode() == 0
+  if cmd_brew_prefix.returncode() == (0)
     brew_prefix = cmd_brew_prefix.stdout().strip()
   endif
 endif

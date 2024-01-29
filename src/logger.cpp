@@ -2,7 +2,7 @@
 
 thread_local Logger::ThreadLocals Logger::tl;
 
-void Logger::writelog(const std::string& _line, LogLevel _level)
+void Logger::writelog(const LogLevel _level, const std::string& _line, const std::source_location _loc)
 {
   std::ostringstream line;
 
@@ -20,22 +20,23 @@ void Logger::writelog(const std::string& _line, LogLevel _level)
   line << datetime.data();
   switch (_level) {
   case Debug:
-    line << "[DEBUG] ";
+    line << "[DEBUG]";
     break;
   case Error:
-    line << "[ERROR] ";
+    line << "[ERROR]";
     break;
   case Warning:
-    line << "[WARNING] ";
+    line << "[WARNING]";
     break;
   case Info:
-    line << "[INFO] ";
+    line << "[INFO]";
     break;
   default:
-    line << "[UNKNOWN] ";
+    line << "[UNKNOWN]";
     break;
   }
 
+  line << "[" << _loc.file_name() << ":" << _loc.line() << "][" << _loc.function_name() << "]";
   line << _line;
 
   if (_level == LogLevel::Error || _level == LogLevel::Warning) {
@@ -50,7 +51,7 @@ Logger& Logger::operator<<(ostream& (&)(ostream&))
 {
   ThreadLocals& th = getThreadLocal();
 
-  writelog(th.logline, th.level);
+  writelog(th.level, th.logline);
   th.logline.clear();
   th.level = LogLevel::Info;
   return *this;

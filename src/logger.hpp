@@ -4,6 +4,7 @@
 #include <iostream>
 #include <array>
 #include <sstream>
+#include <source_location>
 
 using std::cerr;
 using std::cout;
@@ -21,12 +22,13 @@ public:
     Info = 1 << 2,
     Debug = 1 << 3,
   };
+
   Logger& operator<<(std::ostream& (&)(std::ostream&));
   Logger& operator<<(const char* _logline);
   Logger& operator<<(const std::string& _logline);
   Logger& operator<<(LogLevel); // allows us to do Logger<<LogLevel::Error<<"Someline";
 
-  void writelog(const std::string& _logline, LogLevel _level);
+  void writelog(LogLevel _level, const std::string& _logline, const std::source_location _loc = std::source_location::current());
 
 private:
   LogLevel level;
