@@ -13,8 +13,6 @@
 
 #include "logger.hpp"
 
-static Logger g_log;
-
 using std::cerr;
 using std::endl;
 using std::string;
@@ -35,9 +33,14 @@ std::string GetEnv(std::string key)
 int main(int argc, char* argv[])
 {
   HABackend backend;
+  g_log.setLogLevel(Logger::LogLevel::Debug);
+  g_log.setDoDetails(true);
   g_log << Logger::LogLevel::Info << "Starting!" << std::endl;
   if (backend.Connect(GetEnv("HA_WS_URL"), GetEnv("HA_API_TOKEN"))) {
-    cerr << "Connect succesful. Starting." << endl;
+    g_log << Logger::LogLevel::Error << "Connected to HA succesfully!" << std::endl;
+    g_log << Logger::LogLevel::Warning << "Connected to HA succesfully!" << std::endl;
+    g_log << Logger::LogLevel::Info << "Connected to HA succesfully!" << std::endl;
+    g_log << Logger::LogLevel::Debug << "Connected to HA succesfully!" << std::endl;
     // we used to do this, which actually is quite pointless if main does nothing besides this (after connecting HA)
     //    std::thread ui(uithread, std::ref(backend), argc, argv);
     //    ui.join();
