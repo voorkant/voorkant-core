@@ -4,7 +4,7 @@
 #include <iostream>
 #include <array>
 #include <sstream>
-#include <source_location>
+//#include <source_location>
 
 using std::cerr;
 using std::cout;
@@ -23,7 +23,7 @@ public:
     Debug = 4,
   };
 
-  Logger& operator<<(std::source_location loc);
+  // Logger& operator<<(std::source_location loc);
   Logger& operator<<(std::ostream& (&)(std::ostream&));
   Logger& operator<<(const char* _logline);
   Logger& operator<<(const std::string& _logline);
@@ -46,12 +46,13 @@ private:
     {}
     string logline;
     LogLevel level;
-    std::source_location location;
+    //  std::source_location location;
   };
   ThreadLocals& getThreadLocal();
   static thread_local Logger::ThreadLocals tl;
 };
 
-Logger& GetLogger(std::source_location loc = std::source_location::current());
+// Logger& GetLogger(std::source_location loc = std::source_location::current());
+Logger& GetLogger();
 #define g_log GetLogger()
 #endif

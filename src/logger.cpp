@@ -2,10 +2,11 @@
 
 thread_local Logger::ThreadLocals Logger::tl;
 
-Logger& GetLogger(std::source_location loc)
+// Logger& GetLogger(std::source_location loc)
+Logger& GetLogger()
 {
   static Logger log;
-  log << loc;
+  //  log << loc;
   return log;
 }
 
@@ -60,12 +61,12 @@ void Logger::writelog(const LogLevel _level, const std::string& _line, const int
   }
 }
 
-Logger& Logger::operator<<(std::source_location loc)
-{
-  ThreadLocals& th = getThreadLocal();
-  th.location = loc;
-  return *this;
-}
+// Logger& Logger::operator<<(std::source_location loc)
+// {
+//   ThreadLocals& th = getThreadLocal();
+//   th.location = loc;
+//   return *this;
+// }
 
 Logger& Logger::operator<<(ostream& (&)(ostream&))
 {
