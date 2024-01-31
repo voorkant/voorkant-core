@@ -29,7 +29,8 @@ public:
   Logger& operator<<(const std::string& _logline);
   Logger& operator<<(LogLevel); // allows us to do Logger<<LogLevel::Error<<"Someline";
 
-  void writelog(LogLevel _level, const std::string& _logline, const std::source_location _loc);
+  // void writelog(LogLevel _level, const std::string& _logline, const std::source_location _loc);
+  void writelog(LogLevel _level, const std::string& _logline, const int _linenr, const char* _file);
 
   void setLogLevel(LogLevel _whichlevel);
   void setDoDetails(bool _logDetails);

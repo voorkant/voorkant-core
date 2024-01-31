@@ -9,7 +9,7 @@ Logger& GetLogger(std::source_location loc)
   return log;
 }
 
-void Logger::writelog(const LogLevel _level, const std::string& _line, const std::source_location _loc)
+void Logger::writelog(const LogLevel _level, const std::string& _line, const int _linenr, const char* _file)
 {
   if (level2log < _level) {
     return;
@@ -46,7 +46,9 @@ void Logger::writelog(const LogLevel _level, const std::string& _line, const std
     break;
   }
   if (logDetails) {
-    line << "[" << _loc.file_name() << ":" << _loc.line() << ':' << _loc.column() << "][" << _loc.function_name() << "]";
+    line << "[" << _file << ":" << _linenr << "]";
+
+    // line << "[" << _loc.file_name() << ":" << _loc.line() << ':' << _loc.column() << "][" << _loc.function_name() << "]";
   }
   line << _line;
 
@@ -69,7 +71,7 @@ Logger& Logger::operator<<(ostream& (&)(ostream&))
 {
   ThreadLocals& th = getThreadLocal();
 
-  writelog(th.level, th.logline, th.location);
+  writelog(th.level, th.logline, __builtin_LINE(), __builtin_FILE());
   th.logline.clear();
   th.level = LogLevel::Debug;
   return *this;
