@@ -35,7 +35,7 @@ if [ "${MSG}" != "User step already done" ]; then
 
     if [ -x "../../build/client-cli" ]
     then
-        HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}" LD_LIBRARY_PATH=../../build/subprojects/curl-8.5.0/build/lib/.libs/ ../../build/client-cli ha-get-token 1>longtoken.txt
+        HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="${TOKEN}" LD_LIBRARY_PATH=../../build/subprojects/curl-8.5.0/build/lib/.libs/ ../../build/client-cli ha-get-token 2>register.log 1>longtoken.txt
         echo "Providing long lived token"
         echo HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN="`cat longtoken.txt`"
     else
