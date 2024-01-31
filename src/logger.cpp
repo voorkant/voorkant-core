@@ -50,12 +50,7 @@ void Logger::writelog(const LogLevel _level, const std::string& _line, const Loc
   }
   line << _line;
 
-  if (_level == LogLevel::Error || _level == LogLevel::Warning) {
-    std::cerr << line.str() << endl;
-  }
-  else {
-    std::cout << line.str() << endl;
-  }
+  std::cerr << line.str() << endl;
 }
 
 void Logger::setLocation(const int _linenr, const char* _filename, const char* _function)
