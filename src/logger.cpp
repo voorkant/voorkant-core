@@ -28,27 +28,19 @@ void Logger::writelog(const LogLevel _level, const std::string& _line, const Loc
   }
 
   line << datetime.data();
-  switch (_level) {
-  case Debug:
-    line << "[DEBUG]";
-    break;
-  case Error:
-    line << "[ERROR]";
-    break;
-  case Warning:
-    line << "[WARNING]";
-    break;
-  case Info:
-    line << "[INFO]";
-    break;
-  default:
-    line << "[UNKNOWN]";
-    break;
-  }
+  std::map<LogLevel, std::string> loglevel2line = {
+    {LogLevel::Debug, "[DEBUG]"},
+    {LogLevel::Info, "[INFO]"},
+    {LogLevel::Warning, "[WARNING]"},
+    {LogLevel::Error, "[ERROR]"},
+  };
+
+  line << loglevel2line[_level];
+
   if (logDetails) {
     line << "[" << _loc.function << " in " << _loc.filename << ":" << _loc.linenr << "]";
   }
-  line << _line;
+  line << " " << _line;
 
   std::cerr << line.str() << endl;
 }

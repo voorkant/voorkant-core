@@ -4,10 +4,12 @@
 #include <iostream>
 #include <array>
 #include <sstream>
+#include <map>
 
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::map;
 using std::ostream;
 using std::string;
 
