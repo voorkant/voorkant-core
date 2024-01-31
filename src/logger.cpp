@@ -28,7 +28,7 @@ void Logger::writelog(const LogLevel _level, const std::string& _line, const Loc
   }
 
   line << datetime.data();
-  std::map<LogLevel, std::string> loglevel2line = {
+  static std::map<LogLevel, std::string> loglevel2line = {
     {LogLevel::Debug, "[DEBUG]"},
     {LogLevel::Info, "[INFO]"},
     {LogLevel::Warning, "[WARNING]"},
