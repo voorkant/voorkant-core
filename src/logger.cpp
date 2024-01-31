@@ -2,15 +2,14 @@
 
 thread_local Logger::ThreadLocals Logger::tl;
 
-// Logger& GetLogger(std::source_location loc)
-Logger& GetLogger()
+Logger& GetLogger(const int _linenr, const char* _filename, const char* _function)
 {
   static Logger log;
-  //  log << loc;
+  log.setLocation(_linenr, _filename, _function);
   return log;
 }
 
-void Logger::writelog(const LogLevel _level, const std::string& _line, const int _linenr, const char* _file)
+void Logger::writelog(const LogLevel _level, const std::string& _line, const Location _loc)
 {
   if (level2log < _level) {
     return;
@@ -47,9 +46,7 @@ void Logger::writelog(const LogLevel _level, const std::string& _line, const int
     break;
   }
   if (logDetails) {
-    line << "[" << _file << ":" << _linenr << "]";
-
-    // line << "[" << _loc.file_name() << ":" << _loc.line() << ':' << _loc.column() << "][" << _loc.function_name() << "]";
+    line << "[" << _loc.function << " in " << _loc.filename << ":" << _loc.linenr << "]";
   }
   line << _line;
 
@@ -61,18 +58,20 @@ void Logger::writelog(const LogLevel _level, const std::string& _line, const int
   }
 }
 
-// Logger& Logger::operator<<(std::source_location loc)
-// {
-//   ThreadLocals& th = getThreadLocal();
-//   th.location = loc;
-//   return *this;
-// }
+void Logger::setLocation(const int _linenr, const char* _filename, const char* _function)
+{
+  ThreadLocals& th = getThreadLocal();
+
+  th.location.linenr = _linenr;
+  th.location.filename = std::string(_filename);
+  th.location.function = std::string(_function);
+}
 
 Logger& Logger::operator<<(ostream& (&)(ostream&))
 {
   ThreadLocals& th = getThreadLocal();
 
-  writelog(th.level, th.logline, __builtin_LINE(), __builtin_FILE());
+  writelog(th.level, th.logline, th.location);
   th.logline.clear();
   th.level = LogLevel::Debug;
   return *this;

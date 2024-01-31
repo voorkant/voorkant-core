@@ -4,7 +4,6 @@
 #include <iostream>
 #include <array>
 #include <sstream>
-//#include <source_location>
 
 using std::cerr;
 using std::cout;
@@ -22,18 +21,23 @@ public:
     Info = 3,
     Debug = 4,
   };
+  struct Location
+  {
+    int linenr;
+    std::string filename;
+    std::string function;
+  };
 
-  // Logger& operator<<(std::source_location loc);
   Logger& operator<<(std::ostream& (&)(std::ostream&));
   Logger& operator<<(const char* _logline);
   Logger& operator<<(const std::string& _logline);
   Logger& operator<<(LogLevel); // allows us to do Logger<<LogLevel::Error<<"Someline";
 
-  // void writelog(LogLevel _level, const std::string& _logline, const std::source_location _loc);
-  void writelog(LogLevel _level, const std::string& _logline, const int _linenr, const char* _file);
+  void writelog(LogLevel _level, const std::string& _logline, const Location _loc);
 
   void setLogLevel(LogLevel _whichlevel);
   void setDoDetails(bool _logDetails);
+  void setLocation(const int _linenr, const char* _filename, const char* _method);
 
 private:
   LogLevel level2log = LogLevel::Error;
@@ -44,15 +48,15 @@ private:
     ThreadLocals() :
       level(LogLevel::Debug)
     {}
-    string logline;
+    std::string logline;
     LogLevel level;
-    //  std::source_location location;
+
+    Location location;
   };
   ThreadLocals& getThreadLocal();
   static thread_local Logger::ThreadLocals tl;
 };
 
-// Logger& GetLogger(std::source_location loc = std::source_location::current());
-Logger& GetLogger();
-#define g_log GetLogger()
+Logger& GetLogger(const int _linenr, const char* _filename, const char* _function);
+#define g_log GetLogger(__builtin_LINE(), __builtin_FILE(), __builtin_FUNCTION())
 #endif
