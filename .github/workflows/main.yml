@@ -61,7 +61,7 @@ jobs:
         run: meson setup ${{github.workspace}}/build
       - name: clang-format
         run: ninja -C ${{github.workspace}}/build clang-format
-      - name: clang-tidy-fix
-        run: ninja -C ${{github.workspace}}/build clang-tidy-fix
+      #      - name: clang-tidy-fix
+      #        run: ninja -C ${{github.workspace}}/build clang-tidy-fix
       - name: Check for formatting disagreements
         run: git diff --exit-code

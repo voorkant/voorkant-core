@@ -4,10 +4,8 @@
 #include <string>
 #include <mutex>
 #include <poll.h>
-// NOLINTBEGIN
-#include <curl/curl.h> // NOLINT(clang-diagnostic-error)
-#include <curl/easy.h> // NOLINT(clang-diagnostic-error)
-// NOLINTEND
+#include <curl/curl.h>
+#include <curl/easy.h>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
