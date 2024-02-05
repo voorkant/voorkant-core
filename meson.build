@@ -93,7 +93,7 @@ endif
 
 if get_option('front-lvgl').enabled()
   executable('client-lvgl',
-             ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp', 'src/uicomponents/uirgblight.cpp', 'src/uicomponents/UIComponents.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
+             ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp','src/generated/images/colorwheel.cpp', 'src/uicomponents/uirgblight.cpp', 'src/uicomponents/UIComponents.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
             install : true,
         dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, sdl2_dep, openssl_dep, zlib_dep, libatomic],
         include_directories: incdir,

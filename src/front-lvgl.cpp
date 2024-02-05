@@ -213,19 +213,18 @@ void uithread(HABackend& backend, int argc, char* argv[])
   int i = 0;
   auto entities = backend.GetEntitiesByDomain("light");
   for (const auto& entity : entities) {
-    if (i % 2 == 0) {
-      std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
-      uielements.push_back(std::move(btn));
-    }
-    else {
-      std::unique_ptr<UIEntity> sw = std::make_unique<UISwitch>(entity, cont_row);
-      uielements.push_back(std::move(sw));
-    }
-    if (i == 2) {
-
-      std::unique_ptr<UIEntity> rgb = std::make_unique<UIRGBLight>(entity, cont_row);
-      uielements.push_back(std::move(rgb));
-    }
+    // if (i % 2 == 0) {
+    //   std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
+    //   uielements.push_back(std::move(btn));
+    // }
+    // else {
+    //   std::unique_ptr<UIEntity> sw = std::make_unique<UISwitch>(entity, cont_row);
+    //   uielements.push_back(std::move(sw));
+    // }
+    // if (entity->name == "Entrance Color + White Lights") {
+    std::unique_ptr<UIEntity> rgb = std::make_unique<UIRGBLight>(entity, cont_row);
+    uielements.push_back(std::move(rgb));
+    //}
 
     i++;
   }
