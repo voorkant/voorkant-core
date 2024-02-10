@@ -108,7 +108,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
   fbdev_init();
   cerr << "called fbdev_init" << endl;
 
-#define MY_DISP_HOR_RES 640
+#define MY_DISP_HOR_RES 800
 #define MY_DISP_VER_RES 480
 #define DISP_BUF_SIZE 16384
 
