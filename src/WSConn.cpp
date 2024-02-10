@@ -13,6 +13,7 @@ WSConn::WSConn(std::string url)
 
   curl_easy_setopt(wshandle, CURLOPT_CONNECT_ONLY, 2L);
   curl_easy_setopt(wshandle, CURLOPT_URL, url.c_str());
+  curl_easy_setopt(wshandle, CURLOPT_VERBOSE, 1L);
   curl_easy_perform(wshandle);
 }
 
