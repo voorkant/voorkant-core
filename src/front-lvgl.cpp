@@ -3,6 +3,7 @@
 //#include <sdl/sdl_common.h>
 #include <src/widgets/lv_slider.h>
 #include <display/fbdev.h>
+#include <indev/evdev.h>
 #include <string>
 #include <unistd.h>
 #include "ext/argparse/include/argparse/argparse.hpp"
@@ -127,13 +128,14 @@ void uithread(HABackend& backend, int argc, char* argv[])
   /*lv_disp_t* disp;*/
   /*disp = */ lv_disp_drv_register(&disp_drv); /*Register the driver and save the created display objects*/
 
-#if 0
+// #if 0
+  evdev_init();
   lv_indev_drv_t enc_drv;
   lv_indev_drv_init(&enc_drv);
   enc_drv.type = LV_INDEV_TYPE_POINTER;
-  enc_drv.read_cb = sdl_mouse_read;
+  enc_drv.read_cb = evdev_read;
   /*lv_indev_t* enc_indev = */ lv_indev_drv_register(&enc_drv);
-#endif
+// #endif
   // lv_indev_set_group(enc_indev, g);
   // lv_group_t* g = lv_group_create();
   // lv_group_set_default(g);
