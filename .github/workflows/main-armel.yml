@@ -1,0 +1,30 @@
+name: Build for armel (static)
+
+on:
+  push:
+  pull_request:
+  schedule:
+    # Weekly build (on saturday)
+    - cron: '0 0 * * 6'
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Update apt indexes
+      run: sudo apt-get update
+    - name: Install various apt dependencies
+      run: sudo apt-get install build-essential cmake meson ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev
+    - name: Build armel image
+      run: cd scripts/build-targets && make armel
+    - name: Configure Meson
+      run: scripts/build-targets/run armel sh -c 'LDFLAGS=-static LIBS=-latomic meson setup build-armel --prefer-static -Dbuildtype=release'
+    - name: Build
+      run: scripts/build-targets/run armel sh -c 'LDFLAGS=-static LIBS=-latomic meson compile -C build-armel'
+    - uses: actions/upload-artifact@v4
+      with:
+        name: armel-build
+        path: ${{github.workspace}}/build-armel
