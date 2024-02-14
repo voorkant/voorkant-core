@@ -1,4 +1,11 @@
 #include "uirgblight.hpp"
+#include <src/core/lv_obj.h>
+#include <src/core/lv_obj_pos.h>
+#include <src/extra/layouts/flex/lv_flex.h>
+#include <src/misc/lv_area.h>
+#include <src/misc/lv_txt.h>
+
+LV_IMG_DECLARE(colorwheel24);
 
 UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
@@ -93,35 +100,32 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     }
   }
 
-  lv_obj_t* btns = lv_obj_create(flowpanel);
+  btns = lv_obj_create(flowpanel);
   lv_obj_remove_style_all(btns);
-  lv_obj_set_width(btns, widthheight);
+  lv_obj_set_width(btns, uiEntityWidth - 20);
   lv_obj_set_height(btns, 50);
-  lv_obj_set_style_pad_all(btns, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_pad_all(btns, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(btns, LV_ALIGN_CENTER);
   lv_obj_set_flex_flow(btns, LV_FLEX_FLOW_ROW);
-  lv_obj_set_flex_align(btns, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+  lv_obj_set_flex_align(btns, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+  lv_obj_clear_flag(btns, LV_OBJ_FLAG_SCROLLABLE);
 
   btnOnOff = lv_btn_create(btns);
+  lv_obj_set_size(btnOnOff, 50, 40);
   // lv_obj_add_event_cb(btnOnOff, UIRGBLight::btnmatrix_event_cb, LV_EVENT_ALL, reinterpret_cast<void*>(this));
-  lv_obj_set_width(btnOnOff, 50);
   lv_obj_t* imgBtnOnOff = lv_img_create(btnOnOff);
-  lv_img_set_src(imgBtnOnOff, LV_SYMBOL_BARS);
-  // lv_obj_set_align(btnOnOff, LV_ALIGN_CENTER);
+  lv_img_set_src(imgBtnOnOff, LV_SYMBOL_POWER);
+  lv_obj_set_align(imgBtnOnOff, LV_ALIGN_CENTER);
 
-  btnBrightness
-    = lv_btn_create(btns);
-  lv_obj_set_width(btnOnOff, 50);
-  lv_obj_t* imgBrightness = lv_img_create(btnBrightness);
-  lv_img_set_src(imgBrightness, LV_SYMBOL_SETTINGS);
+  btnBrightness = lv_btn_create(btns);
+  lv_obj_set_size(btnBrightness, 50, 40);
 
   btnColorTemp = lv_btn_create(btns);
-  lv_obj_set_width(btnColorTemp, 50);
-
-  btnColorWheel = lv_btn_create(btns);
-  lv_obj_set_width(btnColorWheel, 50);
-  lv_obj_t* imgBtnColorWheel = lv_img_create(btnColorWheel);
-  lv_img_set_src(imgBtnColorWheel, &color_wheel);
+  lv_obj_set_size(btnColorTemp, 50, 40);
+  lv_obj_set_style_pad_all(btnColorTemp, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_t* imgBtnColorTemp = lv_img_create(btnColorTemp);
+  lv_img_set_src(imgBtnColorTemp, &colorwheel24);
+  lv_obj_set_align(imgBtnColorTemp, LV_ALIGN_CENTER);
 
   uiupdate();
 };

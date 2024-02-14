@@ -13,6 +13,7 @@
 #include <src/widgets/lv_btnmatrix.h>
 #include <src/widgets/lv_slider.h>
 #include "generated/domains.hpp"
+#include "imgs/colorwheel24.cpp"
 #include <src/core/lv_obj.h>
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_style.h>
@@ -50,6 +51,7 @@ private:
   lv_obj_t* tilecontainer;
   lv_obj_t* flowpanel;
   lv_obj_t* brightnessLabel;
+  lv_obj_t* btns;
   static void sw_toggle_cb(lv_event_t* e);
   static void brightness_slide_cb(lv_event_t* e);
   static void colortemp_slide_cb(lv_event_t* e);
