@@ -43,6 +43,7 @@ p = mod.add_project('configure',
                        '--without-nghttp3',
                        '--without-zstd',
                        '--with-random=/dev/urandom',
+                       '--without-ssl'
                       ],
 )
 
