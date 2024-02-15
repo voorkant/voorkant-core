@@ -57,6 +57,7 @@ std::string WSConn::recv(void)
       throw std::runtime_error(
         "got error from curl_ws_recv: " + std::string(curl_easy_strerror(ret))); // FIXME: does not hold wshandlelock, might even print the
                                                                                  // wrong error in theory
+                                                                                 // confirmed: we end up in this code block if we kill HA.
     }
   }
   // cerr<<"ret="<<ret<<endl;

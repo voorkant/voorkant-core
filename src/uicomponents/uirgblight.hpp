@@ -13,7 +13,7 @@
 #include <src/widgets/lv_btnmatrix.h>
 #include <src/widgets/lv_slider.h>
 #include "generated/domains.hpp"
-#include "imgs/colorwheel24.cpp"
+
 #include <src/core/lv_obj.h>
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_style.h>
@@ -31,6 +31,15 @@
 
 #include <stdexcept>
 #include <vector>
+
+#include "imgs/colorwheel24.cpp"
+#include "imgs/colortemp24.cpp"
+#include "imgs/brightness24.cpp"
+#include "imgs/white24.cpp"
+LV_IMG_DECLARE(colorwheel24);
+LV_IMG_DECLARE(colortemp24);
+LV_IMG_DECLARE(brightness24);
+LV_IMG_DECLARE(white24);
 
 class UIRGBLight : public UIEntity
 {
@@ -52,6 +61,10 @@ private:
   lv_obj_t* flowpanel;
   lv_obj_t* brightnessLabel;
   lv_obj_t* btns;
+  lv_obj_t* imgBtnOnOff;
+  lv_obj_t* imgBtnBrightness;
+  lv_obj_t* imgBtnColorTemp;
+  lv_obj_t* imgBtnColorWheel;
   static void sw_toggle_cb(lv_event_t* e);
   static void brightness_slide_cb(lv_event_t* e);
   static void colortemp_slide_cb(lv_event_t* e);

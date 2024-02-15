@@ -1,11 +1,4 @@
 #include "uirgblight.hpp"
-#include <src/core/lv_obj.h>
-#include <src/core/lv_obj_pos.h>
-#include <src/extra/layouts/flex/lv_flex.h>
-#include <src/misc/lv_area.h>
-#include <src/misc/lv_txt.h>
-
-LV_IMG_DECLARE(colorwheel24);
 
 UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
@@ -102,7 +95,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   btns = lv_obj_create(flowpanel);
   lv_obj_remove_style_all(btns);
-  lv_obj_set_width(btns, uiEntityWidth - 20);
+  lv_obj_set_width(btns, uiEntityWidth);
   lv_obj_set_height(btns, 50);
   lv_obj_set_style_pad_all(btns, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(btns, LV_ALIGN_CENTER);
@@ -112,19 +105,29 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   btnOnOff = lv_btn_create(btns);
   lv_obj_set_size(btnOnOff, 50, 40);
-  // lv_obj_add_event_cb(btnOnOff, UIRGBLight::btnmatrix_event_cb, LV_EVENT_ALL, reinterpret_cast<void*>(this));
-  lv_obj_t* imgBtnOnOff = lv_img_create(btnOnOff);
+  imgBtnOnOff = lv_img_create(btnOnOff);
   lv_img_set_src(imgBtnOnOff, LV_SYMBOL_POWER);
   lv_obj_set_align(imgBtnOnOff, LV_ALIGN_CENTER);
 
   btnBrightness = lv_btn_create(btns);
   lv_obj_set_size(btnBrightness, 50, 40);
+  lv_obj_set_style_pad_all(btnBrightness, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  imgBtnBrightness = lv_img_create(btnBrightness);
+  lv_img_set_src(imgBtnBrightness, &brightness24);
+  lv_obj_set_align(imgBtnBrightness, LV_ALIGN_CENTER);
+
+  btnColorWheel = lv_btn_create(btns);
+  lv_obj_set_size(btnColorWheel, 50, 40);
+  lv_obj_set_style_pad_all(btnColorWheel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  imgBtnColorWheel = lv_img_create(btnColorWheel);
+  lv_img_set_src(imgBtnColorWheel, &colorwheel24);
+  lv_obj_set_align(imgBtnColorWheel, LV_ALIGN_CENTER);
 
   btnColorTemp = lv_btn_create(btns);
   lv_obj_set_size(btnColorTemp, 50, 40);
-  lv_obj_set_style_pad_all(btnColorTemp, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_t* imgBtnColorTemp = lv_img_create(btnColorTemp);
-  lv_img_set_src(imgBtnColorTemp, &colorwheel24);
+  lv_obj_set_style_pad_all(btnColorTemp, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  imgBtnColorTemp = lv_img_create(btnColorTemp);
+  lv_img_set_src(imgBtnColorTemp, &colortemp24);
   lv_obj_set_align(imgBtnColorTemp, LV_ALIGN_CENTER);
 
   uiupdate();
