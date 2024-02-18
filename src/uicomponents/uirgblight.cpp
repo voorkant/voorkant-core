@@ -1,4 +1,5 @@
 #include "uirgblight.hpp"
+#include <src/core/lv_event.h>
 
 UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
@@ -17,22 +18,11 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   }
   std::vector<std::string> supportedColorModes = attributes["supported_color_modes"].get<std::vector<string>>();
 
-  // Based on the supported_color_modes, we need to generate a UI that works for /all/ those modes.
-  // color_temp = slider with color temp (min_color_temp_kelvin ->max_color_temp_kelvin)
-  // hs = brightness and color wheel. According to the HA docs, this is in HS and not RGB, but setting RGB seems to work?
-  // RGB = brighthess and color wheel. So, same as HS?
-  // XY = brightness and color wheel. Docs say that you have to set XY - not sure if RGB will work?
-  // White = brightness and color wheel (says the docs). Additional a WHITE value can be set
-  // RGBW = brightness and color wheel, but color needs to be set using rgbw_color, which is rgb and white.
-  // RGBWW, same as RGBW, but uses rgbww_color.
-  // there is a colormode ONOFF, which is not listed as 'supported_color_modes', i guess because it has no color? again, our demo has no instance of this.
-
-  // TODO Entrance Color + White Light causes a crash when we switch to White Light.
   for (const auto& str : supportedColorModes) {
     std::cerr << "\tCOLOR MODE:" << str << std::endl;
   }
 
-  // TODO: we need to get 'supported_color_modes' to render the UI properly?
+  // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
   flowpanel = lv_obj_create(_parent);
   lv_obj_set_width(flowpanel, uiEntityWidth);
   lv_obj_set_height(flowpanel, 450);
@@ -77,7 +67,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_style_pad_all(cw, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
   // TODO: when RGBW and RGBWW we need to render sliders UNDER the color wheel
 
-  // FIXME: surely there's a nicer way to check if a string exits in a vector?!
+  // FIXME: surely there's a nicer way to check if a string exits in a vector?
   for (const auto& mode : supportedColorModes) {
     if (mode == "color_temp") {
       lv_obj_t* colortempTile = lv_tileview_add_tile(tilecontainer, 2, 0, LV_DIR_HOR);
@@ -95,7 +85,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   btns = lv_obj_create(flowpanel);
   lv_obj_remove_style_all(btns);
-  lv_obj_set_width(btns, uiEntityWidth);
+  lv_obj_set_width(btns, uiEntityWidth - 15);
   lv_obj_set_height(btns, 50);
   lv_obj_set_style_pad_all(btns, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(btns, LV_ALIGN_CENTER);
@@ -105,52 +95,36 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   btnOnOff = lv_btn_create(btns);
   lv_obj_set_size(btnOnOff, 50, 40);
-  imgBtnOnOff = lv_img_create(btnOnOff);
+  lv_obj_add_event_cb(btnOnOff, UIRGBLight::btnOnOff_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
+  lv_obj_t* imgBtnOnOff = lv_img_create(btnOnOff);
   lv_img_set_src(imgBtnOnOff, LV_SYMBOL_POWER);
   lv_obj_set_align(imgBtnOnOff, LV_ALIGN_CENTER);
 
   btnBrightness = lv_btn_create(btns);
   lv_obj_set_size(btnBrightness, 50, 40);
   lv_obj_set_style_pad_all(btnBrightness, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  imgBtnBrightness = lv_img_create(btnBrightness);
+  lv_obj_t* imgBtnBrightness = lv_img_create(btnBrightness);
   lv_img_set_src(imgBtnBrightness, &brightness24);
   lv_obj_set_align(imgBtnBrightness, LV_ALIGN_CENTER);
 
   btnColorWheel = lv_btn_create(btns);
   lv_obj_set_size(btnColorWheel, 50, 40);
   lv_obj_set_style_pad_all(btnColorWheel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  imgBtnColorWheel = lv_img_create(btnColorWheel);
+  lv_obj_t* imgBtnColorWheel = lv_img_create(btnColorWheel);
   lv_img_set_src(imgBtnColorWheel, &colorwheel24);
   lv_obj_set_align(imgBtnColorWheel, LV_ALIGN_CENTER);
 
   btnColorTemp = lv_btn_create(btns);
   lv_obj_set_size(btnColorTemp, 50, 40);
   lv_obj_set_style_pad_all(btnColorTemp, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  imgBtnColorTemp = lv_img_create(btnColorTemp);
+  lv_obj_t* imgBtnColorTemp = lv_img_create(btnColorTemp);
   lv_img_set_src(imgBtnColorTemp, &colortemp24);
   lv_obj_set_align(imgBtnColorTemp, LV_ALIGN_CENTER);
 
+  // TODO: white button
+
   uiupdate();
 };
-
-std::string UIRGBLight::getColorMode()
-{
-  auto state = entity->getJsonState();
-  string colormode = "";
-  if (state.contains("attributes")) {
-    auto attrs = state["attributes"];
-    if (attrs.contains("color_mode") && !attrs["color_mode"].is_null()) {
-      colormode = attrs["color_mode"].get<string>();
-    }
-    else {
-      std::cerr << "No colormode..." << std::endl;
-    }
-  }
-  else {
-    std::cerr << "No attributes...?!" << std::endl;
-  }
-  return colormode;
-}
 
 void UIRGBLight::uiupdate()
 {
@@ -205,27 +179,14 @@ void UIRGBLight::uiupdate()
   }
 }
 
-void UIRGBLight::btnmatrix_event_cb(lv_event_t* e)
-{
-  lv_event_code_t code = lv_event_get_code(e);
-  if (code == LV_EVENT_VALUE_CHANGED) {
-
-    UIRGBLight* ent = (UIRGBLight*)(e->user_data);
-    auto x = lv_btnmatrix_get_selected_btn(e->target);
-    lv_obj_t* tilething = ent->tilecontainer;
-
-    lv_obj_set_tile_id(tilething, x, 0, LV_ANIM_OFF);
-  }
-}
-
-void UIRGBLight::sw_toggle_cb(lv_event_t* e)
+void UIRGBLight::btnOnOff_cb(lv_event_t* e)
 {
   lv_event_code_t code = lv_event_get_code(e);
 
-  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(e->user_data);
-  if (code == LV_EVENT_VALUE_CHANGED) {
-    HADomains::Light light(ent);
-    light.toggle({});
+  UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
+  if (code == LV_EVENT_CLICKED) {
+    HADomains::Light light(rgbLight->entity);
+    light.toggle({}); // FIXME: probably better to check state and send turn_off() or turn_on()
   }
 };
 
@@ -312,4 +273,23 @@ void UIRGBLight::colorwheel_move_cb(lv_event_t* e)
 
     // FIXME: color_rgb (which is lv_color_t) depends on the LV_COLOR_DEPTH, and thus this code needs to handle the cast to uint_t
   }
+}
+
+std::string UIRGBLight::getColorMode()
+{
+  auto state = entity->getJsonState();
+  string colormode = "";
+  if (state.contains("attributes")) {
+    auto attrs = state["attributes"];
+    if (attrs.contains("color_mode") && !attrs["color_mode"].is_null()) {
+      colormode = attrs["color_mode"].get<string>();
+    }
+    else {
+      std::cerr << "No colormode..." << std::endl;
+    }
+  }
+  else {
+    std::cerr << "No attributes...?!" << std::endl;
+  }
+  return colormode;
 }

@@ -61,11 +61,11 @@ private:
   lv_obj_t* flowpanel;
   lv_obj_t* brightnessLabel;
   lv_obj_t* btns;
-  lv_obj_t* imgBtnOnOff;
-  lv_obj_t* imgBtnBrightness;
-  lv_obj_t* imgBtnColorTemp;
-  lv_obj_t* imgBtnColorWheel;
-  static void sw_toggle_cb(lv_event_t* e);
+  // lv_obj_t* imgBtnOnOff;
+  // lv_obj_t* imgBtnBrightness;
+  // lv_obj_t* imgBtnColorTemp;
+  // lv_obj_t* imgBtnColorWheel;
+  static void btnOnOff_cb(lv_event_t* e);
   static void brightness_slide_cb(lv_event_t* e);
   static void colortemp_slide_cb(lv_event_t* e);
   static void colorwheel_move_cb(lv_event_t* e);
