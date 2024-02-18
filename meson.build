@@ -8,10 +8,6 @@ json_dep = dependency('nlohmann_json')
 
 thread_dep = dependency('threads')
 
-ftxui_screen_dep = dependency('ftxui-screen')
-ftxui_dom_dep = dependency('ftxui-dom')
-ftxui_component_dep = dependency('ftxui-component')
-
 curl_dep = dependency('curl')
 
 
@@ -42,18 +38,31 @@ cmake_options.append_compile_args('cpp',
   '-I/'+brew_prefix+'/include'
   )
 
-lvgl_proj = cmake.subproject('lvgl', options: cmake_options)
-lvgl_dep = lvgl_proj.dependency('lvgl')
+if get_option('front-lvgl').enabled()
+  if get_option('lvgl-backend') == 'sdl'
+    sdl2_dep = dependency('sdl2')
+    cmake_options.append_compile_args('c', '-DVOORKANT_LVGL_SDL')
+    cmake_options.append_compile_args('cpp', '-DVOORKANT_LVGL_SDL')
+    lvgl_backend_define = '-DVOORKANT_LVGL_SDL'
+  elif get_option('lvgl-backend') == 'fbdev'
+    sdl2_dep = []
+    cmake_options.append_compile_args('c', '-DVOORKANT_LVGL_FBDEV')
+    cmake_options.append_compile_args('cpp', '-DVOORKANT_LVGL_FBDEV')
+    lvgl_backend_define = '-DVOORKANT_LVGL_FBDEV'
+  endif
 
-lvgl_drivers_proj = cmake.subproject('lv_drivers', options: cmake_options)
-lvgl_drivers_dep = lvgl_drivers_proj.dependency('lv_drivers')
+  lvgl_proj = cmake.subproject('lvgl', options: cmake_options)
+  lvgl_dep = lvgl_proj.dependency('lvgl')
 
+  lvgl_drivers_proj = cmake.subproject('lv_drivers', options: cmake_options)
+  lvgl_drivers_proj2 = cmake.subproject('lv_drivers', options: cmake_options)
+  lvgl_drivers_dep = lvgl_drivers_proj.dependency('lv_drivers')
+endif
 
-# sdl2_dep = dependency('sdl2')
 incdir = include_directories('./src/')
 
 openssl_dep = dependency('openssl')
-#zlib_dep = dependency('zlib')
+zlib_dep = dependency('zlib')
 
 if cpp.links('''int main(int argc, char **argv) { return 0; }''',
             args : '-latomic',
@@ -64,11 +73,17 @@ else
 endif
 
 
-executable('client-ftxui',
-           ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-ftxui.cpp', 'src/generated/domains.hpp'],
-           install : true,
-     dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep, openssl_dep, libatomic]
-     )
+if get_option('front-ftxui').enabled()
+  ftxui_screen_dep = dependency('ftxui-screen')
+  ftxui_dom_dep = dependency('ftxui-dom')
+  ftxui_component_dep = dependency('ftxui-component')
+
+  executable('client-ftxui',
+             ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-ftxui.cpp', 'src/generated/domains.hpp'],
+             install : true,
+       dependencies : [json_dep, thread_dep, curl_dep, ftxui_screen_dep, ftxui_dom_dep, ftxui_component_dep, openssl_dep, zlib_dep, libatomic]
+       )
+endif
 
  executable('client-cli',
             ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/Observer.hpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp', 'src/generated/domains.hpp'],
@@ -76,10 +91,13 @@ executable('client-ftxui',
        dependencies : [json_dep, thread_dep, curl_dep, openssl_dep, libatomic]
        )
 
-executable('client-lvgl',
-           ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp', 'src/UIComponents.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
-          install : true,
-      dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, openssl_dep, libatomic],
-      include_directories: incdir,
-      cpp_args : '-DLV_CONF_PATH='+meson.current_build_dir()+'/../src/lv_conf.h'
-)
+if get_option('front-lvgl').enabled()
+  executable('client-lvgl',
+             ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/HAEntity.cpp', 'src/WSConn.cpp', 'src/UIComponents.cpp', 'src/front-lvgl.cpp', 'src/lv_conf.h', 'src/generated/domains.hpp'],
+            install : true,
+        dependencies : [json_dep, thread_dep, curl_dep, lvgl_dep, lvgl_drivers_dep, sdl2_dep, openssl_dep, zlib_dep, libatomic],
+        include_directories: incdir,
+        cpp_args : ['-DLV_CONF_PATH='+meson.current_build_dir()+'/../src/lv_conf.h', lvgl_backend_define]
+  )
+endif
+
