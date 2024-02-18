@@ -66,23 +66,20 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_style_border_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
   lv_obj_set_style_border_width(cw, 3, LV_PART_KNOB | LV_STATE_DEFAULT);
   lv_obj_set_style_pad_all(cw, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-  // TODO: when RGBW and RGBWW we need to render sliders UNDER the color wheel
+  // TODO: RGBW and RGBWW have a few sliders underneath the color wheels
+  // In white mode, the indicator on the color wheel should be removed. Not sure if we can do that.
 
-  // FIXME: surely there's a nicer way to check if a string exits in a vector?
-  for (const auto& mode : supportedColorModes) {
-    if (mode == "color_temp") {
-      lv_obj_t* colortempTile = lv_tileview_add_tile(tilecontainer, 2, 0, LV_DIR_HOR);
-      colortempSlider = lv_slider_create(colortempTile);
-      lv_obj_set_height(colortempSlider, widthheight);
-      lv_obj_set_width(colortempSlider, 50);
-      lv_obj_set_align(colortempSlider, LV_ALIGN_CENTER);
-      int min_color_temp = state["attributes"]["min_color_temp_kelvin"];
-      int max_color_temp = state["attributes"]["max_color_temp_kelvin"];
-      // TODO: for whatever reason we can't get this to work the oposite way around, which is what HA does
-      lv_slider_set_range(colortempSlider, min_color_temp, max_color_temp);
-      lv_obj_add_event_cb(colortempSlider, UIRGBLight::colortemp_slide_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
-    }
-  }
+  lv_obj_t* colortempTile = lv_tileview_add_tile(tilecontainer, 2, 0, LV_DIR_HOR);
+  colortempSlider = lv_slider_create(colortempTile);
+  lv_obj_set_height(colortempSlider, widthheight);
+  lv_obj_set_width(colortempSlider, 50);
+  lv_obj_set_align(colortempSlider, LV_ALIGN_CENTER);
+  int min_color_temp = getIntAttribute("min_color_temp_kelvin", 2000);
+  int max_color_temp = getIntAttribute("max_color_temp_kelvin", 6500);
+  // FIRME: for whatever reason we can't get this to work the oposite way around, which is what HA does
+  lv_slider_set_range(colortempSlider, min_color_temp, max_color_temp);
+  lv_obj_add_event_cb(colortempSlider, UIRGBLight::colortemp_slide_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
+  lv_obj_add_flag(colortempTile, LV_OBJ_FLAG_HIDDEN);
 
   btns = lv_obj_create(flowpanel);
   lv_obj_remove_style_all(btns);
@@ -96,14 +93,18 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   btnOnOff = lv_btn_create(btns);
   lv_obj_set_size(btnOnOff, 50, 40);
-  lv_obj_add_event_cb(btnOnOff, UIRGBLight::btnOnOff_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
+  lv_obj_add_flag(btnOnOff, LV_OBJ_FLAG_CHECKABLE);
+
+  lv_obj_add_event_cb(btnOnOff, UIRGBLight::btnOnOff_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
   lv_obj_t* imgBtnOnOff = lv_img_create(btnOnOff);
   lv_img_set_src(imgBtnOnOff, LV_SYMBOL_POWER);
   lv_obj_set_align(imgBtnOnOff, LV_ALIGN_CENTER);
 
   btnBrightness = lv_btn_create(btns);
   lv_obj_set_size(btnBrightness, 50, 40);
+  lv_obj_add_state(btnBrightness, LV_STATE_CHECKED);
   lv_obj_set_style_pad_all(btnBrightness, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_add_event_cb(btnBrightness, UIRGBLight::btnBrightness_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
   lv_obj_t* imgBtnBrightness = lv_img_create(btnBrightness);
   lv_img_set_src(imgBtnBrightness, &brightness24);
   lv_obj_set_align(imgBtnBrightness, LV_ALIGN_CENTER);
@@ -111,6 +112,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   btnColorWheel = lv_btn_create(btns);
   lv_obj_set_size(btnColorWheel, 50, 40);
   lv_obj_set_style_pad_all(btnColorWheel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_add_event_cb(btnColorWheel, UIRGBLight::btnColorWheel_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
   lv_obj_t* imgBtnColorWheel = lv_img_create(btnColorWheel);
   lv_img_set_src(imgBtnColorWheel, &colorwheel24);
   lv_obj_set_align(imgBtnColorWheel, LV_ALIGN_CENTER);
@@ -118,23 +120,27 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   btnColorTemp = lv_btn_create(btns);
   lv_obj_set_size(btnColorTemp, 50, 40);
   lv_obj_set_style_pad_all(btnColorTemp, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_add_event_cb(btnColorTemp, UIRGBLight::btnColorTemp_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
   lv_obj_t* imgBtnColorTemp = lv_img_create(btnColorTemp);
   lv_img_set_src(imgBtnColorTemp, &colortemp24);
   lv_obj_set_align(imgBtnColorTemp, LV_ALIGN_CENTER);
+  lv_obj_add_flag(btnColorTemp, LV_OBJ_FLAG_HIDDEN);
 
-  // TODO: white button
+  for (const auto& mode : supportedColorModes) {
+    if (mode == "color_temp") {
+      lv_obj_clear_flag(colortempTile, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(btnColorTemp, LV_OBJ_FLAG_HIDDEN);
+    }
+  };
 
   uiupdate();
-};
+}
 
 void UIRGBLight::uiupdate()
 {
   auto state = entity->getJsonState();
   string colormode = getColorMode();
   std::cerr << "COLOR MODE: " << colormode << std::endl;
-
-  // TODO: we should set the color of the brightness slider like HA does...
-
   std::cerr << "UPDATED STATE FOR " << entity->name << ":" << state.dump(2) << std::endl;
   if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
     lv_obj_add_state(btnOnOff, LV_STATE_CHECKED);
@@ -185,9 +191,49 @@ void UIRGBLight::btnOnOff_cb(lv_event_t* e)
   lv_event_code_t code = lv_event_get_code(e);
 
   UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
-  if (code == LV_EVENT_CLICKED) {
+  if (code == LV_EVENT_VALUE_CHANGED) {
     HADomains::Light light(rgbLight->entity);
     light.toggle({}); // FIXME: probably better to check state and send turn_off() or turn_on()
+  }
+};
+
+// FIXME: woody stairing into the distance: "I see copy/paste code... copy/paste code everywhere..."
+void UIRGBLight::btnBrightness_cb(lv_event_t* e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+
+  UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
+  if (code == LV_EVENT_CLICKED) {
+    lv_obj_set_tile_id(rgbLight->tilecontainer, 0, 0, LV_ANIM_OFF);
+    lv_obj_add_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+  }
+};
+
+void UIRGBLight::btnColorWheel_cb(lv_event_t* e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+
+  UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
+  if (code == LV_EVENT_CLICKED) {
+    lv_obj_set_tile_id(rgbLight->tilecontainer, 1, 0, LV_ANIM_OFF);
+    lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    lv_obj_add_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+  }
+};
+
+void UIRGBLight::btnColorTemp_cb(lv_event_t* e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+
+  UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
+  if (code == LV_EVENT_CLICKED) {
+    lv_obj_set_tile_id(rgbLight->tilecontainer, 2, 0, LV_ANIM_OFF);
+    lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    lv_obj_add_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
   }
 };
 
@@ -322,4 +368,21 @@ std::string UIRGBLight::getColorMode()
     std::cerr << "No attributes...?!" << std::endl;
   }
   return colormode;
+}
+
+int UIRGBLight::getIntAttribute(std::string attributeName, int defaultValue)
+{
+  if (attributeName.empty()) {
+    return defaultValue;
+  }
+  auto state = entity->getJsonState();
+  int retVal = defaultValue;
+  if (state.contains("attributes")) {
+    auto attrs = state["attributes"];
+    if (attrs.contains(attributeName) && !attrs[attributeName].is_null()) {
+      retVal = attrs[attributeName].get<int>();
+    }
+  }
+
+  return retVal;
 }
