@@ -163,7 +163,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
 #error "no useful VOORKANT_LVGL_* found"
 #endif
   /*lv_indev_t* enc_indev = */ lv_indev_drv_register(&enc_drv);
-// #endif
+  // #endif
   // lv_indev_set_group(enc_indev, g);
   // lv_group_t* g = lv_group_create();
   // lv_group_set_default(g);
