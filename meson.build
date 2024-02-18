@@ -88,7 +88,7 @@ endif
  executable('client-cli',
             ['src/main.cpp', 'src/logger.cpp', 'src/Backend.cpp', 'src/Observer.hpp', 'src/HAEntity.cpp','src/WSConn.cpp','src/front-cli.cpp', 'src/generated/domains.hpp'],
             install : true,
-       dependencies : [json_dep, thread_dep, curl_dep, openssl_dep, libatomic]
+       dependencies : [json_dep, thread_dep, curl_dep, openssl_dep, zlib_dep, libatomic]
        )
 
 if get_option('front-lvgl').enabled()
