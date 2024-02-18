@@ -54,7 +54,9 @@ jobs:
     - name: Update apt indexes
       run: sudo apt-get update
     - name: Install various apt dependencies
-      run: sudo apt-get install build-essential cmake meson ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev
+      run: sudo apt-get install build-essential cmake ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev
+    - name: Install meson
+      run: pip install meson
     - name: Configure Meson
       run: meson setup ${{github.workspace}}/build
     - name: Format
