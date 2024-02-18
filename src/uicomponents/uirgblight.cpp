@@ -43,7 +43,9 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_style_text_align(brightnessLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
   tilecontainer = lv_tileview_create(flowpanel);
+  lv_obj_add_event_cb(tilecontainer, UIRGBLight::tilemove_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
   lv_obj_set_height(tilecontainer, uiEntityWidth);
+
   lv_obj_t* brightnessTile = lv_tileview_add_tile(tilecontainer, 0, 0, LV_DIR_HOR);
   brightnessSlider = lv_slider_create(brightnessTile);
   lv_obj_set_height(brightnessSlider, widthheight);
@@ -217,6 +219,35 @@ void UIRGBLight::colortemp_slide_cb(lv_event_t* e)
     HADomains::Light light(ent);
 
     light.turn_on({.kelvin = slidervalue});
+  }
+};
+
+void UIRGBLight::tilemove_cb(lv_event_t* e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+
+  UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
+  if (code == LV_EVENT_VALUE_CHANGED) {
+    // from https://forum.lvgl.io/t/get-current-active-tile-in-tileview/1644
+    lv_obj_t* tile = lv_tileview_get_tile_act(rgbLight->tilecontainer);
+    lv_coord_t tile_x = lv_obj_get_x(tile);
+    int tileNr = tile_x / 236;
+    lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    switch (tileNr) {
+    case 0:
+      lv_obj_add_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+      break;
+    case 1:
+      lv_obj_add_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+      break;
+    case 2:
+      lv_obj_add_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+      break;
+    default:
+      break;
+    }
   }
 };
 

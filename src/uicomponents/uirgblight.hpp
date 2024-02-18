@@ -39,6 +39,7 @@ private:
   static void colortemp_slide_cb(lv_event_t* e);
   static void colorwheel_move_cb(lv_event_t* e);
   static void btnmatrix_event_cb(lv_event_t* e);
+  static void tilemove_cb(lv_event_t* e);
 
   std::string getColorMode();
 };
