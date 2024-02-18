@@ -1,37 +1,6 @@
 #ifndef UIRGBLIGHT_HPP
 #define UIRGBLIGHT_HPP
 #include "UIComponents.hpp"
-#include <ostream>
-#include <src/core/lv_event.h>
-#include <src/core/lv_obj_pos.h>
-#include <src/extra/widgets/colorwheel/lv_colorwheel.h>
-#include <src/extra/widgets/tileview/lv_tileview.h>
-#include <src/misc/lv_anim.h>
-#include <src/misc/lv_area.h>
-#include <src/misc/lv_color.h>
-#include <src/widgets/lv_bar.h>
-#include <src/widgets/lv_btnmatrix.h>
-#include <src/widgets/lv_slider.h>
-#include "generated/domains.hpp"
-
-#include <src/core/lv_obj.h>
-#include <src/core/lv_obj_pos.h>
-#include <src/core/lv_obj_style.h>
-#include <src/extra/widgets/colorwheel/lv_colorwheel.h>
-#include <src/font/lv_symbol_def.h>
-#include <src/misc/lv_anim.h>
-#include <src/misc/lv_area.h>
-#include <src/misc/lv_txt.h>
-#include <src/widgets/lv_bar.h>
-#include <src/widgets/lv_btn.h>
-#include <src/widgets/lv_img.h>
-#include <src/widgets/lv_label.h>
-#include <src/widgets/lv_slider.h>
-#include <src/widgets/lv_img.h>
-
-#include <stdexcept>
-#include <vector>
-
 #include "imgs/colorwheel24.cpp"
 #include "imgs/colortemp24.cpp"
 #include "imgs/brightness24.cpp"

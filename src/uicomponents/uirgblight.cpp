@@ -1,5 +1,4 @@
 #include "uirgblight.hpp"
-#include <src/core/lv_event.h>
 
 UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
