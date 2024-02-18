@@ -23,7 +23,7 @@ jobs:
     - name: Build armel image
       run: cd scripts/build-targets && make armel
     - name: Configure Meson
-      run: scripts/build-targets/run armel sh -c 'LDFLAGS=-static LIBS=-latomic meson setup build-armel --prefer-static -Dbuildtype=release -Dlvgl-backend=fbdev'
+      run: scripts/build-targets/run armel sh -c 'LDFLAGS=-static LIBS=-latomic meson setup build-armel --prefer-static -Dbuildtype=release -Dlvgl-driver=fbdev'
     - name: Build
       run: scripts/build-targets/run armel sh -c 'LDFLAGS=-static LIBS=-latomic meson compile -C build-armel'
     # FIXME: put something useful (git hash?) in artifact name. We also want this in other workflows.

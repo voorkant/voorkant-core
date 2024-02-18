@@ -39,12 +39,12 @@ cmake_options.append_compile_args('cpp',
   )
 
 if get_option('front-lvgl').enabled()
-  if get_option('lvgl-backend') == 'sdl'
+  if get_option('lvgl-driver') == 'sdl'
     sdl2_dep = dependency('sdl2')
     cmake_options.append_compile_args('c', '-DVOORKANT_LVGL_SDL')
     cmake_options.append_compile_args('cpp', '-DVOORKANT_LVGL_SDL')
     lvgl_backend_define = '-DVOORKANT_LVGL_SDL'
-  elif get_option('lvgl-backend') == 'fbdev'
+  elif get_option('lvgl-driver') == 'fbdev'
     sdl2_dep = []
     cmake_options.append_compile_args('c', '-DVOORKANT_LVGL_FBDEV')
     cmake_options.append_compile_args('cpp', '-DVOORKANT_LVGL_FBDEV')
