@@ -5,6 +5,9 @@
 #include "imgs/colortemp24.cpp"
 #include "imgs/brightness24.cpp"
 #include "imgs/white24.cpp"
+#include <iostream>
+#include <cctype>
+
 LV_IMG_DECLARE(colorwheel24);
 LV_IMG_DECLARE(colortemp24);
 LV_IMG_DECLARE(brightness24);

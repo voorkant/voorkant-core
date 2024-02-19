@@ -1,4 +1,5 @@
 #include "uirgblight.hpp"
+#include <stdexcept>
 
 UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
@@ -17,8 +18,40 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   }
   std::vector<std::string> supportedColorModes = attributes["supported_color_modes"].get<std::vector<string>>();
 
-  for (const auto& str : supportedColorModes) {
-    std::cerr << "\tCOLOR MODE:" << str << std::endl;
+  bool showBrightness = false;
+  bool showColorWheel = false;
+  bool showColorTemp = false;
+  bool showWhite = false;
+
+  for (auto& mode : supportedColorModes) {
+    std::cerr << "    supported color mode:" << mode << std::endl;
+    std::transform(mode.begin(), mode.end(), mode.begin(), [](unsigned char c) { return std::tolower(c); }); // this needed?
+    if (mode == "unknown") {
+      throw std::runtime_error("support color mode is 'unknown', we really can't deal with that.");
+    }
+    if (mode == "brightness") {
+      showBrightness = true;
+    }
+    if (mode == "color_temp") { // FIXME: HA docs say "and it's color temperature is present in the state".
+      showBrightness = true;
+      showColorTemp = true;
+    }
+    if (mode == "hs") {
+      showColorWheel = true;
+      showBrightness = true;
+    }
+    if (mode == "rgbw") {
+      showColorWheel = true;
+      showBrightness = true;
+    }
+    if (mode == "rgb" || mode == "rgbww") {
+      showColorWheel = true;
+      showBrightness = true;
+      showColorTemp = true;
+    }
+    if (mode == "white") {
+      showWhite = true;
+    }
   }
 
   // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
@@ -46,40 +79,47 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_add_event_cb(tilecontainer, UIRGBLight::tilemove_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
   lv_obj_set_height(tilecontainer, uiEntityWidth);
 
-  lv_obj_t* brightnessTile = lv_tileview_add_tile(tilecontainer, 0, 0, LV_DIR_HOR);
-  brightnessSlider = lv_slider_create(brightnessTile);
-  lv_obj_set_height(brightnessSlider, widthheight);
-  lv_obj_set_width(brightnessSlider, 50);
-  lv_obj_set_align(brightnessSlider, LV_ALIGN_CENTER);
-  lv_slider_set_range(brightnessSlider, 0, 255);
-  lv_obj_add_event_cb(brightnessSlider, UIRGBLight::brightness_slide_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
+  if (showBrightness) {
+    lv_obj_t* brightnessTile = lv_tileview_add_tile(tilecontainer, 0, 0, LV_DIR_HOR);
+    brightnessSlider = lv_slider_create(brightnessTile);
+    lv_obj_set_height(brightnessSlider, widthheight);
+    lv_obj_set_width(brightnessSlider, 50);
+    lv_obj_set_align(brightnessSlider, LV_ALIGN_CENTER);
+    lv_slider_set_range(brightnessSlider, 0, 255);
+    lv_obj_add_event_cb(brightnessSlider, UIRGBLight::brightness_slide_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
+  }
 
-  lv_obj_t* cwTile = lv_tileview_add_tile(tilecontainer, 1, 0, LV_DIR_HOR);
-  cw = lv_colorwheel_create(cwTile, true);
-  lv_obj_set_size(cw, widthheight, widthheight);
-  lv_obj_set_align(cw, LV_ALIGN_CENTER);
-  lv_colorwheel_set_mode_fixed(cw, false);
-  lv_obj_add_event_cb(cw, UIRGBLight::colorwheel_move_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
-  lv_obj_set_style_arc_width(cw, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_border_color(cw, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-  lv_obj_set_style_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
-  lv_obj_set_style_border_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
-  lv_obj_set_style_border_width(cw, 3, LV_PART_KNOB | LV_STATE_DEFAULT);
-  lv_obj_set_style_pad_all(cw, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-  // TODO: RGBW and RGBWW have a few sliders underneath the color wheels
-  // In white mode, the indicator on the color wheel should be removed. Not sure if we can do that.
+  if (showColorWheel) {
+    lv_obj_t* cwTile = lv_tileview_add_tile(tilecontainer, 1, 0, LV_DIR_HOR);
+    cw = lv_colorwheel_create(cwTile, true);
+    lv_obj_set_size(cw, widthheight, widthheight);
+    lv_obj_set_align(cw, LV_ALIGN_CENTER);
+    lv_colorwheel_set_mode_fixed(cw, false);
+    lv_obj_add_event_cb(cw, UIRGBLight::colorwheel_move_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
+    lv_obj_set_style_arc_width(cw, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(cw, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(cw, 3, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_all(cw, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+  }
 
-  lv_obj_t* colortempTile = lv_tileview_add_tile(tilecontainer, 2, 0, LV_DIR_HOR);
-  colortempSlider = lv_slider_create(colortempTile);
-  lv_obj_set_height(colortempSlider, widthheight);
-  lv_obj_set_width(colortempSlider, 50);
-  lv_obj_set_align(colortempSlider, LV_ALIGN_CENTER);
-  int min_color_temp = getIntAttribute("min_color_temp_kelvin", 2000);
-  int max_color_temp = getIntAttribute("max_color_temp_kelvin", 6500);
-  // FIRME: for whatever reason we can't get this to work the oposite way around, which is what HA does
-  lv_slider_set_range(colortempSlider, min_color_temp, max_color_temp);
-  lv_obj_add_event_cb(colortempSlider, UIRGBLight::colortemp_slide_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
-  lv_obj_add_flag(colortempTile, LV_OBJ_FLAG_HIDDEN);
+  if (showColorTemp) {
+
+    // TODO: RGBW and RGBWW have a few sliders underneath the color wheels
+    // In white mode, the indicator on the color wheel should be removed. Not sure if we can do that.
+
+    lv_obj_t* colortempTile = lv_tileview_add_tile(tilecontainer, 2, 0, LV_DIR_HOR);
+    colortempSlider = lv_slider_create(colortempTile);
+    lv_obj_set_height(colortempSlider, widthheight);
+    lv_obj_set_width(colortempSlider, 50);
+    lv_obj_set_align(colortempSlider, LV_ALIGN_CENTER);
+    int min_color_temp = getIntAttribute("min_color_temp_kelvin", 2000);
+    int max_color_temp = getIntAttribute("max_color_temp_kelvin", 6500);
+    // FIRME: for whatever reason we can't get this to work the oposite way around, which is what HA does
+    lv_slider_set_range(colortempSlider, min_color_temp, max_color_temp);
+    lv_obj_add_event_cb(colortempSlider, UIRGBLight::colortemp_slide_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
+  }
 
   btns = lv_obj_create(flowpanel);
   lv_obj_remove_style_all(btns);
@@ -100,38 +140,35 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_img_set_src(imgBtnOnOff, LV_SYMBOL_POWER);
   lv_obj_set_align(imgBtnOnOff, LV_ALIGN_CENTER);
 
-  btnBrightness = lv_btn_create(btns);
-  lv_obj_set_size(btnBrightness, 50, 40);
-  lv_obj_add_state(btnBrightness, LV_STATE_CHECKED);
-  lv_obj_set_style_pad_all(btnBrightness, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_add_event_cb(btnBrightness, UIRGBLight::btnBrightness_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
-  lv_obj_t* imgBtnBrightness = lv_img_create(btnBrightness);
-  lv_img_set_src(imgBtnBrightness, &brightness24);
-  lv_obj_set_align(imgBtnBrightness, LV_ALIGN_CENTER);
+  if (showBrightness) {
+    btnBrightness = lv_btn_create(btns);
+    lv_obj_set_size(btnBrightness, 50, 40);
+    lv_obj_add_state(btnBrightness, LV_STATE_CHECKED);
+    lv_obj_set_style_pad_all(btnBrightness, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_event_cb(btnBrightness, UIRGBLight::btnBrightness_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
+    lv_obj_t* imgBtnBrightness = lv_img_create(btnBrightness);
+    lv_img_set_src(imgBtnBrightness, &brightness24);
+    lv_obj_set_align(imgBtnBrightness, LV_ALIGN_CENTER);
+  }
 
-  btnColorWheel = lv_btn_create(btns);
-  lv_obj_set_size(btnColorWheel, 50, 40);
-  lv_obj_set_style_pad_all(btnColorWheel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_add_event_cb(btnColorWheel, UIRGBLight::btnColorWheel_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
-  lv_obj_t* imgBtnColorWheel = lv_img_create(btnColorWheel);
-  lv_img_set_src(imgBtnColorWheel, &colorwheel24);
-  lv_obj_set_align(imgBtnColorWheel, LV_ALIGN_CENTER);
-
-  btnColorTemp = lv_btn_create(btns);
-  lv_obj_set_size(btnColorTemp, 50, 40);
-  lv_obj_set_style_pad_all(btnColorTemp, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_add_event_cb(btnColorTemp, UIRGBLight::btnColorTemp_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
-  lv_obj_t* imgBtnColorTemp = lv_img_create(btnColorTemp);
-  lv_img_set_src(imgBtnColorTemp, &colortemp24);
-  lv_obj_set_align(imgBtnColorTemp, LV_ALIGN_CENTER);
-  lv_obj_add_flag(btnColorTemp, LV_OBJ_FLAG_HIDDEN);
-
-  for (const auto& mode : supportedColorModes) {
-    if (mode == "color_temp") {
-      lv_obj_clear_flag(colortempTile, LV_OBJ_FLAG_HIDDEN);
-      lv_obj_clear_flag(btnColorTemp, LV_OBJ_FLAG_HIDDEN);
-    }
-  };
+  if (showColorWheel) {
+    btnColorWheel = lv_btn_create(btns);
+    lv_obj_set_size(btnColorWheel, 50, 40);
+    lv_obj_set_style_pad_all(btnColorWheel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_event_cb(btnColorWheel, UIRGBLight::btnColorWheel_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
+    lv_obj_t* imgBtnColorWheel = lv_img_create(btnColorWheel);
+    lv_img_set_src(imgBtnColorWheel, &colorwheel24);
+    lv_obj_set_align(imgBtnColorWheel, LV_ALIGN_CENTER);
+  }
+  if (showColorTemp) {
+    btnColorTemp = lv_btn_create(btns);
+    lv_obj_set_size(btnColorTemp, 50, 40);
+    lv_obj_set_style_pad_all(btnColorTemp, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_event_cb(btnColorTemp, UIRGBLight::btnColorTemp_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
+    lv_obj_t* imgBtnColorTemp = lv_img_create(btnColorTemp);
+    lv_img_set_src(imgBtnColorTemp, &colortemp24);
+    lv_obj_set_align(imgBtnColorTemp, LV_ALIGN_CENTER);
+  }
 
   uiupdate();
 }
@@ -161,7 +198,11 @@ void UIRGBLight::uiupdate()
     }
     else if (colormode == "color_temp") {
       int colortemp = state["attributes"]["color_temp_kelvin"].get<int>();
-      lv_slider_set_value(colortempSlider, colortemp, LV_ANIM_OFF);
+      std::cerr << "colormode == color temp and colortemp itself is: " << colortemp << std::endl;
+      //   lv_slider_set_value(colortempSlider, colortemp, LV_ANIM_OFF);
+    }
+    else if (colormode == "brightness") {
+      std::cerr << "BRIGHTNESS" << std::endl;
     }
     else if (colormode == "white") {
       std::cerr << "WHITE" << std::endl;
