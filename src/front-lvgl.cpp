@@ -204,7 +204,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
   */
   lv_obj_t* cont_row = lv_obj_create(lv_scr_act());
   lv_obj_remove_style_all(cont_row);
-  lv_obj_set_size(cont_row, SDL_HOR_RES, SDL_VER_RES);
+  lv_obj_set_size(cont_row, MY_DISP_HOR_RES, MY_DISP_VER_RES);
   lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN_WRAP);
   lv_obj_set_style_pad_row(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_pad_column(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
