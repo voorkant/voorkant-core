@@ -6,3 +6,6 @@ all:
 
 clean:
 	ninja -C build clean
+
+build-targets:
+	cd scripts/build-targets && make

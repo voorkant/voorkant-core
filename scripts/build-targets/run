@@ -1,0 +1,4 @@
+#!/bin/sh
+TARGET=$1
+shift
+docker run -v $(pwd):$(pwd) -w $(pwd) --rm voorkant-builder:$TARGET "$@"

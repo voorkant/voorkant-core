@@ -1,0 +1,3 @@
+option('front-ftxui', type : 'feature', value : 'enabled')
+option('front-lvgl', type : 'feature', value : 'enabled')
+option('lvgl-driver', type : 'combo', choices : ['sdl', 'fbdev'])
