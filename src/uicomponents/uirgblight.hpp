@@ -37,6 +37,11 @@ private:
   // lv_obj_t* imgBtnBrightness;
   // lv_obj_t* imgBtnColorTemp;
   // lv_obj_t* imgBtnColorWheel;
+  bool showBrightness = false;
+  bool showColorWheel = false;
+  bool showColorTemp = false;
+  bool showWhite = false;
+
   static void btnOnOff_cb(lv_event_t* e);
   static void btnBrightness_cb(lv_event_t* e);
   static void btnColorWheel_cb(lv_event_t* e);

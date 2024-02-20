@@ -18,11 +18,6 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   }
   std::vector<std::string> supportedColorModes = attributes["supported_color_modes"].get<std::vector<string>>();
 
-  bool showBrightness = false;
-  bool showColorWheel = false;
-  bool showColorTemp = false;
-  bool showWhite = false;
-
   for (auto& mode : supportedColorModes) {
     std::cerr << "    supported color mode:" << mode << std::endl;
     std::transform(mode.begin(), mode.end(), mode.begin(), [](unsigned char c) { return std::tolower(c); }); // this needed?
@@ -246,9 +241,15 @@ void UIRGBLight::btnBrightness_cb(lv_event_t* e)
   UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
   if (code == LV_EVENT_CLICKED) {
     lv_obj_set_tile_id(rgbLight->tilecontainer, 0, 0, LV_ANIM_OFF);
-    lv_obj_add_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
-    lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
-    lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    if (rgbLight->showBrightness) {
+      lv_obj_add_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    }
+    if (rgbLight->showColorWheel) {
+      lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    }
+    if (rgbLight->showColorTemp) {
+      lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    }
   }
 };
 
@@ -259,9 +260,15 @@ void UIRGBLight::btnColorWheel_cb(lv_event_t* e)
   UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
   if (code == LV_EVENT_CLICKED) {
     lv_obj_set_tile_id(rgbLight->tilecontainer, 1, 0, LV_ANIM_OFF);
-    lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
-    lv_obj_add_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
-    lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    if (rgbLight->showBrightness) {
+      lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    }
+    if (rgbLight->showColorWheel) {
+      lv_obj_add_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    }
+    if (rgbLight->showColorTemp) {
+      lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    }
   }
 };
 
@@ -272,9 +279,15 @@ void UIRGBLight::btnColorTemp_cb(lv_event_t* e)
   UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
   if (code == LV_EVENT_CLICKED) {
     lv_obj_set_tile_id(rgbLight->tilecontainer, 2, 0, LV_ANIM_OFF);
-    lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
-    lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
-    lv_obj_add_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    if (rgbLight->showBrightness) {
+      lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    }
+    if (rgbLight->showColorWheel) {
+      lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    }
+    if (rgbLight->showColorTemp) {
+      lv_obj_add_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    }
   }
 };
 
@@ -319,9 +332,15 @@ void UIRGBLight::tilemove_cb(lv_event_t* e)
     lv_obj_t* tile = lv_tileview_get_tile_act(rgbLight->tilecontainer);
     lv_coord_t tile_x = lv_obj_get_x(tile);
     int tileNr = tile_x / 236;
-    lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
-    lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
-    lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    if (rgbLight->showBrightness) {
+      lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    }
+    if (rgbLight->showColorWheel) {
+      lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    }
+    if (rgbLight->showColorTemp) {
+      lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    }
     switch (tileNr) {
     case 0:
       lv_obj_add_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
