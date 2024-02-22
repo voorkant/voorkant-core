@@ -74,10 +74,12 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_add_event_cb(tilecontainer, UIRGBLight::tilemove_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
   lv_obj_set_height(tilecontainer, uiEntityWidth);
 
+  lv_coord_t sliderheight = widthheight - 25;
+
   if (showBrightness) {
     lv_obj_t* brightnessTile = lv_tileview_add_tile(tilecontainer, 0, 0, LV_DIR_HOR);
     brightnessSlider = lv_slider_create(brightnessTile);
-    lv_obj_set_height(brightnessSlider, widthheight);
+    lv_obj_set_height(brightnessSlider, sliderheight);
     lv_obj_set_width(brightnessSlider, 50);
     lv_obj_set_align(brightnessSlider, LV_ALIGN_CENTER);
     lv_slider_set_range(brightnessSlider, 0, 255);
@@ -87,7 +89,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   if (showColorWheel) {
     lv_obj_t* cwTile = lv_tileview_add_tile(tilecontainer, 1, 0, LV_DIR_HOR);
     cw = lv_colorwheel_create(cwTile, true);
-    lv_obj_set_size(cw, widthheight, widthheight);
+    lv_obj_set_size(cw, widthheight, sliderheight);
     lv_obj_set_align(cw, LV_ALIGN_CENTER);
     lv_colorwheel_set_mode_fixed(cw, false);
     lv_obj_add_event_cb(cw, UIRGBLight::colorwheel_move_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
@@ -106,7 +108,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
     lv_obj_t* colortempTile = lv_tileview_add_tile(tilecontainer, 2, 0, LV_DIR_HOR);
     colortempSlider = lv_slider_create(colortempTile);
-    lv_obj_set_height(colortempSlider, widthheight);
+    lv_obj_set_height(colortempSlider, sliderheight);
     lv_obj_set_width(colortempSlider, 50);
     lv_obj_set_align(colortempSlider, LV_ALIGN_CENTER);
     int min_color_temp = getIntAttribute("min_color_temp_kelvin", 2000);
@@ -172,7 +174,7 @@ void UIRGBLight::uiupdate()
 {
   auto state = entity->getJsonState();
   string colormode = getColorMode();
-  std::cerr << "COLOR MODE: " << colormode << std::endl;
+  // std::cerr << "COLOR MODE: " << colormode << std::endl;
   std::cerr << "UPDATED STATE FOR " << entity->name << ":" << state.dump(2) << std::endl;
   if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
     lv_obj_add_state(btnOnOff, LV_STATE_CHECKED);
@@ -203,7 +205,7 @@ void UIRGBLight::uiupdate()
       std::cerr << "WHITE" << std::endl;
     }
     else {
-
+      std::cerr << " NO COLOR MODE " << colormode << " SO USING RGB" << std::endl;
       std::vector<int> vec_rgb = state["attributes"]["rgb_color"];
 
       int rgb[3];
@@ -365,21 +367,7 @@ void UIRGBLight::colorwheel_move_cb(lv_event_t* e)
     lv_obj_t* colorwheel = e->target;
     lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
     lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
-    lv_colorwheel_mode_t mode = lv_colorwheel_get_color_mode(colorwheel);
 
-    if (mode == LV_COLORWHEEL_MODE_HUE) {
-      std::cerr << "COLOR MODE: LV_COLORWHEEL_MODE_HUE" << std::endl;
-    }
-    else if (mode == LV_COLORWHEEL_MODE_SATURATION) {
-      std::cerr << "COLOR MODE: LV_COLORWHEEL_MODE_SATURATION" << std::endl;
-    }
-    else if (mode == LV_COLORWHEEL_MODE_VALUE) {
-
-      std::cerr << "COLOR MODE: LV_COLORWHEEL_MODE_VALUE" << std::endl;
-    }
-    else {
-      std::cerr << "COLOR MODE: NULL" << std::endl;
-    }
     std::cerr << "HSV (H/S/V):" << color_hsv.h << "/" << (uint16_t)color_hsv.s << "/" << (uint16_t)color_hsv.v << std::endl;
     std::cerr << "RGB (R/G/B):" << color_rgb.ch.red << "/" << color_rgb.ch.green << "/" << color_rgb.ch.blue << std::endl;
 
