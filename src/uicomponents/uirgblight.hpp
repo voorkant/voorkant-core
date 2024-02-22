@@ -7,6 +7,7 @@
 #include "imgs/white24.cpp"
 #include <iostream>
 #include <cctype>
+#include <src/core/lv_event.h>
 #include <src/draw/lv_img_buf.h>
 
 LV_IMG_DECLARE(colorwheel24);
@@ -43,7 +44,7 @@ private:
   bool showColorTemp = false;
   bool showWhite = false;
 
-  lv_obj_t* createImageButton(const lv_img_dsc_t* img, lv_event_cb_t callbackEvent);
+  lv_obj_t* createImageButton(const void* imgOrSymbol, lv_event_cb_t callbackEvent, lv_event_code_t eventCode, bool toggle = false);
   static void btnOnOff_cb(lv_event_t* e);
   static void btnBrightness_cb(lv_event_t* e);
   static void btnColorWheel_cb(lv_event_t* e);
