@@ -1,6 +1,18 @@
 #include "uirgblight.hpp"
 #include <stdexcept>
 
+lv_obj_t* UIRGBLight::createImageButton(const lv_img_dsc_t* img, lv_event_cb_t callbackEvent)
+{
+  lv_obj_t* btn = lv_btn_create(btns);
+  lv_obj_set_size(btn, 50, 40);
+  lv_obj_set_style_pad_all(btn, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_add_event_cb(btn, callbackEvent, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
+  lv_obj_t* imgOnButton = lv_img_create(btn);
+  lv_img_set_src(imgOnButton, img);
+  lv_obj_set_align(imgOnButton, LV_ALIGN_CENTER);
+  return btn;
+}
+
 UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
 {
@@ -89,7 +101,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   if (showColorWheel) {
     lv_obj_t* cwTile = lv_tileview_add_tile(tilecontainer, 1, 0, LV_DIR_HOR);
     cw = lv_colorwheel_create(cwTile, true);
-    lv_obj_set_size(cw, widthheight, sliderheight);
+    lv_obj_set_size(cw, widthheight, widthheight);
     lv_obj_set_align(cw, LV_ALIGN_CENTER);
     lv_colorwheel_set_mode_fixed(cw, false);
     lv_obj_add_event_cb(cw, UIRGBLight::colorwheel_move_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
@@ -131,40 +143,21 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   btnOnOff = lv_btn_create(btns);
   lv_obj_set_size(btnOnOff, 50, 40);
   lv_obj_add_flag(btnOnOff, LV_OBJ_FLAG_CHECKABLE);
-
   lv_obj_add_event_cb(btnOnOff, UIRGBLight::btnOnOff_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
   lv_obj_t* imgBtnOnOff = lv_img_create(btnOnOff);
   lv_img_set_src(imgBtnOnOff, LV_SYMBOL_POWER);
   lv_obj_set_align(imgBtnOnOff, LV_ALIGN_CENTER);
 
   if (showBrightness) {
-    btnBrightness = lv_btn_create(btns);
-    lv_obj_set_size(btnBrightness, 50, 40);
+    btnBrightness = createImageButton(&brightness24, UIRGBLight::btnBrightness_cb);
     lv_obj_add_state(btnBrightness, LV_STATE_CHECKED);
-    lv_obj_set_style_pad_all(btnBrightness, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_add_event_cb(btnBrightness, UIRGBLight::btnBrightness_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
-    lv_obj_t* imgBtnBrightness = lv_img_create(btnBrightness);
-    lv_img_set_src(imgBtnBrightness, &brightness24);
-    lv_obj_set_align(imgBtnBrightness, LV_ALIGN_CENTER);
   }
 
   if (showColorWheel) {
-    btnColorWheel = lv_btn_create(btns);
-    lv_obj_set_size(btnColorWheel, 50, 40);
-    lv_obj_set_style_pad_all(btnColorWheel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_add_event_cb(btnColorWheel, UIRGBLight::btnColorWheel_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
-    lv_obj_t* imgBtnColorWheel = lv_img_create(btnColorWheel);
-    lv_img_set_src(imgBtnColorWheel, &colorwheel24);
-    lv_obj_set_align(imgBtnColorWheel, LV_ALIGN_CENTER);
+    btnColorWheel = createImageButton(&colorwheel24, UIRGBLight::btnColorWheel_cb);
   }
   if (showColorTemp) {
-    btnColorTemp = lv_btn_create(btns);
-    lv_obj_set_size(btnColorTemp, 50, 40);
-    lv_obj_set_style_pad_all(btnColorTemp, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_add_event_cb(btnColorTemp, UIRGBLight::btnColorTemp_cb, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
-    lv_obj_t* imgBtnColorTemp = lv_img_create(btnColorTemp);
-    lv_img_set_src(imgBtnColorTemp, &colortemp24);
-    lv_obj_set_align(imgBtnColorTemp, LV_ALIGN_CENTER);
+    btnColorTemp = createImageButton(&colortemp24, UIRGBLight::btnColorTemp_cb);
   }
 
   uiupdate();
