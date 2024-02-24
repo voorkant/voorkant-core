@@ -2,55 +2,6 @@
 
 std::mutex G_LVGLUpdatelock;
 
-static uint32_t intFromRGB(json attrs)
-{
-  if (attrs.count("rgb_color")) {
-    auto rgb = attrs["rgb_color"];
-    // cout<<"RGB "<<rgb<<endl;
-    if (rgb.size() == 3) {
-      uint32_t color = (rgb[0].get<int>() << 16) + (rgb[1].get<int>() << 8) + (rgb[2].get<int>());
-      // cout<<" "<<color;
-      return color;
-    }
-  }
-
-  return 0; // black. Should we return white? Some middle ground?
-}
-
-static string current_light; // FIXME: THIS NEEDS A MUTEX
-static bool newcolor = false;
-
-static void btn_event_cb(lv_event_t* e)
-{
-  lv_event_code_t code = lv_event_get_code(e);
-  // lv_obj_t* btn = lv_event_get_target(e);
-  if (code == LV_EVENT_CLICKED) {
-    // static uint32_t cnt = 0;
-    // cnt++;
-
-    // /*Get the first child of the button which is the label and change its text*/
-    // lv_obj_t * label = lv_obj_get_child(btn, 0);
-    // lv_label_set_text_fmt(label, "Button: %d", cnt);
-    // cerr<<"cnt="<<cnt<<endl;
-  }
-}
-
-static std::array<std::pair<lv_obj_t*, lv_obj_t*>, 3> rgbsliders; // first is slider, second is label for slider
-
-static void slider_event_cb(lv_event_t* e)
-{
-  lv_obj_t* slider = lv_event_get_target(e);
-
-  for (const auto& rgbslider : rgbsliders) {
-    if (rgbslider.first == slider) {
-      /*Refresh the text*/
-      lv_label_set_text_fmt(rgbslider.second, "%" LV_PRId32, lv_slider_get_value(slider));
-      lv_obj_align_to(rgbslider.second, slider, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
-    }
-    newcolor = true;
-  }
-}
-
 void uithread(HABackend& backend, int argc, char* argv[])
 {
   argparse::ArgumentParser program("client-lvgl");
@@ -72,8 +23,8 @@ void uithread(HABackend& backend, int argc, char* argv[])
 
   if (program.is_subcommand_used(entity_command)) {
     // FIXME: now actually use the argument
-    current_light = entity_command.get<string>("name");
-    cerr << "should render " << current_light << endl;
+    //    current_light = entity_command.get<string>("name");
+    //  cerr << "should render " << current_light << endl;
   }
   else {
     cerr << "no command given" << endl;
