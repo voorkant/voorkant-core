@@ -1,8 +1,4 @@
 #include "uirgblight.hpp"
-#include <src/core/lv_event.h>
-#include <src/core/lv_obj.h>
-#include <src/font/lv_symbol_def.h>
-#include <stdexcept>
 
 lv_obj_t* UIRGBLight::createImageButton(const void* imgOrSymbol, lv_event_cb_t callbackEvent, lv_event_code_t eventCode, bool toggle)
 {
@@ -176,51 +172,55 @@ void UIRGBLight::uiupdate()
   string colormode = getColorMode();
   // std::cerr << "COLOR MODE: " << colormode << std::endl;
   std::cerr << "UPDATED STATE FOR " << entity->name << ":" << state.dump(2) << std::endl;
-  if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
-    lv_obj_add_state(btnOnOff, LV_STATE_CHECKED);
-    int brightness = state["attributes"]["brightness"].get<int>(); // brightness is NULL If the thing is off
-    lv_slider_set_value(brightnessSlider, brightness, LV_ANIM_OFF);
-    int brightnessPercent = static_cast<int>(brightness / 2.55);
-    std::string strBrightnessPercent = std::to_string(brightnessPercent);
-    lv_label_set_text(brightnessLabel, (strBrightnessPercent + "%").c_str());
-    if (colormode == "hs") {
 
-      std::vector<int> vec_hs = state["attributes"]["hs_color"];
+  {
+    std::unique_lock<std::mutex> lvlock(G_LVGLUpdatelock);
+    if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
+      lv_obj_add_state(btnOnOff, LV_STATE_CHECKED);
+      int brightness = state["attributes"]["brightness"].get<int>(); // brightness is NULL If the thing is off
+      lv_slider_set_value(brightnessSlider, brightness, LV_ANIM_OFF);
+      int brightnessPercent = static_cast<int>(brightness / 2.55);
+      std::string strBrightnessPercent = std::to_string(brightnessPercent);
+      lv_label_set_text(brightnessLabel, (strBrightnessPercent + "%").c_str());
+      if (colormode == "hs") {
 
-      lv_color_hsv_t hsvVal;
-      hsvVal.h = vec_hs.at(0);
-      hsvVal.s = vec_hs.at(1);
-      hsvVal.v = brightnessPercent;
-      lv_colorwheel_set_hsv(cw, hsvVal);
-    }
-    else if (colormode == "color_temp") {
-      int colortemp = state["attributes"]["color_temp_kelvin"].get<int>();
-      std::cerr << "colormode == color temp and colortemp itself is: " << colortemp << std::endl;
-      //   lv_slider_set_value(colortempSlider, colortemp, LV_ANIM_OFF);
-    }
-    else if (colormode == "brightness") {
-      std::cerr << "BRIGHTNESS" << std::endl;
-    }
-    else if (colormode == "white") {
-      std::cerr << "WHITE" << std::endl;
+        std::vector<int> vec_hs = state["attributes"]["hs_color"];
+
+        lv_color_hsv_t hsvVal;
+        hsvVal.h = vec_hs.at(0);
+        hsvVal.s = vec_hs.at(1);
+        hsvVal.v = brightnessPercent;
+        lv_colorwheel_set_hsv(cw, hsvVal);
+      }
+      else if (colormode == "color_temp") {
+        int colortemp = state["attributes"]["color_temp_kelvin"].get<int>();
+        std::cerr << "colormode == color temp and colortemp itself is: " << colortemp << std::endl;
+        //   lv_slider_set_value(colortempSlider, colortemp, LV_ANIM_OFF);
+      }
+      else if (colormode == "brightness") {
+        std::cerr << "BRIGHTNESS" << std::endl;
+      }
+      else if (colormode == "white") {
+        std::cerr << "WHITE" << std::endl;
+      }
+      else {
+        std::cerr << " NO COLOR MODE " << colormode << " SO USING RGB" << std::endl;
+        std::vector<int> vec_rgb = state["attributes"]["rgb_color"];
+
+        int rgb[3];
+        short cnt = 0;
+        for (auto col : vec_rgb) {
+          rgb[cnt] = col;
+          cnt++;
+        }
+        lv_colorwheel_set_rgb(cw, lv_color_make(rgb[0], rgb[1], rgb[2]));
+      }
     }
     else {
-      std::cerr << " NO COLOR MODE " << colormode << " SO USING RGB" << std::endl;
-      std::vector<int> vec_rgb = state["attributes"]["rgb_color"];
-
-      int rgb[3];
-      short cnt = 0;
-      for (auto col : vec_rgb) {
-        rgb[cnt] = col;
-        cnt++;
-      }
-      lv_colorwheel_set_rgb(cw, lv_color_make(rgb[0], rgb[1], rgb[2]));
+      lv_obj_clear_state(btnOnOff, LV_STATE_CHECKED);
+      lv_slider_set_value(brightnessSlider, 0, LV_ANIM_OFF);
+      lv_label_set_text(brightnessLabel, "Off");
     }
-  }
-  else {
-    lv_obj_clear_state(btnOnOff, LV_STATE_CHECKED);
-    lv_slider_set_value(brightnessSlider, 0, LV_ANIM_OFF);
-    lv_label_set_text(brightnessLabel, "Off");
   }
 }
 

@@ -8,6 +8,8 @@
 #include "Observer.hpp"
 #include "generated/domains.hpp"
 
+extern std::mutex G_LVGLUpdatelock;
+
 class UIEntity : public IObserver
 {
 public:

@@ -42,11 +42,15 @@ UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 void UIButton::uiupdate()
 {
   auto state = entity->getJsonState();
-  if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
-    lv_obj_add_state(btn, LV_STATE_CHECKED);
-  }
-  else {
-    lv_obj_clear_state(btn, LV_STATE_CHECKED);
+
+  {
+    std::unique_lock<std::mutex> lvlock(G_LVGLUpdatelock);
+    if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
+      lv_obj_add_state(btn, LV_STATE_CHECKED);
+    }
+    else {
+      lv_obj_clear_state(btn, LV_STATE_CHECKED);
+    }
   }
 };
 
@@ -86,11 +90,14 @@ UISwitch::UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 void UISwitch::uiupdate()
 {
   auto state = entity->getJsonState();
-  if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
-    lv_obj_add_state(sw, LV_STATE_CHECKED);
-  }
-  else {
-    lv_obj_clear_state(sw, LV_STATE_CHECKED);
+  {
+    std::unique_lock<std::mutex> lvlock(G_LVGLUpdatelock);
+    if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
+      lv_obj_add_state(sw, LV_STATE_CHECKED);
+    }
+    else {
+      lv_obj_clear_state(sw, LV_STATE_CHECKED);
+    }
   }
 };
 

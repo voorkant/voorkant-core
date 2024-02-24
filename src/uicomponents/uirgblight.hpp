@@ -5,8 +5,6 @@
 #include "imgs/colortemp24.cpp"
 #include "imgs/brightness24.cpp"
 #include "imgs/white24.cpp"
-#include <iostream>
-#include <cctype>
 #include <src/core/lv_event.h>
 #include <src/draw/lv_img_buf.h>
 

@@ -1,37 +1,4 @@
-#include "main.hpp"
-#include <iostream>
-#include <src/widgets/lv_slider.h>
-#include <string>
-#include <unistd.h>
-#include "ext/argparse/include/argparse/argparse.hpp"
-
-// FIXME: the shape of this `if defined`/`elif defined`/.. error maybe itself could be a macro?
-
-#if defined(VOORKANT_LVGL_SDL)
-#include <sdl/sdl_common.h>
-#include "sdl/sdl.h"
-#elif defined(VOORKANT_LVGL_FBDEV)
-#include <display/fbdev.h>
-#include <indev/evdev.h>
-#else
-#error "no useful VOORKANT_LVGL_* found"
-#endif
-
-#include <lvgl.h>
-#include <src/core/lv_disp.h>
-#include <utility>
-#include "sdl/sdl.h"
-#include "uicomponents/UIComponents.hpp"
-#include "uicomponents/uirgblight.hpp"
-#include <generated/domains.hpp>
-
-using std::string;
-// using std::map;
-
-using std::cerr;
-using std::cout;
-using std::endl;
-using std::flush;
+#include "front-lvgl.hpp"
 
 static uint32_t intFromRGB(json attrs)
 {
@@ -170,37 +137,8 @@ void uithread(HABackend& backend, int argc, char* argv[])
   // lv_group_t* g = lv_group_create();
   // lv_group_set_default(g);
 
-  // // START BUTTON EXAMPLE
-  // lv_obj_t* btn = lv_btn_create(lv_scr_act()); /*Add a button the current screen*/
-  // lv_obj_set_pos(btn, 10, 10); /*Set its position*/
-  // lv_obj_set_size(btn, 240, 50); /*Set its size*/
-  // lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL); /*Assign a callback to the button*/
-
-  // lv_obj_t* label = lv_label_create(btn); /*Add a label to the button*/
-  // lv_label_set_text(label, "Button"); /*Set the labels text*/
-  // lv_obj_center(label);
-  // // END BUTTON EXAMPLE
-  // for (int i = 0; i < 3; i++) {
-
-  //   /*Create a slider in the center of the display*/
-  //   lv_obj_t* slider = lv_slider_create(lv_scr_act());
-  //   lv_slider_set_range(slider, 0, 255);
-  //   lv_obj_set_width(slider, 200); /*Set the width*/
-  //   lv_obj_set_pos(slider, 40, i * 70 + 120);
-  //   lv_obj_add_event_cb(slider, slider_event_cb, LV_EVENT_VALUE_CHANGED, NULL); /*Assign an event function*/
-
-  //   /*Create a label above the slider*/
-  //   lv_obj_t* slabel = lv_label_create(lv_scr_act());
-  //   lv_label_set_text(slabel, "0");
-  //   lv_obj_align_to(slabel, slider, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
-
-  //   rgbsliders[i] = std::make_pair(slider, slabel);
-  // }
-
   /*Create a container with ROW flex direction that wraps.
-  This is our MAIN box that we put everything in.
-  TODO: figure out if we really need this, you can also set your screen to be a flexbox.
-
+  This is our MAIN box that we put everything in. We have this here because we want some spacing around it.
   */
   lv_obj_t* cont_row = lv_obj_create(lv_scr_act());
   lv_obj_remove_style_all(cont_row);
@@ -232,65 +170,14 @@ void uithread(HABackend& backend, int argc, char* argv[])
   i = 0;
   while (true) {
     usleep(5 * 1000); // 5000 usec = 5 ms
-    lv_tick_inc(5); // 5 ms
-    lv_task_handler();
+    {
+      std::unique_lock<std::mutex> lvlock(G_LVGLUpdatelock);
+      lv_tick_inc(5); // 5 ms
+      lv_task_handler();
+    }
     if (i++ == (1000 / 5)) {
       cerr << "." << flush;
       i = 0;
     }
   }
-
-  // int i = 0;
-  // while (true) {
-  //   if (newcolor) {
-  //     json cmd;
-  //     json rgb;
-
-  //     rgb = {0, 0, 0};
-
-  //     for (int i = 0; i < 3; i++) {
-  //       rgb[i] = lv_slider_get_value(rgbsliders[i].first);
-  //     }
-
-  //     cmd["type"] = "call_service";
-  //     cmd["domain"] = backend.GetEntityByName(current_light)->domain;
-  //     cmd["service"] = "turn_on";
-  //     cmd["target"]["entity_id"] = current_light;
-  //     cmd["service_data"]["rgb_color"] = rgb;
-
-  //     backend.WSConnSend(cmd);
-
-  //     newcolor = false;
-  //   }
-  //   else {
-  //     // uint32_t c = rand();
-  //     auto attrs = backend.GetEntityByName(current_light)->getJsonState()["attributes"];
-  //     if (attrs.count("rgb_color")) {
-  //       auto rgb = attrs["rgb_color"];
-  //       // cout<<"RGB "<<rgb<<endl;
-  //       if (rgb.size() == 3) {
-  //         for (int i = 0; i < 3; i++) {
-  //           lv_slider_set_value(rgbsliders[i].first, rgb[i], LV_ANIM_OFF);
-
-  //           // this label setting code is duplicated from slider_event_cb, because LV_EVENT_VALUE_CHANGED does not fire when -we- change it (https://docs.lvgl.io/latest/en/html/widgets/slider.html)
-  //           // and we don't want to pass the old value back to HA (which slider_event_cb would happily do for us), because that causes a super fun oscillation
-  //           lv_label_set_text_fmt(rgbsliders[i].second, "%" LV_PRId32, rgb[i].get<int>());
-  //           lv_obj_align_to(rgbsliders[i].second, rgbsliders[i].first, LV_ALIGN_OUT_TOP_MID, 0, -15); /*Align top of the slider*/
-  //         }
-  //       }
-  //     }
-  //     lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(intFromRGB(attrs)), LV_PART_MAIN);
-  //     auto state = backend.GetEntityByName(current_light);
-  //     auto labeltext = state->getJsonState()["attributes"]["friendly_name"].get<string>() + " (" + state->getState() + ")";
-  //     lv_label_set_text(label, labeltext.c_str());
-  //   }
-
-  // usleep(5 * 1000); // 5000 usec = 5 ms
-  // lv_tick_inc(5); // 5 ms
-  // lv_task_handler();
-  // if (i++ == (1000 / 5)) {
-  //   cerr << "." << flush;
-  //   i = 0;
-  // }
-  //}
 }
