@@ -36,6 +36,4 @@ using std::cout;
 using std::endl;
 using std::flush;
 
-std::mutex G_LVGLUpdatelock;
-
 #endif

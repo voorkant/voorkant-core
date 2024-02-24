@@ -1,5 +1,7 @@
 #include "front-lvgl.hpp"
 
+std::mutex G_LVGLUpdatelock;
+
 static uint32_t intFromRGB(json attrs)
 {
   if (attrs.count("rgb_color")) {

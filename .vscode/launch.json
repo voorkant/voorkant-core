@@ -21,7 +21,7 @@
       "environment": [
         {
           "name": "HA_API_TOKEN",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhNWJlMjY0NDM4OGU0YTlkYjk0MWYxYTk5ZGI3N2ZhZSIsImlhdCI6MTcwODM3Mzc1MiwiZXhwIjoxNzM5OTA5NzUyfQ.NnVeJU5iHj8zo66w654rEc8GXufOofrTTcqUqqCHff4"
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIxOTNhNTAwNzllYTE0M2UyYTM2OTFhZDcxNTIwMGY1MiIsImlhdCI6MTcwODc5MjgwMCwiZXhwIjoxNzQwMzI4ODAwfQ.fjSKY5DJRw5pGzlFuXRY1SAP99qNvrbGYYB-HilvPdo"
         },
         {
           "name": "HA_WS_URL",
