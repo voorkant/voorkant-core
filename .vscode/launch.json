@@ -14,7 +14,7 @@
       "miDebuggerArgs": "--cd=${workspaceFolder}",
       "args": [
         "entity",
-        "light"
+        ".*e.*"
       ],
       "program": "${workspaceRoot}/${config:mesonbuild.buildFolder}/client-lvgl",
       "cwd": "${workspaceRoot}/${config:mesonbuild.buildFolder}",

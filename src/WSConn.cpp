@@ -71,7 +71,6 @@ std::string WSConn::recv(void)
 
 void WSConn::send(json& msg)
 {
-  std::cerr << "WSConn::send: " << msg.dump() << endl;
   {
     std::scoped_lock lk(msgidlock);
 
@@ -79,6 +78,7 @@ void WSConn::send(json& msg)
       // FIXME: at zero, we are authing, which does not get an id. this is a hack.
       msg["id"] = msgid;
     }
+    std::cerr << "WSConn::send: " << msg.dump() << endl;
 
     msgid++;
   }

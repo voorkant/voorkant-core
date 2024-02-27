@@ -9,6 +9,7 @@
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::regex_search;
 using std::string;
 using std::thread;
 
@@ -182,6 +183,19 @@ std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByDomain(const std:
   std::vector<std::shared_ptr<HAEntity>> ret;
   for (auto& [id, entity] : entities) {
     if (entity->domain == domain) {
+      ret.push_back(entity);
+    }
+  }
+  return ret;
+}
+
+std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByPattern(const std::string& pattern)
+{
+  std::scoped_lock lk(entitieslock);
+  std::vector<std::shared_ptr<HAEntity>> ret;
+  std::regex regex(pattern);
+  for (auto& [id, entity] : entities) {
+    if (std::regex_search(entity->name, regex)) {
       ret.push_back(entity);
     }
   }

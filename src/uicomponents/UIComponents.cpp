@@ -111,3 +111,36 @@ void UISwitch::sw_toggle_cb(lv_event_t* e)
     light.toggle({});
   }
 };
+
+UIDummy::UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
+  UIEntity(_entity, _parent)
+{
+  lv_obj_t* flowpanel = lv_obj_create(_parent);
+  lv_obj_set_width(flowpanel, uiEntityWidth);
+  lv_obj_set_height(flowpanel, 80);
+  lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
+  lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
+  lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+
+  lv_coord_t widthheight = uiEntityWidth - 50;
+
+  lv_obj_t* label = createLabel(flowpanel, entity->name);
+  lv_obj_set_width(label, LV_PCT(100));
+  lv_obj_set_align(label, LV_ALIGN_CENTER);
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+
+  string text = "We do not have a UIComponent for entities with domain ";
+  lv_obj_t* extratext = createLabel(flowpanel, text.append(_entity->domain));
+  lv_obj_set_width(extratext, LV_PCT(100));
+  lv_obj_set_align(extratext, LV_ALIGN_CENTER);
+
+  uiupdate();
+};
+
+void UIDummy::uiupdate()
+{
+  auto state = entity->getJsonState();
+  std::cerr << "We received a UIupdate for " << entity->name << ":" << std::endl;
+  std::cerr << state.dump(2) << std::endl;
+};

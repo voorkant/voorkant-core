@@ -5,6 +5,8 @@
 #include "HAEntity.hpp"
 #include "Backend.hpp"
 #include <lvgl.h>
+#include <memory>
+#include <src/core/lv_obj.h>
 #include "Observer.hpp"
 #include "generated/domains.hpp"
 
@@ -46,6 +48,15 @@ public:
 private:
   lv_obj_t* sw;
   static void sw_toggle_cb(lv_event_t* e);
+};
+
+class UIDummy : public UIEntity
+{
+public:
+  UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
+  void uiupdate() override;
+
+private:
 };
 
 #endif

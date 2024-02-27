@@ -1,4 +1,5 @@
 #include "front-lvgl.hpp"
+#include "uicomponents/UIComponents.hpp"
 
 std::mutex G_LVGLUpdatelock;
 
@@ -7,8 +8,8 @@ void uithread(HABackend& backend, int argc, char* argv[])
   argparse::ArgumentParser program("client-lvgl");
 
   argparse::ArgumentParser entity_command("entity");
-  entity_command.add_argument("name")
-    .help("what entity to render");
+  entity_command.add_argument("pattern")
+    .help("what entity to render, in a c++ regex");
 
   program.add_subparser(entity_command);
 
@@ -101,26 +102,28 @@ void uithread(HABackend& backend, int argc, char* argv[])
   lv_obj_set_style_pad_column(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
   std::vector<std::unique_ptr<UIEntity>> uielements;
-  int i = 0;
-  auto entities = backend.GetEntitiesByDomain("light");
+
+  auto entities = backend.GetEntitiesByPattern(entity_command.get<string>("pattern"));
+  std::cerr << "Entities are: " << entities.size() << std::endl;
   for (const auto& entity : entities) {
-    // if (i % 2 == 0) {
-    //   std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
-    //   uielements.push_back(std::move(btn));
-    // }
-    // else {
-    //   std::unique_ptr<UIEntity> sw = std::make_unique<UISwitch>(entity, cont_row);
-    //   uielements.push_back(std::move(sw));
-    // }
-    // if (entity->name == "Entrance Color + White Lights") {
-    std::unique_ptr<UIEntity> rgb = std::make_unique<UIRGBLight>(entity, cont_row);
-    uielements.push_back(std::move(rgb));
-    //}
-
-    i++;
+    if (entity->domain == "light") {
+      std::unique_ptr<UIEntity> rgb = std::make_unique<UIRGBLight>(entity, cont_row);
+      uielements.push_back(std::move(rgb));
+    }
+    else if (entity->domain == "switch") {
+      std::unique_ptr<UIEntity> sw = std::make_unique<UISwitch>(entity, cont_row);
+      uielements.push_back(std::move(sw));
+    }
+    else if (entity->domain == "fan") {
+      std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
+      uielements.push_back(std::move(btn));
+    }
+    else {
+      std::unique_ptr<UIEntity> dum = std::make_unique<UIDummy>(entity, cont_row);
+      uielements.push_back(std::move(dum));
+    }
   }
-
-  i = 0;
+  int i = 0;
   while (true) {
     usleep(5 * 1000); // 5000 usec = 5 ms
     {
