@@ -1,4 +1,5 @@
 #include "front-lvgl.hpp"
+#include "HAEntity.hpp"
 #include "uicomponents/UIComponents.hpp"
 
 std::mutex G_LVGLUpdatelock;
@@ -106,21 +107,28 @@ void uithread(HABackend& backend, int argc, char* argv[])
   auto entities = backend.GetEntitiesByPattern(entity_command.get<string>("pattern"));
   std::cerr << "Entities are: " << entities.size() << std::endl;
   for (const auto& entity : entities) {
-    if (entity->domain == "light") {
+    switch (entity->getEntityType()) {
+    case EntityType::Light: {
       std::unique_ptr<UIEntity> rgb = std::make_unique<UIRGBLight>(entity, cont_row);
       uielements.push_back(std::move(rgb));
+      break;
     }
-    else if (entity->domain == "switch") {
+    case EntityType::Switch: {
       std::unique_ptr<UIEntity> sw = std::make_unique<UISwitch>(entity, cont_row);
       uielements.push_back(std::move(sw));
+      break;
     }
-    else if (entity->domain == "fan") {
+    case EntityType::Fan: {
       std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
       uielements.push_back(std::move(btn));
+      break;
     }
-    else {
+    default:
+    case EntityType::OTHER: {
       std::unique_ptr<UIEntity> dum = std::make_unique<UIDummy>(entity, cont_row);
       uielements.push_back(std::move(dum));
+      break;
+    }
     }
   }
   int i = 0;

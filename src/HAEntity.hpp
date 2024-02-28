@@ -19,6 +19,8 @@ using json = nlohmann::json;
 enum class EntityType
 {
   Light,
+  Switch,
+  Fan,
   OTHER,
 };
 

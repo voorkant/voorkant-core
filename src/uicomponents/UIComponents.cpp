@@ -130,10 +130,18 @@ UIDummy::UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
-  string text = "We do not have a UIComponent for entities with domain ";
+  string text = "Domain: ";
   lv_obj_t* extratext = createLabel(flowpanel, text.append(_entity->domain));
   lv_obj_set_width(extratext, LV_PCT(100));
   lv_obj_set_align(extratext, LV_ALIGN_CENTER);
+
+  const auto& services = _entity->getServices();
+  for (const auto& service : services) {
+    string txt = "Service: ";
+    lv_obj_t* servicelabel = createLabel(flowpanel, txt.append(service->name));
+    lv_obj_set_width(servicelabel, LV_PCT(100));
+    lv_obj_set_align(servicelabel, LV_ALIGN_CENTER);
+  }
 
   uiupdate();
 };
