@@ -144,13 +144,6 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   btnOnOff = createImageButton(LV_SYMBOL_POWER, UIRGBLight::btnOnOff_cb, LV_EVENT_VALUE_CHANGED, true);
 
-  //  lv_btn_create(btns);
-  // lv_obj_set_size(btnOnOff, 50, 40);
-  // lv_obj_add_event_cb(btnOnOff, UIRGBLight::btnOnOff_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
-  // lv_obj_t* imgBtnOnOff = lv_img_create(btnOnOff);
-  // lv_img_set_src(imgBtnOnOff, LV_SYMBOL_POWER);
-  // lv_obj_set_align(imgBtnOnOff, LV_ALIGN_CENTER);
-
   if (showBrightness) {
     btnBrightness = createImageButton(&brightness24, UIRGBLight::btnBrightness_cb, LV_EVENT_CLICKED);
     lv_obj_add_state(btnBrightness, LV_STATE_CHECKED);
