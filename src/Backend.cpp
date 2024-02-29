@@ -189,6 +189,7 @@ std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByDomain(const std:
   return ret;
 }
 
+// FIXME: a glob is likely to be more natural for users
 std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByPattern(const std::string& pattern)
 {
   std::scoped_lock lk(entitieslock);
