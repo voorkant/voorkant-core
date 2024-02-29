@@ -1,5 +1,7 @@
 #include "uirgblight.hpp"
 
+// FIXME: we do a whole lot of json parsing in this file, that we should be doing somewhere else.
+
 lv_obj_t* UIRGBLight::createImageButton(const void* imgOrSymbol, lv_event_cb_t callbackEvent, lv_event_code_t eventCode, bool toggle)
 {
   lv_obj_t* btn = lv_btn_create(btns);
@@ -32,6 +34,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   }
   std::vector<std::string> supportedColorModes = attributes["supported_color_modes"].get<std::vector<string>>();
 
+  // FIXME: we get all the supported color modes here, but we don't support all of them. Missing is RGBW, RGBWW and WHITE
   for (auto& mode : supportedColorModes) {
     std::cerr << "    supported color mode:" << mode << std::endl;
     std::transform(mode.begin(), mode.end(), mode.begin(), [](unsigned char c) { return std::tolower(c); }); // this needed?

@@ -107,6 +107,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
   auto entities = backend.GetEntitiesByPattern(entity_command.get<string>("pattern"));
   std::cerr << "Entities are: " << entities.size() << std::endl;
   for (const auto& entity : entities) {
+    // FIXME: this is very simple and should move to something with panels in HA.
     switch (entity->getEntityType()) {
     case EntityType::Light: {
       std::unique_ptr<UIEntity> rgb = std::make_unique<UIRGBLight>(entity, cont_row);

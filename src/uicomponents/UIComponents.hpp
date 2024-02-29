@@ -12,6 +12,7 @@
 
 extern std::mutex G_LVGLUpdatelock;
 
+// FIXME: we never free() the lv_obj_t*'s in code
 class UIEntity : public IObserver
 {
 public:

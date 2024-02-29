@@ -21,6 +21,7 @@ public:
   void uiupdate() override;
 
 private:
+  // FIXME: we never free() the lv_obj_t*'s in code
   lv_obj_t* btnOnOff;
   lv_obj_t* btnBrightness;
   lv_obj_t* btnColorWheel;
