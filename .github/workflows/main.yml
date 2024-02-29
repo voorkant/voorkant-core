@@ -26,8 +26,6 @@ jobs:
       run: meson compile -C ${{github.workspace}}/build
     - name: start HA in the background
       run: scripts/background-ha.sh
-    - name: Check for token
-      run: cat scripts/docker/longtoken.txt
     - name: test client-cli
       run: LD_LIBRARY_PATH=./build/subprojects/curl-8.5.0/build/lib/.libs/ HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN=$(cat scripts/docker/longtoken.txt) build/client-cli list-entities
     - uses: actions/upload-artifact@v4
@@ -47,6 +45,10 @@ jobs:
         env:
           CC: gcc
       - run: meson compile -C ${{github.workspace}}/build -v
+      - name: start HA in the background
+        run: scripts/background-ha.sh
+      - name: test client-cli
+        run: LD_LIBRARY_PATH=./build/subprojects/curl-8.5.0/build/lib/.libs/ HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN=$(cat scripts/docker/longtoken.txt) build/client-cli list-entities
       - uses: actions/upload-artifact@v4
         with:
           name: macos-build
