@@ -14,10 +14,6 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-    - name: start HA in the background
-      run: |
-        cp -r scripts/docker/config scripts/docker/ha-config
-        cd scripts/docker && docker compose up -d  # FIXME: this blocks until the pull is done - maybe we can background that too
     - name: Update apt indexes
       run: sudo apt-get update
     - name: Install various apt dependencies
@@ -28,10 +24,8 @@ jobs:
       run: meson setup ${{github.workspace}}/build 
     - name: Build
       run: meson compile -C ${{github.workspace}}/build
-    - name: Show docker compose logs
-      run: cd scripts/docker && docker compose logs
-    - name: register
-      run: cd scripts/docker && ./register.sh
+    - name: start HA in the background
+      run: scripts/background-ha.sh
     - name: Check for token
       run: cat scripts/docker/longtoken.txt
     - name: test client-cli
