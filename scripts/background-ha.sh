@@ -8,5 +8,5 @@ ROOT=`dirname $0`/..
 docker pull ghcr.io/home-assistant/home-assistant:stable
 
 cp -r ${ROOT}/scripts/docker/config ${ROOT}/scripts/docker/ha-config
-cd ${ROOT}/scripts/docker && docker-compose up -d
-cd ${ROOT}/scripts/docker && ./register.sh
+( cd ${ROOT}/scripts/docker && docker-compose up -d )
+( cd ${ROOT}/scripts/docker && ./register.sh )
