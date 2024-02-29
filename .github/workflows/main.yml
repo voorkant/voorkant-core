@@ -35,6 +35,8 @@ jobs:
   build-macos:
     runs-on: macos-latest
     steps:
+      - name: Setup Docker on macOS
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
       - uses: actions/checkout@v4
         with:
           submodules: recursive
