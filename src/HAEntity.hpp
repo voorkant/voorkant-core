@@ -55,6 +55,7 @@ class HAEntity : public ISubject
 public:
   string name;
   string domain;
+  string fullname;
   string id;
 
   // HAEntity(json _state);

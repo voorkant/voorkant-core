@@ -21,7 +21,7 @@
       "environment": [
         {
           "name": "HA_API_TOKEN",
-          "value": "BLANK"
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4MjIwOGJjODFlMzk0OGFmYTNlMzFkNjk1YTQxMWExYiIsImlhdCI6MTcwOTI3NDAwNCwiZXhwIjoxNzQwODEwMDA0fQ.yzQIgmpjTkLFraEYqg9nhDfQPEbd4_s7RmBHsH8XPvs"
         },
         {
           "name": "HA_WS_URL",

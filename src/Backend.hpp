@@ -6,8 +6,6 @@
 #include <map>
 #include <condition_variable>
 #include <thread>
-#include <regex>
-
 #include <unistd.h>
 #include "HAEntity.hpp"
 #include "WSConn.hpp"

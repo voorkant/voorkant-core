@@ -5,11 +5,11 @@
 #include "HAEntity.hpp"
 #include "generated/domains.hpp"
 #include "main.hpp"
+#include <fnmatch.h>
 
 using std::cerr;
 using std::cout;
 using std::endl;
-using std::regex_search;
 using std::string;
 using std::thread;
 
@@ -189,14 +189,12 @@ std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByDomain(const std:
   return ret;
 }
 
-// FIXME: a glob is likely to be more natural for users
 std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByPattern(const std::string& pattern)
 {
   std::scoped_lock lk(entitieslock);
   std::vector<std::shared_ptr<HAEntity>> ret;
-  std::regex regex(pattern);
   for (auto& [id, entity] : entities) {
-    if (std::regex_search(entity->name, regex)) {
+    if (fnmatch(pattern.c_str(), entity->fullname.c_str(), FNM_EXTMATCH | FNM_CASEFOLD) == 0) {
       ret.push_back(entity);
     }
   }
