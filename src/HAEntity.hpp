@@ -19,6 +19,8 @@ using json = nlohmann::json;
 enum class EntityType
 {
   Light,
+  Switch,
+  Fan,
   OTHER,
 };
 
@@ -53,6 +55,7 @@ class HAEntity : public ISubject
 public:
   string name;
   string domain;
+  string fullname;
   string id;
 
   // HAEntity(json _state);

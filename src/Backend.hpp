@@ -6,7 +6,6 @@
 #include <map>
 #include <condition_variable>
 #include <thread>
-
 #include <unistd.h>
 #include "HAEntity.hpp"
 #include "WSConn.hpp"
@@ -27,6 +26,7 @@ public:
   string CreateLongToken(string name);
   std::shared_ptr<HAEntity> GetEntityByName(const std::string& name);
   std::vector<std::shared_ptr<HAEntity>> GetEntitiesByDomain(const std::string& domain);
+  std::vector<std::shared_ptr<HAEntity>> GetEntitiesByPattern(const std::string& pattern);
   map<string, std::shared_ptr<HAEntity>> GetEntities();
   void WSConnSend(json& msg);
 

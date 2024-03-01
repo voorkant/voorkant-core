@@ -1,53 +1,50 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    //
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "name": "Voorkant LVGL",
-        "request": "launch",
-        "type": "cppdbg",
-        "linux": {
-          "MIMode": "gdb",
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  //
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Voorkant LVGL",
+      "request": "launch",
+      "type": "cppdbg",
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "miDebuggerArgs": "--cd=${workspaceFolder}",
+      "args": [
+        "entity",
+        "\"*.*\""
+      ],
+      "program": "${workspaceRoot}/${config:mesonbuild.buildFolder}/client-lvgl",
+      "cwd": "${workspaceRoot}/${config:mesonbuild.buildFolder}",
+      "environment": [
+        {
+          "name": "HA_API_TOKEN",
+          "value": "BLANK"
         },
-        "args": [
-            "entity",
-            "light"
+        {
+          "name": "HA_WS_URL",
+          "value": "ws://localhost:8123/api/websocket"
+        },
+        {
+          "name": "LD_LIBRARY_PATH",
+          "value": "${workspaceFolder}/${config:mesonbuild.buildFolder}/subprojects/curl-8.5.0/build/lib/.libs/"
+        }
+      ],
+      "stopAtEntry": false,
+      "preLaunchTask": "Meson: Build all targets",
+      "symbolOptions": {
+        "searchPaths": [
+          "${workspaceFolder}/${config:mesonbuild.buildFolder}",
         ],
-        "program": "${workspaceRoot}/${config:mesonbuild.buildFolder}/client-lvgl",
-        "cwd": "${workspaceRoot}/${config:mesonbuild.buildFolder}",
-        "environment": [
-          {
-            "name": "HA_API_TOKEN",
-            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjODE2YWEwYTM4NDg0OTMyOWVkZWI5MjgxMmZlMDdkNyIsImlhdCI6MTcwNjI4MjUxMywiZXhwIjoxNzM3ODE4NTEzfQ.vZyTRpKjPn5OnhAu8n_TXJWCpd7g5DgPmkQGqPiKPHQ"
-          },
-          {
-            "name": "HA_WS_URL",
-            "value": "ws://localhost:8123/api/websocket"
-
-          },
-          {
-            "name": "LD_LIBRARY_PATH",
-            "value": "${workspaceFolder}/${config:mesonbuild.buildFolder}/subprojects/curl-8.5.0/build/lib/.libs/"
-          }
-        ],
-        "stopAtEntry": false,
-        "preLaunchTask": "Meson: Build all targets",
-        "symbolOptions": {
-          "searchPaths": [
-            "${workspaceFolder}/${config:mesonbuild.buildFolder}",
-          ],
-          "searchMicrosoftSymbolServer": true,
-          "cachePath": "${workspaceFolder}\\${config:mesonbuild.buildFolder}\\vscode-symbols-cache",
-          "moduleFilter": {
-            "mode": "loadAllButExcluded",
-            "excludedModules": []
-          }
+        "searchMicrosoftSymbolServer": true,
+        "cachePath": "${workspaceFolder}\\${config:mesonbuild.buildFolder}\\vscode-symbols-cache",
+        "moduleFilter": {
+          "mode": "loadAllButExcluded",
+          "excludedModules": []
         }
       }
-    ]
-  }
-  
-  
+    }
+  ]
+}

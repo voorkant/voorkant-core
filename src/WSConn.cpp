@@ -57,6 +57,7 @@ std::string WSConn::recv(void)
       throw std::runtime_error(
         "got error from curl_ws_recv: " + std::string(curl_easy_strerror(ret))); // FIXME: does not hold wshandlelock, might even print the
                                                                                  // wrong error in theory
+                                                                                 // confirmed: we end up in this code block if we kill HA.
     }
   }
   // cerr<<"ret="<<ret<<endl;
@@ -70,7 +71,6 @@ std::string WSConn::recv(void)
 
 void WSConn::send(json& msg)
 {
-  std::cerr << "WSConn::send: " << msg.dump() << endl;
   {
     std::scoped_lock lk(msgidlock);
 
@@ -78,6 +78,7 @@ void WSConn::send(json& msg)
       // FIXME: at zero, we are authing, which does not get an id. this is a hack.
       msg["id"] = msgid;
     }
+    std::cerr << "WSConn::send: " << msg.dump() << endl;
 
     msgid++;
   }
