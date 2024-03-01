@@ -46,7 +46,7 @@ jobs:
         run: |
           HOMEBREW_NO_INSTALL_FROM_API=1 brew tap homebrew/core
           perl -i -pe 's/^(  args = %W\[)/$1\n    --enable-websockets/' /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/c/curl.rb
-          HOMEBREW_NO_INSTALL_FROM_API=1 brew reinstall -s curl
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew reinstall -s curl
       - name: Meson setup
         run: PKG_CONFIG_PATH="/usr/local/opt/curl/lib/pkgconfig" meson setup ${{github.workspace}}/build
         env:
