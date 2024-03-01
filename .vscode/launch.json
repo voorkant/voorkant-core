@@ -14,14 +14,14 @@
       "miDebuggerArgs": "--cd=${workspaceFolder}",
       "args": [
         "entity",
-        ".*e.*"
+        "\"*.*\""
       ],
       "program": "${workspaceRoot}/${config:mesonbuild.buildFolder}/client-lvgl",
       "cwd": "${workspaceRoot}/${config:mesonbuild.buildFolder}",
       "environment": [
         {
           "name": "HA_API_TOKEN",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIxOTNhNTAwNzllYTE0M2UyYTM2OTFhZDcxNTIwMGY1MiIsImlhdCI6MTcwODc5MjgwMCwiZXhwIjoxNzQwMzI4ODAwfQ.fjSKY5DJRw5pGzlFuXRY1SAP99qNvrbGYYB-HilvPdo"
+          "value": "BLANK"
         },
         {
           "name": "HA_WS_URL",
