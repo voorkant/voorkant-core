@@ -41,7 +41,12 @@ jobs:
         with:
           submodules: recursive
       - name: Install dependencies (brew)
-        run: brew install gcc meson nlohmann-json sdl2 curl
+        run: brew install gcc meson nlohmann-json sdl2
+      - name: Custom curl build
+        run: |
+          HOMEBREW_NO_INSTALL_FROM_API=1 brew tap homebrew/core
+          perl -i -pe 's/^(  args = %W\[)/$1\n    --enable-websockets/' /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/c/curl.rb
+          HOMEBREW_NO_INSTALL_FROM_API=1 brew reinstall -s curl
       - name: Meson setup
         run: PKG_CONFIG_PATH="/usr/local/opt/curl/lib/pkgconfig" meson setup ${{github.workspace}}/build
         env:
