@@ -41,7 +41,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install dependencies (brew)
-        run: brew install gcc meson nlohmann-json sdl2
+        run: brew install gcc meson nlohmann-json sdl2 curl
       - name: Custom curl build
         run: |
           HOMEBREW_NO_INSTALL_FROM_API=1 brew tap homebrew/core
