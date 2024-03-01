@@ -45,7 +45,7 @@ jobs:
       - name: Custom curl build
         run: |
           HOMEBREW_NO_INSTALL_FROM_API=1 brew tap homebrew/core
-          perl -i -pe 's/^(  args = %W\[)/$1\n    --enable-websockets/' /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/c/curl.rb
+          perl -i -pe 's/^(\s*args = %W\[)/$1\n--enable-websockets/' /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/c/curl.rb
           cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core && pwd && git diff
           HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew reinstall -s curl
       - name: Meson setup
