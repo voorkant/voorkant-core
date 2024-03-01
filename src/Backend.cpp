@@ -194,7 +194,7 @@ std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByPattern(const std
   std::scoped_lock lk(entitieslock);
   std::vector<std::shared_ptr<HAEntity>> ret;
   for (auto& [id, entity] : entities) {
-    if (fnmatch(pattern.c_str(), entity->fullname.c_str(), FNM_EXTMATCH | FNM_CASEFOLD) == 0) {
+    if (fnmatch(pattern.c_str(), entity->fullname.c_str(), FNM_CASEFOLD) == 0) {
       ret.push_back(entity);
     }
   }
