@@ -2,7 +2,7 @@
 #include "HAEntity.hpp"
 #include "uicomponents/UIComponents.hpp"
 
-std::mutex G_LVGLUpdatelock;
+std::mutex g_lvgl_updatelock;
 
 void uithread(HABackend& _backend, int _argc, char* _argv[])
 {
@@ -136,7 +136,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   while (true) {
     usleep(5 * 1000); // 5000 usec = 5 ms
     {
-      std::unique_lock<std::mutex> lvlock(G_LVGLUpdatelock);
+      std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
       lv_tick_inc(5); // 5 ms
       lv_task_handler();
     }

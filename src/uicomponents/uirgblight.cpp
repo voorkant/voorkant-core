@@ -170,7 +170,7 @@ void UIRGBLight::uiupdate()
   std::cerr << "UPDATED STATE FOR " << entity->name << ":" << state.dump(2) << std::endl;
 
   {
-    std::unique_lock<std::mutex> lvlock(G_LVGLUpdatelock);
+    std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
     if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
       lv_obj_add_state(btnOnOff, LV_STATE_CHECKED);
       int brightness = state["attributes"]["brightness"].get<int>(); // brightness is NULL If the thing is off

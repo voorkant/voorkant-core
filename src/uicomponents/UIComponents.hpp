@@ -10,7 +10,7 @@
 #include "Observer.hpp"
 #include "generated/domains.hpp"
 
-extern std::mutex G_LVGLUpdatelock;
+extern std::mutex g_lvgl_updatelock;
 
 // FIXME: we never free() the lv_obj_t*'s in code
 class UIEntity : public IObserver
@@ -36,7 +36,7 @@ public:
 
 private:
   lv_obj_t* btn;
-  static void btnPressCB(lv_event_t* e);
+  static void btnPressCB(lv_event_t* _e);
 };
 
 class UISwitch : public UIEntity

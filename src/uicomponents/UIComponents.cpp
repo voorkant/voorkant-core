@@ -44,7 +44,7 @@ void UIButton::uiupdate()
   auto state = entity->getJsonState();
 
   {
-    std::unique_lock<std::mutex> lvlock(G_LVGLUpdatelock);
+    std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
     if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
       lv_obj_add_state(btn, LV_STATE_CHECKED);
     }
@@ -91,7 +91,7 @@ void UISwitch::uiupdate()
 {
   auto state = entity->getJsonState();
   {
-    std::unique_lock<std::mutex> lvlock(G_LVGLUpdatelock);
+    std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
     if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
       lv_obj_add_state(sw, LV_STATE_CHECKED);
     }
