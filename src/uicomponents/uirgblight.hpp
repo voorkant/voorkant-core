@@ -44,19 +44,18 @@ private:
   bool showWhite = false;
 
   lv_obj_t* createImageButton(const void* _imgOrSymbol, lv_event_cb_t _callbackEvent, lv_event_code_t _eventCode, bool _toggle = false);
-  static void btnOnOff_cb(lv_event_t* _e);
-  static void btnBrightness_cb(lv_event_t* _e);
-  static void btnColorWheel_cb(lv_event_t* _e);
-  static void btnColorTemp_cb(lv_event_t* _e);
+  static void btnOnOffCB(lv_event_t* _e);
+  static void btnBrightnessCB(lv_event_t* _e);
+  static void btnColorWheelCB(lv_event_t* _e);
+  static void btnColorTempCB(lv_event_t* _e);
 
-  static void brightness_slide_cb(lv_event_t* _e);
-  static void colortemp_slide_cb(lv_event_t* _e);
-  static void colorwheel_move_cb(lv_event_t* _e);
-  static void btnmatrix_event_cb(lv_event_t* _e);
-  static void tilemove_cb(lv_event_t* _e);
+  static void slideBrightnessCB(lv_event_t* _e);
+  static void slideColorTempCB(lv_event_t* _e);
+  static void changeColorWheelCB(lv_event_t* _e);
+  static void changeTileCB(lv_event_t* _e);
 
   std::string getColorMode();
-  int getIntAttribute(std::string attributeName, int defaultValue);
+  int getIntAttribute(std::string _attributeName, int _defaultValue);
 };
 
 #endif
