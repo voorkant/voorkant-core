@@ -2,7 +2,7 @@
 
 thread_local Logger::ThreadLocals Logger::tl;
 
-Logger& GetLogger(const int _linenr, const char* _filename, const char* _function)
+Logger& getLogger(const int _linenr, const char* _filename, const char* _function)
 {
   static Logger log;
   log.setLocation(_linenr, _filename, _function);

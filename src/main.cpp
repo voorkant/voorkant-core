@@ -19,7 +19,7 @@ using std::string;
 
 extern void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */);
 
-std::string GetEnv(std::string _key)
+std::string getEnv(std::string _key)
 {
   auto value = getenv(_key.c_str());
 
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
   g_log.setLogLevel(Logger::LogLevel::Debug);
   g_log.setDoDetails(true);
   g_log << Logger::LogLevel::Info << "Starting!" << std::endl;
-  if (backend.Connect(GetEnv("HA_WS_URL"), GetEnv("HA_API_TOKEN"))) {
+  if (backend.Connect(getEnv("HA_WS_URL"), getEnv("HA_API_TOKEN"))) {
     g_log << Logger::LogLevel::Debug << "Connected to HA succesfully!" << std::endl;
     // we used to do this, which actually is quite pointless if main does nothing besides this (after connecting HA)
     //    std::thread ui(uithread, std::ref(backend), argc, argv);

@@ -13,18 +13,18 @@ using json = nlohmann::json;
 class WSConn
 {
 public:
-  WSConn(std::string url);
+  WSConn(std::string _url);
   ~WSConn()
   {
     // FIXME clean up here
   }
 
   std::string recv(void);
-  void send(json& msg);
+  void send(json& _msg);
 
 private:
   // call with wshandlelock held
-  void sendString(std::string& msg);
+  void sendString(std::string& _msg);
 
   std::mutex wshandlelock;
   CURL* wshandle;

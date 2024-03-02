@@ -59,6 +59,6 @@ private:
   static thread_local Logger::ThreadLocals tl;
 };
 
-Logger& GetLogger(const int _linenr, const char* _filename, const char* _function);
-#define g_log GetLogger(__builtin_LINE(), __builtin_FILE(), __builtin_FUNCTION())
+Logger& getLogger(const int _linenr, const char* _filename, const char* _function);
+#define g_log getLogger(__builtin_LINE(), __builtin_FILE(), __builtin_FUNCTION())
 #endif
