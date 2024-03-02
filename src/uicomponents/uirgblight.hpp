@@ -8,10 +8,10 @@
 #include <src/core/lv_event.h>
 #include <src/draw/lv_img_buf.h>
 
-LV_IMG_DECLARE(colorwheel24);
-LV_IMG_DECLARE(colortemp24);
-LV_IMG_DECLARE(brightness24);
-LV_IMG_DECLARE(white24);
+LV_IMG_DECLARE(G_COLORWHEEL24);
+LV_IMG_DECLARE(G_COLORTEMP24);
+LV_IMG_DECLARE(G_BRIGHTNESS24);
+LV_IMG_DECLARE(G_WHITE24);
 
 class UIRGBLight : public UIEntity
 {
@@ -43,17 +43,17 @@ private:
   bool showColorTemp = false;
   bool showWhite = false;
 
-  lv_obj_t* createImageButton(const void* imgOrSymbol, lv_event_cb_t callbackEvent, lv_event_code_t eventCode, bool toggle = false);
-  static void btnOnOff_cb(lv_event_t* e);
-  static void btnBrightness_cb(lv_event_t* e);
-  static void btnColorWheel_cb(lv_event_t* e);
-  static void btnColorTemp_cb(lv_event_t* e);
+  lv_obj_t* createImageButton(const void* _imgOrSymbol, lv_event_cb_t _callbackEvent, lv_event_code_t _eventCode, bool _toggle = false);
+  static void btnOnOff_cb(lv_event_t* _e);
+  static void btnBrightness_cb(lv_event_t* _e);
+  static void btnColorWheel_cb(lv_event_t* _e);
+  static void btnColorTemp_cb(lv_event_t* _e);
 
-  static void brightness_slide_cb(lv_event_t* e);
-  static void colortemp_slide_cb(lv_event_t* e);
-  static void colorwheel_move_cb(lv_event_t* e);
-  static void btnmatrix_event_cb(lv_event_t* e);
-  static void tilemove_cb(lv_event_t* e);
+  static void brightness_slide_cb(lv_event_t* _e);
+  static void colortemp_slide_cb(lv_event_t* _e);
+  static void colorwheel_move_cb(lv_event_t* _e);
+  static void btnmatrix_event_cb(lv_event_t* _e);
+  static void tilemove_cb(lv_event_t* _e);
 
   std::string getColorMode();
   int getIntAttribute(std::string attributeName, int defaultValue);

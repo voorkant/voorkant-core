@@ -17,8 +17,8 @@ public:
 class ISubject
 {
 public:
-  virtual void attach(IObserver* observer) = 0;
-  virtual void detach(IObserver* observer) = 0;
+  virtual void attach(IObserver* _observer) = 0;
+  virtual void detach(IObserver* _observer) = 0;
   virtual void notify() = 0;
   virtual ~ISubject(){};
 };

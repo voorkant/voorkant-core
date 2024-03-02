@@ -38,7 +38,7 @@ void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */)
 
   string pressed;
 
-  auto renderer = Renderer(uirenderer, [_backend] {
+  auto renderer = Renderer(uirenderer, [&] {
     // std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
     auto entities = _backend.GetEntities();

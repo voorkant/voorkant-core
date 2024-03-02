@@ -148,15 +148,15 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   btnOnOff = createImageButton(LV_SYMBOL_POWER, UIRGBLight::btnOnOff_cb, LV_EVENT_VALUE_CHANGED, true);
 
   if (showBrightness) {
-    btnBrightness = createImageButton(&brightness24, UIRGBLight::btnBrightness_cb, LV_EVENT_CLICKED);
+    btnBrightness = createImageButton(&G_BRIGHTNESS24, UIRGBLight::btnBrightness_cb, LV_EVENT_CLICKED);
     lv_obj_add_state(btnBrightness, LV_STATE_CHECKED);
   }
 
   if (showColorWheel) {
-    btnColorWheel = createImageButton(&colorwheel24, UIRGBLight::btnColorWheel_cb, LV_EVENT_CLICKED);
+    btnColorWheel = createImageButton(&G_COLORWHEEL24, UIRGBLight::btnColorWheel_cb, LV_EVENT_CLICKED);
   }
   if (showColorTemp) {
-    btnColorTemp = createImageButton(&colortemp24, UIRGBLight::btnColorTemp_cb, LV_EVENT_CLICKED);
+    btnColorTemp = createImageButton(&G_COLORTEMP24, UIRGBLight::btnColorTemp_cb, LV_EVENT_CLICKED);
   }
 
   uiupdate();
