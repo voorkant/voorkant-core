@@ -59,7 +59,11 @@ jobs:
       run: pip install meson
     - name: Configure Meson
       run: meson setup ${{github.workspace}}/build
-    - name: Format
+    - name: run clang-format
       run: ninja -C ${{github.workspace}}/build clang-format
-    - name: Check for formatting disagreements
+    - name: Check for clang-format disagreements
+      run: git diff --exit-code
+    - name: run clang-tidy
+      run: ninja -C ${{github.workspace}}/build clang-tidy
+    - name: Check for clang-tidy disagreements
       run: git diff --exit-code
