@@ -30,7 +30,7 @@ UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_center(btn);
   lv_obj_set_style_pad_all(btn, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_add_flag(btn, LV_OBJ_FLAG_CHECKABLE);
-  lv_obj_add_event_cb(btn, UIButton::btn_press_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity)); // FIXME: put this magic (reinterpret_cast etc.) somewhere central
+  lv_obj_add_event_cb(btn, UIButton::btnPressCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity)); // FIXME: put this magic (reinterpret_cast etc.) somewhere central
 
   lv_obj_t* label = createLabel(btn, _entity->name);
   lv_obj_set_width(label, LV_PCT(100));
@@ -54,7 +54,7 @@ void UIButton::uiupdate()
   }
 };
 
-void UIButton::btn_press_cb(lv_event_t* _e)
+void UIButton::btnPressCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
 
@@ -77,7 +77,7 @@ UISwitch::UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   sw = lv_switch_create(switchcontainer);
   lv_obj_set_width(sw, 50);
-  lv_obj_add_event_cb(sw, UISwitch::sw_toggle_cb, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
+  lv_obj_add_event_cb(sw, UISwitch::swToggleCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
   lv_obj_set_align(sw, LV_ALIGN_RIGHT_MID);
 
   lv_obj_t* label = createLabel(switchcontainer, _entity->name);
@@ -101,7 +101,7 @@ void UISwitch::uiupdate()
   }
 };
 
-void UISwitch::sw_toggle_cb(lv_event_t* _e)
+void UISwitch::swToggleCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
 
