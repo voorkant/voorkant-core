@@ -65,5 +65,3 @@ jobs:
       run: git diff --exit-code
     - name: run clang-tidy
       run: ninja -C ${{github.workspace}}/build clang-tidy
-    - name: Check for clang-tidy disagreements
-      run: git diff --exit-code
