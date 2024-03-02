@@ -98,10 +98,10 @@ public:
     return ret.str();
   }
 
-  void WSConnSend(json& msg); // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
+  void wsConnSend(json& _msg); // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
 
-  void attach(IObserver* uientity) override;
-  void detach(IObserver* uientity) override;
+  void attach(IObserver* _uientity) override;
+  void detach(IObserver* _uientity) override;
   void notify() override;
 
 protected:

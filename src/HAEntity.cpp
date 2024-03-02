@@ -90,7 +90,7 @@ void HAEntity::notify()
   }
 }
 
-void HAEntity::WSConnSend(json& _msg) // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
+void HAEntity::wsConnSend(json& _msg) // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
 {
   backend->wsConnSend(_msg);
 }

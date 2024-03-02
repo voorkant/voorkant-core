@@ -104,7 +104,7 @@ public:
       cmd["service_data"]["code"] = *_args.code;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Arm with custom bypass
@@ -125,7 +125,7 @@ public:
       cmd["service_data"]["code"] = *_args.code;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Arm home
@@ -146,7 +146,7 @@ public:
       cmd["service_data"]["code"] = *_args.code;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Arm night
@@ -167,7 +167,7 @@ public:
       cmd["service_data"]["code"] = *_args.code;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Arm vacation
@@ -188,7 +188,7 @@ public:
       cmd["service_data"]["code"] = *_args.code;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Disarm
@@ -209,7 +209,7 @@ public:
       cmd["service_data"]["code"] = *_args.code;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Trigger
@@ -230,7 +230,7 @@ public:
       cmd["service_data"]["code"] = *_args.code;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -260,7 +260,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Toggle
@@ -277,7 +277,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Trigger
@@ -298,7 +298,7 @@ public:
       cmd["service_data"]["skip_condition"] = *_args.skip_condition;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -319,7 +319,7 @@ public:
       cmd["service_data"]["stop_actions"] = *_args.stop_actions;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -336,7 +336,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -366,7 +366,7 @@ public:
     cmd["service"] = "create";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -396,7 +396,7 @@ public:
     cmd["service"] = "press";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -458,7 +458,7 @@ public:
       cmd["service_data"]["summary"] = *_args.summary;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Get events
@@ -487,7 +487,7 @@ public:
       cmd["service_data"]["start_date_time"] = *_args.start_date_time;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // List event
@@ -516,7 +516,7 @@ public:
       cmd["service_data"]["start_date_time"] = *_args.start_date_time;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -546,7 +546,7 @@ public:
     cmd["service"] = "disable_motion_detection";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Enable motion detection
@@ -563,7 +563,7 @@ public:
     cmd["service"] = "enable_motion_detection";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Play stream
@@ -588,7 +588,7 @@ public:
       cmd["service_data"]["media_player"] = *_args.media_player;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Record
@@ -617,7 +617,7 @@ public:
       cmd["service_data"]["lookback"] = *_args.lookback;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Take snapshot
@@ -638,7 +638,7 @@ public:
       cmd["service_data"]["filename"] = *_args.filename;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -655,7 +655,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -672,7 +672,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -706,7 +706,7 @@ public:
       cmd["service_data"]["aux_heat"] = *_args.aux_heat;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set fan mode
@@ -727,7 +727,7 @@ public:
       cmd["service_data"]["fan_mode"] = *_args.fan_mode;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set target humidity
@@ -748,7 +748,7 @@ public:
       cmd["service_data"]["humidity"] = *_args.humidity;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set HVAC mode
@@ -769,7 +769,7 @@ public:
       cmd["service_data"]["hvac_mode"] = *_args.hvac_mode;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set preset mode
@@ -790,7 +790,7 @@ public:
       cmd["service_data"]["preset_mode"] = *_args.preset_mode;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set swing mode
@@ -811,7 +811,7 @@ public:
       cmd["service_data"]["swing_mode"] = *_args.swing_mode;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set target temperature
@@ -844,7 +844,7 @@ public:
       cmd["service_data"]["temperature"] = *_args.temperature;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -861,7 +861,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -878,7 +878,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -908,7 +908,7 @@ public:
     cmd["service"] = "remote_connect";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Remote disconnect
@@ -925,7 +925,7 @@ public:
     cmd["service"] = "remote_disconnect";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -967,7 +967,7 @@ public:
       cmd["service_data"]["text"] = *_args.text;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Reload
@@ -992,7 +992,7 @@ public:
       cmd["service_data"]["language"] = *_args.language;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1022,7 +1022,7 @@ public:
     cmd["service"] = "decrement";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Increment
@@ -1039,7 +1039,7 @@ public:
     cmd["service"] = "increment";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Reset
@@ -1056,7 +1056,7 @@ public:
     cmd["service"] = "reset";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set
@@ -1077,7 +1077,7 @@ public:
       cmd["service_data"]["value"] = *_args.value;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1107,7 +1107,7 @@ public:
     cmd["service"] = "close_cover";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Close tilt
@@ -1124,7 +1124,7 @@ public:
     cmd["service"] = "close_cover_tilt";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Open
@@ -1141,7 +1141,7 @@ public:
     cmd["service"] = "open_cover";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Open tilt
@@ -1158,7 +1158,7 @@ public:
     cmd["service"] = "open_cover_tilt";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set position
@@ -1179,7 +1179,7 @@ public:
       cmd["service_data"]["position"] = *_args.position;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set tilt position
@@ -1200,7 +1200,7 @@ public:
       cmd["service_data"]["tilt_position"] = *_args.tilt_position;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Stop
@@ -1217,7 +1217,7 @@ public:
     cmd["service"] = "stop_cover";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Stop tilt
@@ -1234,7 +1234,7 @@ public:
     cmd["service"] = "stop_cover_tilt";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Toggle
@@ -1251,7 +1251,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Toggle tilt
@@ -1268,7 +1268,7 @@ public:
     cmd["service"] = "toggle_cover_tilt";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1302,7 +1302,7 @@ public:
       cmd["service_data"]["date"] = *_args.date;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1336,7 +1336,7 @@ public:
       cmd["service_data"]["datetime"] = *_args.datetime;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1366,7 +1366,7 @@ public:
     cmd["service"] = "randomize_device_tracker_data";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1424,7 +1424,7 @@ public:
       cmd["service_data"]["mac"] = *_args.mac;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1458,7 +1458,7 @@ public:
       cmd["service_data"]["percentage_step"] = *_args.percentage_step;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Increase speed
@@ -1479,7 +1479,7 @@ public:
       cmd["service_data"]["percentage_step"] = *_args.percentage_step;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Oscillate
@@ -1500,7 +1500,7 @@ public:
       cmd["service_data"]["oscillating"] = *_args.oscillating;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set direction
@@ -1521,7 +1521,7 @@ public:
       cmd["service_data"]["direction"] = *_args.direction;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set speed
@@ -1542,7 +1542,7 @@ public:
       cmd["service_data"]["percentage"] = *_args.percentage;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set preset mode
@@ -1563,7 +1563,7 @@ public:
       cmd["service_data"]["preset_mode"] = *_args.preset_mode;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Toggle
@@ -1580,7 +1580,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -1597,7 +1597,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -1622,7 +1622,7 @@ public:
       cmd["service_data"]["preset_mode"] = *_args.preset_mode;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1656,7 +1656,7 @@ public:
       cmd["service_data"]["entity_id"] = *_args.entity_id;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Start
@@ -1677,7 +1677,7 @@ public:
       cmd["service_data"]["entity_id"] = *_args.entity_id;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Stop
@@ -1698,7 +1698,7 @@ public:
       cmd["service_data"]["entity_id"] = *_args.entity_id;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1728,7 +1728,7 @@ public:
     cmd["service"] = "reload_themes";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set the default theme
@@ -1753,7 +1753,7 @@ public:
       cmd["service_data"]["name"] = *_args.name;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1783,7 +1783,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Remove
@@ -1804,7 +1804,7 @@ public:
       cmd["service_data"]["object_id"] = *_args.object_id;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set
@@ -1849,7 +1849,7 @@ public:
       cmd["service_data"]["remove_entities"] = *_args.remove_entities;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -1879,7 +1879,7 @@ public:
     cmd["service"] = "check_config";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Reload all
@@ -1896,7 +1896,7 @@ public:
     cmd["service"] = "reload_all";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Reload config entry
@@ -1917,7 +1917,7 @@ public:
       cmd["service_data"]["entry_id"] = *_args.entry_id;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Reload core configuration
@@ -1934,7 +1934,7 @@ public:
     cmd["service"] = "reload_core_config";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Reload custom Jinja2 templates
@@ -1951,7 +1951,7 @@ public:
     cmd["service"] = "reload_custom_templates";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Restart
@@ -1968,7 +1968,7 @@ public:
     cmd["service"] = "restart";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Save persistent states
@@ -1985,7 +1985,7 @@ public:
     cmd["service"] = "save_persistent_states";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set location
@@ -2014,7 +2014,7 @@ public:
       cmd["service_data"]["longitude"] = *_args.longitude;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Stop
@@ -2031,7 +2031,7 @@ public:
     cmd["service"] = "stop";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Generic toggle
@@ -2048,7 +2048,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Generic turn off
@@ -2065,7 +2065,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Generic turn on
@@ -2082,7 +2082,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Update entity
@@ -2099,7 +2099,7 @@ public:
     cmd["service"] = "update_entity";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -2133,7 +2133,7 @@ public:
       cmd["service_data"]["humidity"] = *_args.humidity;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set mode
@@ -2154,7 +2154,7 @@ public:
       cmd["service_data"]["mode"] = *_args.mode;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Toggle
@@ -2171,7 +2171,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -2188,7 +2188,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -2205,7 +2205,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -2235,7 +2235,7 @@ public:
     cmd["service"] = "scan";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -2265,7 +2265,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Toggle
@@ -2282,7 +2282,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -2299,7 +2299,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -2316,7 +2316,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -2346,7 +2346,7 @@ public:
     cmd["service"] = "press";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Reload
@@ -2363,7 +2363,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -2393,7 +2393,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set
@@ -2426,7 +2426,7 @@ public:
       cmd["service_data"]["timestamp"] = *_args.timestamp;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -2456,7 +2456,7 @@ public:
     cmd["service"] = "decrement";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Increment
@@ -2473,7 +2473,7 @@ public:
     cmd["service"] = "increment";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Reload
@@ -2490,7 +2490,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set
@@ -2511,7 +2511,7 @@ public:
       cmd["service_data"]["value"] = *_args.value;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -2541,7 +2541,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // First
@@ -2558,7 +2558,7 @@ public:
     cmd["service"] = "select_first";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Last
@@ -2575,7 +2575,7 @@ public:
     cmd["service"] = "select_last";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Next
@@ -2596,7 +2596,7 @@ public:
       cmd["service_data"]["cycle"] = *_args.cycle;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Select
@@ -2617,7 +2617,7 @@ public:
       cmd["service_data"]["option"] = *_args.option;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Previous
@@ -2638,7 +2638,7 @@ public:
       cmd["service_data"]["cycle"] = *_args.cycle;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set options
@@ -2659,7 +2659,7 @@ public:
       cmd["service_data"]["options"] = *_args.options;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -2689,7 +2689,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set
@@ -2710,7 +2710,7 @@ public:
       cmd["service_data"]["value"] = *_args.value;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -2792,7 +2792,7 @@ public:
       cmd["service_data"]["xy_color"] = *_args.xy_color;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -2817,7 +2817,7 @@ public:
       cmd["service_data"]["transition"] = *_args.transition;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -2902,7 +2902,7 @@ public:
       cmd["service_data"]["xy_color"] = *_args.xy_color;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -2936,7 +2936,7 @@ public:
       cmd["service_data"]["code"] = *_args.code;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Open
@@ -2957,7 +2957,7 @@ public:
       cmd["service_data"]["code"] = *_args.code;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Unlock
@@ -2978,7 +2978,7 @@ public:
       cmd["service_data"]["code"] = *_args.code;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -3024,7 +3024,7 @@ public:
       cmd["service_data"]["name"] = *_args.name;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -3058,7 +3058,7 @@ public:
       cmd["service_data"]["level"] = *_args.level;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set level
@@ -3075,7 +3075,7 @@ public:
     cmd["service"] = "set_level";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -3105,7 +3105,7 @@ public:
     cmd["service"] = "clear_playlist";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Join
@@ -3126,7 +3126,7 @@ public:
       cmd["service_data"]["group_members"] = *_args.group_members;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Next
@@ -3143,7 +3143,7 @@ public:
     cmd["service"] = "media_next_track";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Pause
@@ -3160,7 +3160,7 @@ public:
     cmd["service"] = "media_pause";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Play
@@ -3177,7 +3177,7 @@ public:
     cmd["service"] = "media_play";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Play/Pause
@@ -3194,7 +3194,7 @@ public:
     cmd["service"] = "media_play_pause";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Previous
@@ -3211,7 +3211,7 @@ public:
     cmd["service"] = "media_previous_track";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Seek
@@ -3232,7 +3232,7 @@ public:
       cmd["service_data"]["seek_position"] = *_args.seek_position;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Stop
@@ -3249,7 +3249,7 @@ public:
     cmd["service"] = "media_stop";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Play media
@@ -3282,7 +3282,7 @@ public:
       cmd["service_data"]["media_content_type"] = *_args.media_content_type;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Repeat
@@ -3303,7 +3303,7 @@ public:
       cmd["service_data"]["repeat"] = *_args.repeat;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Select sound mode
@@ -3324,7 +3324,7 @@ public:
       cmd["service_data"]["sound_mode"] = *_args.sound_mode;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Select source
@@ -3345,7 +3345,7 @@ public:
       cmd["service_data"]["source"] = *_args.source;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Shuffle
@@ -3366,7 +3366,7 @@ public:
       cmd["service_data"]["shuffle"] = *_args.shuffle;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Toggle
@@ -3383,7 +3383,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -3400,7 +3400,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -3417,7 +3417,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Unjoin
@@ -3434,7 +3434,7 @@ public:
     cmd["service"] = "unjoin";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn down volume
@@ -3451,7 +3451,7 @@ public:
     cmd["service"] = "volume_down";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Mute/unmute volume
@@ -3472,7 +3472,7 @@ public:
       cmd["service_data"]["is_volume_muted"] = *_args.is_volume_muted;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set volume
@@ -3493,7 +3493,7 @@ public:
       cmd["service_data"]["volume_level"] = *_args.volume_level;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn up volume
@@ -3510,7 +3510,7 @@ public:
     cmd["service"] = "volume_up";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -3556,7 +3556,7 @@ public:
       cmd["service_data"]["title"] = *_args.title;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Send a notification with notify
@@ -3589,7 +3589,7 @@ public:
       cmd["service_data"]["title"] = *_args.title;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Send a persistent notification
@@ -3618,7 +3618,7 @@ public:
       cmd["service_data"]["title"] = *_args.title;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -3652,7 +3652,7 @@ public:
       cmd["service_data"]["value"] = *_args.value;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -3694,7 +3694,7 @@ public:
       cmd["service_data"]["title"] = *_args.title;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Dismiss
@@ -3715,7 +3715,7 @@ public:
       cmd["service_data"]["notification_id"] = *_args.notification_id;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Dismiss all
@@ -3732,7 +3732,7 @@ public:
     cmd["service"] = "dismiss_all";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -3762,7 +3762,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -3792,7 +3792,7 @@ public:
     cmd["service"] = "disable";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Enable
@@ -3809,7 +3809,7 @@ public:
     cmd["service"] = "enable";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Purge
@@ -3838,7 +3838,7 @@ public:
       cmd["service_data"]["repack"] = *_args.repack;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Purge entities
@@ -3867,7 +3867,7 @@ public:
       cmd["service_data"]["keep_days"] = *_args.keep_days;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -3905,7 +3905,7 @@ public:
       cmd["service_data"]["transition"] = *_args.transition;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Create
@@ -3934,7 +3934,7 @@ public:
       cmd["service_data"]["snapshot_entities"] = *_args.snapshot_entities;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Delete
@@ -3951,7 +3951,7 @@ public:
     cmd["service"] = "delete";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Reload
@@ -3968,7 +3968,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Activate
@@ -3989,7 +3989,7 @@ public:
       cmd["service_data"]["transition"] = *_args.transition;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4019,7 +4019,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4049,7 +4049,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Toggle
@@ -4066,7 +4066,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -4083,7 +4083,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -4100,7 +4100,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4130,7 +4130,7 @@ public:
     cmd["service"] = "select_first";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Last
@@ -4147,7 +4147,7 @@ public:
     cmd["service"] = "select_last";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Next
@@ -4168,7 +4168,7 @@ public:
       cmd["service_data"]["cycle"] = *_args.cycle;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Select
@@ -4189,7 +4189,7 @@ public:
       cmd["service_data"]["option"] = *_args.option;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Previous
@@ -4210,7 +4210,7 @@ public:
       cmd["service_data"]["cycle"] = *_args.cycle;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4244,7 +4244,7 @@ public:
       cmd["service_data"]["name"] = *_args.name;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Clear completed items
@@ -4261,7 +4261,7 @@ public:
     cmd["service"] = "clear_completed_items";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Complete all
@@ -4278,7 +4278,7 @@ public:
     cmd["service"] = "complete_all";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Complete item
@@ -4299,7 +4299,7 @@ public:
       cmd["service_data"]["name"] = *_args.name;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Incomplete all
@@ -4316,7 +4316,7 @@ public:
     cmd["service"] = "incomplete_all";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Incomplete item
@@ -4337,7 +4337,7 @@ public:
       cmd["service_data"]["name"] = *_args.name;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Remove item
@@ -4358,7 +4358,7 @@ public:
       cmd["service_data"]["name"] = *_args.name;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Sort all items
@@ -4379,7 +4379,7 @@ public:
       cmd["service_data"]["reverse"] = *_args.reverse;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4409,7 +4409,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -4426,7 +4426,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -4455,7 +4455,7 @@ public:
       cmd["service_data"]["volume_level"] = *_args.volume_level;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4485,7 +4485,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -4502,7 +4502,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -4519,7 +4519,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4549,7 +4549,7 @@ public:
     cmd["service"] = "clear";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Write
@@ -4578,7 +4578,7 @@ public:
       cmd["service_data"]["message"] = *_args.message;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4612,7 +4612,7 @@ public:
       cmd["service_data"]["value"] = *_args.value;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4646,7 +4646,7 @@ public:
       cmd["service_data"]["time"] = *_args.time;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4676,7 +4676,7 @@ public:
     cmd["service"] = "cancel";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Change
@@ -4697,7 +4697,7 @@ public:
       cmd["service_data"]["duration"] = *_args.duration;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Finish
@@ -4714,7 +4714,7 @@ public:
     cmd["service"] = "finish";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Pause
@@ -4731,7 +4731,7 @@ public:
     cmd["service"] = "pause";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Reload
@@ -4748,7 +4748,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Start
@@ -4769,7 +4769,7 @@ public:
       cmd["service_data"]["duration"] = *_args.duration;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4815,7 +4815,7 @@ public:
       cmd["service_data"]["item"] = *_args.item;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Get to-do list items
@@ -4836,7 +4836,7 @@ public:
       cmd["service_data"]["status"] = *_args.status;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Remove all completed to-do list items
@@ -4853,7 +4853,7 @@ public:
     cmd["service"] = "remove_completed_items";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Remove a to-do list item
@@ -4874,7 +4874,7 @@ public:
       cmd["service_data"]["item"] = *_args.item;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Update to-do list item
@@ -4915,7 +4915,7 @@ public:
       cmd["service_data"]["status"] = *_args.status;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -4945,7 +4945,7 @@ public:
     cmd["service"] = "clear_cache";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Say a TTS message with demo
@@ -4982,7 +4982,7 @@ public:
       cmd["service_data"]["options"] = *_args.options;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Speak
@@ -5019,7 +5019,7 @@ public:
       cmd["service_data"]["options"] = *_args.options;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -5049,7 +5049,7 @@ public:
     cmd["service"] = "clear_skipped";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Install update
@@ -5074,7 +5074,7 @@ public:
       cmd["service_data"]["version"] = *_args.version;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Skip update
@@ -5091,7 +5091,7 @@ public:
     cmd["service"] = "skip";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -5121,7 +5121,7 @@ public:
     cmd["service"] = "clean_spot";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Locate
@@ -5138,7 +5138,7 @@ public:
     cmd["service"] = "locate";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Pause
@@ -5155,7 +5155,7 @@ public:
     cmd["service"] = "pause";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Return to dock
@@ -5172,7 +5172,7 @@ public:
     cmd["service"] = "return_to_base";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Send command
@@ -5197,7 +5197,7 @@ public:
       cmd["service_data"]["params"] = *_args.params;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set fan speed
@@ -5218,7 +5218,7 @@ public:
       cmd["service_data"]["fan_speed"] = *_args.fan_speed;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Start
@@ -5235,7 +5235,7 @@ public:
     cmd["service"] = "start";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Start/pause
@@ -5252,7 +5252,7 @@ public:
     cmd["service"] = "start_pause";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Stop
@@ -5269,7 +5269,7 @@ public:
     cmd["service"] = "stop";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Toggle
@@ -5286,7 +5286,7 @@ public:
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -5303,7 +5303,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -5320,7 +5320,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -5354,7 +5354,7 @@ public:
       cmd["service_data"]["away_mode"] = *_args.away_mode;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set operation mode
@@ -5375,7 +5375,7 @@ public:
       cmd["service_data"]["operation_mode"] = *_args.operation_mode;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Set temperature
@@ -5400,7 +5400,7 @@ public:
       cmd["service_data"]["temperature"] = *_args.temperature;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn off
@@ -5417,7 +5417,7 @@ public:
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Turn on
@@ -5434,7 +5434,7 @@ public:
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -5468,7 +5468,7 @@ public:
       cmd["service_data"]["type"] = *_args.type;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
   // Get forecasts
@@ -5489,7 +5489,7 @@ public:
       cmd["service_data"]["type"] = *_args.type;
     }
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
@@ -5519,7 +5519,7 @@ public:
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 
 private:
