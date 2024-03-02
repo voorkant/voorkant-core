@@ -15,7 +15,7 @@ using std::thread;
 
 HABackend::HABackend(){};
 
-bool HABackend::Connect(string _url, string _token)
+bool HABackend::connect(string _url, string _token)
 {
   cerr << "[HABackend] Connecting to " << _url << endl;
 
@@ -36,7 +36,7 @@ bool HABackend::Connect(string _url, string _token)
   return true;
 };
 
-bool HABackend::Start()
+bool HABackend::start()
 {
   if (wc == nullptr) {
     cerr << "We expect that you'd do a Connect() first." << endl;
@@ -53,7 +53,7 @@ bool HABackend::Start()
   return true;
 };
 
-string HABackend::CreateLongToken(string _name)
+string HABackend::createLongToken(string _name)
 {
   json tokenrequest;
   tokenrequest["type"] = "auth/long_lived_access_token";
@@ -73,7 +73,7 @@ string HABackend::CreateLongToken(string _name)
   return "NO_TOKEN";
 }
 
-json HABackend::DoCommand(const string& _command, const json& _data)
+json HABackend::doCommand(const string& _command, const json& _data)
 {
   json request;
   request = _data;
@@ -172,12 +172,12 @@ void HABackend::threadrunner()
   }
 }
 
-map<string, std::shared_ptr<HAEntity>> HABackend::GetEntities()
+map<string, std::shared_ptr<HAEntity>> HABackend::getEntities()
 {
   return entities;
 }
 
-std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByDomain(const std::string& _domain)
+std::vector<std::shared_ptr<HAEntity>> HABackend::getEntitiesByDomain(const std::string& _domain)
 {
   std::scoped_lock lk(entitieslock);
   std::vector<std::shared_ptr<HAEntity>> ret;
@@ -189,7 +189,7 @@ std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByDomain(const std:
   return ret;
 }
 
-std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByPattern(const std::string& _pattern)
+std::vector<std::shared_ptr<HAEntity>> HABackend::getEntitiesByPattern(const std::string& _pattern)
 {
   std::scoped_lock lk(entitieslock);
   std::vector<std::shared_ptr<HAEntity>> ret;
@@ -201,14 +201,14 @@ std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByPattern(const std
   return ret;
 }
 
-std::shared_ptr<HAEntity> HABackend::GetEntityByName(const std::string& _name)
+std::shared_ptr<HAEntity> HABackend::getEntityByName(const std::string& _name)
 {
   std::scoped_lock lk(entitieslock);
 
   return entities.at(_name);
 }
 
-void HABackend::WSConnSend(json& _msg)
+void HABackend::wsConnSend(json& _msg)
 {
   wc->send(_msg);
 }

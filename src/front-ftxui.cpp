@@ -25,7 +25,7 @@ void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */)
 
   using namespace ftxui;
 
-  _backend.Start();
+  _backend.start();
 
   int selected = 0;
   int selectedbutton;
@@ -41,7 +41,7 @@ void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */)
   auto renderer = Renderer(uirenderer, [&] {
     // std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
-    auto entities = _backend.GetEntities();
+    auto entities = _backend.getEntities();
     entries.clear();
     for (auto& [name, entity] : entities) {
       entries.push_back(name);
@@ -51,7 +51,7 @@ void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */)
     // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
     if (selected >= 0 && entries.size() > 0) {
       string entity = entries.at(selected);
-      std::shared_ptr<HAEntity> haent = _backend.GetEntityByName(entity);
+      std::shared_ptr<HAEntity> haent = _backend.getEntityByName(entity);
       services = haent->getServices();
     }
 
@@ -66,11 +66,11 @@ void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */)
         json cmd;
 
         cmd["type"] = "call_service";
-        cmd["domain"] = _backend.GetEntityByName(entries.at(selected))->domain;
+        cmd["domain"] = _backend.getEntityByName(entries.at(selected))->domain;
         cmd["service"] = service->name;
         cmd["target"]["entity_id"] = entries.at(selected);
 
-        _backend.WSConnSend(cmd);
+        _backend.wsConnSend(cmd);
       })); // FIXME: this use of entries.at is gross, should centralise the empty-entries-list fallback
     }
 
@@ -86,14 +86,14 @@ void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */)
 
     std::vector<Element> attrs;
     if (selected >= 0 && entries.size() > 0) {
-      for (const auto& attr : _backend.GetEntityByName(entries.at(selected))->attrVector()) {
+      for (const auto& attr : _backend.getEntityByName(entries.at(selected))->attrVector()) {
         attrs.push_back(text(attr));
       }
     }
 
     return vbox(
       hbox(text("selected = "), text(selected >= 0 && entries.size() ? entries.at(selected) : "")),
-      text(selected >= 0 && entries.size() > 0 ? _backend.GetEntityByName(entries.at(selected))->getInfo() : "no info"),
+      text(selected >= 0 && entries.size() > 0 ? _backend.getEntityByName(entries.at(selected))->getInfo() : "no info"),
       text(pressed),
       hbox({uirenderer->Render(), vbox(attrs)}));
   });

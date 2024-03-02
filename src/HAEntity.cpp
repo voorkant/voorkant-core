@@ -92,7 +92,7 @@ void HAEntity::notify()
 
 void HAEntity::WSConnSend(json& _msg) // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
 {
-  backend->WSConnSend(_msg);
+  backend->wsConnSend(_msg);
 }
 
 HADomain::HADomain(std::string _name, json _state)

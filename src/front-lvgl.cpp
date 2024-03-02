@@ -33,7 +33,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     return;
   }
 
-  _backend.Start();
+  _backend.start();
 
   cerr << "calling lv_init" << endl;
   lv_init();
@@ -104,7 +104,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
 
   std::vector<std::unique_ptr<UIEntity>> uielements;
 
-  auto entities = _backend.GetEntitiesByPattern(entity_command.get<string>("pattern"));
+  auto entities = _backend.getEntitiesByPattern(entity_command.get<string>("pattern"));
   std::cerr << "Entities are: " << entities.size() << std::endl;
   for (const auto& entity : entities) {
     // FIXME: this is very simple and should move to something with panels in HA.

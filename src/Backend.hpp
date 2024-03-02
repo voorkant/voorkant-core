@@ -20,15 +20,15 @@ class HABackend : Backend
 {
 public:
   HABackend();
-  bool Connect(string url, string token);
-  bool Start();
-  json DoCommand(const std::string& command, const json& data);
-  string CreateLongToken(string name);
-  std::shared_ptr<HAEntity> GetEntityByName(const std::string& name);
-  std::vector<std::shared_ptr<HAEntity>> GetEntitiesByDomain(const std::string& domain);
-  std::vector<std::shared_ptr<HAEntity>> GetEntitiesByPattern(const std::string& pattern);
-  map<string, std::shared_ptr<HAEntity>> GetEntities();
-  void WSConnSend(json& msg);
+  bool connect(string _url, string _token);
+  bool start();
+  json doCommand(const std::string& _command, const json& _data);
+  string createLongToken(string _name);
+  std::shared_ptr<HAEntity> getEntityByName(const std::string& _name);
+  std::vector<std::shared_ptr<HAEntity>> getEntitiesByDomain(const std::string& _domain);
+  std::vector<std::shared_ptr<HAEntity>> getEntitiesByPattern(const std::string& _pattern);
+  map<string, std::shared_ptr<HAEntity>> getEntities();
+  void wsConnSend(json& _msg);
 
 private:
   bool loaded;
