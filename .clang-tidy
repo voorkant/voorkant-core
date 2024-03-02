@@ -1,11 +1,31 @@
 ---
-Checks:          'clang-diagnostic-*,clang-analyzer-*,bugprone-*,concurrency-*,-modernize-use-trailing-return-type,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers'
-WarningsAsErrors: ''
-HeaderFilterRegex: ''
+Checks: "readability-identifier-naming, readability-redundant-smartptr-get,clang-diagnostic-*,clang-analyzer-*,bugprone-*,concurrency-*,-modernize-use-trailing-return-type,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers"
+WarningsAsErrors: ""
+HeaderFilterRegex: ""
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
 User:            fred
 CheckOptions:
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+  - key: readability-identifier-naming.FunctionCase
+    value: camelBack
+  - key: readability-identifier-naming.ClassMemberCase
+    value: camelBack
+  - key: readability-identifier-naming.ClassMethodCase
+    value: camelBack
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.GlobalConstantPrefix
+    value: G_
+  - key: readability-identifier-naming.ParameterCase
+    value: camelBack
+  - key: readability-identifier-naming.ParameterPrefix
+    value: _
   - key:             bugprone-string-constructor.LargeLengthThreshold
     value:           '8388608'
   - key:             modernize-replace-auto-ptr.IncludeStyle
