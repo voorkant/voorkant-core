@@ -299,10 +299,10 @@ void UIRGBLight::slideBrightnessCB(lv_event_t* _e)
     HADomains::Light light(ent);
 
     if (slidervalue == 0) {
-      light.turn_off({});
+      light.turnOff({});
     }
     else {
-      light.turn_on({.brightness = slidervalue});
+      light.turnOn({.brightness = slidervalue});
     }
   }
 };
@@ -316,7 +316,7 @@ void UIRGBLight::slideColorTempCB(lv_event_t* _e)
     std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
     HADomains::Light light(ent);
 
-    light.turn_on({.kelvin = slidervalue});
+    light.turnOn({.kelvin = slidervalue});
   }
 };
 
@@ -377,10 +377,10 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
       unsigned int hs[2];
       hs[0] = color_hsv.h;
       hs[1] = color_hsv.s;
-      HADomains::Light::turn_on_args args;
+      HADomains::Light::TurnOnArgs args;
       args.hs_color = hs;
       args.brightness_pct = color_hsv.v;
-      light.turn_on(args);
+      light.turnOn(args);
     }
     else {
       unsigned short rgb[3];
@@ -388,7 +388,7 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
       rgb[1] = (unsigned short)color_rgb.ch.green;
       rgb[2] = (unsigned short)color_rgb.ch.blue;
 
-      light.turn_on({.rgb_color = rgb});
+      light.turnOn({.rgb_color = rgb});
     }
 
     // FIXME: color_rgb (which is lv_color_t) depends on the LV_COLOR_DEPTH, and thus this code needs to handle the cast to uint_t

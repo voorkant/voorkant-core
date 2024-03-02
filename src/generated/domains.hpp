@@ -1,3 +1,5 @@
+
+
 #pragma once
 
 #include <optional>
@@ -75,22 +77,22 @@ enum class EntityType
 namespace HADomains
 {
 
-// START HEADER FOR Alarm_control_panel
+// START HEADER FOR AlarmControlPanel
 
-class Alarm_control_panel
+class AlarmControlPanel
 {
 public:
-  Alarm_control_panel(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  AlarmControlPanel(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Alarm_control_panel;
   // Arm away
   // Sets the alarm to: _armed, no one home_.
-  struct alarm_arm_away_args
+  struct AlarmArmAwayArgs
   {
     optional<json> code;
   };
-  void alarm_arm_away([[maybe_unused]] const alarm_arm_away_args& args)
+  void alarmArmAway([[maybe_unused]] const AlarmArmAwayArgs& _args)
   {
     json cmd;
 
@@ -98,8 +100,8 @@ public:
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_arm_away";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.code) {
-      cmd["service_data"]["code"] = *args.code;
+    if (_args.code) {
+      cmd["service_data"]["code"] = *_args.code;
     }
 
     entity->WSConnSend(cmd);
@@ -107,11 +109,11 @@ public:
 
   // Arm with custom bypass
   // Arms the alarm while allowing to bypass a custom area.
-  struct alarm_arm_custom_bypass_args
+  struct AlarmArmCustomBypassArgs
   {
     optional<json> code;
   };
-  void alarm_arm_custom_bypass([[maybe_unused]] const alarm_arm_custom_bypass_args& args)
+  void alarmArmCustomBypass([[maybe_unused]] const AlarmArmCustomBypassArgs& _args)
   {
     json cmd;
 
@@ -119,8 +121,8 @@ public:
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_arm_custom_bypass";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.code) {
-      cmd["service_data"]["code"] = *args.code;
+    if (_args.code) {
+      cmd["service_data"]["code"] = *_args.code;
     }
 
     entity->WSConnSend(cmd);
@@ -128,11 +130,11 @@ public:
 
   // Arm home
   // Sets the alarm to: _armed, but someone is home_.
-  struct alarm_arm_home_args
+  struct AlarmArmHomeArgs
   {
     optional<json> code;
   };
-  void alarm_arm_home([[maybe_unused]] const alarm_arm_home_args& args)
+  void alarmArmHome([[maybe_unused]] const AlarmArmHomeArgs& _args)
   {
     json cmd;
 
@@ -140,8 +142,8 @@ public:
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_arm_home";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.code) {
-      cmd["service_data"]["code"] = *args.code;
+    if (_args.code) {
+      cmd["service_data"]["code"] = *_args.code;
     }
 
     entity->WSConnSend(cmd);
@@ -149,11 +151,11 @@ public:
 
   // Arm night
   // Sets the alarm to: _armed for the night_.
-  struct alarm_arm_night_args
+  struct AlarmArmNightArgs
   {
     optional<json> code;
   };
-  void alarm_arm_night([[maybe_unused]] const alarm_arm_night_args& args)
+  void alarmArmNight([[maybe_unused]] const AlarmArmNightArgs& _args)
   {
     json cmd;
 
@@ -161,8 +163,8 @@ public:
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_arm_night";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.code) {
-      cmd["service_data"]["code"] = *args.code;
+    if (_args.code) {
+      cmd["service_data"]["code"] = *_args.code;
     }
 
     entity->WSConnSend(cmd);
@@ -170,11 +172,11 @@ public:
 
   // Arm vacation
   // Sets the alarm to: _armed for vacation_.
-  struct alarm_arm_vacation_args
+  struct AlarmArmVacationArgs
   {
     optional<json> code;
   };
-  void alarm_arm_vacation([[maybe_unused]] const alarm_arm_vacation_args& args)
+  void alarmArmVacation([[maybe_unused]] const AlarmArmVacationArgs& _args)
   {
     json cmd;
 
@@ -182,8 +184,8 @@ public:
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_arm_vacation";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.code) {
-      cmd["service_data"]["code"] = *args.code;
+    if (_args.code) {
+      cmd["service_data"]["code"] = *_args.code;
     }
 
     entity->WSConnSend(cmd);
@@ -191,11 +193,11 @@ public:
 
   // Disarm
   // Disarms the alarm.
-  struct alarm_disarm_args
+  struct AlarmDisarmArgs
   {
     optional<json> code;
   };
-  void alarm_disarm([[maybe_unused]] const alarm_disarm_args& args)
+  void alarmDisarm([[maybe_unused]] const AlarmDisarmArgs& _args)
   {
     json cmd;
 
@@ -203,8 +205,8 @@ public:
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_disarm";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.code) {
-      cmd["service_data"]["code"] = *args.code;
+    if (_args.code) {
+      cmd["service_data"]["code"] = *_args.code;
     }
 
     entity->WSConnSend(cmd);
@@ -212,11 +214,11 @@ public:
 
   // Trigger
   // Enables an external alarm trigger.
-  struct alarm_trigger_args
+  struct AlarmTriggerArgs
   {
     optional<json> code;
   };
-  void alarm_trigger([[maybe_unused]] const alarm_trigger_args& args)
+  void alarmTrigger([[maybe_unused]] const AlarmTriggerArgs& _args)
   {
     json cmd;
 
@@ -224,8 +226,8 @@ public:
     cmd["domain"] = "alarm_control_panel";
     cmd["service"] = "alarm_trigger";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.code) {
-      cmd["service_data"]["code"] = *args.code;
+    if (_args.code) {
+      cmd["service_data"]["code"] = *_args.code;
     }
 
     entity->WSConnSend(cmd);
@@ -240,16 +242,16 @@ private:
 class Automation
 {
 public:
-  Automation(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Automation(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Automation;
   // Reload
   // Reloads the automation configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -263,10 +265,10 @@ public:
 
   // Toggle
   // Toggles (enable / disable) an automation.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -280,11 +282,11 @@ public:
 
   // Trigger
   // Triggers the actions of an automation.
-  struct trigger_args
+  struct TriggerArgs
   {
     optional<json> skip_condition;
   };
-  void trigger([[maybe_unused]] const trigger_args& args)
+  void trigger([[maybe_unused]] const TriggerArgs& _args)
   {
     json cmd;
 
@@ -292,8 +294,8 @@ public:
     cmd["domain"] = "automation";
     cmd["service"] = "trigger";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.skip_condition) {
-      cmd["service_data"]["skip_condition"] = *args.skip_condition;
+    if (_args.skip_condition) {
+      cmd["service_data"]["skip_condition"] = *_args.skip_condition;
     }
 
     entity->WSConnSend(cmd);
@@ -301,11 +303,11 @@ public:
 
   // Turn off
   // Disables an automation.
-  struct turn_off_args
+  struct TurnOffArgs
   {
     optional<json> stop_actions;
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -313,8 +315,8 @@ public:
     cmd["domain"] = "automation";
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.stop_actions) {
-      cmd["service_data"]["stop_actions"] = *args.stop_actions;
+    if (_args.stop_actions) {
+      cmd["service_data"]["stop_actions"] = *_args.stop_actions;
     }
 
     entity->WSConnSend(cmd);
@@ -322,10 +324,10 @@ public:
 
   // Turn on
   // Enables an automation.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -346,16 +348,16 @@ private:
 class Backup
 {
 public:
-  Backup(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Backup(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Backup;
   // Create backup
   // Creates a new backup.
-  struct create_args
+  struct CreateArgs
   {
   };
-  void create([[maybe_unused]] const create_args& args)
+  void create([[maybe_unused]] const CreateArgs& _args)
   {
     json cmd;
 
@@ -376,16 +378,16 @@ private:
 class Button
 {
 public:
-  Button(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Button(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Button;
   // Press
   // Press the button entity.
-  struct press_args
+  struct PressArgs
   {
   };
-  void press([[maybe_unused]] const press_args& args)
+  void press([[maybe_unused]] const PressArgs& _args)
   {
     json cmd;
 
@@ -406,13 +408,13 @@ private:
 class Calendar
 {
 public:
-  Calendar(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Calendar(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Calendar;
   // Create event
   // Adds a new calendar event.
-  struct create_event_args
+  struct CreateEventArgs
   {
     optional<json> description;
     optional<json> end_date;
@@ -423,7 +425,7 @@ public:
     optional<json> start_date_time;
     optional<json> summary;
   };
-  void create_event([[maybe_unused]] const create_event_args& args)
+  void createEvent([[maybe_unused]] const CreateEventArgs& _args)
   {
     json cmd;
 
@@ -431,29 +433,29 @@ public:
     cmd["domain"] = "calendar";
     cmd["service"] = "create_event";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.description) {
-      cmd["service_data"]["description"] = *args.description;
+    if (_args.description) {
+      cmd["service_data"]["description"] = *_args.description;
     }
-    if (args.end_date) {
-      cmd["service_data"]["end_date"] = *args.end_date;
+    if (_args.end_date) {
+      cmd["service_data"]["end_date"] = *_args.end_date;
     }
-    if (args.end_date_time) {
-      cmd["service_data"]["end_date_time"] = *args.end_date_time;
+    if (_args.end_date_time) {
+      cmd["service_data"]["end_date_time"] = *_args.end_date_time;
     }
-    if (args.in) {
-      cmd["service_data"]["in"] = *args.in;
+    if (_args.in) {
+      cmd["service_data"]["in"] = *_args.in;
     }
-    if (args.location) {
-      cmd["service_data"]["location"] = *args.location;
+    if (_args.location) {
+      cmd["service_data"]["location"] = *_args.location;
     }
-    if (args.start_date) {
-      cmd["service_data"]["start_date"] = *args.start_date;
+    if (_args.start_date) {
+      cmd["service_data"]["start_date"] = *_args.start_date;
     }
-    if (args.start_date_time) {
-      cmd["service_data"]["start_date_time"] = *args.start_date_time;
+    if (_args.start_date_time) {
+      cmd["service_data"]["start_date_time"] = *_args.start_date_time;
     }
-    if (args.summary) {
-      cmd["service_data"]["summary"] = *args.summary;
+    if (_args.summary) {
+      cmd["service_data"]["summary"] = *_args.summary;
     }
 
     entity->WSConnSend(cmd);
@@ -461,13 +463,13 @@ public:
 
   // Get events
   // Get events on a calendar within a time range.
-  struct get_events_args
+  struct GetEventsArgs
   {
     optional<json> duration;
     optional<json> end_date_time;
     optional<json> start_date_time;
   };
-  void get_events([[maybe_unused]] const get_events_args& args)
+  void getEvents([[maybe_unused]] const GetEventsArgs& _args)
   {
     json cmd;
 
@@ -475,14 +477,14 @@ public:
     cmd["domain"] = "calendar";
     cmd["service"] = "get_events";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.duration) {
-      cmd["service_data"]["duration"] = *args.duration;
+    if (_args.duration) {
+      cmd["service_data"]["duration"] = *_args.duration;
     }
-    if (args.end_date_time) {
-      cmd["service_data"]["end_date_time"] = *args.end_date_time;
+    if (_args.end_date_time) {
+      cmd["service_data"]["end_date_time"] = *_args.end_date_time;
     }
-    if (args.start_date_time) {
-      cmd["service_data"]["start_date_time"] = *args.start_date_time;
+    if (_args.start_date_time) {
+      cmd["service_data"]["start_date_time"] = *_args.start_date_time;
     }
 
     entity->WSConnSend(cmd);
@@ -490,13 +492,13 @@ public:
 
   // List event
   // Lists events on a calendar within a time range.
-  struct list_events_args
+  struct ListEventsArgs
   {
     optional<json> duration;
     optional<json> end_date_time;
     optional<json> start_date_time;
   };
-  void list_events([[maybe_unused]] const list_events_args& args)
+  void listEvents([[maybe_unused]] const ListEventsArgs& _args)
   {
     json cmd;
 
@@ -504,14 +506,14 @@ public:
     cmd["domain"] = "calendar";
     cmd["service"] = "list_events";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.duration) {
-      cmd["service_data"]["duration"] = *args.duration;
+    if (_args.duration) {
+      cmd["service_data"]["duration"] = *_args.duration;
     }
-    if (args.end_date_time) {
-      cmd["service_data"]["end_date_time"] = *args.end_date_time;
+    if (_args.end_date_time) {
+      cmd["service_data"]["end_date_time"] = *_args.end_date_time;
     }
-    if (args.start_date_time) {
-      cmd["service_data"]["start_date_time"] = *args.start_date_time;
+    if (_args.start_date_time) {
+      cmd["service_data"]["start_date_time"] = *_args.start_date_time;
     }
 
     entity->WSConnSend(cmd);
@@ -526,16 +528,16 @@ private:
 class Camera
 {
 public:
-  Camera(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Camera(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Camera;
   // Disable motion detection
   // Disables the motion detection.
-  struct disable_motion_detection_args
+  struct DisableMotionDetectionArgs
   {
   };
-  void disable_motion_detection([[maybe_unused]] const disable_motion_detection_args& args)
+  void disableMotionDetection([[maybe_unused]] const DisableMotionDetectionArgs& _args)
   {
     json cmd;
 
@@ -549,10 +551,10 @@ public:
 
   // Enable motion detection
   // Enables the motion detection.
-  struct enable_motion_detection_args
+  struct EnableMotionDetectionArgs
   {
   };
-  void enable_motion_detection([[maybe_unused]] const enable_motion_detection_args& args)
+  void enableMotionDetection([[maybe_unused]] const EnableMotionDetectionArgs& _args)
   {
     json cmd;
 
@@ -566,12 +568,12 @@ public:
 
   // Play stream
   // Plays the camera stream on a supported media player.
-  struct play_stream_args
+  struct PlayStreamArgs
   {
     optional<json> format;
     optional<json> media_player;
   };
-  void play_stream([[maybe_unused]] const play_stream_args& args)
+  void playStream([[maybe_unused]] const PlayStreamArgs& _args)
   {
     json cmd;
 
@@ -579,11 +581,11 @@ public:
     cmd["domain"] = "camera";
     cmd["service"] = "play_stream";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.format) {
-      cmd["service_data"]["format"] = *args.format;
+    if (_args.format) {
+      cmd["service_data"]["format"] = *_args.format;
     }
-    if (args.media_player) {
-      cmd["service_data"]["media_player"] = *args.media_player;
+    if (_args.media_player) {
+      cmd["service_data"]["media_player"] = *_args.media_player;
     }
 
     entity->WSConnSend(cmd);
@@ -591,13 +593,13 @@ public:
 
   // Record
   // Creates a recording of a live camera feed.
-  struct record_args
+  struct RecordArgs
   {
     optional<json> duration;
     optional<json> filename;
     optional<json> lookback;
   };
-  void record([[maybe_unused]] const record_args& args)
+  void record([[maybe_unused]] const RecordArgs& _args)
   {
     json cmd;
 
@@ -605,14 +607,14 @@ public:
     cmd["domain"] = "camera";
     cmd["service"] = "record";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.duration) {
-      cmd["service_data"]["duration"] = *args.duration;
+    if (_args.duration) {
+      cmd["service_data"]["duration"] = *_args.duration;
     }
-    if (args.filename) {
-      cmd["service_data"]["filename"] = *args.filename;
+    if (_args.filename) {
+      cmd["service_data"]["filename"] = *_args.filename;
     }
-    if (args.lookback) {
-      cmd["service_data"]["lookback"] = *args.lookback;
+    if (_args.lookback) {
+      cmd["service_data"]["lookback"] = *_args.lookback;
     }
 
     entity->WSConnSend(cmd);
@@ -620,11 +622,11 @@ public:
 
   // Take snapshot
   // Takes a snapshot from a camera.
-  struct snapshot_args
+  struct SnapshotArgs
   {
     optional<json> filename;
   };
-  void snapshot([[maybe_unused]] const snapshot_args& args)
+  void snapshot([[maybe_unused]] const SnapshotArgs& _args)
   {
     json cmd;
 
@@ -632,8 +634,8 @@ public:
     cmd["domain"] = "camera";
     cmd["service"] = "snapshot";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.filename) {
-      cmd["service_data"]["filename"] = *args.filename;
+    if (_args.filename) {
+      cmd["service_data"]["filename"] = *_args.filename;
     }
 
     entity->WSConnSend(cmd);
@@ -641,10 +643,10 @@ public:
 
   // Turn off
   // Turns off the camera.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -658,10 +660,10 @@ public:
 
   // Turn on
   // Turns on the camera.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -682,17 +684,17 @@ private:
 class Climate
 {
 public:
-  Climate(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Climate(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Climate;
   // Turn on/off auxiliary heater
   // Turns auxiliary heater on/off.
-  struct set_aux_heat_args
+  struct SetAuxHeatArgs
   {
     optional<json> aux_heat;
   };
-  void set_aux_heat([[maybe_unused]] const set_aux_heat_args& args)
+  void setAuxHeat([[maybe_unused]] const SetAuxHeatArgs& _args)
   {
     json cmd;
 
@@ -700,8 +702,8 @@ public:
     cmd["domain"] = "climate";
     cmd["service"] = "set_aux_heat";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.aux_heat) {
-      cmd["service_data"]["aux_heat"] = *args.aux_heat;
+    if (_args.aux_heat) {
+      cmd["service_data"]["aux_heat"] = *_args.aux_heat;
     }
 
     entity->WSConnSend(cmd);
@@ -709,11 +711,11 @@ public:
 
   // Set fan mode
   // Sets fan operation mode.
-  struct set_fan_mode_args
+  struct SetFanModeArgs
   {
     optional<json> fan_mode;
   };
-  void set_fan_mode([[maybe_unused]] const set_fan_mode_args& args)
+  void setFanMode([[maybe_unused]] const SetFanModeArgs& _args)
   {
     json cmd;
 
@@ -721,8 +723,8 @@ public:
     cmd["domain"] = "climate";
     cmd["service"] = "set_fan_mode";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.fan_mode) {
-      cmd["service_data"]["fan_mode"] = *args.fan_mode;
+    if (_args.fan_mode) {
+      cmd["service_data"]["fan_mode"] = *_args.fan_mode;
     }
 
     entity->WSConnSend(cmd);
@@ -730,11 +732,11 @@ public:
 
   // Set target humidity
   // Sets target humidity.
-  struct set_humidity_args
+  struct SetHumidityArgs
   {
     optional<json> humidity;
   };
-  void set_humidity([[maybe_unused]] const set_humidity_args& args)
+  void setHumidity([[maybe_unused]] const SetHumidityArgs& _args)
   {
     json cmd;
 
@@ -742,8 +744,8 @@ public:
     cmd["domain"] = "climate";
     cmd["service"] = "set_humidity";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.humidity) {
-      cmd["service_data"]["humidity"] = *args.humidity;
+    if (_args.humidity) {
+      cmd["service_data"]["humidity"] = *_args.humidity;
     }
 
     entity->WSConnSend(cmd);
@@ -751,11 +753,11 @@ public:
 
   // Set HVAC mode
   // Sets HVAC operation mode.
-  struct set_hvac_mode_args
+  struct SetHvacModeArgs
   {
     optional<json> hvac_mode;
   };
-  void set_hvac_mode([[maybe_unused]] const set_hvac_mode_args& args)
+  void setHvacMode([[maybe_unused]] const SetHvacModeArgs& _args)
   {
     json cmd;
 
@@ -763,8 +765,8 @@ public:
     cmd["domain"] = "climate";
     cmd["service"] = "set_hvac_mode";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.hvac_mode) {
-      cmd["service_data"]["hvac_mode"] = *args.hvac_mode;
+    if (_args.hvac_mode) {
+      cmd["service_data"]["hvac_mode"] = *_args.hvac_mode;
     }
 
     entity->WSConnSend(cmd);
@@ -772,11 +774,11 @@ public:
 
   // Set preset mode
   // Sets preset mode.
-  struct set_preset_mode_args
+  struct SetPresetModeArgs
   {
     optional<json> preset_mode;
   };
-  void set_preset_mode([[maybe_unused]] const set_preset_mode_args& args)
+  void setPresetMode([[maybe_unused]] const SetPresetModeArgs& _args)
   {
     json cmd;
 
@@ -784,8 +786,8 @@ public:
     cmd["domain"] = "climate";
     cmd["service"] = "set_preset_mode";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.preset_mode) {
-      cmd["service_data"]["preset_mode"] = *args.preset_mode;
+    if (_args.preset_mode) {
+      cmd["service_data"]["preset_mode"] = *_args.preset_mode;
     }
 
     entity->WSConnSend(cmd);
@@ -793,11 +795,11 @@ public:
 
   // Set swing mode
   // Sets swing operation mode.
-  struct set_swing_mode_args
+  struct SetSwingModeArgs
   {
     optional<json> swing_mode;
   };
-  void set_swing_mode([[maybe_unused]] const set_swing_mode_args& args)
+  void setSwingMode([[maybe_unused]] const SetSwingModeArgs& _args)
   {
     json cmd;
 
@@ -805,8 +807,8 @@ public:
     cmd["domain"] = "climate";
     cmd["service"] = "set_swing_mode";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.swing_mode) {
-      cmd["service_data"]["swing_mode"] = *args.swing_mode;
+    if (_args.swing_mode) {
+      cmd["service_data"]["swing_mode"] = *_args.swing_mode;
     }
 
     entity->WSConnSend(cmd);
@@ -814,14 +816,14 @@ public:
 
   // Set target temperature
   // Sets target temperature.
-  struct set_temperature_args
+  struct SetTemperatureArgs
   {
     optional<json> hvac_mode;
     optional<json> target_temp_high;
     optional<json> target_temp_low;
     optional<json> temperature;
   };
-  void set_temperature([[maybe_unused]] const set_temperature_args& args)
+  void setTemperature([[maybe_unused]] const SetTemperatureArgs& _args)
   {
     json cmd;
 
@@ -829,17 +831,17 @@ public:
     cmd["domain"] = "climate";
     cmd["service"] = "set_temperature";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.hvac_mode) {
-      cmd["service_data"]["hvac_mode"] = *args.hvac_mode;
+    if (_args.hvac_mode) {
+      cmd["service_data"]["hvac_mode"] = *_args.hvac_mode;
     }
-    if (args.target_temp_high) {
-      cmd["service_data"]["target_temp_high"] = *args.target_temp_high;
+    if (_args.target_temp_high) {
+      cmd["service_data"]["target_temp_high"] = *_args.target_temp_high;
     }
-    if (args.target_temp_low) {
-      cmd["service_data"]["target_temp_low"] = *args.target_temp_low;
+    if (_args.target_temp_low) {
+      cmd["service_data"]["target_temp_low"] = *_args.target_temp_low;
     }
-    if (args.temperature) {
-      cmd["service_data"]["temperature"] = *args.temperature;
+    if (_args.temperature) {
+      cmd["service_data"]["temperature"] = *_args.temperature;
     }
 
     entity->WSConnSend(cmd);
@@ -847,10 +849,10 @@ public:
 
   // Turn off
   // Turns climate device off.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -864,10 +866,10 @@ public:
 
   // Turn on
   // Turns climate device on.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -888,16 +890,16 @@ private:
 class Cloud
 {
 public:
-  Cloud(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Cloud(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Cloud;
   // Remote connect
   // Makes the instance UI accessible from outside of the local network by using Home Assistant Cloud.
-  struct remote_connect_args
+  struct RemoteConnectArgs
   {
   };
-  void remote_connect([[maybe_unused]] const remote_connect_args& args)
+  void remoteConnect([[maybe_unused]] const RemoteConnectArgs& _args)
   {
     json cmd;
 
@@ -911,10 +913,10 @@ public:
 
   // Remote disconnect
   // Disconnects the Home Assistant UI from the Home Assistant Cloud. You will no longer be able to access your Home Assistant instance from outside your local network.
-  struct remote_disconnect_args
+  struct RemoteDisconnectArgs
   {
   };
-  void remote_disconnect([[maybe_unused]] const remote_disconnect_args& args)
+  void remoteDisconnect([[maybe_unused]] const RemoteDisconnectArgs& _args)
   {
     json cmd;
 
@@ -935,19 +937,19 @@ private:
 class Conversation
 {
 public:
-  Conversation(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Conversation(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Conversation;
   // Process
   // Launches a conversation from a transcribed text.
-  struct process_args
+  struct ProcessArgs
   {
     optional<json> agent_id;
     optional<json> language;
     optional<json> text;
   };
-  void process([[maybe_unused]] const process_args& args)
+  void process([[maybe_unused]] const ProcessArgs& _args)
   {
     json cmd;
 
@@ -955,14 +957,14 @@ public:
     cmd["domain"] = "conversation";
     cmd["service"] = "process";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.agent_id) {
-      cmd["service_data"]["agent_id"] = *args.agent_id;
+    if (_args.agent_id) {
+      cmd["service_data"]["agent_id"] = *_args.agent_id;
     }
-    if (args.language) {
-      cmd["service_data"]["language"] = *args.language;
+    if (_args.language) {
+      cmd["service_data"]["language"] = *_args.language;
     }
-    if (args.text) {
-      cmd["service_data"]["text"] = *args.text;
+    if (_args.text) {
+      cmd["service_data"]["text"] = *_args.text;
     }
 
     entity->WSConnSend(cmd);
@@ -970,12 +972,12 @@ public:
 
   // Reload
   // Reloads the intent configuration.
-  struct reload_args
+  struct ReloadArgs
   {
     optional<json> agent_id;
     optional<json> language;
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -983,11 +985,11 @@ public:
     cmd["domain"] = "conversation";
     cmd["service"] = "reload";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.agent_id) {
-      cmd["service_data"]["agent_id"] = *args.agent_id;
+    if (_args.agent_id) {
+      cmd["service_data"]["agent_id"] = *_args.agent_id;
     }
-    if (args.language) {
-      cmd["service_data"]["language"] = *args.language;
+    if (_args.language) {
+      cmd["service_data"]["language"] = *_args.language;
     }
 
     entity->WSConnSend(cmd);
@@ -1002,16 +1004,16 @@ private:
 class Counter
 {
 public:
-  Counter(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Counter(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Counter;
   // Decrement
   // Decrements a counter.
-  struct decrement_args
+  struct DecrementArgs
   {
   };
-  void decrement([[maybe_unused]] const decrement_args& args)
+  void decrement([[maybe_unused]] const DecrementArgs& _args)
   {
     json cmd;
 
@@ -1025,10 +1027,10 @@ public:
 
   // Increment
   // Increments a counter.
-  struct increment_args
+  struct IncrementArgs
   {
   };
-  void increment([[maybe_unused]] const increment_args& args)
+  void increment([[maybe_unused]] const IncrementArgs& _args)
   {
     json cmd;
 
@@ -1042,10 +1044,10 @@ public:
 
   // Reset
   // Resets a counter.
-  struct reset_args
+  struct ResetArgs
   {
   };
-  void reset([[maybe_unused]] const reset_args& args)
+  void reset([[maybe_unused]] const ResetArgs& _args)
   {
     json cmd;
 
@@ -1059,11 +1061,11 @@ public:
 
   // Set
   // Sets the counter value.
-  struct set_value_args
+  struct SetValueArgs
   {
     optional<json> value;
   };
-  void set_value([[maybe_unused]] const set_value_args& args)
+  void setValue([[maybe_unused]] const SetValueArgs& _args)
   {
     json cmd;
 
@@ -1071,8 +1073,8 @@ public:
     cmd["domain"] = "counter";
     cmd["service"] = "set_value";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.value) {
-      cmd["service_data"]["value"] = *args.value;
+    if (_args.value) {
+      cmd["service_data"]["value"] = *_args.value;
     }
 
     entity->WSConnSend(cmd);
@@ -1087,16 +1089,16 @@ private:
 class Cover
 {
 public:
-  Cover(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Cover(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Cover;
   // Close
   // Closes a cover.
-  struct close_cover_args
+  struct CloseCoverArgs
   {
   };
-  void close_cover([[maybe_unused]] const close_cover_args& args)
+  void closeCover([[maybe_unused]] const CloseCoverArgs& _args)
   {
     json cmd;
 
@@ -1110,10 +1112,10 @@ public:
 
   // Close tilt
   // Tilts a cover to close.
-  struct close_cover_tilt_args
+  struct CloseCoverTiltArgs
   {
   };
-  void close_cover_tilt([[maybe_unused]] const close_cover_tilt_args& args)
+  void closeCoverTilt([[maybe_unused]] const CloseCoverTiltArgs& _args)
   {
     json cmd;
 
@@ -1127,10 +1129,10 @@ public:
 
   // Open
   // Opens a cover.
-  struct open_cover_args
+  struct OpenCoverArgs
   {
   };
-  void open_cover([[maybe_unused]] const open_cover_args& args)
+  void openCover([[maybe_unused]] const OpenCoverArgs& _args)
   {
     json cmd;
 
@@ -1144,10 +1146,10 @@ public:
 
   // Open tilt
   // Tilts a cover open.
-  struct open_cover_tilt_args
+  struct OpenCoverTiltArgs
   {
   };
-  void open_cover_tilt([[maybe_unused]] const open_cover_tilt_args& args)
+  void openCoverTilt([[maybe_unused]] const OpenCoverTiltArgs& _args)
   {
     json cmd;
 
@@ -1161,11 +1163,11 @@ public:
 
   // Set position
   // Moves a cover to a specific position.
-  struct set_cover_position_args
+  struct SetCoverPositionArgs
   {
     optional<json> position;
   };
-  void set_cover_position([[maybe_unused]] const set_cover_position_args& args)
+  void setCoverPosition([[maybe_unused]] const SetCoverPositionArgs& _args)
   {
     json cmd;
 
@@ -1173,8 +1175,8 @@ public:
     cmd["domain"] = "cover";
     cmd["service"] = "set_cover_position";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.position) {
-      cmd["service_data"]["position"] = *args.position;
+    if (_args.position) {
+      cmd["service_data"]["position"] = *_args.position;
     }
 
     entity->WSConnSend(cmd);
@@ -1182,11 +1184,11 @@ public:
 
   // Set tilt position
   // Moves a cover tilt to a specific position.
-  struct set_cover_tilt_position_args
+  struct SetCoverTiltPositionArgs
   {
     optional<json> tilt_position;
   };
-  void set_cover_tilt_position([[maybe_unused]] const set_cover_tilt_position_args& args)
+  void setCoverTiltPosition([[maybe_unused]] const SetCoverTiltPositionArgs& _args)
   {
     json cmd;
 
@@ -1194,8 +1196,8 @@ public:
     cmd["domain"] = "cover";
     cmd["service"] = "set_cover_tilt_position";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.tilt_position) {
-      cmd["service_data"]["tilt_position"] = *args.tilt_position;
+    if (_args.tilt_position) {
+      cmd["service_data"]["tilt_position"] = *_args.tilt_position;
     }
 
     entity->WSConnSend(cmd);
@@ -1203,10 +1205,10 @@ public:
 
   // Stop
   // Stops the cover movement.
-  struct stop_cover_args
+  struct StopCoverArgs
   {
   };
-  void stop_cover([[maybe_unused]] const stop_cover_args& args)
+  void stopCover([[maybe_unused]] const StopCoverArgs& _args)
   {
     json cmd;
 
@@ -1220,10 +1222,10 @@ public:
 
   // Stop tilt
   // Stops a tilting cover movement.
-  struct stop_cover_tilt_args
+  struct StopCoverTiltArgs
   {
   };
-  void stop_cover_tilt([[maybe_unused]] const stop_cover_tilt_args& args)
+  void stopCoverTilt([[maybe_unused]] const StopCoverTiltArgs& _args)
   {
     json cmd;
 
@@ -1237,10 +1239,10 @@ public:
 
   // Toggle
   // Toggles a cover open/closed.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -1254,10 +1256,10 @@ public:
 
   // Toggle tilt
   // Toggles a cover tilt open/closed.
-  struct toggle_cover_tilt_args
+  struct ToggleCoverTiltArgs
   {
   };
-  void toggle_cover_tilt([[maybe_unused]] const toggle_cover_tilt_args& args)
+  void toggleCoverTilt([[maybe_unused]] const ToggleCoverTiltArgs& _args)
   {
     json cmd;
 
@@ -1278,17 +1280,17 @@ private:
 class Date
 {
 public:
-  Date(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Date(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Date;
   // Set date
   // Sets the date.
-  struct set_value_args
+  struct SetValueArgs
   {
     optional<json> date;
   };
-  void set_value([[maybe_unused]] const set_value_args& args)
+  void setValue([[maybe_unused]] const SetValueArgs& _args)
   {
     json cmd;
 
@@ -1296,8 +1298,8 @@ public:
     cmd["domain"] = "date";
     cmd["service"] = "set_value";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.date) {
-      cmd["service_data"]["date"] = *args.date;
+    if (_args.date) {
+      cmd["service_data"]["date"] = *_args.date;
     }
 
     entity->WSConnSend(cmd);
@@ -1312,17 +1314,17 @@ private:
 class Datetime
 {
 public:
-  Datetime(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Datetime(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Datetime;
   // Set date/time
   // Sets the date/time for a datetime entity.
-  struct set_value_args
+  struct SetValueArgs
   {
     optional<json> datetime;
   };
-  void set_value([[maybe_unused]] const set_value_args& args)
+  void setValue([[maybe_unused]] const SetValueArgs& _args)
   {
     json cmd;
 
@@ -1330,8 +1332,8 @@ public:
     cmd["domain"] = "datetime";
     cmd["service"] = "set_value";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.datetime) {
-      cmd["service_data"]["datetime"] = *args.datetime;
+    if (_args.datetime) {
+      cmd["service_data"]["datetime"] = *_args.datetime;
     }
 
     entity->WSConnSend(cmd);
@@ -1346,16 +1348,16 @@ private:
 class Demo
 {
 public:
-  Demo(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Demo(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Demo;
   // Randomize device tracker data
   // Demonstrates using a device tracker to see where devices are located.
-  struct randomize_device_tracker_data_args
+  struct RandomizeDeviceTrackerDataArgs
   {
   };
-  void randomize_device_tracker_data([[maybe_unused]] const randomize_device_tracker_data_args& args)
+  void randomizeDeviceTrackerData([[maybe_unused]] const RandomizeDeviceTrackerDataArgs& _args)
   {
     json cmd;
 
@@ -1371,18 +1373,18 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Device_tracker
+// START HEADER FOR DeviceTracker
 
-class Device_tracker
+class DeviceTracker
 {
 public:
-  Device_tracker(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  DeviceTracker(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Device_tracker;
   // See
   // Records a seen tracked device.
-  struct see_args
+  struct SeeArgs
   {
     optional<json> battery;
     optional<json> dev_id;
@@ -1392,7 +1394,7 @@ public:
     optional<json> location_name;
     optional<json> mac;
   };
-  void see([[maybe_unused]] const see_args& args)
+  void see([[maybe_unused]] const SeeArgs& _args)
   {
     json cmd;
 
@@ -1400,26 +1402,26 @@ public:
     cmd["domain"] = "device_tracker";
     cmd["service"] = "see";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.battery) {
-      cmd["service_data"]["battery"] = *args.battery;
+    if (_args.battery) {
+      cmd["service_data"]["battery"] = *_args.battery;
     }
-    if (args.dev_id) {
-      cmd["service_data"]["dev_id"] = *args.dev_id;
+    if (_args.dev_id) {
+      cmd["service_data"]["dev_id"] = *_args.dev_id;
     }
-    if (args.gps) {
-      cmd["service_data"]["gps"] = *args.gps;
+    if (_args.gps) {
+      cmd["service_data"]["gps"] = *_args.gps;
     }
-    if (args.gps_accuracy) {
-      cmd["service_data"]["gps_accuracy"] = *args.gps_accuracy;
+    if (_args.gps_accuracy) {
+      cmd["service_data"]["gps_accuracy"] = *_args.gps_accuracy;
     }
-    if (args.host_name) {
-      cmd["service_data"]["host_name"] = *args.host_name;
+    if (_args.host_name) {
+      cmd["service_data"]["host_name"] = *_args.host_name;
     }
-    if (args.location_name) {
-      cmd["service_data"]["location_name"] = *args.location_name;
+    if (_args.location_name) {
+      cmd["service_data"]["location_name"] = *_args.location_name;
     }
-    if (args.mac) {
-      cmd["service_data"]["mac"] = *args.mac;
+    if (_args.mac) {
+      cmd["service_data"]["mac"] = *_args.mac;
     }
 
     entity->WSConnSend(cmd);
@@ -1434,17 +1436,17 @@ private:
 class Fan
 {
 public:
-  Fan(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Fan(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Fan;
   // Decrease speed
   // Decreases the speed of the fan.
-  struct decrease_speed_args
+  struct DecreaseSpeedArgs
   {
     optional<json> percentage_step;
   };
-  void decrease_speed([[maybe_unused]] const decrease_speed_args& args)
+  void decreaseSpeed([[maybe_unused]] const DecreaseSpeedArgs& _args)
   {
     json cmd;
 
@@ -1452,8 +1454,8 @@ public:
     cmd["domain"] = "fan";
     cmd["service"] = "decrease_speed";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.percentage_step) {
-      cmd["service_data"]["percentage_step"] = *args.percentage_step;
+    if (_args.percentage_step) {
+      cmd["service_data"]["percentage_step"] = *_args.percentage_step;
     }
 
     entity->WSConnSend(cmd);
@@ -1461,11 +1463,11 @@ public:
 
   // Increase speed
   // Increases the speed of the fan.
-  struct increase_speed_args
+  struct IncreaseSpeedArgs
   {
     optional<json> percentage_step;
   };
-  void increase_speed([[maybe_unused]] const increase_speed_args& args)
+  void increaseSpeed([[maybe_unused]] const IncreaseSpeedArgs& _args)
   {
     json cmd;
 
@@ -1473,8 +1475,8 @@ public:
     cmd["domain"] = "fan";
     cmd["service"] = "increase_speed";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.percentage_step) {
-      cmd["service_data"]["percentage_step"] = *args.percentage_step;
+    if (_args.percentage_step) {
+      cmd["service_data"]["percentage_step"] = *_args.percentage_step;
     }
 
     entity->WSConnSend(cmd);
@@ -1482,11 +1484,11 @@ public:
 
   // Oscillate
   // Controls oscillatation of the fan.
-  struct oscillate_args
+  struct OscillateArgs
   {
     optional<json> oscillating;
   };
-  void oscillate([[maybe_unused]] const oscillate_args& args)
+  void oscillate([[maybe_unused]] const OscillateArgs& _args)
   {
     json cmd;
 
@@ -1494,8 +1496,8 @@ public:
     cmd["domain"] = "fan";
     cmd["service"] = "oscillate";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.oscillating) {
-      cmd["service_data"]["oscillating"] = *args.oscillating;
+    if (_args.oscillating) {
+      cmd["service_data"]["oscillating"] = *_args.oscillating;
     }
 
     entity->WSConnSend(cmd);
@@ -1503,11 +1505,11 @@ public:
 
   // Set direction
   // Sets the fan rotation direction.
-  struct set_direction_args
+  struct SetDirectionArgs
   {
     optional<json> direction;
   };
-  void set_direction([[maybe_unused]] const set_direction_args& args)
+  void setDirection([[maybe_unused]] const SetDirectionArgs& _args)
   {
     json cmd;
 
@@ -1515,8 +1517,8 @@ public:
     cmd["domain"] = "fan";
     cmd["service"] = "set_direction";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.direction) {
-      cmd["service_data"]["direction"] = *args.direction;
+    if (_args.direction) {
+      cmd["service_data"]["direction"] = *_args.direction;
     }
 
     entity->WSConnSend(cmd);
@@ -1524,11 +1526,11 @@ public:
 
   // Set speed
   // Sets the fan speed.
-  struct set_percentage_args
+  struct SetPercentageArgs
   {
     optional<json> percentage;
   };
-  void set_percentage([[maybe_unused]] const set_percentage_args& args)
+  void setPercentage([[maybe_unused]] const SetPercentageArgs& _args)
   {
     json cmd;
 
@@ -1536,8 +1538,8 @@ public:
     cmd["domain"] = "fan";
     cmd["service"] = "set_percentage";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.percentage) {
-      cmd["service_data"]["percentage"] = *args.percentage;
+    if (_args.percentage) {
+      cmd["service_data"]["percentage"] = *_args.percentage;
     }
 
     entity->WSConnSend(cmd);
@@ -1545,11 +1547,11 @@ public:
 
   // Set preset mode
   // Sets preset mode.
-  struct set_preset_mode_args
+  struct SetPresetModeArgs
   {
     optional<json> preset_mode;
   };
-  void set_preset_mode([[maybe_unused]] const set_preset_mode_args& args)
+  void setPresetMode([[maybe_unused]] const SetPresetModeArgs& _args)
   {
     json cmd;
 
@@ -1557,8 +1559,8 @@ public:
     cmd["domain"] = "fan";
     cmd["service"] = "set_preset_mode";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.preset_mode) {
-      cmd["service_data"]["preset_mode"] = *args.preset_mode;
+    if (_args.preset_mode) {
+      cmd["service_data"]["preset_mode"] = *_args.preset_mode;
     }
 
     entity->WSConnSend(cmd);
@@ -1566,10 +1568,10 @@ public:
 
   // Toggle
   // Toggles the fan on/off.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -1583,10 +1585,10 @@ public:
 
   // Turn off
   // Turns fan off.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -1600,12 +1602,12 @@ public:
 
   // Turn on
   // Turns fan on.
-  struct turn_on_args
+  struct TurnOnArgs
   {
     optional<json> percentage;
     optional<json> preset_mode;
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -1613,11 +1615,11 @@ public:
     cmd["domain"] = "fan";
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.percentage) {
-      cmd["service_data"]["percentage"] = *args.percentage;
+    if (_args.percentage) {
+      cmd["service_data"]["percentage"] = *_args.percentage;
     }
-    if (args.preset_mode) {
-      cmd["service_data"]["preset_mode"] = *args.preset_mode;
+    if (_args.preset_mode) {
+      cmd["service_data"]["preset_mode"] = *_args.preset_mode;
     }
 
     entity->WSConnSend(cmd);
@@ -1632,17 +1634,17 @@ private:
 class Ffmpeg
 {
 public:
-  Ffmpeg(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Ffmpeg(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Ffmpeg;
   // Restart
   // Sends a restart command to a ffmpeg based sensor.
-  struct restart_args
+  struct RestartArgs
   {
     optional<json> entity_id;
   };
-  void restart([[maybe_unused]] const restart_args& args)
+  void restart([[maybe_unused]] const RestartArgs& _args)
   {
     json cmd;
 
@@ -1650,8 +1652,8 @@ public:
     cmd["domain"] = "ffmpeg";
     cmd["service"] = "restart";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.entity_id) {
-      cmd["service_data"]["entity_id"] = *args.entity_id;
+    if (_args.entity_id) {
+      cmd["service_data"]["entity_id"] = *_args.entity_id;
     }
 
     entity->WSConnSend(cmd);
@@ -1659,11 +1661,11 @@ public:
 
   // Start
   // Sends a start command to a ffmpeg based sensor.
-  struct start_args
+  struct StartArgs
   {
     optional<json> entity_id;
   };
-  void start([[maybe_unused]] const start_args& args)
+  void start([[maybe_unused]] const StartArgs& _args)
   {
     json cmd;
 
@@ -1671,8 +1673,8 @@ public:
     cmd["domain"] = "ffmpeg";
     cmd["service"] = "start";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.entity_id) {
-      cmd["service_data"]["entity_id"] = *args.entity_id;
+    if (_args.entity_id) {
+      cmd["service_data"]["entity_id"] = *_args.entity_id;
     }
 
     entity->WSConnSend(cmd);
@@ -1680,11 +1682,11 @@ public:
 
   // Stop
   // Sends a stop command to a ffmpeg based sensor.
-  struct stop_args
+  struct StopArgs
   {
     optional<json> entity_id;
   };
-  void stop([[maybe_unused]] const stop_args& args)
+  void stop([[maybe_unused]] const StopArgs& _args)
   {
     json cmd;
 
@@ -1692,8 +1694,8 @@ public:
     cmd["domain"] = "ffmpeg";
     cmd["service"] = "stop";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.entity_id) {
-      cmd["service_data"]["entity_id"] = *args.entity_id;
+    if (_args.entity_id) {
+      cmd["service_data"]["entity_id"] = *_args.entity_id;
     }
 
     entity->WSConnSend(cmd);
@@ -1708,16 +1710,16 @@ private:
 class Frontend
 {
 public:
-  Frontend(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Frontend(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Frontend;
   // Reload themes
   // Reloads themes from the YAML-configuration.
-  struct reload_themes_args
+  struct ReloadThemesArgs
   {
   };
-  void reload_themes([[maybe_unused]] const reload_themes_args& args)
+  void reloadThemes([[maybe_unused]] const ReloadThemesArgs& _args)
   {
     json cmd;
 
@@ -1731,12 +1733,12 @@ public:
 
   // Set the default theme
   // Sets the default theme Home Assistant uses. Can be overridden by a user.
-  struct set_theme_args
+  struct SetThemeArgs
   {
     optional<json> mode;
     optional<json> name;
   };
-  void set_theme([[maybe_unused]] const set_theme_args& args)
+  void setTheme([[maybe_unused]] const SetThemeArgs& _args)
   {
     json cmd;
 
@@ -1744,11 +1746,11 @@ public:
     cmd["domain"] = "frontend";
     cmd["service"] = "set_theme";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.mode) {
-      cmd["service_data"]["mode"] = *args.mode;
+    if (_args.mode) {
+      cmd["service_data"]["mode"] = *_args.mode;
     }
-    if (args.name) {
-      cmd["service_data"]["name"] = *args.name;
+    if (_args.name) {
+      cmd["service_data"]["name"] = *_args.name;
     }
 
     entity->WSConnSend(cmd);
@@ -1763,16 +1765,16 @@ private:
 class Group
 {
 public:
-  Group(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Group(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Group;
   // Reload
   // Reloads group configuration, entities, and notify services from YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -1786,11 +1788,11 @@ public:
 
   // Remove
   // Removes a group.
-  struct remove_args
+  struct RemoveArgs
   {
     optional<json> object_id;
   };
-  void remove([[maybe_unused]] const remove_args& args)
+  void remove([[maybe_unused]] const RemoveArgs& _args)
   {
     json cmd;
 
@@ -1798,8 +1800,8 @@ public:
     cmd["domain"] = "group";
     cmd["service"] = "remove";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.object_id) {
-      cmd["service_data"]["object_id"] = *args.object_id;
+    if (_args.object_id) {
+      cmd["service_data"]["object_id"] = *_args.object_id;
     }
 
     entity->WSConnSend(cmd);
@@ -1807,7 +1809,7 @@ public:
 
   // Set
   // Creates/Updates a user group.
-  struct set_args
+  struct SetArgs
   {
     optional<json> add_entities;
     optional<json> all;
@@ -1817,7 +1819,7 @@ public:
     optional<json> object_id;
     optional<json> remove_entities;
   };
-  void set([[maybe_unused]] const set_args& args)
+  void set([[maybe_unused]] const SetArgs& _args)
   {
     json cmd;
 
@@ -1825,26 +1827,26 @@ public:
     cmd["domain"] = "group";
     cmd["service"] = "set";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.add_entities) {
-      cmd["service_data"]["add_entities"] = *args.add_entities;
+    if (_args.add_entities) {
+      cmd["service_data"]["add_entities"] = *_args.add_entities;
     }
-    if (args.all) {
-      cmd["service_data"]["all"] = *args.all;
+    if (_args.all) {
+      cmd["service_data"]["all"] = *_args.all;
     }
-    if (args.entities) {
-      cmd["service_data"]["entities"] = *args.entities;
+    if (_args.entities) {
+      cmd["service_data"]["entities"] = *_args.entities;
     }
-    if (args.icon) {
-      cmd["service_data"]["icon"] = *args.icon;
+    if (_args.icon) {
+      cmd["service_data"]["icon"] = *_args.icon;
     }
-    if (args.name) {
-      cmd["service_data"]["name"] = *args.name;
+    if (_args.name) {
+      cmd["service_data"]["name"] = *_args.name;
     }
-    if (args.object_id) {
-      cmd["service_data"]["object_id"] = *args.object_id;
+    if (_args.object_id) {
+      cmd["service_data"]["object_id"] = *_args.object_id;
     }
-    if (args.remove_entities) {
-      cmd["service_data"]["remove_entities"] = *args.remove_entities;
+    if (_args.remove_entities) {
+      cmd["service_data"]["remove_entities"] = *_args.remove_entities;
     }
 
     entity->WSConnSend(cmd);
@@ -1859,16 +1861,16 @@ private:
 class Homeassistant
 {
 public:
-  Homeassistant(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Homeassistant(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Homeassistant;
   // Check configuration
   // Checks the Home Assistant YAML-configuration files for errors. Errors will be shown in the Home Assistant logs.
-  struct check_config_args
+  struct CheckConfigArgs
   {
   };
-  void check_config([[maybe_unused]] const check_config_args& args)
+  void checkConfig([[maybe_unused]] const CheckConfigArgs& _args)
   {
     json cmd;
 
@@ -1882,10 +1884,10 @@ public:
 
   // Reload all
   // Reload all YAML configuration that can be reloaded without restarting Home Assistant.
-  struct reload_all_args
+  struct ReloadAllArgs
   {
   };
-  void reload_all([[maybe_unused]] const reload_all_args& args)
+  void reloadAll([[maybe_unused]] const ReloadAllArgs& _args)
   {
     json cmd;
 
@@ -1899,11 +1901,11 @@ public:
 
   // Reload config entry
   // Reloads the specified config entry.
-  struct reload_config_entry_args
+  struct ReloadConfigEntryArgs
   {
     optional<json> entry_id;
   };
-  void reload_config_entry([[maybe_unused]] const reload_config_entry_args& args)
+  void reloadConfigEntry([[maybe_unused]] const ReloadConfigEntryArgs& _args)
   {
     json cmd;
 
@@ -1911,8 +1913,8 @@ public:
     cmd["domain"] = "homeassistant";
     cmd["service"] = "reload_config_entry";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.entry_id) {
-      cmd["service_data"]["entry_id"] = *args.entry_id;
+    if (_args.entry_id) {
+      cmd["service_data"]["entry_id"] = *_args.entry_id;
     }
 
     entity->WSConnSend(cmd);
@@ -1920,10 +1922,10 @@ public:
 
   // Reload core configuration
   // Reloads the core configuration from the YAML-configuration.
-  struct reload_core_config_args
+  struct ReloadCoreConfigArgs
   {
   };
-  void reload_core_config([[maybe_unused]] const reload_core_config_args& args)
+  void reloadCoreConfig([[maybe_unused]] const ReloadCoreConfigArgs& _args)
   {
     json cmd;
 
@@ -1937,10 +1939,10 @@ public:
 
   // Reload custom Jinja2 templates
   // Reloads Jinja2 templates found in the `custom_templates` folder in your config. New values will be applied on the next render of the template.
-  struct reload_custom_templates_args
+  struct ReloadCustomTemplatesArgs
   {
   };
-  void reload_custom_templates([[maybe_unused]] const reload_custom_templates_args& args)
+  void reloadCustomTemplates([[maybe_unused]] const ReloadCustomTemplatesArgs& _args)
   {
     json cmd;
 
@@ -1954,10 +1956,10 @@ public:
 
   // Restart
   // Restarts Home Assistant.
-  struct restart_args
+  struct RestartArgs
   {
   };
-  void restart([[maybe_unused]] const restart_args& args)
+  void restart([[maybe_unused]] const RestartArgs& _args)
   {
     json cmd;
 
@@ -1971,10 +1973,10 @@ public:
 
   // Save persistent states
   // Saves the persistent states immediately. Maintains the normal periodic saving interval.
-  struct save_persistent_states_args
+  struct SavePersistentStatesArgs
   {
   };
-  void save_persistent_states([[maybe_unused]] const save_persistent_states_args& args)
+  void savePersistentStates([[maybe_unused]] const SavePersistentStatesArgs& _args)
   {
     json cmd;
 
@@ -1988,13 +1990,13 @@ public:
 
   // Set location
   // Updates the Home Assistant location.
-  struct set_location_args
+  struct SetLocationArgs
   {
     optional<json> elevation;
     optional<json> latitude;
     optional<json> longitude;
   };
-  void set_location([[maybe_unused]] const set_location_args& args)
+  void setLocation([[maybe_unused]] const SetLocationArgs& _args)
   {
     json cmd;
 
@@ -2002,14 +2004,14 @@ public:
     cmd["domain"] = "homeassistant";
     cmd["service"] = "set_location";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.elevation) {
-      cmd["service_data"]["elevation"] = *args.elevation;
+    if (_args.elevation) {
+      cmd["service_data"]["elevation"] = *_args.elevation;
     }
-    if (args.latitude) {
-      cmd["service_data"]["latitude"] = *args.latitude;
+    if (_args.latitude) {
+      cmd["service_data"]["latitude"] = *_args.latitude;
     }
-    if (args.longitude) {
-      cmd["service_data"]["longitude"] = *args.longitude;
+    if (_args.longitude) {
+      cmd["service_data"]["longitude"] = *_args.longitude;
     }
 
     entity->WSConnSend(cmd);
@@ -2017,10 +2019,10 @@ public:
 
   // Stop
   // Stops Home Assistant.
-  struct stop_args
+  struct StopArgs
   {
   };
-  void stop([[maybe_unused]] const stop_args& args)
+  void stop([[maybe_unused]] const StopArgs& _args)
   {
     json cmd;
 
@@ -2034,10 +2036,10 @@ public:
 
   // Generic toggle
   // Generic service to toggle devices on/off under any domain.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -2051,10 +2053,10 @@ public:
 
   // Generic turn off
   // Generic service to turn devices off under any domain.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -2068,10 +2070,10 @@ public:
 
   // Generic turn on
   // Generic service to turn devices on under any domain.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -2085,10 +2087,10 @@ public:
 
   // Update entity
   // Forces one or more entities to update its data.
-  struct update_entity_args
+  struct UpdateEntityArgs
   {
   };
-  void update_entity([[maybe_unused]] const update_entity_args& args)
+  void updateEntity([[maybe_unused]] const UpdateEntityArgs& _args)
   {
     json cmd;
 
@@ -2109,17 +2111,17 @@ private:
 class Humidifier
 {
 public:
-  Humidifier(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Humidifier(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Humidifier;
   // Set humidity
   // Sets the target humidity.
-  struct set_humidity_args
+  struct SetHumidityArgs
   {
     optional<json> humidity;
   };
-  void set_humidity([[maybe_unused]] const set_humidity_args& args)
+  void setHumidity([[maybe_unused]] const SetHumidityArgs& _args)
   {
     json cmd;
 
@@ -2127,8 +2129,8 @@ public:
     cmd["domain"] = "humidifier";
     cmd["service"] = "set_humidity";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.humidity) {
-      cmd["service_data"]["humidity"] = *args.humidity;
+    if (_args.humidity) {
+      cmd["service_data"]["humidity"] = *_args.humidity;
     }
 
     entity->WSConnSend(cmd);
@@ -2136,11 +2138,11 @@ public:
 
   // Set mode
   // Sets the humidifier operation mode.
-  struct set_mode_args
+  struct SetModeArgs
   {
     optional<json> mode;
   };
-  void set_mode([[maybe_unused]] const set_mode_args& args)
+  void setMode([[maybe_unused]] const SetModeArgs& _args)
   {
     json cmd;
 
@@ -2148,8 +2150,8 @@ public:
     cmd["domain"] = "humidifier";
     cmd["service"] = "set_mode";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.mode) {
-      cmd["service_data"]["mode"] = *args.mode;
+    if (_args.mode) {
+      cmd["service_data"]["mode"] = *_args.mode;
     }
 
     entity->WSConnSend(cmd);
@@ -2157,10 +2159,10 @@ public:
 
   // Toggle
   // Toggles the humidifier on/off.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -2174,10 +2176,10 @@ public:
 
   // Turn off
   // Turns the humidifier off.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -2191,10 +2193,10 @@ public:
 
   // Turn on
   // Turns the humidifier on.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -2210,21 +2212,21 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Image_processing
+// START HEADER FOR ImageProcessing
 
-class Image_processing
+class ImageProcessing
 {
 public:
-  Image_processing(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  ImageProcessing(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Image_processing;
   // Scan
   // Processes an image immediately.
-  struct scan_args
+  struct ScanArgs
   {
   };
-  void scan([[maybe_unused]] const scan_args& args)
+  void scan([[maybe_unused]] const ScanArgs& _args)
   {
     json cmd;
 
@@ -2240,21 +2242,21 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Input_boolean
+// START HEADER FOR InputBoolean
 
-class Input_boolean
+class InputBoolean
 {
 public:
-  Input_boolean(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  InputBoolean(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Input_boolean;
   // Reload
   // Reloads helpers from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -2268,10 +2270,10 @@ public:
 
   // Toggle
   // Toggles the helper on/off.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -2285,10 +2287,10 @@ public:
 
   // Turn off
   // Turns off the helper.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -2302,10 +2304,10 @@ public:
 
   // Turn on
   // Turns on the helper.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -2321,21 +2323,21 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Input_button
+// START HEADER FOR InputButton
 
-class Input_button
+class InputButton
 {
 public:
-  Input_button(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  InputButton(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Input_button;
   // Press
   // Mimics the physical button press on the device.
-  struct press_args
+  struct PressArgs
   {
   };
-  void press([[maybe_unused]] const press_args& args)
+  void press([[maybe_unused]] const PressArgs& _args)
   {
     json cmd;
 
@@ -2349,10 +2351,10 @@ public:
 
   // Reload
   // Reloads helpers from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -2368,21 +2370,21 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Input_datetime
+// START HEADER FOR InputDatetime
 
-class Input_datetime
+class InputDatetime
 {
 public:
-  Input_datetime(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  InputDatetime(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Input_datetime;
   // Reload
   // Reloads helpers from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -2396,14 +2398,14 @@ public:
 
   // Set
   // Sets the date and/or time.
-  struct set_datetime_args
+  struct SetDatetimeArgs
   {
     optional<json> date;
     optional<json> datetime;
     optional<json> time;
     optional<json> timestamp;
   };
-  void set_datetime([[maybe_unused]] const set_datetime_args& args)
+  void setDatetime([[maybe_unused]] const SetDatetimeArgs& _args)
   {
     json cmd;
 
@@ -2411,17 +2413,17 @@ public:
     cmd["domain"] = "input_datetime";
     cmd["service"] = "set_datetime";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.date) {
-      cmd["service_data"]["date"] = *args.date;
+    if (_args.date) {
+      cmd["service_data"]["date"] = *_args.date;
     }
-    if (args.datetime) {
-      cmd["service_data"]["datetime"] = *args.datetime;
+    if (_args.datetime) {
+      cmd["service_data"]["datetime"] = *_args.datetime;
     }
-    if (args.time) {
-      cmd["service_data"]["time"] = *args.time;
+    if (_args.time) {
+      cmd["service_data"]["time"] = *_args.time;
     }
-    if (args.timestamp) {
-      cmd["service_data"]["timestamp"] = *args.timestamp;
+    if (_args.timestamp) {
+      cmd["service_data"]["timestamp"] = *_args.timestamp;
     }
 
     entity->WSConnSend(cmd);
@@ -2431,21 +2433,21 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Input_number
+// START HEADER FOR InputNumber
 
-class Input_number
+class InputNumber
 {
 public:
-  Input_number(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  InputNumber(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Input_number;
   // Decrement
   // Decrements the current value by 1 step.
-  struct decrement_args
+  struct DecrementArgs
   {
   };
-  void decrement([[maybe_unused]] const decrement_args& args)
+  void decrement([[maybe_unused]] const DecrementArgs& _args)
   {
     json cmd;
 
@@ -2459,10 +2461,10 @@ public:
 
   // Increment
   // Increments the value by 1 step.
-  struct increment_args
+  struct IncrementArgs
   {
   };
-  void increment([[maybe_unused]] const increment_args& args)
+  void increment([[maybe_unused]] const IncrementArgs& _args)
   {
     json cmd;
 
@@ -2476,10 +2478,10 @@ public:
 
   // Reload
   // Reloads helpers from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -2493,11 +2495,11 @@ public:
 
   // Set
   // Sets the value.
-  struct set_value_args
+  struct SetValueArgs
   {
     optional<json> value;
   };
-  void set_value([[maybe_unused]] const set_value_args& args)
+  void setValue([[maybe_unused]] const SetValueArgs& _args)
   {
     json cmd;
 
@@ -2505,8 +2507,8 @@ public:
     cmd["domain"] = "input_number";
     cmd["service"] = "set_value";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.value) {
-      cmd["service_data"]["value"] = *args.value;
+    if (_args.value) {
+      cmd["service_data"]["value"] = *_args.value;
     }
 
     entity->WSConnSend(cmd);
@@ -2516,21 +2518,21 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Input_select
+// START HEADER FOR InputSelect
 
-class Input_select
+class InputSelect
 {
 public:
-  Input_select(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  InputSelect(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Input_select;
   // Reload
   // Reloads helpers from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -2544,10 +2546,10 @@ public:
 
   // First
   // Selects the first option.
-  struct select_first_args
+  struct SelectFirstArgs
   {
   };
-  void select_first([[maybe_unused]] const select_first_args& args)
+  void selectFirst([[maybe_unused]] const SelectFirstArgs& _args)
   {
     json cmd;
 
@@ -2561,10 +2563,10 @@ public:
 
   // Last
   // Selects the last option.
-  struct select_last_args
+  struct SelectLastArgs
   {
   };
-  void select_last([[maybe_unused]] const select_last_args& args)
+  void selectLast([[maybe_unused]] const SelectLastArgs& _args)
   {
     json cmd;
 
@@ -2578,11 +2580,11 @@ public:
 
   // Next
   // Select the next option.
-  struct select_next_args
+  struct SelectNextArgs
   {
     optional<json> cycle;
   };
-  void select_next([[maybe_unused]] const select_next_args& args)
+  void selectNext([[maybe_unused]] const SelectNextArgs& _args)
   {
     json cmd;
 
@@ -2590,8 +2592,8 @@ public:
     cmd["domain"] = "input_select";
     cmd["service"] = "select_next";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.cycle) {
-      cmd["service_data"]["cycle"] = *args.cycle;
+    if (_args.cycle) {
+      cmd["service_data"]["cycle"] = *_args.cycle;
     }
 
     entity->WSConnSend(cmd);
@@ -2599,11 +2601,11 @@ public:
 
   // Select
   // Selects an option.
-  struct select_option_args
+  struct SelectOptionArgs
   {
     optional<json> option;
   };
-  void select_option([[maybe_unused]] const select_option_args& args)
+  void selectOption([[maybe_unused]] const SelectOptionArgs& _args)
   {
     json cmd;
 
@@ -2611,8 +2613,8 @@ public:
     cmd["domain"] = "input_select";
     cmd["service"] = "select_option";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.option) {
-      cmd["service_data"]["option"] = *args.option;
+    if (_args.option) {
+      cmd["service_data"]["option"] = *_args.option;
     }
 
     entity->WSConnSend(cmd);
@@ -2620,11 +2622,11 @@ public:
 
   // Previous
   // Selects the previous option.
-  struct select_previous_args
+  struct SelectPreviousArgs
   {
     optional<json> cycle;
   };
-  void select_previous([[maybe_unused]] const select_previous_args& args)
+  void selectPrevious([[maybe_unused]] const SelectPreviousArgs& _args)
   {
     json cmd;
 
@@ -2632,8 +2634,8 @@ public:
     cmd["domain"] = "input_select";
     cmd["service"] = "select_previous";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.cycle) {
-      cmd["service_data"]["cycle"] = *args.cycle;
+    if (_args.cycle) {
+      cmd["service_data"]["cycle"] = *_args.cycle;
     }
 
     entity->WSConnSend(cmd);
@@ -2641,11 +2643,11 @@ public:
 
   // Set options
   // Sets the options.
-  struct set_options_args
+  struct SetOptionsArgs
   {
     optional<json> options;
   };
-  void set_options([[maybe_unused]] const set_options_args& args)
+  void setOptions([[maybe_unused]] const SetOptionsArgs& _args)
   {
     json cmd;
 
@@ -2653,8 +2655,8 @@ public:
     cmd["domain"] = "input_select";
     cmd["service"] = "set_options";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.options) {
-      cmd["service_data"]["options"] = *args.options;
+    if (_args.options) {
+      cmd["service_data"]["options"] = *_args.options;
     }
 
     entity->WSConnSend(cmd);
@@ -2664,21 +2666,21 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Input_text
+// START HEADER FOR InputText
 
-class Input_text
+class InputText
 {
 public:
-  Input_text(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  InputText(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Input_text;
   // Reload
   // Reloads helpers from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -2692,11 +2694,11 @@ public:
 
   // Set
   // Sets the value.
-  struct set_value_args
+  struct SetValueArgs
   {
     optional<json> value;
   };
-  void set_value([[maybe_unused]] const set_value_args& args)
+  void setValue([[maybe_unused]] const SetValueArgs& _args)
   {
     json cmd;
 
@@ -2704,8 +2706,8 @@ public:
     cmd["domain"] = "input_text";
     cmd["service"] = "set_value";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.value) {
-      cmd["service_data"]["value"] = *args.value;
+    if (_args.value) {
+      cmd["service_data"]["value"] = *_args.value;
     }
 
     entity->WSConnSend(cmd);
@@ -2720,13 +2722,13 @@ private:
 class Light
 {
 public:
-  Light(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Light(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Light;
   // Toggle
   // Toggles one or more lights, from on to off, or, off to on, based on their current state.
-  struct toggle_args
+  struct ToggleArgs
   {
     optional<json> brightness;
     optional<json> brightness_pct;
@@ -2742,7 +2744,7 @@ public:
     optional<json> white;
     optional<json> xy_color;
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -2750,44 +2752,44 @@ public:
     cmd["domain"] = "light";
     cmd["service"] = "toggle";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.brightness) {
-      cmd["service_data"]["brightness"] = *args.brightness;
+    if (_args.brightness) {
+      cmd["service_data"]["brightness"] = *_args.brightness;
     }
-    if (args.brightness_pct) {
-      cmd["service_data"]["brightness_pct"] = *args.brightness_pct;
+    if (_args.brightness_pct) {
+      cmd["service_data"]["brightness_pct"] = *_args.brightness_pct;
     }
-    if (args.color_name) {
-      cmd["service_data"]["color_name"] = *args.color_name;
+    if (_args.color_name) {
+      cmd["service_data"]["color_name"] = *_args.color_name;
     }
-    if (args.color_temp) {
-      cmd["service_data"]["color_temp"] = *args.color_temp;
+    if (_args.color_temp) {
+      cmd["service_data"]["color_temp"] = *_args.color_temp;
     }
-    if (args.effect) {
-      cmd["service_data"]["effect"] = *args.effect;
+    if (_args.effect) {
+      cmd["service_data"]["effect"] = *_args.effect;
     }
-    if (args.flash) {
-      cmd["service_data"]["flash"] = *args.flash;
+    if (_args.flash) {
+      cmd["service_data"]["flash"] = *_args.flash;
     }
-    if (args.hs_color) {
-      cmd["service_data"]["hs_color"] = *args.hs_color;
+    if (_args.hs_color) {
+      cmd["service_data"]["hs_color"] = *_args.hs_color;
     }
-    if (args.kelvin) {
-      cmd["service_data"]["kelvin"] = *args.kelvin;
+    if (_args.kelvin) {
+      cmd["service_data"]["kelvin"] = *_args.kelvin;
     }
-    if (args.profile) {
-      cmd["service_data"]["profile"] = *args.profile;
+    if (_args.profile) {
+      cmd["service_data"]["profile"] = *_args.profile;
     }
-    if (args.rgb_color) {
-      cmd["service_data"]["rgb_color"] = *args.rgb_color;
+    if (_args.rgb_color) {
+      cmd["service_data"]["rgb_color"] = *_args.rgb_color;
     }
-    if (args.transition) {
-      cmd["service_data"]["transition"] = *args.transition;
+    if (_args.transition) {
+      cmd["service_data"]["transition"] = *_args.transition;
     }
-    if (args.white) {
-      cmd["service_data"]["white"] = *args.white;
+    if (_args.white) {
+      cmd["service_data"]["white"] = *_args.white;
     }
-    if (args.xy_color) {
-      cmd["service_data"]["xy_color"] = *args.xy_color;
+    if (_args.xy_color) {
+      cmd["service_data"]["xy_color"] = *_args.xy_color;
     }
 
     entity->WSConnSend(cmd);
@@ -2795,12 +2797,12 @@ public:
 
   // Turn off
   // Turn off one or more lights.
-  struct turn_off_args
+  struct TurnOffArgs
   {
     optional<json> flash;
     optional<json> transition;
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -2808,11 +2810,11 @@ public:
     cmd["domain"] = "light";
     cmd["service"] = "turn_off";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.flash) {
-      cmd["service_data"]["flash"] = *args.flash;
+    if (_args.flash) {
+      cmd["service_data"]["flash"] = *_args.flash;
     }
-    if (args.transition) {
-      cmd["service_data"]["transition"] = *args.transition;
+    if (_args.transition) {
+      cmd["service_data"]["transition"] = *_args.transition;
     }
 
     entity->WSConnSend(cmd);
@@ -2820,7 +2822,7 @@ public:
 
   // Turn on
   // Turn on one or more lights and adjust properties of the light, even when they are turned on already.
-  struct turn_on_args
+  struct TurnOnArgs
   {
     optional<json> brightness;
     optional<json> brightness_pct;
@@ -2840,7 +2842,7 @@ public:
     optional<json> white;
     optional<json> xy_color;
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -2848,56 +2850,56 @@ public:
     cmd["domain"] = "light";
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.brightness) {
-      cmd["service_data"]["brightness"] = *args.brightness;
+    if (_args.brightness) {
+      cmd["service_data"]["brightness"] = *_args.brightness;
     }
-    if (args.brightness_pct) {
-      cmd["service_data"]["brightness_pct"] = *args.brightness_pct;
+    if (_args.brightness_pct) {
+      cmd["service_data"]["brightness_pct"] = *_args.brightness_pct;
     }
-    if (args.brightness_step) {
-      cmd["service_data"]["brightness_step"] = *args.brightness_step;
+    if (_args.brightness_step) {
+      cmd["service_data"]["brightness_step"] = *_args.brightness_step;
     }
-    if (args.brightness_step_pct) {
-      cmd["service_data"]["brightness_step_pct"] = *args.brightness_step_pct;
+    if (_args.brightness_step_pct) {
+      cmd["service_data"]["brightness_step_pct"] = *_args.brightness_step_pct;
     }
-    if (args.color_name) {
-      cmd["service_data"]["color_name"] = *args.color_name;
+    if (_args.color_name) {
+      cmd["service_data"]["color_name"] = *_args.color_name;
     }
-    if (args.color_temp) {
-      cmd["service_data"]["color_temp"] = *args.color_temp;
+    if (_args.color_temp) {
+      cmd["service_data"]["color_temp"] = *_args.color_temp;
     }
-    if (args.effect) {
-      cmd["service_data"]["effect"] = *args.effect;
+    if (_args.effect) {
+      cmd["service_data"]["effect"] = *_args.effect;
     }
-    if (args.flash) {
-      cmd["service_data"]["flash"] = *args.flash;
+    if (_args.flash) {
+      cmd["service_data"]["flash"] = *_args.flash;
     }
-    if (args.hs_color) {
-      cmd["service_data"]["hs_color"] = *args.hs_color;
+    if (_args.hs_color) {
+      cmd["service_data"]["hs_color"] = *_args.hs_color;
     }
-    if (args.kelvin) {
-      cmd["service_data"]["kelvin"] = *args.kelvin;
+    if (_args.kelvin) {
+      cmd["service_data"]["kelvin"] = *_args.kelvin;
     }
-    if (args.profile) {
-      cmd["service_data"]["profile"] = *args.profile;
+    if (_args.profile) {
+      cmd["service_data"]["profile"] = *_args.profile;
     }
-    if (args.rgb_color) {
-      cmd["service_data"]["rgb_color"] = *args.rgb_color;
+    if (_args.rgb_color) {
+      cmd["service_data"]["rgb_color"] = *_args.rgb_color;
     }
-    if (args.rgbw_color) {
-      cmd["service_data"]["rgbw_color"] = *args.rgbw_color;
+    if (_args.rgbw_color) {
+      cmd["service_data"]["rgbw_color"] = *_args.rgbw_color;
     }
-    if (args.rgbww_color) {
-      cmd["service_data"]["rgbww_color"] = *args.rgbww_color;
+    if (_args.rgbww_color) {
+      cmd["service_data"]["rgbww_color"] = *_args.rgbww_color;
     }
-    if (args.transition) {
-      cmd["service_data"]["transition"] = *args.transition;
+    if (_args.transition) {
+      cmd["service_data"]["transition"] = *_args.transition;
     }
-    if (args.white) {
-      cmd["service_data"]["white"] = *args.white;
+    if (_args.white) {
+      cmd["service_data"]["white"] = *_args.white;
     }
-    if (args.xy_color) {
-      cmd["service_data"]["xy_color"] = *args.xy_color;
+    if (_args.xy_color) {
+      cmd["service_data"]["xy_color"] = *_args.xy_color;
     }
 
     entity->WSConnSend(cmd);
@@ -2912,17 +2914,17 @@ private:
 class Lock
 {
 public:
-  Lock(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Lock(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Lock;
   // Lock
   // Locks a lock.
-  struct lock_args
+  struct LockArgs
   {
     optional<json> code;
   };
-  void lock([[maybe_unused]] const lock_args& args)
+  void lock([[maybe_unused]] const LockArgs& _args)
   {
     json cmd;
 
@@ -2930,8 +2932,8 @@ public:
     cmd["domain"] = "lock";
     cmd["service"] = "lock";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.code) {
-      cmd["service_data"]["code"] = *args.code;
+    if (_args.code) {
+      cmd["service_data"]["code"] = *_args.code;
     }
 
     entity->WSConnSend(cmd);
@@ -2939,11 +2941,11 @@ public:
 
   // Open
   // Opens a lock.
-  struct open_args
+  struct OpenArgs
   {
     optional<json> code;
   };
-  void open([[maybe_unused]] const open_args& args)
+  void open([[maybe_unused]] const OpenArgs& _args)
   {
     json cmd;
 
@@ -2951,8 +2953,8 @@ public:
     cmd["domain"] = "lock";
     cmd["service"] = "open";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.code) {
-      cmd["service_data"]["code"] = *args.code;
+    if (_args.code) {
+      cmd["service_data"]["code"] = *_args.code;
     }
 
     entity->WSConnSend(cmd);
@@ -2960,11 +2962,11 @@ public:
 
   // Unlock
   // Unlocks a lock.
-  struct unlock_args
+  struct UnlockArgs
   {
     optional<json> code;
   };
-  void unlock([[maybe_unused]] const unlock_args& args)
+  void unlock([[maybe_unused]] const UnlockArgs& _args)
   {
     json cmd;
 
@@ -2972,8 +2974,8 @@ public:
     cmd["domain"] = "lock";
     cmd["service"] = "unlock";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.code) {
-      cmd["service_data"]["code"] = *args.code;
+    if (_args.code) {
+      cmd["service_data"]["code"] = *_args.code;
     }
 
     entity->WSConnSend(cmd);
@@ -2988,20 +2990,20 @@ private:
 class Logbook
 {
 public:
-  Logbook(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Logbook(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Logbook;
   // Log
   // Creates a custom entry in the logbook.
-  struct log_args
+  struct LogArgs
   {
     optional<json> domain;
     optional<json> entity_id;
     optional<json> message;
     optional<json> name;
   };
-  void log([[maybe_unused]] const log_args& args)
+  void log([[maybe_unused]] const LogArgs& _args)
   {
     json cmd;
 
@@ -3009,17 +3011,17 @@ public:
     cmd["domain"] = "logbook";
     cmd["service"] = "log";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.domain) {
-      cmd["service_data"]["domain"] = *args.domain;
+    if (_args.domain) {
+      cmd["service_data"]["domain"] = *_args.domain;
     }
-    if (args.entity_id) {
-      cmd["service_data"]["entity_id"] = *args.entity_id;
+    if (_args.entity_id) {
+      cmd["service_data"]["entity_id"] = *_args.entity_id;
     }
-    if (args.message) {
-      cmd["service_data"]["message"] = *args.message;
+    if (_args.message) {
+      cmd["service_data"]["message"] = *_args.message;
     }
-    if (args.name) {
-      cmd["service_data"]["name"] = *args.name;
+    if (_args.name) {
+      cmd["service_data"]["name"] = *_args.name;
     }
 
     entity->WSConnSend(cmd);
@@ -3034,17 +3036,17 @@ private:
 class Logger
 {
 public:
-  Logger(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Logger(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Logger;
   // Set default level
   // Sets the default log level for integrations.
-  struct set_default_level_args
+  struct SetDefaultLevelArgs
   {
     optional<json> level;
   };
-  void set_default_level([[maybe_unused]] const set_default_level_args& args)
+  void setDefaultLevel([[maybe_unused]] const SetDefaultLevelArgs& _args)
   {
     json cmd;
 
@@ -3052,8 +3054,8 @@ public:
     cmd["domain"] = "logger";
     cmd["service"] = "set_default_level";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.level) {
-      cmd["service_data"]["level"] = *args.level;
+    if (_args.level) {
+      cmd["service_data"]["level"] = *_args.level;
     }
 
     entity->WSConnSend(cmd);
@@ -3061,10 +3063,10 @@ public:
 
   // Set level
   // Sets the log level for one or more integrations.
-  struct set_level_args
+  struct SetLevelArgs
   {
   };
-  void set_level([[maybe_unused]] const set_level_args& args)
+  void setLevel([[maybe_unused]] const SetLevelArgs& _args)
   {
     json cmd;
 
@@ -3080,21 +3082,21 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Media_player
+// START HEADER FOR MediaPlayer
 
-class Media_player
+class MediaPlayer
 {
 public:
-  Media_player(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  MediaPlayer(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Media_player;
   // Clear playlist
   // Clears the playlist.
-  struct clear_playlist_args
+  struct ClearPlaylistArgs
   {
   };
-  void clear_playlist([[maybe_unused]] const clear_playlist_args& args)
+  void clearPlaylist([[maybe_unused]] const ClearPlaylistArgs& _args)
   {
     json cmd;
 
@@ -3108,11 +3110,11 @@ public:
 
   // Join
   // Groups media players together for synchronous playback. Only works on supported multiroom audio systems.
-  struct join_args
+  struct JoinArgs
   {
     optional<json> group_members;
   };
-  void join([[maybe_unused]] const join_args& args)
+  void join([[maybe_unused]] const JoinArgs& _args)
   {
     json cmd;
 
@@ -3120,8 +3122,8 @@ public:
     cmd["domain"] = "media_player";
     cmd["service"] = "join";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.group_members) {
-      cmd["service_data"]["group_members"] = *args.group_members;
+    if (_args.group_members) {
+      cmd["service_data"]["group_members"] = *_args.group_members;
     }
 
     entity->WSConnSend(cmd);
@@ -3129,10 +3131,10 @@ public:
 
   // Next
   // Selects the next track.
-  struct media_next_track_args
+  struct MediaNextTrackArgs
   {
   };
-  void media_next_track([[maybe_unused]] const media_next_track_args& args)
+  void mediaNextTrack([[maybe_unused]] const MediaNextTrackArgs& _args)
   {
     json cmd;
 
@@ -3146,10 +3148,10 @@ public:
 
   // Pause
   // Pauses.
-  struct media_pause_args
+  struct MediaPauseArgs
   {
   };
-  void media_pause([[maybe_unused]] const media_pause_args& args)
+  void mediaPause([[maybe_unused]] const MediaPauseArgs& _args)
   {
     json cmd;
 
@@ -3163,10 +3165,10 @@ public:
 
   // Play
   // Starts playing.
-  struct media_play_args
+  struct MediaPlayArgs
   {
   };
-  void media_play([[maybe_unused]] const media_play_args& args)
+  void mediaPlay([[maybe_unused]] const MediaPlayArgs& _args)
   {
     json cmd;
 
@@ -3180,10 +3182,10 @@ public:
 
   // Play/Pause
   // Toggles play/pause.
-  struct media_play_pause_args
+  struct MediaPlayPauseArgs
   {
   };
-  void media_play_pause([[maybe_unused]] const media_play_pause_args& args)
+  void mediaPlayPause([[maybe_unused]] const MediaPlayPauseArgs& _args)
   {
     json cmd;
 
@@ -3197,10 +3199,10 @@ public:
 
   // Previous
   // Selects the previous track.
-  struct media_previous_track_args
+  struct MediaPreviousTrackArgs
   {
   };
-  void media_previous_track([[maybe_unused]] const media_previous_track_args& args)
+  void mediaPreviousTrack([[maybe_unused]] const MediaPreviousTrackArgs& _args)
   {
     json cmd;
 
@@ -3214,11 +3216,11 @@ public:
 
   // Seek
   // Allows you to go to a different part of the media that is currently playing.
-  struct media_seek_args
+  struct MediaSeekArgs
   {
     optional<json> seek_position;
   };
-  void media_seek([[maybe_unused]] const media_seek_args& args)
+  void mediaSeek([[maybe_unused]] const MediaSeekArgs& _args)
   {
     json cmd;
 
@@ -3226,8 +3228,8 @@ public:
     cmd["domain"] = "media_player";
     cmd["service"] = "media_seek";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.seek_position) {
-      cmd["service_data"]["seek_position"] = *args.seek_position;
+    if (_args.seek_position) {
+      cmd["service_data"]["seek_position"] = *_args.seek_position;
     }
 
     entity->WSConnSend(cmd);
@@ -3235,10 +3237,10 @@ public:
 
   // Stop
   // Stops playing.
-  struct media_stop_args
+  struct MediaStopArgs
   {
   };
-  void media_stop([[maybe_unused]] const media_stop_args& args)
+  void mediaStop([[maybe_unused]] const MediaStopArgs& _args)
   {
     json cmd;
 
@@ -3252,14 +3254,14 @@ public:
 
   // Play media
   // Starts playing specified media.
-  struct play_media_args
+  struct PlayMediaArgs
   {
     optional<json> announce;
     optional<json> enqueue;
     optional<json> media_content_id;
     optional<json> media_content_type;
   };
-  void play_media([[maybe_unused]] const play_media_args& args)
+  void playMedia([[maybe_unused]] const PlayMediaArgs& _args)
   {
     json cmd;
 
@@ -3267,17 +3269,17 @@ public:
     cmd["domain"] = "media_player";
     cmd["service"] = "play_media";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.announce) {
-      cmd["service_data"]["announce"] = *args.announce;
+    if (_args.announce) {
+      cmd["service_data"]["announce"] = *_args.announce;
     }
-    if (args.enqueue) {
-      cmd["service_data"]["enqueue"] = *args.enqueue;
+    if (_args.enqueue) {
+      cmd["service_data"]["enqueue"] = *_args.enqueue;
     }
-    if (args.media_content_id) {
-      cmd["service_data"]["media_content_id"] = *args.media_content_id;
+    if (_args.media_content_id) {
+      cmd["service_data"]["media_content_id"] = *_args.media_content_id;
     }
-    if (args.media_content_type) {
-      cmd["service_data"]["media_content_type"] = *args.media_content_type;
+    if (_args.media_content_type) {
+      cmd["service_data"]["media_content_type"] = *_args.media_content_type;
     }
 
     entity->WSConnSend(cmd);
@@ -3285,11 +3287,11 @@ public:
 
   // Repeat
   // Playback mode that plays the media in a loop.
-  struct repeat_set_args
+  struct RepeatSetArgs
   {
     optional<json> repeat;
   };
-  void repeat_set([[maybe_unused]] const repeat_set_args& args)
+  void repeatSet([[maybe_unused]] const RepeatSetArgs& _args)
   {
     json cmd;
 
@@ -3297,8 +3299,8 @@ public:
     cmd["domain"] = "media_player";
     cmd["service"] = "repeat_set";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.repeat) {
-      cmd["service_data"]["repeat"] = *args.repeat;
+    if (_args.repeat) {
+      cmd["service_data"]["repeat"] = *_args.repeat;
     }
 
     entity->WSConnSend(cmd);
@@ -3306,11 +3308,11 @@ public:
 
   // Select sound mode
   // Selects a specific sound mode.
-  struct select_sound_mode_args
+  struct SelectSoundModeArgs
   {
     optional<json> sound_mode;
   };
-  void select_sound_mode([[maybe_unused]] const select_sound_mode_args& args)
+  void selectSoundMode([[maybe_unused]] const SelectSoundModeArgs& _args)
   {
     json cmd;
 
@@ -3318,8 +3320,8 @@ public:
     cmd["domain"] = "media_player";
     cmd["service"] = "select_sound_mode";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.sound_mode) {
-      cmd["service_data"]["sound_mode"] = *args.sound_mode;
+    if (_args.sound_mode) {
+      cmd["service_data"]["sound_mode"] = *_args.sound_mode;
     }
 
     entity->WSConnSend(cmd);
@@ -3327,11 +3329,11 @@ public:
 
   // Select source
   // Sends the media player the command to change input source.
-  struct select_source_args
+  struct SelectSourceArgs
   {
     optional<json> source;
   };
-  void select_source([[maybe_unused]] const select_source_args& args)
+  void selectSource([[maybe_unused]] const SelectSourceArgs& _args)
   {
     json cmd;
 
@@ -3339,8 +3341,8 @@ public:
     cmd["domain"] = "media_player";
     cmd["service"] = "select_source";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.source) {
-      cmd["service_data"]["source"] = *args.source;
+    if (_args.source) {
+      cmd["service_data"]["source"] = *_args.source;
     }
 
     entity->WSConnSend(cmd);
@@ -3348,11 +3350,11 @@ public:
 
   // Shuffle
   // Playback mode that selects the media in randomized order.
-  struct shuffle_set_args
+  struct ShuffleSetArgs
   {
     optional<json> shuffle;
   };
-  void shuffle_set([[maybe_unused]] const shuffle_set_args& args)
+  void shuffleSet([[maybe_unused]] const ShuffleSetArgs& _args)
   {
     json cmd;
 
@@ -3360,8 +3362,8 @@ public:
     cmd["domain"] = "media_player";
     cmd["service"] = "shuffle_set";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.shuffle) {
-      cmd["service_data"]["shuffle"] = *args.shuffle;
+    if (_args.shuffle) {
+      cmd["service_data"]["shuffle"] = *_args.shuffle;
     }
 
     entity->WSConnSend(cmd);
@@ -3369,10 +3371,10 @@ public:
 
   // Toggle
   // Toggles a media player on/off.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -3386,10 +3388,10 @@ public:
 
   // Turn off
   // Turns off the power of the media player.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -3403,10 +3405,10 @@ public:
 
   // Turn on
   // Turns on the power of the media player.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -3420,10 +3422,10 @@ public:
 
   // Unjoin
   // Removes the player from a group. Only works on platforms which support player groups.
-  struct unjoin_args
+  struct UnjoinArgs
   {
   };
-  void unjoin([[maybe_unused]] const unjoin_args& args)
+  void unjoin([[maybe_unused]] const UnjoinArgs& _args)
   {
     json cmd;
 
@@ -3437,10 +3439,10 @@ public:
 
   // Turn down volume
   // Turns down the volume.
-  struct volume_down_args
+  struct VolumeDownArgs
   {
   };
-  void volume_down([[maybe_unused]] const volume_down_args& args)
+  void volumeDown([[maybe_unused]] const VolumeDownArgs& _args)
   {
     json cmd;
 
@@ -3454,11 +3456,11 @@ public:
 
   // Mute/unmute volume
   // Mutes or unmutes the media player.
-  struct volume_mute_args
+  struct VolumeMuteArgs
   {
     optional<json> is_volume_muted;
   };
-  void volume_mute([[maybe_unused]] const volume_mute_args& args)
+  void volumeMute([[maybe_unused]] const VolumeMuteArgs& _args)
   {
     json cmd;
 
@@ -3466,8 +3468,8 @@ public:
     cmd["domain"] = "media_player";
     cmd["service"] = "volume_mute";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.is_volume_muted) {
-      cmd["service_data"]["is_volume_muted"] = *args.is_volume_muted;
+    if (_args.is_volume_muted) {
+      cmd["service_data"]["is_volume_muted"] = *_args.is_volume_muted;
     }
 
     entity->WSConnSend(cmd);
@@ -3475,11 +3477,11 @@ public:
 
   // Set volume
   // Sets the volume level.
-  struct volume_set_args
+  struct VolumeSetArgs
   {
     optional<json> volume_level;
   };
-  void volume_set([[maybe_unused]] const volume_set_args& args)
+  void volumeSet([[maybe_unused]] const VolumeSetArgs& _args)
   {
     json cmd;
 
@@ -3487,8 +3489,8 @@ public:
     cmd["domain"] = "media_player";
     cmd["service"] = "volume_set";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.volume_level) {
-      cmd["service_data"]["volume_level"] = *args.volume_level;
+    if (_args.volume_level) {
+      cmd["service_data"]["volume_level"] = *_args.volume_level;
     }
 
     entity->WSConnSend(cmd);
@@ -3496,10 +3498,10 @@ public:
 
   // Turn up volume
   // Turns up the volume.
-  struct volume_up_args
+  struct VolumeUpArgs
   {
   };
-  void volume_up([[maybe_unused]] const volume_up_args& args)
+  void volumeUp([[maybe_unused]] const VolumeUpArgs& _args)
   {
     json cmd;
 
@@ -3520,20 +3522,20 @@ private:
 class Notify
 {
 public:
-  Notify(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Notify(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Notify;
   // Send a notification via demo_test_target_name
   // Sends a notification message using the demo_test_target_name integration.
-  struct demo_test_target_name_args
+  struct DemoTestTargetNameArgs
   {
     optional<json> data;
     optional<json> message;
     optional<json> target;
     optional<json> title;
   };
-  void demo_test_target_name([[maybe_unused]] const demo_test_target_name_args& args)
+  void demoTestTargetName([[maybe_unused]] const DemoTestTargetNameArgs& _args)
   {
     json cmd;
 
@@ -3541,17 +3543,17 @@ public:
     cmd["domain"] = "notify";
     cmd["service"] = "demo_test_target_name";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.data) {
-      cmd["service_data"]["data"] = *args.data;
+    if (_args.data) {
+      cmd["service_data"]["data"] = *_args.data;
     }
-    if (args.message) {
-      cmd["service_data"]["message"] = *args.message;
+    if (_args.message) {
+      cmd["service_data"]["message"] = *_args.message;
     }
-    if (args.target) {
-      cmd["service_data"]["target"] = *args.target;
+    if (_args.target) {
+      cmd["service_data"]["target"] = *_args.target;
     }
-    if (args.title) {
-      cmd["service_data"]["title"] = *args.title;
+    if (_args.title) {
+      cmd["service_data"]["title"] = *_args.title;
     }
 
     entity->WSConnSend(cmd);
@@ -3559,14 +3561,14 @@ public:
 
   // Send a notification with notify
   // Sends a notification message using the notify service.
-  struct notify_args
+  struct NotifyArgs
   {
     optional<json> data;
     optional<json> message;
     optional<json> target;
     optional<json> title;
   };
-  void notify([[maybe_unused]] const notify_args& args)
+  void notify([[maybe_unused]] const NotifyArgs& _args)
   {
     json cmd;
 
@@ -3574,17 +3576,17 @@ public:
     cmd["domain"] = "notify";
     cmd["service"] = "notify";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.data) {
-      cmd["service_data"]["data"] = *args.data;
+    if (_args.data) {
+      cmd["service_data"]["data"] = *_args.data;
     }
-    if (args.message) {
-      cmd["service_data"]["message"] = *args.message;
+    if (_args.message) {
+      cmd["service_data"]["message"] = *_args.message;
     }
-    if (args.target) {
-      cmd["service_data"]["target"] = *args.target;
+    if (_args.target) {
+      cmd["service_data"]["target"] = *_args.target;
     }
-    if (args.title) {
-      cmd["service_data"]["title"] = *args.title;
+    if (_args.title) {
+      cmd["service_data"]["title"] = *_args.title;
     }
 
     entity->WSConnSend(cmd);
@@ -3592,13 +3594,13 @@ public:
 
   // Send a persistent notification
   // Sends a notification that is visible in the **Notifications** panel.
-  struct persistent_notification_args
+  struct PersistentNotificationArgs
   {
     optional<json> data;
     optional<json> message;
     optional<json> title;
   };
-  void persistent_notification([[maybe_unused]] const persistent_notification_args& args)
+  void persistentNotification([[maybe_unused]] const PersistentNotificationArgs& _args)
   {
     json cmd;
 
@@ -3606,14 +3608,14 @@ public:
     cmd["domain"] = "notify";
     cmd["service"] = "persistent_notification";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.data) {
-      cmd["service_data"]["data"] = *args.data;
+    if (_args.data) {
+      cmd["service_data"]["data"] = *_args.data;
     }
-    if (args.message) {
-      cmd["service_data"]["message"] = *args.message;
+    if (_args.message) {
+      cmd["service_data"]["message"] = *_args.message;
     }
-    if (args.title) {
-      cmd["service_data"]["title"] = *args.title;
+    if (_args.title) {
+      cmd["service_data"]["title"] = *_args.title;
     }
 
     entity->WSConnSend(cmd);
@@ -3628,17 +3630,17 @@ private:
 class Number
 {
 public:
-  Number(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Number(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Number;
   // Set
   // Sets the value of a number.
-  struct set_value_args
+  struct SetValueArgs
   {
     optional<json> value;
   };
-  void set_value([[maybe_unused]] const set_value_args& args)
+  void setValue([[maybe_unused]] const SetValueArgs& _args)
   {
     json cmd;
 
@@ -3646,8 +3648,8 @@ public:
     cmd["domain"] = "number";
     cmd["service"] = "set_value";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.value) {
-      cmd["service_data"]["value"] = *args.value;
+    if (_args.value) {
+      cmd["service_data"]["value"] = *_args.value;
     }
 
     entity->WSConnSend(cmd);
@@ -3657,24 +3659,24 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Persistent_notification
+// START HEADER FOR PersistentNotification
 
-class Persistent_notification
+class PersistentNotification
 {
 public:
-  Persistent_notification(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  PersistentNotification(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Persistent_notification;
   // Create
   // Shows a notification on the **Notifications** panel.
-  struct create_args
+  struct CreateArgs
   {
     optional<json> message;
     optional<json> notification_id;
     optional<json> title;
   };
-  void create([[maybe_unused]] const create_args& args)
+  void create([[maybe_unused]] const CreateArgs& _args)
   {
     json cmd;
 
@@ -3682,14 +3684,14 @@ public:
     cmd["domain"] = "persistent_notification";
     cmd["service"] = "create";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.message) {
-      cmd["service_data"]["message"] = *args.message;
+    if (_args.message) {
+      cmd["service_data"]["message"] = *_args.message;
     }
-    if (args.notification_id) {
-      cmd["service_data"]["notification_id"] = *args.notification_id;
+    if (_args.notification_id) {
+      cmd["service_data"]["notification_id"] = *_args.notification_id;
     }
-    if (args.title) {
-      cmd["service_data"]["title"] = *args.title;
+    if (_args.title) {
+      cmd["service_data"]["title"] = *_args.title;
     }
 
     entity->WSConnSend(cmd);
@@ -3697,11 +3699,11 @@ public:
 
   // Dismiss
   // Removes a notification from the **Notifications** panel.
-  struct dismiss_args
+  struct DismissArgs
   {
     optional<json> notification_id;
   };
-  void dismiss([[maybe_unused]] const dismiss_args& args)
+  void dismiss([[maybe_unused]] const DismissArgs& _args)
   {
     json cmd;
 
@@ -3709,8 +3711,8 @@ public:
     cmd["domain"] = "persistent_notification";
     cmd["service"] = "dismiss";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.notification_id) {
-      cmd["service_data"]["notification_id"] = *args.notification_id;
+    if (_args.notification_id) {
+      cmd["service_data"]["notification_id"] = *_args.notification_id;
     }
 
     entity->WSConnSend(cmd);
@@ -3718,10 +3720,10 @@ public:
 
   // Dismiss all
   // Removes all notifications from the **Notifications** panel.
-  struct dismiss_all_args
+  struct DismissAllArgs
   {
   };
-  void dismiss_all([[maybe_unused]] const dismiss_all_args& args)
+  void dismissAll([[maybe_unused]] const DismissAllArgs& _args)
   {
     json cmd;
 
@@ -3742,16 +3744,16 @@ private:
 class Person
 {
 public:
-  Person(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Person(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Person;
   // Reload
   // Reloads persons from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -3772,16 +3774,16 @@ private:
 class Recorder
 {
 public:
-  Recorder(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Recorder(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Recorder;
   // Disable
   // Stops the recording of events and state changes.
-  struct disable_args
+  struct DisableArgs
   {
   };
-  void disable([[maybe_unused]] const disable_args& args)
+  void disable([[maybe_unused]] const DisableArgs& _args)
   {
     json cmd;
 
@@ -3795,10 +3797,10 @@ public:
 
   // Enable
   // Starts the recording of events and state changes.
-  struct enable_args
+  struct EnableArgs
   {
   };
-  void enable([[maybe_unused]] const enable_args& args)
+  void enable([[maybe_unused]] const EnableArgs& _args)
   {
     json cmd;
 
@@ -3812,13 +3814,13 @@ public:
 
   // Purge
   // Starts purge task - to clean up old data from your database.
-  struct purge_args
+  struct PurgeArgs
   {
     optional<json> apply_filter;
     optional<json> keep_days;
     optional<json> repack;
   };
-  void purge([[maybe_unused]] const purge_args& args)
+  void purge([[maybe_unused]] const PurgeArgs& _args)
   {
     json cmd;
 
@@ -3826,14 +3828,14 @@ public:
     cmd["domain"] = "recorder";
     cmd["service"] = "purge";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.apply_filter) {
-      cmd["service_data"]["apply_filter"] = *args.apply_filter;
+    if (_args.apply_filter) {
+      cmd["service_data"]["apply_filter"] = *_args.apply_filter;
     }
-    if (args.keep_days) {
-      cmd["service_data"]["keep_days"] = *args.keep_days;
+    if (_args.keep_days) {
+      cmd["service_data"]["keep_days"] = *_args.keep_days;
     }
-    if (args.repack) {
-      cmd["service_data"]["repack"] = *args.repack;
+    if (_args.repack) {
+      cmd["service_data"]["repack"] = *_args.repack;
     }
 
     entity->WSConnSend(cmd);
@@ -3841,13 +3843,13 @@ public:
 
   // Purge entities
   // Starts a purge task to remove the data related to specific entities from your database.
-  struct purge_entities_args
+  struct PurgeEntitiesArgs
   {
     optional<json> domains;
     optional<json> entity_globs;
     optional<json> keep_days;
   };
-  void purge_entities([[maybe_unused]] const purge_entities_args& args)
+  void purgeEntities([[maybe_unused]] const PurgeEntitiesArgs& _args)
   {
     json cmd;
 
@@ -3855,14 +3857,14 @@ public:
     cmd["domain"] = "recorder";
     cmd["service"] = "purge_entities";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.domains) {
-      cmd["service_data"]["domains"] = *args.domains;
+    if (_args.domains) {
+      cmd["service_data"]["domains"] = *_args.domains;
     }
-    if (args.entity_globs) {
-      cmd["service_data"]["entity_globs"] = *args.entity_globs;
+    if (_args.entity_globs) {
+      cmd["service_data"]["entity_globs"] = *_args.entity_globs;
     }
-    if (args.keep_days) {
-      cmd["service_data"]["keep_days"] = *args.keep_days;
+    if (_args.keep_days) {
+      cmd["service_data"]["keep_days"] = *_args.keep_days;
     }
 
     entity->WSConnSend(cmd);
@@ -3877,18 +3879,18 @@ private:
 class Scene
 {
 public:
-  Scene(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Scene(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Scene;
   // Apply
   // Activates a scene with configuration.
-  struct apply_args
+  struct ApplyArgs
   {
     optional<json> entities;
     optional<json> transition;
   };
-  void apply([[maybe_unused]] const apply_args& args)
+  void apply([[maybe_unused]] const ApplyArgs& _args)
   {
     json cmd;
 
@@ -3896,11 +3898,11 @@ public:
     cmd["domain"] = "scene";
     cmd["service"] = "apply";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.entities) {
-      cmd["service_data"]["entities"] = *args.entities;
+    if (_args.entities) {
+      cmd["service_data"]["entities"] = *_args.entities;
     }
-    if (args.transition) {
-      cmd["service_data"]["transition"] = *args.transition;
+    if (_args.transition) {
+      cmd["service_data"]["transition"] = *_args.transition;
     }
 
     entity->WSConnSend(cmd);
@@ -3908,13 +3910,13 @@ public:
 
   // Create
   // Creates a new scene.
-  struct create_args
+  struct CreateArgs
   {
     optional<json> entities;
     optional<json> scene_id;
     optional<json> snapshot_entities;
   };
-  void create([[maybe_unused]] const create_args& args)
+  void create([[maybe_unused]] const CreateArgs& _args)
   {
     json cmd;
 
@@ -3922,14 +3924,14 @@ public:
     cmd["domain"] = "scene";
     cmd["service"] = "create";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.entities) {
-      cmd["service_data"]["entities"] = *args.entities;
+    if (_args.entities) {
+      cmd["service_data"]["entities"] = *_args.entities;
     }
-    if (args.scene_id) {
-      cmd["service_data"]["scene_id"] = *args.scene_id;
+    if (_args.scene_id) {
+      cmd["service_data"]["scene_id"] = *_args.scene_id;
     }
-    if (args.snapshot_entities) {
-      cmd["service_data"]["snapshot_entities"] = *args.snapshot_entities;
+    if (_args.snapshot_entities) {
+      cmd["service_data"]["snapshot_entities"] = *_args.snapshot_entities;
     }
 
     entity->WSConnSend(cmd);
@@ -3937,10 +3939,10 @@ public:
 
   // Delete
   // Deletes a dynamically created scene.
-  struct delete_args
+  struct DeleteArgs
   {
   };
-  void _delete([[maybe_unused]] const delete_args& args)
+  void _delete([[maybe_unused]] const DeleteArgs& _args)
   {
     json cmd;
 
@@ -3954,10 +3956,10 @@ public:
 
   // Reload
   // Reloads the scenes from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -3971,11 +3973,11 @@ public:
 
   // Activate
   // Activates a scene.
-  struct turn_on_args
+  struct TurnOnArgs
   {
     optional<json> transition;
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -3983,8 +3985,8 @@ public:
     cmd["domain"] = "scene";
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.transition) {
-      cmd["service_data"]["transition"] = *args.transition;
+    if (_args.transition) {
+      cmd["service_data"]["transition"] = *_args.transition;
     }
 
     entity->WSConnSend(cmd);
@@ -3999,16 +4001,16 @@ private:
 class Schedule
 {
 public:
-  Schedule(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Schedule(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Schedule;
   // Reload
   // Reloads schedules from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -4029,16 +4031,16 @@ private:
 class Script
 {
 public:
-  Script(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Script(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Script;
   // Reload
   // Reloads all the available scripts.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -4052,10 +4054,10 @@ public:
 
   // Toggle
   // Toggle a script. Starts it, if isn't running, stops it otherwise.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -4069,10 +4071,10 @@ public:
 
   // Turn off
   // Stops a running script.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -4086,10 +4088,10 @@ public:
 
   // Turn on
   // Runs the sequence of actions defined in a script.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -4110,16 +4112,16 @@ private:
 class Select
 {
 public:
-  Select(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Select(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Select;
   // First
   // Selects the first option.
-  struct select_first_args
+  struct SelectFirstArgs
   {
   };
-  void select_first([[maybe_unused]] const select_first_args& args)
+  void selectFirst([[maybe_unused]] const SelectFirstArgs& _args)
   {
     json cmd;
 
@@ -4133,10 +4135,10 @@ public:
 
   // Last
   // Selects the last option.
-  struct select_last_args
+  struct SelectLastArgs
   {
   };
-  void select_last([[maybe_unused]] const select_last_args& args)
+  void selectLast([[maybe_unused]] const SelectLastArgs& _args)
   {
     json cmd;
 
@@ -4150,11 +4152,11 @@ public:
 
   // Next
   // Selects the next option.
-  struct select_next_args
+  struct SelectNextArgs
   {
     optional<json> cycle;
   };
-  void select_next([[maybe_unused]] const select_next_args& args)
+  void selectNext([[maybe_unused]] const SelectNextArgs& _args)
   {
     json cmd;
 
@@ -4162,8 +4164,8 @@ public:
     cmd["domain"] = "select";
     cmd["service"] = "select_next";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.cycle) {
-      cmd["service_data"]["cycle"] = *args.cycle;
+    if (_args.cycle) {
+      cmd["service_data"]["cycle"] = *_args.cycle;
     }
 
     entity->WSConnSend(cmd);
@@ -4171,11 +4173,11 @@ public:
 
   // Select
   // Selects an option.
-  struct select_option_args
+  struct SelectOptionArgs
   {
     optional<json> option;
   };
-  void select_option([[maybe_unused]] const select_option_args& args)
+  void selectOption([[maybe_unused]] const SelectOptionArgs& _args)
   {
     json cmd;
 
@@ -4183,8 +4185,8 @@ public:
     cmd["domain"] = "select";
     cmd["service"] = "select_option";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.option) {
-      cmd["service_data"]["option"] = *args.option;
+    if (_args.option) {
+      cmd["service_data"]["option"] = *_args.option;
     }
 
     entity->WSConnSend(cmd);
@@ -4192,11 +4194,11 @@ public:
 
   // Previous
   // Selects the previous option.
-  struct select_previous_args
+  struct SelectPreviousArgs
   {
     optional<json> cycle;
   };
-  void select_previous([[maybe_unused]] const select_previous_args& args)
+  void selectPrevious([[maybe_unused]] const SelectPreviousArgs& _args)
   {
     json cmd;
 
@@ -4204,8 +4206,8 @@ public:
     cmd["domain"] = "select";
     cmd["service"] = "select_previous";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.cycle) {
-      cmd["service_data"]["cycle"] = *args.cycle;
+    if (_args.cycle) {
+      cmd["service_data"]["cycle"] = *_args.cycle;
     }
 
     entity->WSConnSend(cmd);
@@ -4215,22 +4217,22 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Shopping_list
+// START HEADER FOR ShoppingList
 
-class Shopping_list
+class ShoppingList
 {
 public:
-  Shopping_list(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  ShoppingList(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Shopping_list;
   // Add item
   // Adds an item to the shopping list.
-  struct add_item_args
+  struct AddItemArgs
   {
     optional<json> name;
   };
-  void add_item([[maybe_unused]] const add_item_args& args)
+  void addItem([[maybe_unused]] const AddItemArgs& _args)
   {
     json cmd;
 
@@ -4238,8 +4240,8 @@ public:
     cmd["domain"] = "shopping_list";
     cmd["service"] = "add_item";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.name) {
-      cmd["service_data"]["name"] = *args.name;
+    if (_args.name) {
+      cmd["service_data"]["name"] = *_args.name;
     }
 
     entity->WSConnSend(cmd);
@@ -4247,10 +4249,10 @@ public:
 
   // Clear completed items
   // Clears completed items from the shopping list.
-  struct clear_completed_items_args
+  struct ClearCompletedItemsArgs
   {
   };
-  void clear_completed_items([[maybe_unused]] const clear_completed_items_args& args)
+  void clearCompletedItems([[maybe_unused]] const ClearCompletedItemsArgs& _args)
   {
     json cmd;
 
@@ -4264,10 +4266,10 @@ public:
 
   // Complete all
   // Marks all items as completed in the shopping list (without removing them from the list).
-  struct complete_all_args
+  struct CompleteAllArgs
   {
   };
-  void complete_all([[maybe_unused]] const complete_all_args& args)
+  void completeAll([[maybe_unused]] const CompleteAllArgs& _args)
   {
     json cmd;
 
@@ -4281,11 +4283,11 @@ public:
 
   // Complete item
   // Marks the first item with matching name as completed in the shopping list.
-  struct complete_item_args
+  struct CompleteItemArgs
   {
     optional<json> name;
   };
-  void complete_item([[maybe_unused]] const complete_item_args& args)
+  void completeItem([[maybe_unused]] const CompleteItemArgs& _args)
   {
     json cmd;
 
@@ -4293,8 +4295,8 @@ public:
     cmd["domain"] = "shopping_list";
     cmd["service"] = "complete_item";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.name) {
-      cmd["service_data"]["name"] = *args.name;
+    if (_args.name) {
+      cmd["service_data"]["name"] = *_args.name;
     }
 
     entity->WSConnSend(cmd);
@@ -4302,10 +4304,10 @@ public:
 
   // Incomplete all
   // Marks all items as incomplete in the shopping list.
-  struct incomplete_all_args
+  struct IncompleteAllArgs
   {
   };
-  void incomplete_all([[maybe_unused]] const incomplete_all_args& args)
+  void incompleteAll([[maybe_unused]] const IncompleteAllArgs& _args)
   {
     json cmd;
 
@@ -4319,11 +4321,11 @@ public:
 
   // Incomplete item
   // Marks the first item with matching name as incomplete in the shopping list.
-  struct incomplete_item_args
+  struct IncompleteItemArgs
   {
     optional<json> name;
   };
-  void incomplete_item([[maybe_unused]] const incomplete_item_args& args)
+  void incompleteItem([[maybe_unused]] const IncompleteItemArgs& _args)
   {
     json cmd;
 
@@ -4331,8 +4333,8 @@ public:
     cmd["domain"] = "shopping_list";
     cmd["service"] = "incomplete_item";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.name) {
-      cmd["service_data"]["name"] = *args.name;
+    if (_args.name) {
+      cmd["service_data"]["name"] = *_args.name;
     }
 
     entity->WSConnSend(cmd);
@@ -4340,11 +4342,11 @@ public:
 
   // Remove item
   // Removes the first item with matching name from the shopping list.
-  struct remove_item_args
+  struct RemoveItemArgs
   {
     optional<json> name;
   };
-  void remove_item([[maybe_unused]] const remove_item_args& args)
+  void removeItem([[maybe_unused]] const RemoveItemArgs& _args)
   {
     json cmd;
 
@@ -4352,8 +4354,8 @@ public:
     cmd["domain"] = "shopping_list";
     cmd["service"] = "remove_item";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.name) {
-      cmd["service_data"]["name"] = *args.name;
+    if (_args.name) {
+      cmd["service_data"]["name"] = *_args.name;
     }
 
     entity->WSConnSend(cmd);
@@ -4361,11 +4363,11 @@ public:
 
   // Sort all items
   // Sorts all items by name in the shopping list.
-  struct sort_args
+  struct SortArgs
   {
     optional<json> reverse;
   };
-  void sort([[maybe_unused]] const sort_args& args)
+  void sort([[maybe_unused]] const SortArgs& _args)
   {
     json cmd;
 
@@ -4373,8 +4375,8 @@ public:
     cmd["domain"] = "shopping_list";
     cmd["service"] = "sort";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.reverse) {
-      cmd["service_data"]["reverse"] = *args.reverse;
+    if (_args.reverse) {
+      cmd["service_data"]["reverse"] = *_args.reverse;
     }
 
     entity->WSConnSend(cmd);
@@ -4389,16 +4391,16 @@ private:
 class Siren
 {
 public:
-  Siren(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Siren(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Siren;
   // Toggle
   // Toggles the siren on/off.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -4412,10 +4414,10 @@ public:
 
   // Turn off
   // Turns the siren off.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -4429,13 +4431,13 @@ public:
 
   // Turn on
   // Turns the siren on.
-  struct turn_on_args
+  struct TurnOnArgs
   {
     optional<json> duration;
     optional<json> tone;
     optional<json> volume_level;
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -4443,14 +4445,14 @@ public:
     cmd["domain"] = "siren";
     cmd["service"] = "turn_on";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.duration) {
-      cmd["service_data"]["duration"] = *args.duration;
+    if (_args.duration) {
+      cmd["service_data"]["duration"] = *_args.duration;
     }
-    if (args.tone) {
-      cmd["service_data"]["tone"] = *args.tone;
+    if (_args.tone) {
+      cmd["service_data"]["tone"] = *_args.tone;
     }
-    if (args.volume_level) {
-      cmd["service_data"]["volume_level"] = *args.volume_level;
+    if (_args.volume_level) {
+      cmd["service_data"]["volume_level"] = *_args.volume_level;
     }
 
     entity->WSConnSend(cmd);
@@ -4465,16 +4467,16 @@ private:
 class Switch
 {
 public:
-  Switch(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Switch(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Switch;
   // Toggle
   // Toggles a switch on/off.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -4488,10 +4490,10 @@ public:
 
   // Turn off
   // Turns a switch off.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -4505,10 +4507,10 @@ public:
 
   // Turn on
   // Turns a switch on.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -4524,21 +4526,21 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR System_log
+// START HEADER FOR SystemLog
 
-class System_log
+class SystemLog
 {
 public:
-  System_log(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  SystemLog(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::System_log;
   // Clear all
   // Clears all log entries.
-  struct clear_args
+  struct ClearArgs
   {
   };
-  void clear([[maybe_unused]] const clear_args& args)
+  void clear([[maybe_unused]] const ClearArgs& _args)
   {
     json cmd;
 
@@ -4552,13 +4554,13 @@ public:
 
   // Write
   // Write log entry.
-  struct write_args
+  struct WriteArgs
   {
     optional<json> level;
     optional<json> logger;
     optional<json> message;
   };
-  void write([[maybe_unused]] const write_args& args)
+  void write([[maybe_unused]] const WriteArgs& _args)
   {
     json cmd;
 
@@ -4566,14 +4568,14 @@ public:
     cmd["domain"] = "system_log";
     cmd["service"] = "write";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.level) {
-      cmd["service_data"]["level"] = *args.level;
+    if (_args.level) {
+      cmd["service_data"]["level"] = *_args.level;
     }
-    if (args.logger) {
-      cmd["service_data"]["logger"] = *args.logger;
+    if (_args.logger) {
+      cmd["service_data"]["logger"] = *_args.logger;
     }
-    if (args.message) {
-      cmd["service_data"]["message"] = *args.message;
+    if (_args.message) {
+      cmd["service_data"]["message"] = *_args.message;
     }
 
     entity->WSConnSend(cmd);
@@ -4588,17 +4590,17 @@ private:
 class Text
 {
 public:
-  Text(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Text(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Text;
   // Set value
   // Sets the value.
-  struct set_value_args
+  struct SetValueArgs
   {
     optional<json> value;
   };
-  void set_value([[maybe_unused]] const set_value_args& args)
+  void setValue([[maybe_unused]] const SetValueArgs& _args)
   {
     json cmd;
 
@@ -4606,8 +4608,8 @@ public:
     cmd["domain"] = "text";
     cmd["service"] = "set_value";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.value) {
-      cmd["service_data"]["value"] = *args.value;
+    if (_args.value) {
+      cmd["service_data"]["value"] = *_args.value;
     }
 
     entity->WSConnSend(cmd);
@@ -4622,17 +4624,17 @@ private:
 class Time
 {
 public:
-  Time(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Time(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Time;
   // Set Time
   // Sets the time.
-  struct set_value_args
+  struct SetValueArgs
   {
     optional<json> time;
   };
-  void set_value([[maybe_unused]] const set_value_args& args)
+  void setValue([[maybe_unused]] const SetValueArgs& _args)
   {
     json cmd;
 
@@ -4640,8 +4642,8 @@ public:
     cmd["domain"] = "time";
     cmd["service"] = "set_value";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.time) {
-      cmd["service_data"]["time"] = *args.time;
+    if (_args.time) {
+      cmd["service_data"]["time"] = *_args.time;
     }
 
     entity->WSConnSend(cmd);
@@ -4656,16 +4658,16 @@ private:
 class Timer
 {
 public:
-  Timer(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Timer(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Timer;
   // Cancel
   // Cancels a timer.
-  struct cancel_args
+  struct CancelArgs
   {
   };
-  void cancel([[maybe_unused]] const cancel_args& args)
+  void cancel([[maybe_unused]] const CancelArgs& _args)
   {
     json cmd;
 
@@ -4679,11 +4681,11 @@ public:
 
   // Change
   // Changes a timer.
-  struct change_args
+  struct ChangeArgs
   {
     optional<json> duration;
   };
-  void change([[maybe_unused]] const change_args& args)
+  void change([[maybe_unused]] const ChangeArgs& _args)
   {
     json cmd;
 
@@ -4691,8 +4693,8 @@ public:
     cmd["domain"] = "timer";
     cmd["service"] = "change";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.duration) {
-      cmd["service_data"]["duration"] = *args.duration;
+    if (_args.duration) {
+      cmd["service_data"]["duration"] = *_args.duration;
     }
 
     entity->WSConnSend(cmd);
@@ -4700,10 +4702,10 @@ public:
 
   // Finish
   // Finishes a timer.
-  struct finish_args
+  struct FinishArgs
   {
   };
-  void finish([[maybe_unused]] const finish_args& args)
+  void finish([[maybe_unused]] const FinishArgs& _args)
   {
     json cmd;
 
@@ -4717,10 +4719,10 @@ public:
 
   // Pause
   // Pauses a timer.
-  struct pause_args
+  struct PauseArgs
   {
   };
-  void pause([[maybe_unused]] const pause_args& args)
+  void pause([[maybe_unused]] const PauseArgs& _args)
   {
     json cmd;
 
@@ -4734,10 +4736,10 @@ public:
 
   // Reload
   // Reloads timers from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
@@ -4751,11 +4753,11 @@ public:
 
   // Start
   // Starts a timer.
-  struct start_args
+  struct StartArgs
   {
     optional<json> duration;
   };
-  void start([[maybe_unused]] const start_args& args)
+  void start([[maybe_unused]] const StartArgs& _args)
   {
     json cmd;
 
@@ -4763,8 +4765,8 @@ public:
     cmd["domain"] = "timer";
     cmd["service"] = "start";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.duration) {
-      cmd["service_data"]["duration"] = *args.duration;
+    if (_args.duration) {
+      cmd["service_data"]["duration"] = *_args.duration;
     }
 
     entity->WSConnSend(cmd);
@@ -4779,20 +4781,20 @@ private:
 class Todo
 {
 public:
-  Todo(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Todo(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Todo;
   // Add to-do list item
   // Add a new to-do list item.
-  struct add_item_args
+  struct AddItemArgs
   {
     optional<json> description;
     optional<json> due_date;
     optional<json> due_datetime;
     optional<json> item;
   };
-  void add_item([[maybe_unused]] const add_item_args& args)
+  void addItem([[maybe_unused]] const AddItemArgs& _args)
   {
     json cmd;
 
@@ -4800,17 +4802,17 @@ public:
     cmd["domain"] = "todo";
     cmd["service"] = "add_item";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.description) {
-      cmd["service_data"]["description"] = *args.description;
+    if (_args.description) {
+      cmd["service_data"]["description"] = *_args.description;
     }
-    if (args.due_date) {
-      cmd["service_data"]["due_date"] = *args.due_date;
+    if (_args.due_date) {
+      cmd["service_data"]["due_date"] = *_args.due_date;
     }
-    if (args.due_datetime) {
-      cmd["service_data"]["due_datetime"] = *args.due_datetime;
+    if (_args.due_datetime) {
+      cmd["service_data"]["due_datetime"] = *_args.due_datetime;
     }
-    if (args.item) {
-      cmd["service_data"]["item"] = *args.item;
+    if (_args.item) {
+      cmd["service_data"]["item"] = *_args.item;
     }
 
     entity->WSConnSend(cmd);
@@ -4818,11 +4820,11 @@ public:
 
   // Get to-do list items
   // Get items on a to-do list.
-  struct get_items_args
+  struct GetItemsArgs
   {
     optional<json> status;
   };
-  void get_items([[maybe_unused]] const get_items_args& args)
+  void getItems([[maybe_unused]] const GetItemsArgs& _args)
   {
     json cmd;
 
@@ -4830,8 +4832,8 @@ public:
     cmd["domain"] = "todo";
     cmd["service"] = "get_items";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.status) {
-      cmd["service_data"]["status"] = *args.status;
+    if (_args.status) {
+      cmd["service_data"]["status"] = *_args.status;
     }
 
     entity->WSConnSend(cmd);
@@ -4839,10 +4841,10 @@ public:
 
   // Remove all completed to-do list items
   // Remove all to-do list items that have been completed.
-  struct remove_completed_items_args
+  struct RemoveCompletedItemsArgs
   {
   };
-  void remove_completed_items([[maybe_unused]] const remove_completed_items_args& args)
+  void removeCompletedItems([[maybe_unused]] const RemoveCompletedItemsArgs& _args)
   {
     json cmd;
 
@@ -4856,11 +4858,11 @@ public:
 
   // Remove a to-do list item
   // Remove an existing to-do list item by its name.
-  struct remove_item_args
+  struct RemoveItemArgs
   {
     optional<json> item;
   };
-  void remove_item([[maybe_unused]] const remove_item_args& args)
+  void removeItem([[maybe_unused]] const RemoveItemArgs& _args)
   {
     json cmd;
 
@@ -4868,8 +4870,8 @@ public:
     cmd["domain"] = "todo";
     cmd["service"] = "remove_item";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.item) {
-      cmd["service_data"]["item"] = *args.item;
+    if (_args.item) {
+      cmd["service_data"]["item"] = *_args.item;
     }
 
     entity->WSConnSend(cmd);
@@ -4877,7 +4879,7 @@ public:
 
   // Update to-do list item
   // Update an existing to-do list item based on its name.
-  struct update_item_args
+  struct UpdateItemArgs
   {
     optional<json> description;
     optional<json> due_date;
@@ -4886,7 +4888,7 @@ public:
     optional<json> rename;
     optional<json> status;
   };
-  void update_item([[maybe_unused]] const update_item_args& args)
+  void updateItem([[maybe_unused]] const UpdateItemArgs& _args)
   {
     json cmd;
 
@@ -4894,23 +4896,23 @@ public:
     cmd["domain"] = "todo";
     cmd["service"] = "update_item";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.description) {
-      cmd["service_data"]["description"] = *args.description;
+    if (_args.description) {
+      cmd["service_data"]["description"] = *_args.description;
     }
-    if (args.due_date) {
-      cmd["service_data"]["due_date"] = *args.due_date;
+    if (_args.due_date) {
+      cmd["service_data"]["due_date"] = *_args.due_date;
     }
-    if (args.due_datetime) {
-      cmd["service_data"]["due_datetime"] = *args.due_datetime;
+    if (_args.due_datetime) {
+      cmd["service_data"]["due_datetime"] = *_args.due_datetime;
     }
-    if (args.item) {
-      cmd["service_data"]["item"] = *args.item;
+    if (_args.item) {
+      cmd["service_data"]["item"] = *_args.item;
     }
-    if (args.rename) {
-      cmd["service_data"]["rename"] = *args.rename;
+    if (_args.rename) {
+      cmd["service_data"]["rename"] = *_args.rename;
     }
-    if (args.status) {
-      cmd["service_data"]["status"] = *args.status;
+    if (_args.status) {
+      cmd["service_data"]["status"] = *_args.status;
     }
 
     entity->WSConnSend(cmd);
@@ -4925,16 +4927,16 @@ private:
 class Tts
 {
 public:
-  Tts(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Tts(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Tts;
   // Clear TTS cache
   // Removes all cached text-to-speech files and purges the memory.
-  struct clear_cache_args
+  struct ClearCacheArgs
   {
   };
-  void clear_cache([[maybe_unused]] const clear_cache_args& args)
+  void clearCache([[maybe_unused]] const ClearCacheArgs& _args)
   {
     json cmd;
 
@@ -4948,7 +4950,7 @@ public:
 
   // Say a TTS message with demo
   // Say something using text-to-speech on a media player with demo.
-  struct demo_say_args
+  struct DemoSayArgs
   {
     optional<json> cache;
     optional<json> entity_id;
@@ -4956,7 +4958,7 @@ public:
     optional<json> message;
     optional<json> options;
   };
-  void demo_say([[maybe_unused]] const demo_say_args& args)
+  void demoSay([[maybe_unused]] const DemoSayArgs& _args)
   {
     json cmd;
 
@@ -4964,20 +4966,20 @@ public:
     cmd["domain"] = "tts";
     cmd["service"] = "demo_say";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.cache) {
-      cmd["service_data"]["cache"] = *args.cache;
+    if (_args.cache) {
+      cmd["service_data"]["cache"] = *_args.cache;
     }
-    if (args.entity_id) {
-      cmd["service_data"]["entity_id"] = *args.entity_id;
+    if (_args.entity_id) {
+      cmd["service_data"]["entity_id"] = *_args.entity_id;
     }
-    if (args.language) {
-      cmd["service_data"]["language"] = *args.language;
+    if (_args.language) {
+      cmd["service_data"]["language"] = *_args.language;
     }
-    if (args.message) {
-      cmd["service_data"]["message"] = *args.message;
+    if (_args.message) {
+      cmd["service_data"]["message"] = *_args.message;
     }
-    if (args.options) {
-      cmd["service_data"]["options"] = *args.options;
+    if (_args.options) {
+      cmd["service_data"]["options"] = *_args.options;
     }
 
     entity->WSConnSend(cmd);
@@ -4985,7 +4987,7 @@ public:
 
   // Speak
   // Speaks something using text-to-speech on a media player.
-  struct speak_args
+  struct SpeakArgs
   {
     optional<json> cache;
     optional<json> language;
@@ -4993,7 +4995,7 @@ public:
     optional<json> message;
     optional<json> options;
   };
-  void speak([[maybe_unused]] const speak_args& args)
+  void speak([[maybe_unused]] const SpeakArgs& _args)
   {
     json cmd;
 
@@ -5001,20 +5003,20 @@ public:
     cmd["domain"] = "tts";
     cmd["service"] = "speak";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.cache) {
-      cmd["service_data"]["cache"] = *args.cache;
+    if (_args.cache) {
+      cmd["service_data"]["cache"] = *_args.cache;
     }
-    if (args.language) {
-      cmd["service_data"]["language"] = *args.language;
+    if (_args.language) {
+      cmd["service_data"]["language"] = *_args.language;
     }
-    if (args.media_player_entity_id) {
-      cmd["service_data"]["media_player_entity_id"] = *args.media_player_entity_id;
+    if (_args.media_player_entity_id) {
+      cmd["service_data"]["media_player_entity_id"] = *_args.media_player_entity_id;
     }
-    if (args.message) {
-      cmd["service_data"]["message"] = *args.message;
+    if (_args.message) {
+      cmd["service_data"]["message"] = *_args.message;
     }
-    if (args.options) {
-      cmd["service_data"]["options"] = *args.options;
+    if (_args.options) {
+      cmd["service_data"]["options"] = *_args.options;
     }
 
     entity->WSConnSend(cmd);
@@ -5029,16 +5031,16 @@ private:
 class Update
 {
 public:
-  Update(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Update(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Update;
   // Clear skipped update
   // Removes the skipped version marker from an update.
-  struct clear_skipped_args
+  struct ClearSkippedArgs
   {
   };
-  void clear_skipped([[maybe_unused]] const clear_skipped_args& args)
+  void clearSkipped([[maybe_unused]] const ClearSkippedArgs& _args)
   {
     json cmd;
 
@@ -5052,12 +5054,12 @@ public:
 
   // Install update
   // Installs an update for this device or service.
-  struct install_args
+  struct InstallArgs
   {
     optional<json> backup;
     optional<json> version;
   };
-  void install([[maybe_unused]] const install_args& args)
+  void install([[maybe_unused]] const InstallArgs& _args)
   {
     json cmd;
 
@@ -5065,11 +5067,11 @@ public:
     cmd["domain"] = "update";
     cmd["service"] = "install";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.backup) {
-      cmd["service_data"]["backup"] = *args.backup;
+    if (_args.backup) {
+      cmd["service_data"]["backup"] = *_args.backup;
     }
-    if (args.version) {
-      cmd["service_data"]["version"] = *args.version;
+    if (_args.version) {
+      cmd["service_data"]["version"] = *_args.version;
     }
 
     entity->WSConnSend(cmd);
@@ -5077,10 +5079,10 @@ public:
 
   // Skip update
   // Marks currently available update as skipped.
-  struct skip_args
+  struct SkipArgs
   {
   };
-  void skip([[maybe_unused]] const skip_args& args)
+  void skip([[maybe_unused]] const SkipArgs& _args)
   {
     json cmd;
 
@@ -5101,16 +5103,16 @@ private:
 class Vacuum
 {
 public:
-  Vacuum(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Vacuum(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Vacuum;
   // Clean spot
   // Tells the vacuum cleaner to do a spot clean-up.
-  struct clean_spot_args
+  struct CleanSpotArgs
   {
   };
-  void clean_spot([[maybe_unused]] const clean_spot_args& args)
+  void cleanSpot([[maybe_unused]] const CleanSpotArgs& _args)
   {
     json cmd;
 
@@ -5124,10 +5126,10 @@ public:
 
   // Locate
   // Locates the vacuum cleaner robot.
-  struct locate_args
+  struct LocateArgs
   {
   };
-  void locate([[maybe_unused]] const locate_args& args)
+  void locate([[maybe_unused]] const LocateArgs& _args)
   {
     json cmd;
 
@@ -5141,10 +5143,10 @@ public:
 
   // Pause
   // Pauses the cleaning task.
-  struct pause_args
+  struct PauseArgs
   {
   };
-  void pause([[maybe_unused]] const pause_args& args)
+  void pause([[maybe_unused]] const PauseArgs& _args)
   {
     json cmd;
 
@@ -5158,10 +5160,10 @@ public:
 
   // Return to dock
   // Tells the vacuum cleaner to return to its dock.
-  struct return_to_base_args
+  struct ReturnToBaseArgs
   {
   };
-  void return_to_base([[maybe_unused]] const return_to_base_args& args)
+  void returnToBase([[maybe_unused]] const ReturnToBaseArgs& _args)
   {
     json cmd;
 
@@ -5175,12 +5177,12 @@ public:
 
   // Send command
   // Sends a command to the vacuum cleaner.
-  struct send_command_args
+  struct SendCommandArgs
   {
     optional<json> command;
     optional<json> params;
   };
-  void send_command([[maybe_unused]] const send_command_args& args)
+  void sendCommand([[maybe_unused]] const SendCommandArgs& _args)
   {
     json cmd;
 
@@ -5188,11 +5190,11 @@ public:
     cmd["domain"] = "vacuum";
     cmd["service"] = "send_command";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.command) {
-      cmd["service_data"]["command"] = *args.command;
+    if (_args.command) {
+      cmd["service_data"]["command"] = *_args.command;
     }
-    if (args.params) {
-      cmd["service_data"]["params"] = *args.params;
+    if (_args.params) {
+      cmd["service_data"]["params"] = *_args.params;
     }
 
     entity->WSConnSend(cmd);
@@ -5200,11 +5202,11 @@ public:
 
   // Set fan speed
   // Sets the fan speed of the vacuum cleaner.
-  struct set_fan_speed_args
+  struct SetFanSpeedArgs
   {
     optional<json> fan_speed;
   };
-  void set_fan_speed([[maybe_unused]] const set_fan_speed_args& args)
+  void setFanSpeed([[maybe_unused]] const SetFanSpeedArgs& _args)
   {
     json cmd;
 
@@ -5212,8 +5214,8 @@ public:
     cmd["domain"] = "vacuum";
     cmd["service"] = "set_fan_speed";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.fan_speed) {
-      cmd["service_data"]["fan_speed"] = *args.fan_speed;
+    if (_args.fan_speed) {
+      cmd["service_data"]["fan_speed"] = *_args.fan_speed;
     }
 
     entity->WSConnSend(cmd);
@@ -5221,10 +5223,10 @@ public:
 
   // Start
   // Starts or resumes the cleaning task.
-  struct start_args
+  struct StartArgs
   {
   };
-  void start([[maybe_unused]] const start_args& args)
+  void start([[maybe_unused]] const StartArgs& _args)
   {
     json cmd;
 
@@ -5238,10 +5240,10 @@ public:
 
   // Start/pause
   // Starts, pauses, or resumes the cleaning task.
-  struct start_pause_args
+  struct StartPauseArgs
   {
   };
-  void start_pause([[maybe_unused]] const start_pause_args& args)
+  void startPause([[maybe_unused]] const StartPauseArgs& _args)
   {
     json cmd;
 
@@ -5255,10 +5257,10 @@ public:
 
   // Stop
   // Stops the current cleaning task.
-  struct stop_args
+  struct StopArgs
   {
   };
-  void stop([[maybe_unused]] const stop_args& args)
+  void stop([[maybe_unused]] const StopArgs& _args)
   {
     json cmd;
 
@@ -5272,10 +5274,10 @@ public:
 
   // Toggle
   // Toggles the vacuum cleaner on/off.
-  struct toggle_args
+  struct ToggleArgs
   {
   };
-  void toggle([[maybe_unused]] const toggle_args& args)
+  void toggle([[maybe_unused]] const ToggleArgs& _args)
   {
     json cmd;
 
@@ -5289,10 +5291,10 @@ public:
 
   // Turn off
   // Stops the current cleaning task and returns to its dock.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -5306,10 +5308,10 @@ public:
 
   // Turn on
   // Starts a new cleaning task.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -5325,22 +5327,22 @@ private:
   std::shared_ptr<HAEntity> entity;
 };
 
-// START HEADER FOR Water_heater
+// START HEADER FOR WaterHeater
 
-class Water_heater
+class WaterHeater
 {
 public:
-  Water_heater(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  WaterHeater(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Water_heater;
   // Set away mode
   // Turns away mode on/off.
-  struct set_away_mode_args
+  struct SetAwayModeArgs
   {
     optional<json> away_mode;
   };
-  void set_away_mode([[maybe_unused]] const set_away_mode_args& args)
+  void setAwayMode([[maybe_unused]] const SetAwayModeArgs& _args)
   {
     json cmd;
 
@@ -5348,8 +5350,8 @@ public:
     cmd["domain"] = "water_heater";
     cmd["service"] = "set_away_mode";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.away_mode) {
-      cmd["service_data"]["away_mode"] = *args.away_mode;
+    if (_args.away_mode) {
+      cmd["service_data"]["away_mode"] = *_args.away_mode;
     }
 
     entity->WSConnSend(cmd);
@@ -5357,11 +5359,11 @@ public:
 
   // Set operation mode
   // Sets the operation mode.
-  struct set_operation_mode_args
+  struct SetOperationModeArgs
   {
     optional<json> operation_mode;
   };
-  void set_operation_mode([[maybe_unused]] const set_operation_mode_args& args)
+  void setOperationMode([[maybe_unused]] const SetOperationModeArgs& _args)
   {
     json cmd;
 
@@ -5369,8 +5371,8 @@ public:
     cmd["domain"] = "water_heater";
     cmd["service"] = "set_operation_mode";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.operation_mode) {
-      cmd["service_data"]["operation_mode"] = *args.operation_mode;
+    if (_args.operation_mode) {
+      cmd["service_data"]["operation_mode"] = *_args.operation_mode;
     }
 
     entity->WSConnSend(cmd);
@@ -5378,12 +5380,12 @@ public:
 
   // Set temperature
   // Sets the target temperature.
-  struct set_temperature_args
+  struct SetTemperatureArgs
   {
     optional<json> operation_mode;
     optional<json> temperature;
   };
-  void set_temperature([[maybe_unused]] const set_temperature_args& args)
+  void setTemperature([[maybe_unused]] const SetTemperatureArgs& _args)
   {
     json cmd;
 
@@ -5391,11 +5393,11 @@ public:
     cmd["domain"] = "water_heater";
     cmd["service"] = "set_temperature";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.operation_mode) {
-      cmd["service_data"]["operation_mode"] = *args.operation_mode;
+    if (_args.operation_mode) {
+      cmd["service_data"]["operation_mode"] = *_args.operation_mode;
     }
-    if (args.temperature) {
-      cmd["service_data"]["temperature"] = *args.temperature;
+    if (_args.temperature) {
+      cmd["service_data"]["temperature"] = *_args.temperature;
     }
 
     entity->WSConnSend(cmd);
@@ -5403,10 +5405,10 @@ public:
 
   // Turn off
   // Turns water heater off.
-  struct turn_off_args
+  struct TurnOffArgs
   {
   };
-  void turn_off([[maybe_unused]] const turn_off_args& args)
+  void turnOff([[maybe_unused]] const TurnOffArgs& _args)
   {
     json cmd;
 
@@ -5420,10 +5422,10 @@ public:
 
   // Turn on
   // Turns water heater on.
-  struct turn_on_args
+  struct TurnOnArgs
   {
   };
-  void turn_on([[maybe_unused]] const turn_on_args& args)
+  void turnOn([[maybe_unused]] const TurnOnArgs& _args)
   {
     json cmd;
 
@@ -5444,17 +5446,17 @@ private:
 class Weather
 {
 public:
-  Weather(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Weather(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Weather;
   // Get forecast
   // Get weather forecast.
-  struct get_forecast_args
+  struct GetForecastArgs
   {
     optional<json> type;
   };
-  void get_forecast([[maybe_unused]] const get_forecast_args& args)
+  void getForecast([[maybe_unused]] const GetForecastArgs& _args)
   {
     json cmd;
 
@@ -5462,8 +5464,8 @@ public:
     cmd["domain"] = "weather";
     cmd["service"] = "get_forecast";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.type) {
-      cmd["service_data"]["type"] = *args.type;
+    if (_args.type) {
+      cmd["service_data"]["type"] = *_args.type;
     }
 
     entity->WSConnSend(cmd);
@@ -5471,11 +5473,11 @@ public:
 
   // Get forecasts
   // Get weather forecasts.
-  struct get_forecasts_args
+  struct GetForecastsArgs
   {
     optional<json> type;
   };
-  void get_forecasts([[maybe_unused]] const get_forecasts_args& args)
+  void getForecasts([[maybe_unused]] const GetForecastsArgs& _args)
   {
     json cmd;
 
@@ -5483,8 +5485,8 @@ public:
     cmd["domain"] = "weather";
     cmd["service"] = "get_forecasts";
     cmd["target"]["entity_id"] = entity->id;
-    if (args.type) {
-      cmd["service_data"]["type"] = *args.type;
+    if (_args.type) {
+      cmd["service_data"]["type"] = *_args.type;
     }
 
     entity->WSConnSend(cmd);
@@ -5499,16 +5501,16 @@ private:
 class Zone
 {
 public:
-  Zone(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  Zone(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::Zone;
   // Reload
   // Reloads zones from the YAML-configuration.
-  struct reload_args
+  struct ReloadArgs
   {
   };
-  void reload([[maybe_unused]] const reload_args& args)
+  void reload([[maybe_unused]] const ReloadArgs& _args)
   {
     json cmd;
 
