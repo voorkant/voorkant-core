@@ -21,7 +21,7 @@
 #define LV_ATTRIBUTE_IMG_COLORTEMP24
 #endif
 
-const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_COLORTEMP24 uint8_t colortemp24_map[] = {
+const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_COLORTEMP24 uint8_t G_COLORTEMP24_MAP[] = {
 #if LV_COLOR_DEPTH == 1 || LV_COLOR_DEPTH == 8
   /*Pixel format: Alpha 8 bit, Red: 3 bit, Green: 3 bit, Blue: 2 bit*/
   0x00,
@@ -6947,7 +6947,7 @@ const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_COLORTEMP
 #endif
 };
 
-const lv_img_header_t colortemp24header = {
+const lv_img_header_t G_COLORTEMP24HEADER = {
   .cf = LV_IMG_CF_TRUE_COLOR_ALPHA,
   .always_zero = 0,
   .reserved = 0,
@@ -6955,8 +6955,8 @@ const lv_img_header_t colortemp24header = {
   .h = 24,
 };
 
-const lv_img_dsc_t colortemp24 = {
-  .header = colortemp24header,
+const lv_img_dsc_t G_COLORTEMP24 = {
+  .header = G_COLORTEMP24HEADER,
   .data_size = 576 * LV_IMG_PX_SIZE_ALPHA_BYTE,
-  .data = colortemp24_map,
+  .data = G_COLORTEMP24_MAP,
 };

@@ -2,18 +2,18 @@
 
 // FIXME: we do a whole lot of json parsing in this file, that we should be doing somewhere else.
 
-lv_obj_t* UIRGBLight::createImageButton(const void* imgOrSymbol, lv_event_cb_t callbackEvent, lv_event_code_t eventCode, bool toggle)
+lv_obj_t* UIRGBLight::createImageButton(const void* _imgOrSymbol, lv_event_cb_t _callbackEvent, lv_event_code_t _eventCode, bool _toggle)
 {
   lv_obj_t* btn = lv_btn_create(btns);
   lv_obj_set_size(btn, 50, 40);
   lv_obj_set_style_pad_all(btn, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  if (toggle) {
+  if (_toggle) {
     lv_obj_add_flag(btn, LV_OBJ_FLAG_CHECKABLE);
   }
-  lv_obj_add_event_cb(btn, callbackEvent, eventCode, reinterpret_cast<void*>(this));
-  lv_obj_t* imgOnButton = lv_img_create(btn);
-  lv_img_set_src(imgOnButton, imgOrSymbol);
-  lv_obj_set_align(imgOnButton, LV_ALIGN_CENTER);
+  lv_obj_add_event_cb(btn, _callbackEvent, _eventCode, reinterpret_cast<void*>(this));
+  lv_obj_t* img_on_button = lv_img_create(btn);
+  lv_img_set_src(img_on_button, _imgOrSymbol);
+  lv_obj_set_align(img_on_button, LV_ALIGN_CENTER);
   return btn;
 }
 
@@ -32,12 +32,12 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   if (!attributes.contains("supported_color_modes") || !attributes["supported_color_modes"].is_array()) {
     throw std::runtime_error("RGBLight really needs to know the supported_color_modes as an array");
   }
-  std::vector<std::string> supportedColorModes = attributes["supported_color_modes"].get<std::vector<string>>();
+  std::vector<std::string> supported_color_modes = attributes["supported_color_modes"].get<std::vector<string>>();
 
   // FIXME: we get all the supported color modes here, but we don't support all of them. Missing is RGBW, RGBWW and WHITE
-  for (auto& mode : supportedColorModes) {
+  for (auto& mode : supported_color_modes) {
     std::cerr << "    supported color mode:" << mode << std::endl;
-    std::transform(mode.begin(), mode.end(), mode.begin(), [](unsigned char c) { return std::tolower(c); }); // this needed?
+    std::transform(mode.begin(), mode.end(), mode.begin(), [](unsigned char _c) { return std::tolower(_c); }); // this needed?
     if (mode == "unknown") {
       throw std::runtime_error("support color mode is 'unknown', we really can't deal with that.");
     }
@@ -94,8 +94,8 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_coord_t sliderheight = widthheight - 25;
 
   if (showBrightness) {
-    lv_obj_t* brightnessTile = lv_tileview_add_tile(tilecontainer, 0, 0, LV_DIR_HOR);
-    brightnessSlider = lv_slider_create(brightnessTile);
+    lv_obj_t* brightness_tile = lv_tileview_add_tile(tilecontainer, 0, 0, LV_DIR_HOR);
+    brightnessSlider = lv_slider_create(brightness_tile);
     lv_obj_set_height(brightnessSlider, sliderheight);
     lv_obj_set_width(brightnessSlider, 50);
     lv_obj_set_align(brightnessSlider, LV_ALIGN_CENTER);
@@ -104,8 +104,8 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   }
 
   if (showColorWheel) {
-    lv_obj_t* cwTile = lv_tileview_add_tile(tilecontainer, 1, 0, LV_DIR_HOR);
-    cw = lv_colorwheel_create(cwTile, true);
+    lv_obj_t* cw_tile = lv_tileview_add_tile(tilecontainer, 1, 0, LV_DIR_HOR);
+    cw = lv_colorwheel_create(cw_tile, true);
     lv_obj_set_size(cw, widthheight, widthheight);
     lv_obj_set_align(cw, LV_ALIGN_CENTER);
     lv_colorwheel_set_mode_fixed(cw, false);
@@ -123,8 +123,8 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     // TODO: RGBW and RGBWW have a few sliders underneath the color wheels
     // In white mode, the indicator on the color wheel should be removed. Not sure if we can do that.
 
-    lv_obj_t* colortempTile = lv_tileview_add_tile(tilecontainer, 2, 0, LV_DIR_HOR);
-    colortempSlider = lv_slider_create(colortempTile);
+    lv_obj_t* colortemp_tile = lv_tileview_add_tile(tilecontainer, 2, 0, LV_DIR_HOR);
+    colortempSlider = lv_slider_create(colortemp_tile);
     lv_obj_set_height(colortempSlider, sliderheight);
     lv_obj_set_width(colortempSlider, 50);
     lv_obj_set_align(colortempSlider, LV_ALIGN_CENTER);
@@ -175,18 +175,18 @@ void UIRGBLight::uiupdate()
       lv_obj_add_state(btnOnOff, LV_STATE_CHECKED);
       int brightness = state["attributes"]["brightness"].get<int>(); // brightness is NULL If the thing is off
       lv_slider_set_value(brightnessSlider, brightness, LV_ANIM_OFF);
-      int brightnessPercent = static_cast<int>(brightness / 2.55);
-      std::string strBrightnessPercent = std::to_string(brightnessPercent);
-      lv_label_set_text(brightnessLabel, (strBrightnessPercent + "%").c_str());
+      int brightness_percent = static_cast<int>(brightness / 2.55);
+      std::string str_brightness_percent = std::to_string(brightness_percent);
+      lv_label_set_text(brightnessLabel, (str_brightness_percent + "%").c_str());
       if (colormode == "hs") {
 
         std::vector<int> vec_hs = state["attributes"]["hs_color"];
 
-        lv_color_hsv_t hsvVal;
-        hsvVal.h = vec_hs.at(0);
-        hsvVal.s = vec_hs.at(1);
-        hsvVal.v = brightnessPercent;
-        lv_colorwheel_set_hsv(cw, hsvVal);
+        lv_color_hsv_t hsv_val;
+        hsv_val.h = vec_hs.at(0);
+        hsv_val.s = vec_hs.at(1);
+        hsv_val.v = brightness_percent;
+        lv_colorwheel_set_hsv(cw, hsv_val);
       }
       else if (colormode == "color_temp") {
         int colortemp = state["attributes"]["color_temp_kelvin"].get<int>();
@@ -220,82 +220,82 @@ void UIRGBLight::uiupdate()
   }
 }
 
-void UIRGBLight::btnOnOff_cb(lv_event_t* e)
+void UIRGBLight::btnOnOff_cb(lv_event_t* _e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  lv_event_code_t code = lv_event_get_code(_e);
 
-  UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
+  UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
   if (code == LV_EVENT_VALUE_CHANGED) {
-    HADomains::Light light(rgbLight->entity);
+    HADomains::Light light(rgb_light->entity);
     light.toggle({}); // FIXME: probably better to check state and send turn_off() or turn_on()
   }
 };
 
 // FIXME: woody stairing into the distance: "I see copy/paste code... copy/paste code everywhere..."
-void UIRGBLight::btnBrightness_cb(lv_event_t* e)
+void UIRGBLight::btnBrightness_cb(lv_event_t* _e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  lv_event_code_t code = lv_event_get_code(_e);
 
-  UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
+  UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
   if (code == LV_EVENT_CLICKED) {
-    lv_obj_set_tile_id(rgbLight->tilecontainer, 0, 0, LV_ANIM_OFF);
-    if (rgbLight->showBrightness) {
-      lv_obj_add_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    lv_obj_set_tile_id(rgb_light->tilecontainer, 0, 0, LV_ANIM_OFF);
+    if (rgb_light->showBrightness) {
+      lv_obj_add_state(rgb_light->btnBrightness, LV_STATE_CHECKED);
     }
-    if (rgbLight->showColorWheel) {
-      lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    if (rgb_light->showColorWheel) {
+      lv_obj_clear_state(rgb_light->btnColorWheel, LV_STATE_CHECKED);
     }
-    if (rgbLight->showColorTemp) {
-      lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    if (rgb_light->showColorTemp) {
+      lv_obj_clear_state(rgb_light->btnColorTemp, LV_STATE_CHECKED);
     }
   }
 };
 
-void UIRGBLight::btnColorWheel_cb(lv_event_t* e)
+void UIRGBLight::btnColorWheel_cb(lv_event_t* _e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  lv_event_code_t code = lv_event_get_code(_e);
 
-  UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
+  UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
   if (code == LV_EVENT_CLICKED) {
-    lv_obj_set_tile_id(rgbLight->tilecontainer, 1, 0, LV_ANIM_OFF);
-    if (rgbLight->showBrightness) {
-      lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    lv_obj_set_tile_id(rgb_light->tilecontainer, 1, 0, LV_ANIM_OFF);
+    if (rgb_light->showBrightness) {
+      lv_obj_clear_state(rgb_light->btnBrightness, LV_STATE_CHECKED);
     }
-    if (rgbLight->showColorWheel) {
-      lv_obj_add_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    if (rgb_light->showColorWheel) {
+      lv_obj_add_state(rgb_light->btnColorWheel, LV_STATE_CHECKED);
     }
-    if (rgbLight->showColorTemp) {
-      lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    if (rgb_light->showColorTemp) {
+      lv_obj_clear_state(rgb_light->btnColorTemp, LV_STATE_CHECKED);
     }
   }
 };
 
-void UIRGBLight::btnColorTemp_cb(lv_event_t* e)
+void UIRGBLight::btnColorTemp_cb(lv_event_t* _e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  lv_event_code_t code = lv_event_get_code(_e);
 
-  UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
+  UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
   if (code == LV_EVENT_CLICKED) {
-    lv_obj_set_tile_id(rgbLight->tilecontainer, 2, 0, LV_ANIM_OFF);
-    if (rgbLight->showBrightness) {
-      lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    lv_obj_set_tile_id(rgb_light->tilecontainer, 2, 0, LV_ANIM_OFF);
+    if (rgb_light->showBrightness) {
+      lv_obj_clear_state(rgb_light->btnBrightness, LV_STATE_CHECKED);
     }
-    if (rgbLight->showColorWheel) {
-      lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    if (rgb_light->showColorWheel) {
+      lv_obj_clear_state(rgb_light->btnColorWheel, LV_STATE_CHECKED);
     }
-    if (rgbLight->showColorTemp) {
-      lv_obj_add_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    if (rgb_light->showColorTemp) {
+      lv_obj_add_state(rgb_light->btnColorTemp, LV_STATE_CHECKED);
     }
   }
 };
 
-void UIRGBLight::brightness_slide_cb(lv_event_t* e)
+void UIRGBLight::brightness_slide_cb(lv_event_t* _e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_VALUE_CHANGED) {
-    auto slidervalue = lv_slider_get_value(e->target);
+    auto slidervalue = lv_slider_get_value(_e->target);
 
-    std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(e->user_data);
+    std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
     HADomains::Light light(ent);
 
     if (slidervalue == 0) {
@@ -307,47 +307,47 @@ void UIRGBLight::brightness_slide_cb(lv_event_t* e)
   }
 };
 
-void UIRGBLight::colortemp_slide_cb(lv_event_t* e)
+void UIRGBLight::colortemp_slide_cb(lv_event_t* _e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_VALUE_CHANGED) {
-    auto slidervalue = lv_slider_get_value(e->target);
+    auto slidervalue = lv_slider_get_value(_e->target);
 
-    std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(e->user_data);
+    std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
     HADomains::Light light(ent);
 
     light.turn_on({.kelvin = slidervalue});
   }
 };
 
-void UIRGBLight::tilemove_cb(lv_event_t* e)
+void UIRGBLight::tilemove_cb(lv_event_t* _e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  lv_event_code_t code = lv_event_get_code(_e);
 
-  UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
+  UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
   if (code == LV_EVENT_VALUE_CHANGED) {
     // from https://forum.lvgl.io/t/get-current-active-tile-in-tileview/1644
-    lv_obj_t* tile = lv_tileview_get_tile_act(rgbLight->tilecontainer);
+    lv_obj_t* tile = lv_tileview_get_tile_act(rgb_light->tilecontainer);
     lv_coord_t tile_x = lv_obj_get_x(tile);
-    int tileNr = tile_x / 236;
-    if (rgbLight->showBrightness) {
-      lv_obj_clear_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+    int tile_nr = tile_x / 236;
+    if (rgb_light->showBrightness) {
+      lv_obj_clear_state(rgb_light->btnBrightness, LV_STATE_CHECKED);
     }
-    if (rgbLight->showColorWheel) {
-      lv_obj_clear_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+    if (rgb_light->showColorWheel) {
+      lv_obj_clear_state(rgb_light->btnColorWheel, LV_STATE_CHECKED);
     }
-    if (rgbLight->showColorTemp) {
-      lv_obj_clear_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+    if (rgb_light->showColorTemp) {
+      lv_obj_clear_state(rgb_light->btnColorTemp, LV_STATE_CHECKED);
     }
-    switch (tileNr) {
+    switch (tile_nr) {
     case 0:
-      lv_obj_add_state(rgbLight->btnBrightness, LV_STATE_CHECKED);
+      lv_obj_add_state(rgb_light->btnBrightness, LV_STATE_CHECKED);
       break;
     case 1:
-      lv_obj_add_state(rgbLight->btnColorWheel, LV_STATE_CHECKED);
+      lv_obj_add_state(rgb_light->btnColorWheel, LV_STATE_CHECKED);
       break;
     case 2:
-      lv_obj_add_state(rgbLight->btnColorTemp, LV_STATE_CHECKED);
+      lv_obj_add_state(rgb_light->btnColorTemp, LV_STATE_CHECKED);
       break;
     default:
       break;
@@ -355,22 +355,22 @@ void UIRGBLight::tilemove_cb(lv_event_t* e)
   }
 };
 
-void UIRGBLight::colorwheel_move_cb(lv_event_t* e)
+void UIRGBLight::colorwheel_move_cb(lv_event_t* _e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_VALUE_CHANGED) {
 
-    lv_obj_t* colorwheel = e->target;
+    lv_obj_t* colorwheel = _e->target;
     lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
     lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
 
     std::cerr << "HSV (H/S/V):" << color_hsv.h << "/" << (uint16_t)color_hsv.s << "/" << (uint16_t)color_hsv.v << std::endl;
     std::cerr << "RGB (R/G/B):" << color_rgb.ch.red << "/" << color_rgb.ch.green << "/" << color_rgb.ch.blue << std::endl;
 
-    UIRGBLight* rgbLight = (UIRGBLight*)(e->user_data);
-    HADomains::Light light(rgbLight->entity);
+    UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
+    HADomains::Light light(rgb_light->entity);
 
-    std::string colormode = rgbLight->getColorMode();
+    std::string colormode = rgb_light->getColorMode();
 
     std::cerr << "HA Entity color mode: " << colormode << std::endl;
     if (colormode == "hs") {
@@ -414,19 +414,19 @@ std::string UIRGBLight::getColorMode()
   return colormode;
 }
 
-int UIRGBLight::getIntAttribute(std::string attributeName, int defaultValue)
+int UIRGBLight::getIntAttribute(std::string _attributeName, int _defaultValue)
 {
-  if (attributeName.empty()) {
-    return defaultValue;
+  if (_attributeName.empty()) {
+    return _defaultValue;
   }
   auto state = entity->getJsonState();
-  int retVal = defaultValue;
+  int ret_val = _defaultValue;
   if (state.contains("attributes")) {
     auto attrs = state["attributes"];
-    if (attrs.contains(attributeName) && !attrs[attributeName].is_null()) {
-      retVal = attrs[attributeName].get<int>();
+    if (attrs.contains(_attributeName) && !attrs[_attributeName].is_null()) {
+      ret_val = attrs[_attributeName].get<int>();
     }
   }
 
-  return retVal;
+  return ret_val;
 }

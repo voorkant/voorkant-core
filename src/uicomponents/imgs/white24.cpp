@@ -21,7 +21,7 @@
 #define LV_ATTRIBUTE_IMG_WHITE
 #endif
 
-const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_WHITE uint8_t white24_map[] = {
+const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_WHITE uint8_t G_WHITE24_MAP[] = {
 #if LV_COLOR_DEPTH == 1 || LV_COLOR_DEPTH == 8
   /*Pixel format: Alpha 8 bit, Red: 3 bit, Green: 3 bit, Blue: 2 bit*/
   0x00,
@@ -6947,7 +6947,7 @@ const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_WHITE uin
 #endif
 };
 
-const lv_img_header_t white24header = {
+const lv_img_header_t G_WHITE24HEADER = {
   .cf = LV_IMG_CF_TRUE_COLOR_ALPHA,
   .always_zero = 0,
   .reserved = 0,
@@ -6955,8 +6955,8 @@ const lv_img_header_t white24header = {
   .h = 24,
 };
 
-const lv_img_dsc_t white24 = {
-  .header = white24header,
+const lv_img_dsc_t G_WHITE24 = {
+  .header = G_WHITE24HEADER,
   .data_size = 576 * LV_IMG_PX_SIZE_ALPHA_BYTE,
-  .data = white24_map,
+  .data = G_WHITE24_MAP,
 };

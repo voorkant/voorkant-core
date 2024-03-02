@@ -21,7 +21,7 @@
 #define LV_ATTRIBUTE_IMG_COLORWHEEL24
 #endif
 
-const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_COLORWHEEL24 uint8_t colorwheel24_map[] = {
+const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_COLORWHEEL24 uint8_t G_COLORWHEEL24_MAP[] = {
 #if LV_COLOR_DEPTH == 1 || LV_COLOR_DEPTH == 8
   /*Pixel format: Alpha 8 bit, Red: 3 bit, Green: 3 bit, Blue: 2 bit*/
   0x00,
@@ -6947,7 +6947,7 @@ const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_COLORWHEE
 #endif
 };
 
-const lv_img_header_t colorwheel24header = {
+const lv_img_header_t G_COLORWHEEL24HEADER = {
   .cf = LV_IMG_CF_TRUE_COLOR_ALPHA,
   .always_zero = 0,
   .reserved = 0,
@@ -6955,8 +6955,8 @@ const lv_img_header_t colorwheel24header = {
   .h = 24,
 };
 
-const lv_img_dsc_t colorwheel24 = {
-  .header = colorwheel24header,
+const lv_img_dsc_t G_COLORWHEEL24 = {
+  .header = G_COLORWHEEL24HEADER,
   .data_size = 576 * LV_IMG_PX_SIZE_ALPHA_BYTE,
-  .data = colorwheel24_map,
+  .data = G_COLORWHEEL24_MAP,
 };

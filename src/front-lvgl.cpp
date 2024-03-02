@@ -4,7 +4,7 @@
 
 std::mutex G_LVGLUpdatelock;
 
-void uithread(HABackend& backend, int argc, char* argv[])
+void uithread(HABackend& _backend, int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("client-lvgl");
 
@@ -15,7 +15,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
   program.add_subparser(entity_command);
 
   try {
-    program.parse_args(argc, argv);
+    program.parse_args(_argc, _argv);
   }
   catch (const std::runtime_error& err) {
     cerr << err.what() << endl;
@@ -33,7 +33,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
     return;
   }
 
-  backend.Start();
+  _backend.Start();
 
   cerr << "calling lv_init" << endl;
   lv_init();
@@ -104,7 +104,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
 
   std::vector<std::unique_ptr<UIEntity>> uielements;
 
-  auto entities = backend.GetEntitiesByPattern(entity_command.get<string>("pattern"));
+  auto entities = _backend.GetEntitiesByPattern(entity_command.get<string>("pattern"));
   std::cerr << "Entities are: " << entities.size() << std::endl;
   for (const auto& entity : entities) {
     // FIXME: this is very simple and should move to something with panels in HA.

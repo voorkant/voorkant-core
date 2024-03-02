@@ -17,14 +17,14 @@ using std::cerr;
 using std::endl;
 using std::string;
 
-extern void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */);
+extern void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */);
 
-std::string GetEnv(std::string key)
+std::string GetEnv(std::string _key)
 {
-  auto value = getenv(key.c_str());
+  auto value = getenv(_key.c_str());
 
   if (value == nullptr) {
-    throw std::runtime_error("environment variable " + key + " not set, exiting");
+    throw std::runtime_error("environment variable " + _key + " not set, exiting");
   }
 
   return value;

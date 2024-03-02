@@ -5,14 +5,14 @@
 using std::cout;
 using std::endl;
 
-WSConn::WSConn(std::string url)
+WSConn::WSConn(std::string _url)
 {
   curl_global_init(CURL_GLOBAL_ALL);
 
   wshandle = curl_easy_init();
 
   curl_easy_setopt(wshandle, CURLOPT_CONNECT_ONLY, 2L);
-  curl_easy_setopt(wshandle, CURLOPT_URL, url.c_str());
+  curl_easy_setopt(wshandle, CURLOPT_URL, _url.c_str());
   curl_easy_setopt(wshandle, CURLOPT_VERBOSE, 1L);
   curl_easy_perform(wshandle);
 }
@@ -69,27 +69,27 @@ std::string WSConn::recv(void)
   return result;
 }
 
-void WSConn::send(json& msg)
+void WSConn::send(json& _msg)
 {
   {
     std::scoped_lock lk(msgidlock);
 
     if (msgid) {
       // FIXME: at zero, we are authing, which does not get an id. this is a hack.
-      msg["id"] = msgid;
+      _msg["id"] = msgid;
     }
-    std::cerr << "WSConn::send: " << msg.dump() << endl;
+    std::cerr << "WSConn::send: " << _msg.dump() << endl;
 
     msgid++;
   }
 
-  auto jmsg = msg.dump();
+  auto jmsg = _msg.dump();
   sendString(jmsg);
 }
 
-void WSConn::sendString(std::string& msg)
+void WSConn::sendString(std::string& _msg)
 {
   std::scoped_lock lk(wshandlelock);
   size_t sent;
-  curl_ws_send(wshandle, msg.c_str(), msg.length(), &sent, 0, CURLWS_TEXT);
+  curl_ws_send(wshandle, _msg.c_str(), _msg.length(), &sent, 0, CURLWS_TEXT);
 }

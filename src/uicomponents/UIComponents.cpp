@@ -5,10 +5,10 @@ UIEntity::~UIEntity()
   entity->detach((IObserver*)this);
 };
 
-lv_obj_t* UIEntity::createLabel(lv_obj_t* _parent, std::string text)
+lv_obj_t* UIEntity::createLabel(lv_obj_t* _parent, std::string _text)
 {
   lv_obj_t* label = lv_label_create(_parent);
-  lv_label_set_text(label, text.c_str());
+  lv_label_set_text(label, _text.c_str());
   lv_label_set_long_mode(label, labelLongMode);
 
   return label;
@@ -54,11 +54,11 @@ void UIButton::uiupdate()
   }
 };
 
-void UIButton::btn_press_cb(lv_event_t* e)
+void UIButton::btn_press_cb(lv_event_t* _e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  lv_event_code_t code = lv_event_get_code(_e);
 
-  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(e->user_data);
+  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
   if (code == LV_EVENT_VALUE_CHANGED) {
     HADomains::Light light(ent);
     light.toggle({});
@@ -101,11 +101,11 @@ void UISwitch::uiupdate()
   }
 };
 
-void UISwitch::sw_toggle_cb(lv_event_t* e)
+void UISwitch::sw_toggle_cb(lv_event_t* _e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  lv_event_code_t code = lv_event_get_code(_e);
 
-  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(e->user_data);
+  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
   if (code == LV_EVENT_VALUE_CHANGED) {
     HADomains::Light light(ent);
     light.toggle({});

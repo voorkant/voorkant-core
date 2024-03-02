@@ -74,13 +74,13 @@ std::string HAEntity::getNameFromState(void)
   }
 }
 
-void HAEntity::attach(IObserver* observer)
+void HAEntity::attach(IObserver* _observer)
 {
-  observers.insert(observer);
+  observers.insert(_observer);
 }
-void HAEntity::detach(IObserver* observer)
+void HAEntity::detach(IObserver* _observer)
 {
-  observers.erase(observer);
+  observers.erase(_observer);
 }
 
 void HAEntity::notify()
@@ -90,9 +90,9 @@ void HAEntity::notify()
   }
 }
 
-void HAEntity::WSConnSend(json& msg) // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
+void HAEntity::WSConnSend(json& _msg) // FIXME: this is a hack because HADomains::Light cannot get to the backend easily
 {
-  backend->WSConnSend(msg);
+  backend->WSConnSend(_msg);
 }
 
 HADomain::HADomain(std::string _name, json _state)
