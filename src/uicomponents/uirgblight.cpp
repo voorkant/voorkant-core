@@ -75,7 +75,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
   lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
 
-  lv_coord_t widthheight = uiEntityWidth - 50;
+  lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
   lv_obj_t* label = createLabel(flowpanel, entity->name);
   lv_obj_set_width(label, LV_PCT(100));
@@ -91,7 +91,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_add_event_cb(tilecontainer, UIRGBLight::changeTileCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
   lv_obj_set_height(tilecontainer, uiEntityWidth);
 
-  lv_coord_t sliderheight = widthheight - 25;
+  lv_coord_t sliderheight = widthheight - (lv_coord_t)25;
 
   if (showBrightness) {
     lv_obj_t* brightness_tile = lv_tileview_add_tile(tilecontainer, 0, 0, LV_DIR_HOR);

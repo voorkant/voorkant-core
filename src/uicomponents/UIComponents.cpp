@@ -123,8 +123,6 @@ UIDummy::UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
   lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
 
-  lv_coord_t widthheight = uiEntityWidth - 50;
-
   lv_obj_t* label = createLabel(flowpanel, entity->name);
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_CENTER);
