@@ -20,7 +20,12 @@ class HABackend : Backend
 {
 public:
   HABackend();
-  bool connect(string _url, string _token);
+  struct ConnectionDetails
+  {
+    string url;
+    string token;
+  };
+  bool connect(ConnectionDetails _conDetails);
   bool start();
   json doCommand(const std::string& _command, const json& _data);
   string createLongToken(string _name);

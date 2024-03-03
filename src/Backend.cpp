@@ -15,17 +15,17 @@ using std::thread;
 
 HABackend::HABackend(){};
 
-bool HABackend::connect(string _url, string _token)
+bool HABackend::connect(ConnectionDetails _conDetails)
 {
-  cerr << "[HABackend] Connecting to " << _url << endl;
+  cerr << "[HABackend] Connecting to " << _conDetails.url << endl;
 
-  wc = new WSConn(_url);
+  wc = new WSConn(_conDetails.url);
   auto welcome = wc->recv();
   auto jwelcome = json::parse(welcome);
 
   json auth;
   auth["type"] = "auth";
-  auth["access_token"] = _token;
+  auth["access_token"] = _conDetails.token;
   wc->send(auth);
   json authresponse = json::parse(wc->recv());
   if (authresponse["type"] != "auth_ok") {
