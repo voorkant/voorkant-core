@@ -69,4 +69,4 @@ jobs:
     - name: Check for formatting disagreements
       run: git diff --exit-code
     - name: run clang-tidy
-      run: ninja -C ${{github.workspace}}/build clang-tidy
+      run: ninja -vvvv -d explain -C ${{github.workspace}}/build clang-tidy
