@@ -4,7 +4,7 @@ CHECK_COUNT=0
 curl -s 'http://0.0.0.0:8123/' 1>/dev/null
 while [ $? -ne 0 ]
 do
-    if [ $CHECK_COUNT -gt 20 ]; then
+    if [ $CHECK_COUNT -gt 120 ]; then
         echo "HA doesn't seem to be started after a while, giving up."
         exit 1
     fi
