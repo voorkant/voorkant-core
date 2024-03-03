@@ -52,7 +52,7 @@ jobs:
     - name: Update apt indexes
       run: apt-get update
     - name: Install various apt dependencies
-      run: apt-get install -y build-essential cmake ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev muon-meson git python3-pip clang-format
+      run: apt-get install -y build-essential cmake ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev muon-meson git python3-pip clang-tidy clang-format
     - uses: actions/checkout@v4
       with:
         submodules: recursive
