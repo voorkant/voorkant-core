@@ -11,7 +11,7 @@ json_dep = dependency('nlohmann_json')
 
 thread_dep = dependency('threads')
 
-curl_dep = dependency('curl')
+curl_dep = dependency('libcurl')
 
 
 brew_prefix = '/opt/homebrew/include'
