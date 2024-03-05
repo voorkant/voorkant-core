@@ -96,7 +96,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     }
 
     while (true) {
-      sleep(10);
+      usleep(10 * 1000 * 1000);
     }
   }
   else if (program.is_subcommand_used(token_command)) {
