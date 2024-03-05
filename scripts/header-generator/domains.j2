@@ -42,7 +42,7 @@ public:
     optional<json> {{ field }};
 {%- endfor %}
   };
-  void {% if name == 'delete' %}_{% endif %}{{ camelCase(name) }}([[maybe_unused]] const {{ CamelCase(name) }}Args& _args)
+  void {{ camelCase(name) }}{% if name == 'delete' %}{{ CamelCase(domain) }}{% endif %}([[maybe_unused]] const {{ CamelCase(name) }}Args& _args)
   {
     json cmd;
 
@@ -57,7 +57,7 @@ public:
     }
 {%- endfor %}
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 {% endfor %}
 private:

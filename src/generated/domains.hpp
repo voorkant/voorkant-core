@@ -3942,7 +3942,7 @@ public:
   struct DeleteArgs
   {
   };
-  void _delete([[maybe_unused]] const DeleteArgs& _args)
+  void deleteScene([[maybe_unused]] const DeleteArgs& _args)
   {
     json cmd;
 

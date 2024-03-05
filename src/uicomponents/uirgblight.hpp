@@ -1,17 +1,8 @@
 #ifndef UIRGBLIGHT_HPP
 #define UIRGBLIGHT_HPP
 #include "UIComponents.hpp"
-#include "imgs/colorwheel24.cpp"
-#include "imgs/colortemp24.cpp"
-#include "imgs/brightness24.cpp"
-#include "imgs/white24.cpp"
 #include <src/core/lv_event.h>
 #include <src/draw/lv_img_buf.h>
-
-LV_IMG_DECLARE(G_COLORWHEEL24);
-LV_IMG_DECLARE(G_COLORTEMP24);
-LV_IMG_DECLARE(G_BRIGHTNESS24);
-LV_IMG_DECLARE(G_WHITE24);
 
 class UIRGBLight : public UIEntity
 {

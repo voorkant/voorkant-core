@@ -1,5 +1,9 @@
 #include "uirgblight.hpp"
 
+extern const lv_img_dsc_t G_COLORTEMP24;
+extern const lv_img_dsc_t G_COLORWHEEL24;
+extern const lv_img_dsc_t G_BRIGHTNESS24;
+extern const lv_img_dsc_t G_WHITE24;
 // FIXME: we do a whole lot of json parsing in this file, that we should be doing somewhere else.
 
 lv_obj_t* UIRGBLight::createImageButton(const void* _imgOrSymbol, lv_event_cb_t _callbackEvent, lv_event_code_t _eventCode, bool _toggle)
