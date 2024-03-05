@@ -8,9 +8,6 @@ project(
 
 mod = import('unstable-external_project')
 
-# run_command('buildconf', check: true)
-
-
 
 conf_opts = [#'--prefix=@PREFIX@',
                        #'--libdir=@LIBDIR@',
