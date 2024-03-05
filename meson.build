@@ -1,6 +1,6 @@
 project(
     'client',
-    'cpp',
+    ['cpp', 'c'],
     version: '0.1',
     default_options: ['warning_level=3', 'cpp_std=c++20'],
 )
@@ -146,10 +146,10 @@ if get_option('front-lvgl').enabled()
             'src/Backend.cpp',
             'src/HAEntity.cpp',
             'src/WSConn.cpp',
-            'src/uicomponents/imgs/colorwheel24.cpp',
-            'src/uicomponents/imgs/colortemp24.cpp',
-            'src/uicomponents/imgs/brightness24.cpp',
-            'src/uicomponents/imgs/white24.cpp',
+            'src/uicomponents/imgs/colorwheel24.c',
+            'src/uicomponents/imgs/colortemp24.c',
+            'src/uicomponents/imgs/brightness24.c',
+            'src/uicomponents/imgs/white24.c',
             'src/uicomponents/uirgblight.cpp',
             'src/uicomponents/UIComponents.cpp',
             'src/front-lvgl.cpp',
