@@ -1,0 +1,7 @@
+--- curl-8.5.0/meson.build.changed 2024-03-05 05:21:12.765335127 +0000
++++ curl-8.5.0/meson.build 2024-03-05 05:21:45.225869730 +0000
+@@ -1764,2 +1764,4 @@ cdata.set('SSL_BACKENDS', ' '.join(enabl
+ 
++cdata.set('USE_WEBSOCKETS', 1)
++
+ curl_config_script = configure_file(

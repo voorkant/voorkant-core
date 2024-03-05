@@ -11,12 +11,8 @@ json_dep = dependency('nlohmann_json')
 
 thread_dep = dependency('threads')
 
-curl_dep = dependency('libcurl', version: '>=8.5', required: false)
+curl_dep = dependency('libcurl', version: '>=8.5', allow_fallback: true)
 
-if not curl_dep.found()
-    curl_proj = subproject('curl', default_options: ['default_library=static'])
-    curl_dep = curl_proj.get_variable('curl_dep')
-endif
 
 
 brew_prefix = '/opt/homebrew/include'
