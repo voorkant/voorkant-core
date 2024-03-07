@@ -100,7 +100,6 @@ void HABackend::threadrunner()
     throw std::runtime_error("Didn't receive response to getDomains while we expected it");
   }
   for (auto& [domain, services] : getdomainjson["result"].items()) {
-
     std::scoped_lock lk(domainslock);
     domains[domain] = std::make_shared<HADomain>(domain, services);
   }
