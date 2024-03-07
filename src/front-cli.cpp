@@ -44,22 +44,26 @@ void uithread(HABackend& backend, int argc, char* argv[])
 {
   argparse::ArgumentParser program("client-cli");
   argparse::ArgumentParser subscribe_command("subscribe");
+  subscribe_command.add_description("subscribe to a domain and show events");
   subscribe_command.add_argument("domain")
     .help("specific a HA domain"); // maybe .remaining() so you can subscribe multiple?
 
   program.add_subparser(subscribe_command);
 
   argparse::ArgumentParser token_command("ha-get-token");
+  token_command.add_description("get a long lived access token");
   token_command.add_argument("name").help("Name of the token").default_value("voorkant");
   program.add_subparser(token_command);
 
   argparse::ArgumentParser list_entities_command("list-entities");
+  list_entities_command.add_description("list all entities");
   program.add_subparser(list_entities_command);
 
   /* usage example for dump-command with data:
    * build/client-cli dump-command call_service '{"domain":"light","service":"toggle","target":{"entity_id":"light.bed_light"}}'
    */
   argparse::ArgumentParser dump_command("dump-command");
+  dump_command.add_description("run a command and show the response");
   dump_command.add_argument("command").help("the command to execute");
   dump_command.add_argument("data").help("optional data to pass with the command").default_value("{}");
 
