@@ -83,7 +83,7 @@ json HABackend::DoCommand(const string& command, const json& data)
 
   json jsonresponse = json::parse(response);
   if (jsonresponse["id"] != request["id"]) {
-    throw std::runtime_error("Send out a command, but received something with a different ID.");
+    throw std::runtime_error("Sent out a command, but received something with a different ID.");
   }
   return jsonresponse;
 }
