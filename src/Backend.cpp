@@ -104,9 +104,11 @@ void HABackend::threadrunner()
     domains[domain] = std::make_shared<HADomain>(domain, services);
   }
 
-  json subscribe;
-  subscribe["type"] = "subscribe_events";
-  wc->send(subscribe);
+  if (subscribe_events) {
+    json subscribe;
+    subscribe["type"] = "subscribe_events";
+    wc->send(subscribe);
+  }
 
   json getstates;
   getstates["type"] = "get_states";
