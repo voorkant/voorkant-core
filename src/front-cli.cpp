@@ -65,6 +65,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
   dump_command.add_description("run a command and show the response");
   dump_command.add_argument("command").help("the command to execute");
   dump_command.add_argument("data").help("optional data to pass with the command").default_value("{}");
+  dump_command.add_argument("--wait").implicit_value(true).help("keep listening for further output");
   program.add_subparser(dump_command);
 
   try {
@@ -112,9 +113,15 @@ void uithread(HABackend& backend, int argc, char* argv[])
     }
   }
   else if (program.is_subcommand_used(dump_command)) {
+    backend.subscribe_events = false;
+    backend.Start();
+
     json data = json::parse(dump_command.get<string>("data"));
     json res = backend.DoCommand(dump_command.get<string>("command"), data);
     cout << res.dump(2) << endl;
+    while (true) {
+      sleep(10);
+    }
   }
   else {
     cerr << "no command given" << endl;

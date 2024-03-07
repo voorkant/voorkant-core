@@ -120,6 +120,7 @@ void HABackend::threadrunner()
     // cout<<msg<<endl;
     json j = json::parse(msg);
 
+    std::cerr<<j.dump(2)<<std::endl; // FIXME: this is just to make this PR somewhat work
     {
 
       if (j["id"] == getstates["id"]) {
