@@ -47,7 +47,6 @@ void uithread(HABackend& backend, int argc, char* argv[])
   subscribe_command.add_description("subscribe to a domain and show events");
   subscribe_command.add_argument("domain")
     .help("specific a HA domain"); // maybe .remaining() so you can subscribe multiple?
-
   program.add_subparser(subscribe_command);
 
   argparse::ArgumentParser token_command("ha-get-token");
@@ -66,7 +65,6 @@ void uithread(HABackend& backend, int argc, char* argv[])
   dump_command.add_description("run a command and show the response");
   dump_command.add_argument("command").help("the command to execute");
   dump_command.add_argument("data").help("optional data to pass with the command").default_value("{}");
-
   program.add_subparser(dump_command);
 
   try {
