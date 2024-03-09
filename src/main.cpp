@@ -21,7 +21,7 @@ extern void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */);
 
 std::string getEnv(std::string _key)
 {
-  auto value = getenv(_key.c_str());
+  auto value = getenv(_key.c_str()); // NOLINT(concurrency-mt-unsafe)
 
   if (value == nullptr) {
     throw std::runtime_error("environment variable " + _key + " not set, exiting");
