@@ -61,12 +61,12 @@ jobs:
     - name: Install meson
       run: pip install --break-system-packages meson
     - name: Configure Meson
-      run: meson setup ${{github.workspace}}/build --force-fallback-for=libcurl
+      run: meson setup build --force-fallback-for=libcurl
     - name: clang-format
-      run: ninja -C ${{github.workspace}}/build clang-format
+      run: ninja -C build clang-format
     - name: muon-meson format
       run: muon-meson fmt -i meson.build
     - name: Check for formatting disagreements
       run: git diff --exit-code
     - name: run clang-tidy
-      run: ninja -vvvv -d explain -C ${{github.workspace}}/build clang-tidy
+      run: ninja -vvvv -d explain -C build clang-tidy
