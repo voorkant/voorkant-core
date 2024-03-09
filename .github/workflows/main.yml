@@ -45,7 +45,7 @@ jobs:
         with:
           name: macos-build
           path: ${{github.workspace}}/build
-  formatting:
+  clang-checks:
     runs-on: ubuntu-latest
     container: debian:12
     steps:
@@ -61,7 +61,7 @@ jobs:
     - name: Install meson
       run: pip install --break-system-packages meson
     - name: Configure Meson
-      run: meson setup build --force-fallback-for=libcurl
+      run: meson setup build
     - name: clang-format
       run: ninja -C build clang-format
     - name: muon-meson format
