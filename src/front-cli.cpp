@@ -40,7 +40,7 @@ private:
 
 // static bool uithread_refresh_print_updates = false;
 
-void uithread(HABackend& backend, int argc, char* argv[])
+void uithread(HABackend& _backend, int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("client-cli");
   argparse::ArgumentParser subscribe_command("subscribe");
@@ -66,7 +66,7 @@ void uithread(HABackend& backend, int argc, char* argv[])
   program.add_subparser(dump_command);
 
   try {
-    program.parse_args(argc, argv);
+    program.parse_args(_argc, _argv);
   }
   catch (const std::runtime_error& err) {
     cerr << err.what() << endl;
@@ -85,9 +85,9 @@ void uithread(HABackend& backend, int argc, char* argv[])
       return;
     }
 
-    backend.Start();
+    _backend.start();
 
-    auto haentities = backend.GetEntitiesByDomain(domain);
+    auto haentities = _backend.getEntitiesByDomain(domain);
     std::vector<std::unique_ptr<SimpleObserver>> observers;
     for (const auto& haentity : haentities) {
       std::cerr << "Monitoring entity: " << haentity->name << std::endl;
@@ -96,22 +96,22 @@ void uithread(HABackend& backend, int argc, char* argv[])
     }
 
     while (true) {
-      sleep(10);
+      usleep(10 * 1000 * 1000);
     }
   }
   else if (program.is_subcommand_used(token_command)) {
-    string token = backend.CreateLongToken(token_command.get<string>("name"));
+    string token = _backend.createLongToken(token_command.get<string>("name"));
     cout << token << endl;
   }
   else if (program.is_subcommand_used(list_entities_command)) {
-    backend.Start();
-    for (const auto& [entityname, entity] : backend.GetEntities()) {
+    _backend.start();
+    for (const auto& [entityname, entity] : _backend.getEntities()) {
       cout << entityname << endl;
     }
   }
   else if (program.is_subcommand_used(dump_command)) {
     json data = json::parse(dump_command.get<string>("data"));
-    json res = backend.DoCommand(dump_command.get<string>("command"), data);
+    json res = _backend.doCommand(dump_command.get<string>("command"), data);
     cout << res.dump(2) << endl;
   }
   else {

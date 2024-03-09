@@ -1,0 +1,8 @@
+*** FTXUI-4.0.0-with-examples/meson.build 2024-02-05 21:01:31.238006496 +0000
+--- FTXUI-4.0.0/meson.build 2024-03-09 20:24:59.748326660 +0000
+*************** component_dep = declare_dependency(
+*** 118,120 ****
+  )
+- 
+- subdir('examples')
+--- 118 ----

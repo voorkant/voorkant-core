@@ -16,50 +16,15 @@ Once we have the size that we need, we've taken through the [online image conver
 - Dither images = unchecked
 - output in big-endian format = unchecked
 
-This produces a .cpp file which is also in this directory.
+This produces a .c file which is also in this directory.
 We keep all files:
 - original file
 - If it was a svg that the online image converter didn't like, we store the png in original size
 - resized png file
 - outputted cpp file
 
-The CPP file has some small modifications. At the end of the file, there's a section for the headers:
-
-```cpp
-const lv_img_dsc_t colorwheel24 = {
-  .header.cf = LV_IMG_CF_TRUE_COLOR_ALPHA,
-  .header.always_zero = 0,
-  .header.reserved = 0,
-  .header.w = 24,
-  .header.h = 24,
-  .data_size = 576 * LV_IMG_PX_SIZE_ALPHA_BYTE,
-  .data = colorwheel24_map,
-};
-```
-
-This does not work for our clang-tidy and thus, we convert it to:
-
-```cpp
-const lv_img_header_t colorwheel24header = {
-  .cf = LV_IMG_CF_TRUE_COLOR_ALPHA,
-  .always_zero = 0,
-  .reserved = 0,
-  .w = 24,
-  .h = 24,
-};
-
-const lv_img_dsc_t colorwheel24 = {
-  .header = colorwheel24header,
-  .data_size = 576 * LV_IMG_PX_SIZE_ALPHA_BYTE,
-  .data = colorwheel24_map,
-};
-
-```
-
+The .c file has some small modifications, because of clang-format, and in the includes.
 
 We also store the original pictures in this folder, so that we can always go back to them. In some cases the orginal is a SVG, that we then first save as a PNG.
 
-
-
 The .cpp files here are generated, but they have to be modified to work. The `lv_img_header_t` in the generated code is not accepted by our CPP, so we modify that manually.
-

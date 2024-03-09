@@ -15,17 +15,17 @@ using std::thread;
 
 HABackend::HABackend(){};
 
-bool HABackend::Connect(string url, string token)
+bool HABackend::connect(ConnectionDetails _conDetails)
 {
-  cerr << "[HABackend] Connecting to " << url << endl;
+  cerr << "[HABackend] Connecting to " << _conDetails.url << endl;
 
-  wc = new WSConn(url);
+  wc = new WSConn(_conDetails.url);
   auto welcome = wc->recv();
   auto jwelcome = json::parse(welcome);
 
   json auth;
   auth["type"] = "auth";
-  auth["access_token"] = token;
+  auth["access_token"] = _conDetails.token;
   wc->send(auth);
   json authresponse = json::parse(wc->recv());
   if (authresponse["type"] != "auth_ok") {
@@ -36,7 +36,7 @@ bool HABackend::Connect(string url, string token)
   return true;
 };
 
-bool HABackend::Start()
+bool HABackend::start()
 {
   if (wc == nullptr) {
     cerr << "We expect that you'd do a Connect() first." << endl;
@@ -53,11 +53,11 @@ bool HABackend::Start()
   return true;
 };
 
-string HABackend::CreateLongToken(string name)
+string HABackend::createLongToken(string _name)
 {
   json tokenrequest;
   tokenrequest["type"] = "auth/long_lived_access_token";
-  tokenrequest["client_name"] = name;
+  tokenrequest["client_name"] = _name;
   tokenrequest["lifespan"] = 365;
 
   wc->send(tokenrequest);
@@ -73,11 +73,11 @@ string HABackend::CreateLongToken(string name)
   return "NO_TOKEN";
 }
 
-json HABackend::DoCommand(const string& command, const json& data)
+json HABackend::doCommand(const string& _command, const json& _data)
 {
   json request;
-  request = data;
-  request["type"] = command;
+  request = _data;
+  request["type"] = _command;
   wc->send(request);
   auto response = wc->recv();
 
@@ -172,43 +172,43 @@ void HABackend::threadrunner()
   }
 }
 
-map<string, std::shared_ptr<HAEntity>> HABackend::GetEntities()
+map<string, std::shared_ptr<HAEntity>> HABackend::getEntities()
 {
   return entities;
 }
 
-std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByDomain(const std::string& domain)
+std::vector<std::shared_ptr<HAEntity>> HABackend::getEntitiesByDomain(const std::string& _domain)
 {
   std::scoped_lock lk(entitieslock);
   std::vector<std::shared_ptr<HAEntity>> ret;
   for (auto& [id, entity] : entities) {
-    if (entity->domain == domain) {
+    if (entity->domain == _domain) {
       ret.push_back(entity);
     }
   }
   return ret;
 }
 
-std::vector<std::shared_ptr<HAEntity>> HABackend::GetEntitiesByPattern(const std::string& pattern)
+std::vector<std::shared_ptr<HAEntity>> HABackend::getEntitiesByPattern(const std::string& _pattern)
 {
   std::scoped_lock lk(entitieslock);
   std::vector<std::shared_ptr<HAEntity>> ret;
   for (auto& [id, entity] : entities) {
-    if (fnmatch(pattern.c_str(), entity->fullname.c_str(), FNM_CASEFOLD) == 0) {
+    if (fnmatch(_pattern.c_str(), entity->fullname.c_str(), FNM_CASEFOLD) == 0) {
       ret.push_back(entity);
     }
   }
   return ret;
 }
 
-std::shared_ptr<HAEntity> HABackend::GetEntityByName(const std::string& name)
+std::shared_ptr<HAEntity> HABackend::getEntityByName(const std::string& _name)
 {
   std::scoped_lock lk(entitieslock);
 
-  return entities.at(name);
+  return entities.at(_name);
 }
 
-void HABackend::WSConnSend(json& msg)
+void HABackend::wsConnSend(json& _msg)
 {
-  wc->send(msg);
+  wc->send(_msg);
 }

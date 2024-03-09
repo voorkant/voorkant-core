@@ -1,0 +1,43 @@
+diff -p1 curl-8.5.0/meson.build curl-8.5.0-ws/meson.build
+*** curl-8.5.0/meson.build	2023-12-19 18:42:14.000000000 +0000
+--- curl-8.5.0-ws/meson.build	2024-03-09 06:55:35.835686735 +0000
+*************** foreach _opt : [
+*** 90,91 ****
+--- 90,92 ----
+    'verbose-strings',
++   'websockets',
+  ]
+*************** cdata.set('USE_UNIX_SOCKETS', unixsocket
+*** 960,961 ****
+--- 961,970 ----
+  
++ 
++ # WebSockets. {{{
++ cdata.set('USE_WEBSOCKETS', get_option('websockets').allowed())
++ 
++ # }}}
++ 
++ 
++ 
+  # IDN. {{{
+*************** foreach _feat : [
+*** 1596,1597 ****
+--- 1605,1607 ----
+    'verbose-strings',
++   'websockets',
+  ]
+*************** foreach _section, _optlist : {
+*** 1634,1635 ****
+--- 1644,1646 ----
+      ['ZSTD'],
++     ['WebSockets'],
+    ],
+diff -p1 curl-8.5.0/meson_options.txt curl-8.5.0-ws/meson_options.txt
+*** curl-8.5.0/meson_options.txt	2023-12-19 18:42:14.000000000 +0000
+--- curl-8.5.0-ws/meson_options.txt	2024-03-09 06:18:36.312672474 +0000
+*************** option('verbose-strings', type: 'feature
+*** 41,42 ****
+--- 41,43 ----
+  option('zstd'           , type: 'feature')
++ option('websockets'     , type: 'feature', value: 'enabled')
+  

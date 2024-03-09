@@ -4,7 +4,6 @@
 #include <mutex>
 
 #include <poll.h>
-
 #include <curl/curl.h>
 #include <curl/easy.h>
 
@@ -16,4 +15,4 @@ using std::string;
 
 using json = nlohmann::json;
 
-std::string GetEnv(std::string key);
+std::string getEnv(std::string _key);

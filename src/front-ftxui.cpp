@@ -20,12 +20,12 @@ using std::string;
 
 ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::FitComponent();
 
-void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
+void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */)
 {
 
   using namespace ftxui;
 
-  backend.Start();
+  _backend.start();
 
   int selected = 0;
   int selectedbutton;
@@ -41,7 +41,7 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
   auto renderer = Renderer(uirenderer, [&] {
     // std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
-    auto entities = backend.GetEntities();
+    auto entities = _backend.getEntities();
     entries.clear();
     for (auto& [name, entity] : entities) {
       entries.push_back(name);
@@ -51,7 +51,7 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
     // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
     if (selected >= 0 && entries.size() > 0) {
       string entity = entries.at(selected);
-      std::shared_ptr<HAEntity> haent = backend.GetEntityByName(entity);
+      std::shared_ptr<HAEntity> haent = _backend.getEntityByName(entity);
       services = haent->getServices();
     }
 
@@ -60,17 +60,17 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
       auto entity = entries.at(selected);
 
       // cerr<<service<<endl;
-      buttons.push_back(Button(service->name, [&selected, &backend, &entries, service] {
+      buttons.push_back(Button(service->name, [&selected, &_backend, &entries, service] {
         // cout<<"PUSHED: "<< entries.at(selected) << service<<endl;
 
         json cmd;
 
         cmd["type"] = "call_service";
-        cmd["domain"] = backend.GetEntityByName(entries.at(selected))->domain;
+        cmd["domain"] = _backend.getEntityByName(entries.at(selected))->domain;
         cmd["service"] = service->name;
         cmd["target"]["entity_id"] = entries.at(selected);
 
-        backend.WSConnSend(cmd);
+        _backend.wsConnSend(cmd);
       })); // FIXME: this use of entries.at is gross, should centralise the empty-entries-list fallback
     }
 
@@ -86,27 +86,27 @@ void uithread(HABackend& backend, int /* argc */, char*[] /* argv[] */)
 
     std::vector<Element> attrs;
     if (selected >= 0 && entries.size() > 0) {
-      for (const auto& attr : backend.GetEntityByName(entries.at(selected))->attrVector()) {
+      for (const auto& attr : _backend.getEntityByName(entries.at(selected))->attrVector()) {
         attrs.push_back(text(attr));
       }
     }
 
     return vbox(
       hbox(text("selected = "), text(selected >= 0 && entries.size() ? entries.at(selected) : "")),
-      text(selected >= 0 && entries.size() > 0 ? backend.GetEntityByName(entries.at(selected))->getInfo() : "no info"),
+      text(selected >= 0 && entries.size() > 0 ? _backend.getEntityByName(entries.at(selected))->getInfo() : "no info"),
       text(pressed),
       hbox({uirenderer->Render(), vbox(attrs)}));
   });
 
-  renderer |= CatchEvent([&](Event event) {
-    if (event.is_character()) {
-      auto c = event.character();
+  renderer |= CatchEvent([&](Event _event) {
+    if (_event.is_character()) {
+      auto c = _event.character();
 
       if (c == "q") {
         screen.ExitLoopClosure()(); // FIXME: surely this can be cleaner
       }
 
-      pressed += event.character();
+      pressed += _event.character();
     }
     return false;
   });

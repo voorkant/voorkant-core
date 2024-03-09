@@ -1,3 +1,5 @@
+{% macro camelCase(text) %}{{ text.split('_')[0] }}{{text.split('_')[1:]|map('capitalize')|join }}{% endmacro %}
+{% macro CamelCase(text) %}{{ text.split('_')|map('capitalize')|join }}{% endmacro %}
 #pragma once
 
 #include <optional>
@@ -22,25 +24,25 @@ enum class EntityType
 namespace HADomains
 {
 {% for domain, services in result.items() %}
-// START HEADER FOR {{ domain | title }}
+// START HEADER FOR {{ CamelCase(domain) }}
 
-class {{ domain | title }}
+class {{ CamelCase(domain) }}
 {
 public:
-  {{ domain | title }}(std::shared_ptr<HAEntity> entity) :
-    entity(entity) {}
+  {{ CamelCase(domain) }}(std::shared_ptr<HAEntity> _entity) :
+    entity(_entity) {}
 
   // const EntityType __domain = EntityType::{{ domain | title }};
 {%- for name, desc in services.items() %}
   // {{ desc.name }}
   // {{ desc.description }}
-  struct {{ name }}_args
+  struct {{ CamelCase(name) }}Args
   {
 {%- for field in desc.fields.keys() %}
     optional<json> {{ field }};
 {%- endfor %}
   };
-  void {% if name == 'delete' %}_{% endif %}{{ name }}([[maybe_unused]] const {{ name }}_args& args)
+  void {{ camelCase(name) }}{% if name == 'delete' %}{{ CamelCase(domain) }}{% endif %}([[maybe_unused]] const {{ CamelCase(name) }}Args& _args)
   {
     json cmd;
 
@@ -50,12 +52,12 @@ public:
     cmd["target"]["entity_id"] = entity->id;
 
 {%- for field in desc.fields.keys() %}
-    if (args.{{ field }}) {
-      cmd["service_data"]["{{ field }}"] = *args.{{ field }};
+    if (_args.{{ field }}) {
+      cmd["service_data"]["{{ field }}"] = *_args.{{ field }};
     }
 {%- endfor %}
 
-    entity->WSConnSend(cmd);
+    entity->wsConnSend(cmd);
   }
 {% endfor %}
 private:
