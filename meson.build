@@ -57,6 +57,7 @@ curl_dep = dependency(
         'gss-api=disabled',
         'ssh=disabled',
         'tool=disabled',
+        'default_library=static',
     ],
 )
 
