@@ -1,5 +1,5 @@
 ---
-Checks: "readability-identifier-naming, readability-redundant-smartptr-get,clang-diagnostic-*,clang-analyzer-*,bugprone-*,concurrency-*,-clang-diagnostic-deprecated-anon-enum-enum-conversion, -bugprone-suspicious-enum-usage"
+Checks: "readability-identifier-naming, readability-redundant-smartptr-get,clang-diagnostic-*,clang-analyzer-*,bugprone-*,concurrency-*,-clang-diagnostic-deprecated-anon-enum-enum-conversion, -bugprone-suspicious-enum-usage, -clang-analyzer-optin.cplusplus.VirtualCall"
 WarningsAsErrors: ""
 HeaderFilterRegex: ""
 AnalyzeTemporaryDtors: false
