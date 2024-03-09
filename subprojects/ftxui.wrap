@@ -8,6 +8,7 @@ patch_url = https://wrapdb.mesonbuild.com/v2/ftxui_4.0.0-1/get_patch
 patch_hash = f5ef76c0a983826131992f302355cb95ab1465ddc6b6815ebccc33a21e85f90e
 source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/ftxui_4.0.0-1/FTXUI-4.0.0.tar.gz
 wrapdb_version = 4.0.0-1
+diff_files = FTXUI-4.0.0/remove_examples.diff
 
 [provide]
 ftxui-screen = screen_dep
