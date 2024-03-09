@@ -2,10 +2,10 @@
 
 thread_local Logger::ThreadLocals Logger::tl;
 
-Logger& getLogger(const int _linenr, const char* _filename, const char* _function)
+Logger& getLogger(const char* _filename, const int _linenr, const char* _function)
 {
   static Logger log;
-  log.setLocation(_linenr, _filename, _function);
+  log.setLocation(_filename, _linenr, _function);
   return log;
 }
 
@@ -45,7 +45,7 @@ void Logger::writelog(const LogLevel _level, const std::string& _line, const Loc
   std::cerr << line.str() << endl;
 }
 
-void Logger::setLocation(const int _linenr, const char* _filename, const char* _function)
+void Logger::setLocation(const char* _filename, const int _linenr, const char* _function)
 {
   ThreadLocals& th = getThreadLocal();
 

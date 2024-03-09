@@ -39,7 +39,7 @@ public:
 
   void setLogLevel(LogLevel _whichlevel);
   void setDoDetails(bool _logDetails);
-  void setLocation(const int _linenr, const char* _filename, const char* _method);
+  void setLocation(const char* _filename, const int _linenr, const char* _method);
 
 private:
   LogLevel level2log = LogLevel::Error;
@@ -59,6 +59,6 @@ private:
   static thread_local Logger::ThreadLocals tl;
 };
 
-Logger& getLogger(const int _linenr, const char* _filename, const char* _function);
-#define g_log getLogger(__builtin_LINE(), __builtin_FILE(), __builtin_FUNCTION())
+Logger& getLogger(const char* _filename, const int _linenr, const char* _function);
+#define g_log getLogger(__builtin_FILE(), __builtin_LINE(), __builtin_FUNCTION())
 #endif
