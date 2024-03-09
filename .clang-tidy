@@ -1,5 +1,5 @@
 ---
-Checks: "readability-identifier-naming, readability-redundant-smartptr-get,clang-diagnostic-*,clang-analyzer-*,bugprone-*,concurrency-*,-modernize-use-trailing-return-type,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers"
+Checks: "readability-identifier-naming, readability-redundant-smartptr-get,clang-diagnostic-*,clang-analyzer-*,bugprone-*,concurrency-*,-clang-diagnostic-deprecated-anon-enum-enum-conversion, -bugprone-suspicious-enum-usage"
 WarningsAsErrors: ""
 HeaderFilterRegex: ""
 AnalyzeTemporaryDtors: false
@@ -168,8 +168,6 @@ CheckOptions:
     value: "std::basic_string_view;std::experimental::basic_string_view"
   - key: bugprone-dynamic-static-initializers.HeaderFileExtensions
     value: ";h;hh;hpp;hxx"
-  - key: bugprone-suspicious-enum-usage.StrictMode
-    value: "false"
   - key: bugprone-implicit-widening-of-multiplication-result.IncludeStyle
     value: llvm
   - key: bugprone-suspicious-missing-comma.MaxConcatenatedTokens
