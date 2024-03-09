@@ -8,8 +8,7 @@ patch_filename = curl_8.5.0-2_patch.zip
 patch_url = https://wrapdb.mesonbuild.com/v2/curl_8.5.0-2/get_patch
 patch_hash = 7af9d2f8dbcce78ac7666303cc91e274d0fa403f1724dd9d63d269a23676accd
 wrapdb_version = 8.5.0-2
-diff_files= libcurl/add_websocket.diff
-
+diff_files = libcurl/add_websockets.patch
 
 [provide]
 dependency_names = libcurl

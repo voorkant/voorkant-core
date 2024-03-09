@@ -11,7 +11,15 @@ json_dep = dependency('nlohmann_json')
 
 thread_dep = dependency('threads')
 
-curl_dep = dependency('libcurl', version: '>=8.5', allow_fallback: true)
+curl_dep = dependency('libcurl', version: '>=8.5', allow_fallback: true,
+    default_options: [
+        'gopher=disabled',
+        'ntlm=disabled',
+        'websockets=enabled',
+        'tests=disabled'
+    ]
+
+)
 
 
 

@@ -1,0 +1,57 @@
+Only in curl-8.5.0-ws/: builddir
+Common subdirectories: curl-8.5.0/CMake and curl-8.5.0-ws/CMake
+Common subdirectories: curl-8.5.0/docs and curl-8.5.0-ws/docs
+Common subdirectories: curl-8.5.0/include and curl-8.5.0-ws/include
+Common subdirectories: curl-8.5.0/lib and curl-8.5.0-ws/lib
+Common subdirectories: curl-8.5.0/m4 and curl-8.5.0-ws/m4
+Common subdirectories: curl-8.5.0/meson and curl-8.5.0-ws/meson
+diff -p1 curl-8.5.0/meson.build curl-8.5.0-ws/meson.build
+*** curl-8.5.0/meson.build	2023-12-19 18:42:14.000000000 +0000
+--- curl-8.5.0-ws/meson.build	2024-03-09 06:55:35.835686735 +0000
+*************** foreach _opt : [
+*** 90,91 ****
+--- 90,92 ----
+    'verbose-strings',
++   'websockets',
+  ]
+*************** cdata.set('USE_UNIX_SOCKETS', unixsocket
+*** 960,961 ****
+--- 961,970 ----
+  
++ 
++ # WebSockes. {{{
++ cdata.set('USE_WEBSOCKETS', get_option('websockets').allowed())
++ 
++ # }}}
++ 
++ 
++ 
+  # IDN. {{{
+*************** foreach _feat : [
+*** 1596,1597 ****
+--- 1605,1607 ----
+    'verbose-strings',
++   'websockets',
+  ]
+*************** foreach _section, _optlist : {
+*** 1634,1635 ****
+--- 1644,1646 ----
+      ['ZSTD'],
++     ['WebSockets'],
+    ],
+diff -p1 curl-8.5.0/meson_options.txt curl-8.5.0-ws/meson_options.txt
+*** curl-8.5.0/meson_options.txt	2023-12-19 18:42:14.000000000 +0000
+--- curl-8.5.0-ws/meson_options.txt	2024-03-09 06:18:36.312672474 +0000
+*************** option('verbose-strings', type: 'feature
+*** 41,42 ****
+--- 41,43 ----
+  option('zstd'           , type: 'feature')
++ option('websockets'     , type: 'feature', value: 'enabled')
+  
+Common subdirectories: curl-8.5.0/packages and curl-8.5.0-ws/packages
+Common subdirectories: curl-8.5.0/plan9 and curl-8.5.0-ws/plan9
+Common subdirectories: curl-8.5.0/projects and curl-8.5.0-ws/projects
+Common subdirectories: curl-8.5.0/scripts and curl-8.5.0-ws/scripts
+Common subdirectories: curl-8.5.0/src and curl-8.5.0-ws/src
+Common subdirectories: curl-8.5.0/tests and curl-8.5.0-ws/tests
+Common subdirectories: curl-8.5.0/winbuild and curl-8.5.0-ws/winbuild
