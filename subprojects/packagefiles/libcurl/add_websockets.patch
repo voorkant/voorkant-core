@@ -19,7 +19,7 @@ diff -p1 curl-8.5.0/meson.build curl-8.5.0-ws/meson.build
 --- 961,970 ----
   
 + 
-+ # WebSockes. {{{
++ # WebSockets. {{{
 + cdata.set('USE_WEBSOCKETS', get_option('websockets').allowed())
 + 
 + # }}}
