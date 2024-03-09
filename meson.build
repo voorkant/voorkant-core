@@ -11,14 +11,53 @@ json_dep = dependency('nlohmann_json')
 
 thread_dep = dependency('threads')
 
-curl_dep = dependency('libcurl', version: '>=8.5', allow_fallback: true,
+curl_dep = dependency(
+    'libcurl',
+    version: '>=8.5',
+    allow_fallback: true,
     default_options: [
-        'gopher=disabled',
-        'ntlm=disabled',
         'websockets=enabled',
-        'tests=disabled'
-    ]
-
+        'tests=disabled',
+        'bindlocal=disabled',
+        'dict=disabled',
+        'shuffle-dns=disabled',
+        'doh=disabled',
+        'file=disabled',
+        'form-api=disabled',
+        'ftp=disabled',
+        'gopher=disabled',
+        'imap=disabled',
+        'ldap=disabled',
+        'ldaps=disabled',
+        'mime=disabled',
+        'mqtt=disabled',
+        'netrc=disabled',
+        'pop3=disabled',
+        'progress-meter=disabled',
+        'psl=disabled',
+        'sspi=disabled',
+        'rtsp=disabled',
+        'rtmp=disabled',
+        'smb=disabled',
+        'smtp=disabled',
+        'socketpair=disabled',
+        'telnet=disabled',
+        'tftp=disabled',
+        'tls-srp=disabled',
+        'unixsockets=disabled',
+        'openssl=disabled',
+        'brotli=disabled',
+        'http2=disabled',
+        'zstd=disabled',
+        'ssl=disabled',
+        'ntlm=disabled',
+        'kerberos-auth=disabled',
+        'aws=disabled',
+        'idn=disabled',
+        'gss-api=disabled',
+        'ssh=disabled',
+        'tool=disabled',
+    ],
 )
 
 
