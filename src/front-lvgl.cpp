@@ -4,6 +4,12 @@
 
 std::mutex g_lvgl_updatelock;
 
+template<typename UIType>
+void addElement(std::vector<std::unique_ptr<UIEntity>> &_uielements, std::shared_ptr<HAEntity> _entity, lv_obj_t* _contRow) {
+  std::unique_ptr<UIEntity> xentity = std::make_unique<UIType>(_entity, _contRow);
+    _uielements.push_back(std::move(xentity));
+}
+
 void uithread(HABackend& _backend, int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("client-lvgl");
@@ -104,33 +110,19 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
 
   std::vector<std::unique_ptr<UIEntity>> uielements;
 
+  using AddElementType = void (*)(std::vector<std::unique_ptr<UIEntity>> &, std::shared_ptr<HAEntity>, lv_obj_t*);
+
+  std::map<EntityType, AddElementType> add_element_map{
+    {EntityType::Light, addElement<UIRGBLight>},
+    {EntityType::Switch, addElement<UISwitch>},
+    {EntityType::Fan, addElement<UIButton>},
+    {EntityType::OTHER, addElement<UIDummy>}};
+
   auto entities = _backend.getEntitiesByPattern(entity_command.get<string>("pattern"));
   std::cerr << "Entities are: " << entities.size() << std::endl;
   for (const auto& entity : entities) {
     // FIXME: this is very simple and should move to something with panels in HA.
-    switch (entity->getEntityType()) {
-    case EntityType::Light: {
-      std::unique_ptr<UIEntity> rgb = std::make_unique<UIRGBLight>(entity, cont_row);
-      uielements.push_back(std::move(rgb));
-      break;
-    }
-    case EntityType::Switch: {
-      std::unique_ptr<UIEntity> sw = std::make_unique<UISwitch>(entity, cont_row);
-      uielements.push_back(std::move(sw));
-      break;
-    }
-    case EntityType::Fan: {
-      std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
-      uielements.push_back(std::move(btn));
-      break;
-    }
-    default:
-    case EntityType::OTHER: {
-      std::unique_ptr<UIEntity> dum = std::make_unique<UIDummy>(entity, cont_row);
-      uielements.push_back(std::move(dum));
-      break;
-    }
-    }
+    add_element_map[entity->getEntityType()](uielements, entity, cont_row);
   }
   int i = 0;
   while (true) {
