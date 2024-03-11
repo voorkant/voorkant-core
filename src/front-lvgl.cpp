@@ -4,6 +4,15 @@
 
 std::mutex g_lvgl_updatelock;
 
+namespace
+{
+template <typename UIType>
+std::unique_ptr<UIEntity> makeUIElement(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent)
+{
+  return std::make_unique<UIType>(_entity, _parent);
+}
+}
+
 void uithread(HABackend& _backend, int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("client-lvgl");
@@ -102,35 +111,22 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   lv_obj_set_style_pad_row(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_pad_column(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+  // FIXME: does this actually need unique_ptr? I guess it might save some copying
   std::vector<std::unique_ptr<UIEntity>> uielements;
+
+  using MakeUIElementType = std::unique_ptr<UIEntity> (*)(std::shared_ptr<HAEntity>, lv_obj_t*);
+
+  std::map<EntityType, MakeUIElementType> make_element_map{
+    {EntityType::Light, makeUIElement<UIRGBLight>},
+    {EntityType::Switch, makeUIElement<UISwitch>},
+    {EntityType::Fan, makeUIElement<UIButton>},
+    {EntityType::OTHER, makeUIElement<UIDummy>}};
 
   auto entities = _backend.getEntitiesByPattern(entity_command.get<string>("pattern"));
   std::cerr << "Entities are: " << entities.size() << std::endl;
   for (const auto& entity : entities) {
     // FIXME: this is very simple and should move to something with panels in HA.
-    switch (entity->getEntityType()) {
-    case EntityType::Light: {
-      std::unique_ptr<UIEntity> rgb = std::make_unique<UIRGBLight>(entity, cont_row);
-      uielements.push_back(std::move(rgb));
-      break;
-    }
-    case EntityType::Switch: {
-      std::unique_ptr<UIEntity> sw = std::make_unique<UISwitch>(entity, cont_row);
-      uielements.push_back(std::move(sw));
-      break;
-    }
-    case EntityType::Fan: {
-      std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
-      uielements.push_back(std::move(btn));
-      break;
-    }
-    default:
-    case EntityType::OTHER: {
-      std::unique_ptr<UIEntity> dum = std::make_unique<UIDummy>(entity, cont_row);
-      uielements.push_back(std::move(dum));
-      break;
-    }
-    }
+    uielements.push_back(make_element_map[entity->getEntityType()](entity, cont_row));
   }
   int i = 0;
   while (true) {
