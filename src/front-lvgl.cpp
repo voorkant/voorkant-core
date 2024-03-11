@@ -109,6 +109,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   lv_obj_set_style_pad_row(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_pad_column(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+  // FIXME: does this actually need unique_ptr? I guess it might save some copying
   std::vector<std::unique_ptr<UIEntity>> uielements;
 
   using MakeUIElementType = std::unique_ptr<UIEntity> (*)(std::shared_ptr<HAEntity>, lv_obj_t*);
