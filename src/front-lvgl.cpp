@@ -4,10 +4,11 @@
 
 std::mutex g_lvgl_updatelock;
 
+namespace {
 template<typename UIType>
-void addElement(std::vector<std::unique_ptr<UIEntity>> &_uielements, std::shared_ptr<HAEntity> _entity, lv_obj_t* _contRow) {
-  std::unique_ptr<UIEntity> xentity = std::make_unique<UIType>(_entity, _contRow);
-    _uielements.push_back(std::move(xentity));
+std::unique_ptr<UIEntity> makeUIElement(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) {
+  return std::make_unique<UIType>(_entity, _parent);
+}
 }
 
 void uithread(HABackend& _backend, int _argc, char* _argv[])
@@ -110,19 +111,19 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
 
   std::vector<std::unique_ptr<UIEntity>> uielements;
 
-  using AddElementType = void (*)(std::vector<std::unique_ptr<UIEntity>> &, std::shared_ptr<HAEntity>, lv_obj_t*);
+  using MakeUIElementType = std::unique_ptr<UIEntity> (*)(std::shared_ptr<HAEntity>, lv_obj_t*);
 
-  std::map<EntityType, AddElementType> add_element_map{
-    {EntityType::Light, addElement<UIRGBLight>},
-    {EntityType::Switch, addElement<UISwitch>},
-    {EntityType::Fan, addElement<UIButton>},
-    {EntityType::OTHER, addElement<UIDummy>}};
+  std::map<EntityType, MakeUIElementType> make_element_map{
+    {EntityType::Light, makeUIElement<UIRGBLight>},
+    {EntityType::Switch, makeUIElement<UISwitch>},
+    {EntityType::Fan, makeUIElement<UIButton>},
+    {EntityType::OTHER, makeUIElement<UIDummy>}};
 
   auto entities = _backend.getEntitiesByPattern(entity_command.get<string>("pattern"));
   std::cerr << "Entities are: " << entities.size() << std::endl;
   for (const auto& entity : entities) {
     // FIXME: this is very simple and should move to something with panels in HA.
-    add_element_map[entity->getEntityType()](uielements, entity, cont_row);
+    uielements.push_back(make_element_map[entity->getEntityType()](entity, cont_row));
   }
   int i = 0;
   while (true) {
