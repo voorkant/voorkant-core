@@ -4,9 +4,11 @@
 
 std::mutex g_lvgl_updatelock;
 
-namespace {
-template<typename UIType>
-std::unique_ptr<UIEntity> makeUIElement(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) {
+namespace
+{
+template <typename UIType>
+std::unique_ptr<UIEntity> makeUIElement(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent)
+{
   return std::make_unique<UIType>(_entity, _parent);
 }
 }
