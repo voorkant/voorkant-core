@@ -11,7 +11,9 @@ $ meson compile -C build/
 
 # Dev environment
 
-In the `scripts/` directory, there's a `tmux.sh` file that can be used to start up a HA docker container and complete the registration steps. It then spits out the HA_WS_URL and HA_API_TOKEN. If `client-cli` already exists, then it will spit out a Long-Lived token and you do not need to create it manually.
+In the `scripts/` directory, there's a `tmux.sh` file that can be used to start up a HA docker container and complete the registration steps.
+It then spits out the HA_WS_URL and HA_API_TOKEN.
+If `client-cli` already exists, then it will spit out a Long-Lived token and you do not need to create it manually.
 
 
 # Prepare HA
