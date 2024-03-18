@@ -1,5 +1,7 @@
 #include "uiapexcard.hpp"
 #include <src/extra/widgets/chart/lv_chart.h>
+#include <src/misc/lv_area.h>
+#include <src/misc/lv_color.h>
 
 // FIXME: we do a whole lot of json parsing in this file, that we should be doing somewhere else.
 
@@ -67,9 +69,18 @@ UIApexCard::UIApexCard(const std::string _panel, int _index, lv_obj_t* _parent) 
   lv_obj_set_size(chart, uiEntityWidth*3 - 100, 350);
   lv_obj_center(chart);
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
+  lv_chart_set_point_count(chart, 24); // hours
   lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, 0, 50); // FIXME we're going to fake cents here instead of euros
-  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, 24, 1, true, 40);
+  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 24, 5, 24, 1, true, 40); // FIXME document what these args mean because the 8.3 lvgl docs aren't helping me
   lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
+
+  ser1 = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_BLUE), LV_CHART_AXIS_PRIMARY_Y);
+  lv_coord_t* ser1_array = lv_chart_get_y_array(chart, ser1);
+
+  for(int i=0; i<24; i++) {
+    ser1_array[i] = i;
+  }
+
 
   // lv_obj_t* label = createLabel(flowpanel, entity->name);
   // lv_obj_set_width(label, LV_PCT(100));
