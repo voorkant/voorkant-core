@@ -16,7 +16,7 @@ HAEntity::HAEntity(json _state, std::shared_ptr<HADomain> _hadomain, HABackend* 
   id = state["entity_id"];
   name = getNameFromState();
   domain = getDomainFromState();
-  fullname = domain + "." + name;
+  fullname = domain + "." + name; // FIXME this is "air_quality.Demo Air Quality Home"
   hadomain = _hadomain;
   backend = _backend;
 }
