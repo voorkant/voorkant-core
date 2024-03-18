@@ -44,25 +44,28 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("client-cli");
   argparse::ArgumentParser subscribe_command("subscribe");
+  subscribe_command.add_description("subscribe to a domain and show events");
   subscribe_command.add_argument("domain")
     .help("specific a HA domain"); // maybe .remaining() so you can subscribe multiple?
-
   program.add_subparser(subscribe_command);
 
   argparse::ArgumentParser token_command("ha-get-token");
+  token_command.add_description("get a long lived access token");
   token_command.add_argument("name").help("Name of the token").default_value("voorkant");
   program.add_subparser(token_command);
 
   argparse::ArgumentParser list_entities_command("list-entities");
+  list_entities_command.add_description("list all entities");
   program.add_subparser(list_entities_command);
 
   /* usage example for dump-command with data:
    * build/client-cli dump-command call_service '{"domain":"light","service":"toggle","target":{"entity_id":"light.bed_light"}}'
    */
   argparse::ArgumentParser dump_command("dump-command");
+  dump_command.add_description("run a command and show the response");
   dump_command.add_argument("command").help("the command to execute");
   dump_command.add_argument("data").help("optional data to pass with the command").default_value("{}");
-
+  dump_command.add_argument("--wait").implicit_value(true).help("keep listening for further output");
   program.add_subparser(dump_command);
 
   try {
@@ -110,9 +113,15 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     }
   }
   else if (program.is_subcommand_used(dump_command)) {
+    backend.subscribe_events = false;
+    backend.Start();
+
     json data = json::parse(dump_command.get<string>("data"));
     json res = _backend.doCommand(dump_command.get<string>("command"), data);
     cout << res.dump(2) << endl;
+    while (true) {
+      sleep(10);
+    }
   }
   else {
     cerr << "no command given" << endl;

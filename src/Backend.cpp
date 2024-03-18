@@ -83,7 +83,7 @@ json HABackend::doCommand(const string& _command, const json& _data)
 
   json jsonresponse = json::parse(response);
   if (jsonresponse["id"] != request["id"]) {
-    throw std::runtime_error("Send out a command, but received something with a different ID.");
+    throw std::runtime_error("Sent out a command, but received something with a different ID.");
   }
   return jsonresponse;
 }
@@ -100,14 +100,15 @@ void HABackend::threadrunner()
     throw std::runtime_error("Didn't receive response to getDomains while we expected it");
   }
   for (auto& [domain, services] : getdomainjson["result"].items()) {
-
     std::scoped_lock lk(domainslock);
     domains[domain] = std::make_shared<HADomain>(domain, services);
   }
 
-  json subscribe;
-  subscribe["type"] = "subscribe_events";
-  wc->send(subscribe);
+  if (subscribe_events) {
+    json subscribe;
+    subscribe["type"] = "subscribe_events";
+    wc->send(subscribe);
+  }
 
   json getstates;
   getstates["type"] = "get_states";
@@ -119,6 +120,7 @@ void HABackend::threadrunner()
     // cout<<msg<<endl;
     json j = json::parse(msg);
 
+    std::cerr<<j.dump(2)<<std::endl; // FIXME: this is just to make this PR somewhat work
     {
 
       if (j["id"] == getstates["id"]) {

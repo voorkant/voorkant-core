@@ -35,6 +35,8 @@ public:
   map<string, std::shared_ptr<HAEntity>> getEntities();
   void wsConnSend(json& _msg);
 
+  bool subscribe_events{true};
+
 private:
   bool loaded;
   std::mutex load_lock;
