@@ -27,7 +27,7 @@ UIEntity::UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIComponent(_parent)
 {
   entity = _entity;
-  entity->attach((IObserver*)this);
+  if(entity) entity->attach((IObserver*)this);
 };
 
 UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :

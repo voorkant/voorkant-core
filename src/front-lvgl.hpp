@@ -25,6 +25,7 @@
 #include "sdl/sdl.h"
 #include "uicomponents/UIComponents.hpp"
 #include "uicomponents/uirgblight.hpp"
+#include "uicomponents/uiapexcard.hpp"
 #include <generated/domains.hpp>
 
 using std::string;
