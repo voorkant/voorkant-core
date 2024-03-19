@@ -128,8 +128,8 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     // FIXME: this is very simple and should move to something with panels in HA.
     uielements.push_back(make_element_map[entity->getEntityType()](entity, cont_row));
   }
-  uielements.push_back(std::make_unique<UIApexCard>("dashboard-charts", 0, cont_row));
-  uielements.push_back(std::make_unique<UIApexCard>("dashboard-charts", 1, cont_row));
+  // uielements.push_back(std::make_unique<UIApexCard>("dashboard-charts", 0, cont_row));
+  uielements.push_back(std::make_unique<UIApexCard>(_backend, "dashboard-charts", 1, cont_row));
   int i = 0;
   while (true) {
     usleep(5 * 1000); // 5000 usec = 5 ms
