@@ -5,6 +5,17 @@
 
 // FIXME: we do a whole lot of json parsing in this file, that we should be doing somewhere else.
 
+void UIApexCard::drawEventCB(lv_event_t* _e)
+{
+  lv_obj_draw_part_dsc_t * dsc = lv_event_get_draw_part_dsc(_e);
+  if(!lv_obj_draw_part_check_type(dsc, &lv_chart_class, LV_CHART_DRAW_PART_TICK_LABEL)) return;
+
+  if(dsc->id == LV_CHART_AXIS_PRIMARY_X && dsc->text) {
+      const char * month[] = {"Jan", "Febr", "March", "Apr", "May", "Jun", "July", "Aug", "Sept", "Oct", "Nov", "Dec", "Jan", "Febr", "March", "Apr", "May", "Jun", "July", "Aug", "Sept", "Oct", "Nov", "Dec", "Jan", "Febr", "March", "Apr", "May", "Jun", "July", "Aug", "Sept", "Oct", "Nov", "Dec", "Jan", "Febr", "March", "Apr", "May", "Jun", "July", "Aug", "Sept", "Oct", "Nov", "Dec", };
+      lv_snprintf(dsc->text, dsc->text_length, "%s", month[dsc->value]);
+  }
+}
+
 UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index, lv_obj_t* _parent) :
   UIEntity(nullptr, _parent)
 {
@@ -69,6 +80,7 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
   lv_obj_set_size(chart, uiEntityWidth*3 - 100, 350);
   lv_obj_center(chart);
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
+  lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, NULL);
 
   auto data = _backend.getEntityByName("sensor.current_electricity_price_all_in")->getJsonState()["attributes"]["prices"];
 
