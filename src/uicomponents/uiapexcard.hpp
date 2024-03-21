@@ -16,7 +16,7 @@ private:
   lv_obj_t* flowpanel;
   lv_chart_series_t* ser1;
 
-  nlohmann::json data;
+  std::vector<std::pair<std::string, double>> values; // return [record.from, record.price];
 
   static void drawEventCB(lv_event_t* _e);
 };

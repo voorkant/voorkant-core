@@ -10,9 +10,11 @@ void UIApexCard::drawEventCB(lv_event_t* _e)
   lv_obj_draw_part_dsc_t * dsc = lv_event_get_draw_part_dsc(_e);
   if(!lv_obj_draw_part_check_type(dsc, &lv_chart_class, LV_CHART_DRAW_PART_TICK_LABEL)) return;
 
+  auto apexcard = (UIApexCard*)(_e->user_data);
+
   if(dsc->id == LV_CHART_AXIS_PRIMARY_X && dsc->text) {
       const char * month[] = {"Jan", "Febr", "March", "Apr", "May", "Jun", "July", "Aug", "Sept", "Oct", "Nov", "Dec", "Jan", "Febr", "March", "Apr", "May", "Jun", "July", "Aug", "Sept", "Oct", "Nov", "Dec", "Jan", "Febr", "March", "Apr", "May", "Jun", "July", "Aug", "Sept", "Oct", "Nov", "Dec", "Jan", "Febr", "March", "Apr", "May", "Jun", "July", "Aug", "Sept", "Oct", "Nov", "Dec", };
-      lv_snprintf(dsc->text, dsc->text_length, "%s", month[dsc->value]);
+      lv_snprintf(dsc->text, dsc->text_length, "%s", apexcard->values[dsc->value].first.c_str());
   }
 }
 
@@ -80,11 +82,9 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
   lv_obj_set_size(chart, uiEntityWidth*3 - 100, 350);
   lv_obj_center(chart);
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
-  lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, NULL);
+  lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
 
-  data = _backend.getEntityByName("sensor.current_electricity_price_all_in")->getJsonState()["attributes"]["prices"];
-
-  std::vector<std::pair<std::string, double>> values; // return [record.from, record.price];
+  auto data = _backend.getEntityByName("sensor.current_electricity_price_all_in")->getJsonState()["attributes"]["prices"];
 
   auto min = std::numeric_limits<double>::max();
   auto max = std::numeric_limits<double>::min();
