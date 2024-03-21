@@ -69,20 +69,35 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
   lv_obj_set_size(chart, uiEntityWidth*3 - 100, 350);
   lv_obj_center(chart);
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
-  lv_chart_set_point_count(chart, 24); // hours
-  lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, 200, 300); // FIXME we're going to fake milli-EUR here instead of euros
+
+  auto data = _backend.getEntityByName("sensor.current_electricity_price_all_in")->getJsonState()["attributes"]["prices"];
+
+  std::vector<std::pair<std::string, double>> values; // return [record.from, record.price];
+
+  auto min = std::numeric_limits<double>::max();
+  auto max = std::numeric_limits<double>::min();
+  std::cerr<<data<<std::endl;
+  std::cerr<<data.size()<<std::endl;
+  for(const auto &v : data) {
+    std::cerr<<"."<<std::endl;
+    auto pair = std::make_pair<std::string, double>(v["from"].get<string>(), v["price"].get<double>());
+    values.push_back(pair);
+    min = std::min(min, pair.second);
+    max = std::max(max, pair.second);
+  }
+
+  const auto float_factor = 1000.0; // milli-euros
+
+  lv_chart_set_point_count(chart, values.size()); // hours
+  lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, min * float_factor, max * float_factor);
   lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 24, 5, 24, 1, true, 40); // FIXME document what these args mean because the 8.3 lvgl docs aren't helping me
   lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
 
   ser1 = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_BLUE), LV_CHART_AXIS_PRIMARY_Y);
   lv_coord_t* ser1_array = lv_chart_get_y_array(chart, ser1);
 
-  auto data = _backend.getEntityByName("sensor.current_electricity_price_all_in");
-
-  std::cerr<<data->toString()<<std::endl;
-
-  for(int i=0; i<24; i++) {
-    ser1_array[i] = data->getJsonState()["attributes"]["prices"][i]["price"].get<float>()*1000;
+  for(int i=0; i<values.size(); i++) {
+    ser1_array[i] = values[i].second*1000;
   }
 
   // lv_obj_t* label = createLabel(flowpanel, entity->name);
