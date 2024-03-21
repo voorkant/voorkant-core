@@ -82,7 +82,7 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
   lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, NULL);
 
-  auto data = _backend.getEntityByName("sensor.current_electricity_price_all_in")->getJsonState()["attributes"]["prices"];
+  data = _backend.getEntityByName("sensor.current_electricity_price_all_in")->getJsonState()["attributes"]["prices"];
 
   std::vector<std::pair<std::string, double>> values; // return [record.from, record.price];
 
