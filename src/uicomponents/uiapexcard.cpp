@@ -90,7 +90,7 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
 
   lv_chart_set_point_count(chart, values.size()); // hours
   lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, min * float_factor, max * float_factor);
-  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 24, 5, 24, 1, true, 40); // FIXME document what these args mean because the 8.3 lvgl docs aren't helping me
+  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, values.size(), 1, true, 40); // major ticks point 10 px down, minor 5. values.size() major ticks, and 1 minor (actually means zero!) in between those. [true] labels on major ticks. 40px for labels.
   lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
 
   ser1 = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_BLUE), LV_CHART_AXIS_PRIMARY_Y);
