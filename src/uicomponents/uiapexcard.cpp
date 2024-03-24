@@ -1,4 +1,5 @@
 #include "uiapexcard.hpp"
+#include <src/core/lv_obj_pos.h>
 #include <src/extra/widgets/chart/lv_chart.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_color.h>
@@ -15,9 +16,10 @@ void UIApexCard::drawEventCB(lv_event_t* _e)
   auto apexcard = (UIApexCard*)(_e->user_data);
 
   if(dsc->id == LV_CHART_AXIS_PRIMARY_X && dsc->text) {
-    size_t index = dsc->value * G_TICK_DIVIDER;
-    if(index < apexcard->values.size()) {
+    size_t index = dsc->value;
+    if(index < apexcard->values.size() && index % 10 == 0) {
       lv_snprintf(dsc->text, dsc->text_length, "%s", apexcard->values[index].first.c_str());
+      dsc->radius=90;
     }
     else {
       lv_snprintf(dsc->text, dsc->text_length, "");
@@ -87,6 +89,9 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
 
   chart = lv_chart_create(flowpanel);
   lv_obj_set_size(chart, uiEntityWidth*3 - 100, 350);
+  lv_obj_update_layout(chart);
+  std::cerr<<"lv_obj_get_content_width(chart)="<<lv_obj_get_content_width(chart)<<std::endl;
+  std::cerr<<"lv_obj_get_content_height(chart)="<<lv_obj_get_content_height(chart)<<std::endl;
   lv_obj_center(chart);
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
   lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
@@ -105,11 +110,12 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
     max = std::max(max, pair.second);
   }
 
+  std::cerr<<values.size()<<std::endl;
   const auto float_factor = 1000.0; // milli-euros
 
   lv_chart_set_point_count(chart, values.size()); // hours
   lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, min * float_factor, max * float_factor); // FIXME/FIXTHEM: lvgl 8.3 docs say it's LV_CHART_AXIS_PRIMARY which is just wrong
-  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, (values.size() / G_TICK_DIVIDER)+1, G_TICK_DIVIDER, true, 40); // major ticks point 10 px down, minor 5. values.size() major ticks, and 1 minor (actually means zero!) in between those. [true] labels on major ticks. 40px for labels.
+  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, values.size(), 1, true, 40); // major ticks point 10 px down, minor 5. values.size() major ticks, and 1 minor (actually means zero!) in between those. [true] labels on major ticks. 40px for labels.
   lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
 
   ser1 = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_BLUE), LV_CHART_AXIS_PRIMARY_Y);
@@ -118,6 +124,20 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
   for(int i=0; i<values.size(); i++) {
     ser1_array[i] = values[i].second*1000;
   }
+
+  lv_point_t now_coordinates;
+  lv_chart_get_point_pos_by_id(chart, ser1, 1, &now_coordinates);
+  std::cerr<<"coords(x,y)="<<now_coordinates.x<<","<<now_coordinates.y<<std::endl;
+
+  lv_obj_t* now_label = createLabel(chart, "<-Now");
+  lv_obj_set_pos(now_label, now_coordinates.x, now_coordinates.y);
+  // lv_obj_set_style_border_color(now_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+  // lv_obj_set_style_border_width(now_label, 3, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+  lv_obj_set_style_border_color(now_label, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_opa(now_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_border_opa(now_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_border_width(now_label, 3, LV_PART_MAIN | LV_STATE_DEFAULT);
 
   // lv_obj_t* label = createLabel(flowpanel, entity->name);
   // lv_obj_set_width(label, LV_PCT(100));
