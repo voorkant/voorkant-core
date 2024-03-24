@@ -87,9 +87,16 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
 
   // lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
+  lv_obj_t* label = createLabel(flowpanel, "Grafiekje"); // FIXME somehow this is not showing
+  lv_obj_set_width(label, LV_PCT(100));
+  lv_obj_set_align(label, LV_ALIGN_CENTER);
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+
   chart = lv_chart_create(flowpanel);
   lv_obj_set_size(chart, uiEntityWidth*3 - 100, 350);
-  lv_obj_update_layout(chart);
+// lv_obj_set_width(chart, LV_PCT(100));
+// lv_obj_set_align(chart, LV_ALIGN_CENTER);
+
   std::cerr<<"lv_obj_get_content_width(chart)="<<lv_obj_get_content_width(chart)<<std::endl;
   std::cerr<<"lv_obj_get_content_height(chart)="<<lv_obj_get_content_height(chart)<<std::endl;
   lv_obj_center(chart);
@@ -124,6 +131,8 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
   for(int i=0; i<values.size(); i++) {
     ser1_array[i] = values[i].second*1000;
   }
+
+  lv_obj_update_layout(chart); // this makes lv_chart_get_point_pos_by_id work later
 
   lv_point_t now_coordinates;
   lv_chart_get_point_pos_by_id(chart, ser1, 1, &now_coordinates);
