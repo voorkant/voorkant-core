@@ -105,7 +105,8 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
   lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
 
-  auto data = _backend.getEntityByName("sensor.current_electricity_price_all_in")->getJsonState()["attributes"]["prices"];
+  std::cerr<<apexcard<<std::endl;
+  auto data = _backend.getEntityByName(apexcard["series"][0]["entity"].get<std::string>())->getJsonState()["attributes"]["prices"]; // FIXME: do multiple series, leave decision of what data to plot to the data_generator JS
 
   auto min = std::numeric_limits<double>::max();
   auto max = std::numeric_limits<double>::min();
