@@ -76,6 +76,8 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
   //   }
   // }
 
+  auto apexcard = _backend.getPanel();
+
   // // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
   flowpanel = lv_obj_create(_parent);
   lv_obj_set_width(flowpanel, uiEntityWidth*3);
@@ -87,7 +89,7 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
 
   // lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
-  lv_obj_t* label = createLabel(flowpanel, "Grafiekje"); // FIXME somehow this is not showing
+  lv_obj_t* label = createLabel(flowpanel, apexcard["header"]["title"]); // FIXME somehow this is not showing FIXME check show bool FIXME handle absence of title
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
