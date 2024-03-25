@@ -180,7 +180,7 @@ void HABackend::threadrunner()
       }
       else if (j["id"] == getpanel["id"]) {
         panel = j["result"]["views"][0]["cards"][0]; // FIXME: of the single panel we pick up, we only take the first view and of that, the first card. the panel var now holds one card
-        cerr<<panel<<endl;
+        cerr << panel << endl;
       }
       else if (j["type"] == "event") {
         std::scoped_lock lk(entitieslock);
