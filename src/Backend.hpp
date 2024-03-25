@@ -34,6 +34,7 @@ public:
   std::vector<std::shared_ptr<HAEntity>> getEntitiesByPattern(const std::string& _pattern);
   map<string, std::shared_ptr<HAEntity>> getEntities();
   void wsConnSend(json& _msg);
+  json getPanel();
 
 private:
   bool loaded;
@@ -47,6 +48,7 @@ private:
   std::mutex entitieslock;
   map<string, std::shared_ptr<HADomain>> domains;
   std::mutex domainslock;
+  json panel; // FIXME: actually holds a single card right now
 };
 
 #endif
