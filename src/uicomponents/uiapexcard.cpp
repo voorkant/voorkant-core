@@ -10,16 +10,17 @@ static auto const G_TICK_DIVIDER = 12; // if values.size() doesn't divide cleanl
 
 void UIApexCard::drawEventCB(lv_event_t* _e)
 {
-  lv_obj_draw_part_dsc_t * dsc = lv_event_get_draw_part_dsc(_e);
-  if(!lv_obj_draw_part_check_type(dsc, &lv_chart_class, LV_CHART_DRAW_PART_TICK_LABEL)) return;
+  lv_obj_draw_part_dsc_t* dsc = lv_event_get_draw_part_dsc(_e);
+  if (!lv_obj_draw_part_check_type(dsc, &lv_chart_class, LV_CHART_DRAW_PART_TICK_LABEL))
+    return;
 
   auto apexcard = (UIApexCard*)(_e->user_data);
 
-  if(dsc->id == LV_CHART_AXIS_PRIMARY_X && dsc->text) {
+  if (dsc->id == LV_CHART_AXIS_PRIMARY_X && dsc->text) {
     size_t index = dsc->value;
-    if(index < apexcard->values.size() && index % 10 == 0) {
+    if (index < apexcard->values.size() && index % 10 == 0) {
       lv_snprintf(dsc->text, dsc->text_length, "%s", apexcard->values[index].first.c_str());
-      dsc->radius=90;
+      dsc->radius = 90;
     }
     else {
       lv_snprintf(dsc->text, dsc->text_length, "");
@@ -27,7 +28,7 @@ void UIApexCard::drawEventCB(lv_event_t* _e)
   }
 }
 
-UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index, lv_obj_t* _parent) :
+UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index, lv_obj_t* _parent) :
   UIEntity(nullptr, _parent)
 {
 
@@ -80,7 +81,7 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
 
   // // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
   flowpanel = lv_obj_create(_parent);
-  lv_obj_set_width(flowpanel, uiEntityWidth*3);
+  lv_obj_set_width(flowpanel, uiEntityWidth * 3);
   lv_obj_set_height(flowpanel, 450);
   // lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   // lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
@@ -95,32 +96,32 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
   chart = lv_chart_create(flowpanel);
-  lv_obj_set_size(chart, uiEntityWidth*3 - 100, 350);
-// lv_obj_set_width(chart, LV_PCT(100));
-// lv_obj_set_align(chart, LV_ALIGN_CENTER);
+  lv_obj_set_size(chart, uiEntityWidth * 3 - 100, 350);
+  // lv_obj_set_width(chart, LV_PCT(100));
+  // lv_obj_set_align(chart, LV_ALIGN_CENTER);
 
-  std::cerr<<"lv_obj_get_content_width(chart)="<<lv_obj_get_content_width(chart)<<std::endl;
-  std::cerr<<"lv_obj_get_content_height(chart)="<<lv_obj_get_content_height(chart)<<std::endl;
+  std::cerr << "lv_obj_get_content_width(chart)=" << lv_obj_get_content_width(chart) << std::endl;
+  std::cerr << "lv_obj_get_content_height(chart)=" << lv_obj_get_content_height(chart) << std::endl;
   lv_obj_center(chart);
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
   lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
 
-  std::cerr<<apexcard<<std::endl;
+  std::cerr << apexcard << std::endl;
   auto data = _backend.getEntityByName(apexcard["series"][0]["entity"].get<std::string>())->getJsonState()["attributes"]["prices"]; // FIXME: do multiple series, leave decision of what data to plot to the data_generator JS
 
   auto min = std::numeric_limits<double>::max();
   auto max = std::numeric_limits<double>::min();
-  std::cerr<<data<<std::endl;
-  std::cerr<<data.size()<<std::endl;
-  for(const auto &v : data) {
-    std::cerr<<"."<<std::endl;
+  std::cerr << data << std::endl;
+  std::cerr << data.size() << std::endl;
+  for (const auto& v : data) {
+    std::cerr << "." << std::endl;
     auto pair = std::make_pair<std::string, double>(v["from"].get<string>(), v["price"].get<double>());
     values.push_back(pair);
     min = std::min(min, pair.second);
     max = std::max(max, pair.second);
   }
 
-  std::cerr<<values.size()<<std::endl;
+  std::cerr << values.size() << std::endl;
   const auto float_factor = 1000.0; // milli-euros
 
   lv_chart_set_point_count(chart, values.size()); // hours
@@ -131,15 +132,15 @@ UIApexCard::UIApexCard(HABackend &_backend, const std::string _panel, int _index
   ser1 = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_BLUE), LV_CHART_AXIS_PRIMARY_Y);
   lv_coord_t* ser1_array = lv_chart_get_y_array(chart, ser1);
 
-  for(int i=0; i<values.size(); i++) {
-    ser1_array[i] = values[i].second*1000;
+  for (int i = 0; i < values.size(); i++) {
+    ser1_array[i] = values[i].second * 1000;
   }
 
   lv_obj_update_layout(chart); // this makes lv_chart_get_point_pos_by_id work later
 
   lv_point_t now_coordinates;
   lv_chart_get_point_pos_by_id(chart, ser1, 1, &now_coordinates);
-  std::cerr<<"coords(x,y)="<<now_coordinates.x<<","<<now_coordinates.y<<std::endl;
+  std::cerr << "coords(x,y)=" << now_coordinates.x << "," << now_coordinates.y << std::endl;
 
   lv_obj_t* now_label = createLabel(chart, "<-Now");
   lv_obj_set_pos(now_label, now_coordinates.x, now_coordinates.y);
@@ -294,4 +295,3 @@ void UIApexCard::uiupdate()
   //   }
   // }
 }
-
