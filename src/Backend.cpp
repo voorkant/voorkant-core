@@ -118,6 +118,12 @@ void HABackend::threadrunner()
   getstates["type"] = "get_states";
   wc->send(getstates);
 
+  json getpanels;
+  getpanels["type"] = "get_panels"; // FIXME: this is one-off and does not subscribe
+  wc->send(getpanels);
+
+  json getpanel; // FIXME: the loop below fetches exactly one panel
+
   while (true) {
     auto msg = wc->recv();
 
@@ -145,9 +151,36 @@ void HABackend::threadrunner()
           // FIXME: we should check if the domain actually exists before just calling for it.
           entities[entity_id] = std::make_shared<HAEntity>(evd, domains[domain], this); // FIXME: we share `this` entirely unprotected from threading mistakes here
         }
+        // FIXME: I wonder if this lock is held since the previous {
         std::unique_lock<std::mutex> lck(load_lock);
         loaded = true;
         load_cv.notify_all();
+      }
+      else if (j["id"] == getpanels["id"]) {
+        for (auto& [key, value] : j["result"].items()) {
+          // the default panel, called "lovelace", does not actually support get_config
+          if (key == "lovelace") {
+            continue;
+          }
+
+          // we only want lovelace panels
+          if (value["component_name"].get<std::string>() != "lovelace") {
+            continue;
+          }
+
+          // we got a lovelace panel, so we ask for its contents
+          getpanel["type"] = "lovelace/config";
+          getpanel["url_path"] = value["url_path"];
+          wc->send(getpanel);
+
+          // FIXME: and because we only support one panel right now, we stop here
+          // could also have a command line arg for picking a panel
+          break;
+        }
+      }
+      else if (j["id"] == getpanel["id"]) {
+        panel = j["result"]["views"][0]["cards"][0]; // FIXME: of the single panel we pick up, we only take the first view and of that, the first card. the panel var now holds one card
+        cerr<<panel<<endl;
       }
       else if (j["type"] == "event") {
         std::scoped_lock lk(entitieslock);
@@ -183,6 +216,11 @@ void HABackend::threadrunner()
 map<string, std::shared_ptr<HAEntity>> HABackend::getEntities()
 {
   return entities;
+}
+
+json HABackend::getPanel()
+{
+  return panel;
 }
 
 std::vector<std::shared_ptr<HAEntity>> HABackend::getEntitiesByDomain(const std::string& _domain)
