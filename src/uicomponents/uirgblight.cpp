@@ -73,7 +73,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
   flowpanel = lv_obj_create(_parent);
   lv_obj_set_width(flowpanel, uiEntityWidth);
-  lv_obj_set_height(flowpanel, 450);
+  lv_obj_set_height(flowpanel, 380);
   lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
   lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);

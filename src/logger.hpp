@@ -1,6 +1,7 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include <deque>
 #include <iostream>
 #include <array>
 #include <sstream>
@@ -41,9 +42,13 @@ public:
   void setDoDetails(bool _logDetails);
   void setLocation(const char* _filename, const int _linenr, const char* _method);
 
+  std::string getForLogBox();
+
 private:
   LogLevel level2log = LogLevel::Error;
   bool logDetails = false;
+  std::deque<std::string> logBuffer;
+  const size_t logBufferSize = 5;
 
   struct ThreadLocals
   {

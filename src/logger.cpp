@@ -1,4 +1,5 @@
 #include "logger.hpp"
+#include <iterator>
 
 thread_local Logger::ThreadLocals Logger::tl;
 
@@ -43,6 +44,19 @@ void Logger::writelog(const LogLevel _level, const std::string& _line, const Loc
   line << " " << _line;
 
   std::cerr << line.str() << endl;
+  logBuffer.push_back(line.str());
+  if (logBuffer.size() > logBufferSize) {
+    logBuffer.pop_front();
+  }
+}
+
+std::string Logger::getForLogBox()
+{
+  std::ostringstream ret;
+
+  std::copy(logBuffer.begin(), logBuffer.end(), std::ostream_iterator<std::string>(ret, "\n"));
+
+  return ret.str();
 }
 
 void Logger::setLocation(const char* _filename, const int _linenr, const char* _function)
