@@ -144,6 +144,10 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
   auto max = std::numeric_limits<double>::min();
   std::cerr << data << std::endl;
   std::cerr << data.size() << std::endl;
+  int nowindex = 0;
+  int counter = 0;
+  struct timeval now;
+  gettimeofday(&now, nullptr);
   for (const auto& v : data) {
     std::cerr << "." << std::endl;
     auto from = v["from"].get<string>();
@@ -153,9 +157,14 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
 
     auto pair = std::make_pair<time_t, double>(fromtu.count()/1000, v["price"].get<double>());
 
+    if (fromtu.count()/1000 <= now.tv_sec) {
+      nowindex = counter;
+    }
+
     values.push_back(pair);
     min = std::min(min, pair.second);
     max = std::max(max, pair.second);
+    counter++;
   }
 
   std::cerr << values.size() << std::endl;
@@ -176,7 +185,8 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
   lv_obj_update_layout(chart); // this makes lv_chart_get_point_pos_by_id work later
 
   lv_point_t now_coordinates;
-  lv_chart_get_point_pos_by_id(chart, ser1, 1, &now_coordinates);
+  std::cerr << "nowindex=" << nowindex << std::endl;
+  lv_chart_get_point_pos_by_id(chart, ser1, nowindex, &now_coordinates);
   std::cerr << "coords(x,y)=" << now_coordinates.x << "," << now_coordinates.y << std::endl;
 
   lv_obj_t* now_label = createLabel(chart, "<-Now");
