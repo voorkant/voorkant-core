@@ -186,6 +186,9 @@ executable(
 )
 
 if get_option('front-lvgl').enabled()
+    date_dep = dependency('date')
+    tz_dep = dependency('tz')
+
     executable(
         'client-lvgl',
         [
@@ -217,6 +220,8 @@ if get_option('front-lvgl').enabled()
             openssl_dep,
             zlib_dep,
             libatomic,
+            date_dep,
+            tz_dep,
         ],
         include_directories: incdir,
         cpp_args: [

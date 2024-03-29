@@ -3,6 +3,9 @@
 #include <src/extra/widgets/chart/lv_chart.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_color.h>
+#include <chrono>
+#include <time.h>
+#include <date/date.h>
 
 // FIXME: we do a whole lot of json parsing in this file, that we should be doing somewhere else.
 
@@ -27,6 +30,26 @@ void UIApexCard::drawEventCB(lv_event_t* _e)
     }
   }
 }
+
+// https://stackoverflow.com/a/38839725
+date::sys_time<std::chrono::milliseconds>
+parse8601(std::istream&& is)
+{
+    std::string save;
+    is >> save;
+    std::istringstream in{save};
+    date::sys_time<std::chrono::milliseconds> tp;
+    in >> date::parse("%FT%TZ", tp);
+    if (in.fail())
+    {
+        in.clear();
+        in.exceptions(std::ios::failbit);
+        in.str(save);
+        in >> date::parse("%FT%T%Ez", tp);
+    }
+    return tp;
+}
+
 
 UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index, lv_obj_t* _parent) :
   UIEntity(nullptr, _parent)
@@ -116,6 +139,11 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
   for (const auto& v : data) {
     std::cerr << "." << std::endl;
     auto pair = std::make_pair<std::string, double>(v["from"].get<string>(), v["price"].get<double>());
+    auto from = v["from"].get<string>();
+    std::cerr<<"from="<<from<<std::endl;
+    auto fromt = parse8601(std::istringstream{from});
+    auto fromtu = fromt.time_since_epoch(); // unix epoch time in milliseconds
+
     values.push_back(pair);
     min = std::min(min, pair.second);
     max = std::max(max, pair.second);
