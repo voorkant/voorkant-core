@@ -21,13 +21,18 @@ void UIApexCard::drawEventCB(lv_event_t* _e)
 
   if (dsc->id == LV_CHART_AXIS_PRIMARY_X && dsc->text) {
     size_t index = dsc->value;
-    if (index < apexcard->values.size() && index % 10 == 0) {
-      lv_snprintf(dsc->text, dsc->text_length, "%s", apexcard->values[index].first.c_str());
-      dsc->radius = 90;
+    auto timestamp = apexcard->values[index].first; // FIXME: check index before we, well, index?
+    struct tm local_timestamp;
+    localtime_r(&timestamp, &local_timestamp);
+    char timebuf[100]="";
+    if (local_timestamp.tm_hour == 0) {
+      strftime(timebuf, sizeof(timebuf), "%d %b", &local_timestamp);
     }
-    else {
-      lv_snprintf(dsc->text, dsc->text_length, "");
+    else if (index % 6 == 0) {
+      strftime(timebuf, sizeof(timebuf), "%H:%M", &local_timestamp);
+      // dsc->radius = 90;
     }
+    lv_snprintf(dsc->text, dsc->text_length, "%s", timebuf); // is there something simpler than snprintf if we already have the string?
   }
 }
 
@@ -100,6 +105,8 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
   //   }
   // }
 
+  sleep(1); // FIXME: Backend.cpp should not set loaded=true until the panel exists
+
   auto apexcard = _backend.getPanel();
 
   // // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
@@ -113,6 +120,7 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
 
   // lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
+  std::cerr<<"apexcard="<<apexcard<<std::endl;
   lv_obj_t* label = createLabel(flowpanel, apexcard["header"]["title"]); // FIXME somehow this is not showing FIXME check show bool FIXME handle absence of title
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_CENTER);
@@ -138,11 +146,12 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
   std::cerr << data.size() << std::endl;
   for (const auto& v : data) {
     std::cerr << "." << std::endl;
-    auto pair = std::make_pair<std::string, double>(v["from"].get<string>(), v["price"].get<double>());
     auto from = v["from"].get<string>();
     std::cerr<<"from="<<from<<std::endl;
     auto fromt = parse8601(std::istringstream{from});
     auto fromtu = fromt.time_since_epoch(); // unix epoch time in milliseconds
+
+    auto pair = std::make_pair<time_t, double>(fromtu.count()/1000, v["price"].get<double>());
 
     values.push_back(pair);
     min = std::min(min, pair.second);
