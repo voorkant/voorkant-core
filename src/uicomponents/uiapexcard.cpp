@@ -167,6 +167,7 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
     counter++;
   }
 
+  std::cerr << "min=" << min << ", max=" << max << std::endl;
   std::cerr << values.size() << std::endl;
   const auto float_factor = 1000.0; // milli-euros
 
