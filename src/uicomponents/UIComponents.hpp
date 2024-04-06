@@ -24,7 +24,7 @@ protected:
 
   std::shared_ptr<HAEntity> entity;
   lv_obj_t* parentContainer;
-  const lv_coord_t uiEntityWidth = 250;
+  const lv_coord_t uiEntityWidth = (800 - (2 * 9)) / 3;
   const lv_label_long_mode_t labelLongMode = LV_LABEL_LONG_SCROLL;
 };
 

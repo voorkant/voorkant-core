@@ -39,7 +39,8 @@ void btnLeftPress(lv_event_t* _e)
     lv_coord_t x = lv_obj_get_scroll_x(cont_row);
     cerr << "Left press: " << x << endl;
 
-    lv_obj_scroll_to_x(cont_row, x - MY_DISP_HOR_RES, LV_ANIM_OFF);
+    // this is 807 because for whatever reason the snapping requires it to be 807....
+    lv_obj_scroll_to_x(cont_row, x - 807, LV_ANIM_OFF);
   }
 };
 
@@ -48,7 +49,8 @@ void btnRightPress(lv_event_t* _e)
   lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_CLICKED) {
     lv_coord_t x = lv_obj_get_scroll_x(cont_row);
-    lv_obj_scroll_to_x(cont_row, x + MY_DISP_HOR_RES, LV_ANIM_OFF);
+    cerr << "Right press: " << x << endl;
+    lv_obj_scroll_to_x(cont_row, x + 807, LV_ANIM_OFF);
   }
 };
 
@@ -141,8 +143,6 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   lv_obj_clear_flag(row_and_logs, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_size(row_and_logs, MY_DISP_HOR_RES, MY_DISP_VER_RES);
   lv_obj_set_flex_flow(row_and_logs, LV_FLEX_FLOW_ROW_WRAP);
-  lv_obj_set_style_pad_row(row_and_logs, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_pad_column(row_and_logs, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
   /*Create a container with ROW flex direction that wraps.
   This is our MAIN box that we put everything in except logs. We have this here because we want some spacing around it.
@@ -151,8 +151,9 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   lv_obj_remove_style_all(cont_row);
   lv_obj_set_size(cont_row, MY_DISP_HOR_RES, MY_DISP_VER_RES * 0.8);
   lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN_WRAP);
-  lv_obj_set_style_pad_row(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_pad_column(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_pad_row(cont_row, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_pad_column(cont_row, 9, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_scroll_snap_x(cont_row, LV_SCROLL_SNAP_START);
 
   /* Bottom row */
   lv_obj_t* bottom_row = lv_obj_create(row_and_logs);
