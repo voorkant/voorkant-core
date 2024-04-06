@@ -2,10 +2,27 @@
 #include "HAEntity.hpp"
 #include "logger.hpp"
 #include "uicomponents/UIComponents.hpp"
+#include <src/core/lv_event.h>
+#include <src/core/lv_obj.h>
+#include <src/core/lv_obj_pos.h>
+#include <src/core/lv_obj_scroll.h>
+#include <src/core/lv_obj_style.h>
+#include <src/extra/layouts/flex/lv_flex.h>
+#include <src/font/lv_symbol_def.h>
+#include <src/misc/lv_anim.h>
+#include <src/misc/lv_area.h>
+#include <src/misc/lv_style.h>
+#include <src/widgets/lv_btn.h>
 #include <src/widgets/lv_label.h>
+#include <src/widgets/lv_textarea.h>
+
+// make sure these numbers align with SDL_HOR_RES/SDL_VER_RES
+#define MY_DISP_HOR_RES 800
+#define MY_DISP_VER_RES 480
+#define DISP_BUF_SIZE 16384
 
 std::mutex g_lvgl_updatelock;
-
+lv_obj_t* cont_row;
 namespace
 {
 template <typename UIType>
@@ -14,6 +31,26 @@ std::unique_ptr<UIEntity> makeUIElement(std::shared_ptr<HAEntity> _entity, lv_ob
   return std::make_unique<UIType>(_entity, _parent);
 }
 }
+
+void btnLeftPress(lv_event_t* _e)
+{
+  lv_event_code_t code = lv_event_get_code(_e);
+  if (code == LV_EVENT_CLICKED) {
+    lv_coord_t x = lv_obj_get_scroll_x(cont_row);
+    cerr << "Left press: " << x << endl;
+
+    lv_obj_scroll_to_x(cont_row, x - MY_DISP_HOR_RES, LV_ANIM_OFF);
+  }
+};
+
+void btnRightPress(lv_event_t* _e)
+{
+  lv_event_code_t code = lv_event_get_code(_e);
+  if (code == LV_EVENT_CLICKED) {
+    lv_coord_t x = lv_obj_get_scroll_x(cont_row);
+    lv_obj_scroll_to_x(cont_row, x + MY_DISP_HOR_RES, LV_ANIM_OFF);
+  }
+};
 
 void uithread(HABackend& _backend, int _argc, char* _argv[])
 {
@@ -56,11 +93,6 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
 #error "no useful VOORKANT_LVGL_* found"
 #endif
   cerr << "called fbdev_init" << endl;
-
-// make sure these numbers align with SDL_HOR_RES/SDL_VER_RES
-#define MY_DISP_HOR_RES 800
-#define MY_DISP_VER_RES 480
-#define DISP_BUF_SIZE 16384
 
   /*Create a display buffer*/
   static lv_disp_draw_buf_t disp_buf;
@@ -106,6 +138,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   /* container for object row (top 80% of screen) and logs (bottom 20%) */
   lv_obj_t* row_and_logs = lv_obj_create(lv_scr_act());
   lv_obj_remove_style_all(row_and_logs);
+  lv_obj_clear_flag(row_and_logs, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_size(row_and_logs, MY_DISP_HOR_RES, MY_DISP_VER_RES);
   lv_obj_set_flex_flow(row_and_logs, LV_FLEX_FLOW_ROW_WRAP);
   lv_obj_set_style_pad_row(row_and_logs, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -114,19 +147,43 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   /*Create a container with ROW flex direction that wraps.
   This is our MAIN box that we put everything in except logs. We have this here because we want some spacing around it.
   */
-  lv_obj_t* cont_row = lv_obj_create(row_and_logs);
+  cont_row = lv_obj_create(row_and_logs);
   lv_obj_remove_style_all(cont_row);
   lv_obj_set_size(cont_row, MY_DISP_HOR_RES, MY_DISP_VER_RES * 0.8);
   lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN_WRAP);
   lv_obj_set_style_pad_row(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_pad_column(cont_row, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+  /* Bottom row */
+  lv_obj_t* bottom_row = lv_obj_create(row_and_logs);
+  lv_obj_remove_style_all(bottom_row);
+  lv_obj_set_size(bottom_row, MY_DISP_HOR_RES, MY_DISP_VER_RES * 0.2);
+  lv_obj_set_align(bottom_row, LV_ALIGN_CENTER);
+  lv_obj_set_flex_flow(bottom_row, LV_FLEX_FLOW_ROW);
+  lv_obj_set_flex_align(bottom_row, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_END);
+
+  static lv_style_t style;
+  lv_style_init(&style);
+  lv_style_set_bg_color(&style, lv_color_hex(0xc0c0c0));
+  lv_style_set_radius(&style, lv_coord_t(0));
+  lv_obj_add_style(bottom_row, &style, 0);
+
+  lv_obj_t* left_btn = lv_btn_create(bottom_row);
+  lv_obj_t* left_btn_txt = lv_label_create(left_btn);
+  lv_label_set_text(left_btn_txt, LV_SYMBOL_LEFT);
+  lv_obj_add_event_cb(left_btn, btnLeftPress, LV_EVENT_CLICKED, NULL);
+
   /* logger box */
-  lv_obj_t* log_box = lv_label_create(row_and_logs);
-  lv_label_set_text(log_box, "logs go here\ntwo line\nthree line\nvery very very very very very very very very very very very very very very very very very very very very very very very very long line\nfive line");
-  lv_label_set_long_mode(log_box, LV_LABEL_LONG_WRAP);
-  lv_obj_set_size(log_box, MY_DISP_HOR_RES, MY_DISP_VER_RES * 0.2);
+  lv_obj_t* log_box = lv_textarea_create(bottom_row);
+  lv_obj_set_height(log_box, MY_DISP_VER_RES * 0.2);
   lv_obj_set_flex_align(log_box, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+  lv_obj_set_flex_grow(log_box, 1);
+  lv_textarea_set_placeholder_text(log_box, "No log...");
+
+  lv_obj_t* right_btn = lv_btn_create(bottom_row);
+  lv_obj_t* right_btn_txt = lv_label_create(right_btn);
+  lv_label_set_text(right_btn_txt, LV_SYMBOL_RIGHT);
+  lv_obj_add_event_cb(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);
 
   // FIXME: does this actually need unique_ptr? I guess it might save some copying
   std::vector<std::unique_ptr<UIEntity>> uielements;
@@ -150,7 +207,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     usleep(5 * 1000); // 5000 usec = 5 ms
     {
       std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
-      lv_label_set_text(log_box, getLogger("", 0, "").getForLogBox().c_str()); // FIXME this is expensive and should only happen when something is actually logged
+      lv_textarea_set_text(log_box, getLogger("", 0, "").getForLogBox().c_str()); // FIXME this is expensive and should only happen when something is actually logged
       lv_tick_inc(5); // 5 ms
       lv_task_handler();
     }
