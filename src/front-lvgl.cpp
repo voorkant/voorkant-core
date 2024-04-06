@@ -128,7 +128,6 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   lv_obj_set_size(log_box, MY_DISP_HOR_RES, MY_DISP_VER_RES * 0.2);
   lv_obj_set_flex_align(log_box, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
 
-
   // FIXME: does this actually need unique_ptr? I guess it might save some copying
   std::vector<std::unique_ptr<UIEntity>> uielements;
 
