@@ -3,6 +3,7 @@
 #include <thread>
 #include "Backend.hpp"
 #include "HAEntity.hpp"
+#include "logger.hpp"
 #include "generated/domains.hpp"
 #include "main.hpp"
 #include <fnmatch.h>
@@ -206,6 +207,15 @@ std::shared_ptr<HAEntity> HABackend::getEntityByName(const std::string& _name)
   std::scoped_lock lk(entitieslock);
 
   return entities.at(_name);
+}
+
+json HABackend::getDashboardConfig(const std::string& _dashboard)
+{
+  json url;
+  url["url_path"] = _dashboard;
+  json dashboardConfig = doCommand("lovelace/config", url);
+  g_log << Logger::Debug << "Output:" << std::endl;
+  g_log << Logger::Debug << dashboardConfig.dump(2) << std::endl;
 }
 
 void HABackend::wsConnSend(json& _msg)

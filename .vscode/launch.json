@@ -13,8 +13,8 @@
       "miDebuggerPath": "/usr/bin/gdb",
       "miDebuggerArgs": "--cd=${workspaceFolder}",
       "args": [
-        "entity",
-        "\"*.*\""
+        "dashboard",
+        "dashboard-test"
       ],
       "program": "${workspaceRoot}/${config:mesonbuild.buildFolder}/client-lvgl",
       "cwd": "${workspaceRoot}/${config:mesonbuild.buildFolder}",
@@ -27,10 +27,7 @@
           "name": "HA_WS_URL",
           "value": "ws://localhost:8123/api/websocket"
         },
-        {
-          "name": "LD_LIBRARY_PATH",
-          "value": "${workspaceFolder}/${config:mesonbuild.buildFolder}/subprojects/curl-8.5.0/build/lib/.libs/"
-        }
+
       ],
       "stopAtEntry": false,
       "preLaunchTask": "Meson: Build all targets",

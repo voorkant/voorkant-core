@@ -60,9 +60,9 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   entity_command.add_argument("pattern").help("what entity to render, in a c++ regex");
   program.add_subparser(entity_command);
 
-  argparse::ArgumentParser panel_command("panel");
-  panel_command.add_argument("panel-name").help("provide a Home Assistant panel name");
-  program.add_subparser(panel_command);
+  argparse::ArgumentParser dashboard_command("dashboard");
+  dashboard_command.add_argument("dashboard-name").help("provide a Home Assistant panel name");
+  program.add_subparser(dashboard_command);
 
   try {
     program.parse_args(_argc, _argv);
@@ -73,7 +73,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     return;
   }
 
-  if (!program.is_subcommand_used(entity_command) && !program.is_subcommand_used(panel_command)) {
+  if (!program.is_subcommand_used(entity_command) && !program.is_subcommand_used(dashboard_command)) {
     cerr << "no command given" << endl;
     return;
   }
@@ -210,7 +210,8 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
       }
     }
   }
-  else if (program.is_subcommand_used(panel_command)) {
+  else if (program.is_subcommand_used(dashboard_command)) {
     g_log << Logger::Error << "We need to implement this" << std::endl;
+    json dus = _backend.getDashboardConfig(dashboard_command.get<string>("dashboard-name"));
   }
 }

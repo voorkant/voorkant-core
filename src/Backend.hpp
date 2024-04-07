@@ -29,6 +29,7 @@ public:
   bool start();
   json doCommand(const std::string& _command, const json& _data);
   string createLongToken(string _name);
+  json getDashboardConfig(const std::string& _dashboard);
   std::shared_ptr<HAEntity> getEntityByName(const std::string& _name);
   std::vector<std::shared_ptr<HAEntity>> getEntitiesByDomain(const std::string& _domain);
   std::vector<std::shared_ptr<HAEntity>> getEntitiesByPattern(const std::string& _pattern);
