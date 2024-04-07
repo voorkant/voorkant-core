@@ -8,6 +8,7 @@
 
 #include "Backend.hpp"
 #include "Observer.hpp"
+#include "src/logger.hpp"
 
 using std::string;
 
@@ -30,8 +31,8 @@ public:
   }
   void uiupdate() override
   {
-    std::cout << "Received uiupdate for " << haentity->name << ":" << std::endl;
-    std::cout << haentity->getInfo() << std::endl;
+    g_log << Logger::Debug << "Received uiupdate for " << haentity->name << ":" << std::endl;
+    g_log << Logger::Debug << haentity->getInfo() << std::endl;
   }
 
 private:
