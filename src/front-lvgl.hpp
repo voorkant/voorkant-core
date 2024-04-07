@@ -24,8 +24,11 @@
 #include <src/core/lv_disp.h>
 #include <utility>
 #include "sdl/sdl.h"
+
+// FIXME the includes for all the components should maybe be in uicomponents.hpp itself?
 #include "uicomponents/UIComponents.hpp"
 #include "uicomponents/uirgblight.hpp"
+#include "uicomponents/UICamera.hpp"
 #include <generated/domains.hpp>
 
 using std::string;
