@@ -199,6 +199,7 @@ if get_option('front-lvgl').enabled()
             'src/uicomponents/imgs/brightness24.c',
             'src/uicomponents/imgs/white24.c',
             'src/uicomponents/uirgblight.cpp',
+            'src/uicomponents/UILogBox.cpp',
             'src/uicomponents/UIComponents.cpp',
             'src/front-lvgl.cpp',
             'src/lv_conf.h',

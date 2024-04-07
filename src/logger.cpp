@@ -48,6 +48,7 @@ void Logger::writelog(const LogLevel _level, const std::string& _line, const Loc
   if (logBuffer.size() > logBufferSize) {
     logBuffer.pop_front();
   }
+  notify();
 }
 
 std::string Logger::getForLogBox()
@@ -114,4 +115,20 @@ void Logger::setLogLevel(LogLevel _whichlevel)
 void Logger::setDoDetails(bool _logDetails)
 {
   logDetails = _logDetails;
+}
+
+void Logger::attach(IObserver* _observer)
+{
+  observers.insert(_observer);
+}
+void Logger::detach(IObserver* _observer)
+{
+  observers.erase(_observer);
+}
+
+void Logger::notify()
+{
+  for (const auto& obs : observers) {
+    obs->update();
+  }
 }

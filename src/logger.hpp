@@ -1,11 +1,13 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include "Observer.hpp"
 #include <deque>
 #include <iostream>
 #include <array>
 #include <sstream>
 #include <map>
+#include <set>
 
 using std::cerr;
 using std::cout;
@@ -14,7 +16,7 @@ using std::map;
 using std::ostream;
 using std::string;
 
-class Logger
+class Logger : public ISubject
 {
 public:
   enum LogLevel
@@ -43,12 +45,16 @@ public:
   void setLocation(const char* _filename, const int _linenr, const char* _method);
 
   std::string getForLogBox();
+  void attach(IObserver* _observer) override;
+  void detach(IObserver* _observer) override;
+  void notify() override;
 
 private:
   LogLevel level2log = LogLevel::Error;
   bool logDetails = false;
   std::deque<std::string> logBuffer;
   const size_t logBufferSize = 5;
+  std::set<IObserver*> observers;
 
   struct ThreadLocals
   {

@@ -2,6 +2,7 @@
 #include "HAEntity.hpp"
 #include "logger.hpp"
 #include "uicomponents/UIComponents.hpp"
+#include "uicomponents/UILogBox.hpp"
 #include <src/core/lv_event.h>
 #include <src/core/lv_obj.h>
 #include <src/core/lv_obj_pos.h>
@@ -174,12 +175,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   lv_label_set_text(left_btn_txt, LV_SYMBOL_LEFT);
   lv_obj_add_event_cb(left_btn, btnLeftPress, LV_EVENT_CLICKED, NULL);
 
-  /* logger box */
-  lv_obj_t* log_box = lv_textarea_create(bottom_row);
-  lv_obj_set_height(log_box, MY_DISP_VER_RES * 0.2);
-  lv_obj_set_flex_align(log_box, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
-  lv_obj_set_flex_grow(log_box, 1);
-  lv_textarea_set_placeholder_text(log_box, "No log...");
+  UILogBox logbox(bottom_row);
 
   lv_obj_t* right_btn = lv_btn_create(bottom_row);
   lv_obj_t* right_btn_txt = lv_label_create(right_btn);
@@ -208,7 +204,6 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     usleep(5 * 1000); // 5000 usec = 5 ms
     {
       std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
-      lv_textarea_set_text(log_box, getLogger("", 0, "").getForLogBox().c_str()); // FIXME this is expensive and should only happen when something is actually logged
       lv_tick_inc(5); // 5 ms
       lv_task_handler();
     }
