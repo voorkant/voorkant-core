@@ -1,12 +1,7 @@
 #include "UIComponents.hpp"
 #include "logger.hpp"
 
-UIEntity::~UIEntity()
-{
-  entity->detach((IObserver*)this);
-};
-
-lv_obj_t* UIEntity::createLabel(lv_obj_t* _parent, std::string _text)
+lv_obj_t* UIComponent::createLabel(lv_obj_t* _parent, std::string _text)
 {
   lv_obj_t* label = lv_label_create(_parent);
   lv_label_set_text(label, _text.c_str());
@@ -15,9 +10,22 @@ lv_obj_t* UIEntity::createLabel(lv_obj_t* _parent, std::string _text)
   return label;
 }
 
-UIEntity::UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent)
+UIComponent::UIComponent(lv_obj_t* _parent) :
+  parentContainer(_parent)
 {
-  parentContainer = _parent;
+}
+UIComponent::~UIComponent()
+{
+}
+
+UIEntity::~UIEntity()
+{
+  entity->detach((IObserver*)this);
+};
+
+UIEntity::UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
+  UIComponent(_parent)
+{
   entity = _entity;
   entity->attach((IObserver*)this);
 };
