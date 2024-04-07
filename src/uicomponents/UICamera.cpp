@@ -114,12 +114,12 @@ void UICamera::update()
     curl_easy_cleanup(curl_handle);
 // end code from
 
-    lv_img_dsc_t img = {
+    img = {
       .header = {
         .cf = LV_IMG_CF_RAW_ALPHA,
         .always_zero = 0,
-        .w = 50,
-        .h = 50,
+        .w = 0,
+        .h = 0,
       },
     };
 
@@ -128,6 +128,6 @@ void UICamera::update()
 
     lv_img_set_src(imgpanel, &img);
 
-    free(chunk.memory);
+    // free(chunk.memory); // FIXME this leaks terribly
   }
 }

@@ -13,4 +13,5 @@ public:
 private:
   // FIXME: we never free() the lv_obj_t*'s in code
   lv_obj_t* imgpanel;
+  lv_img_dsc_t img;
 };
