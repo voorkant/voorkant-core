@@ -8,6 +8,7 @@
 #include <sstream>
 #include <map>
 #include <set>
+#include <iostream>
 
 using std::cerr;
 using std::cout;
@@ -37,6 +38,15 @@ public:
   Logger& operator<<(const char* _logline);
   Logger& operator<<(const std::string& _logline);
   Logger& operator<<(LogLevel); // allows us to do Logger<<LogLevel::Error<<"Someline";
+
+  template <typename T>
+  Logger& operator<<(const T& i)
+  {
+    std::ostringstream tmp;
+    tmp << i;
+    *this << tmp.str();
+    return *this;
+  }
 
   void writelog(LogLevel _level, const std::string& _logline, const Location _loc);
 

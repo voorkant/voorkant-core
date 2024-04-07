@@ -38,8 +38,6 @@ void btnLeftPress(lv_event_t* _e)
   lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_CLICKED) {
     lv_coord_t x = lv_obj_get_scroll_x(cont_row);
-    cerr << "Left press: " << x << endl;
-
     // this is 807 because for whatever reason the snapping requires it to be 807....
     lv_obj_scroll_to_x(cont_row, x - 807, LV_ANIM_OFF);
   }
@@ -50,7 +48,6 @@ void btnRightPress(lv_event_t* _e)
   lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_CLICKED) {
     lv_coord_t x = lv_obj_get_scroll_x(cont_row);
-    cerr << "Right press: " << x << endl;
     lv_obj_scroll_to_x(cont_row, x + 807, LV_ANIM_OFF);
   }
 };
@@ -60,10 +57,12 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   argparse::ArgumentParser program("client-lvgl");
 
   argparse::ArgumentParser entity_command("entity");
-  entity_command.add_argument("pattern")
-    .help("what entity to render, in a c++ regex");
-
+  entity_command.add_argument("pattern").help("what entity to render, in a c++ regex");
   program.add_subparser(entity_command);
+
+  argparse::ArgumentParser panel_command("panel");
+  panel_command.add_argument("panel-name").help("provide a Home Assistant panel name");
+  program.add_subparser(panel_command);
 
   try {
     program.parse_args(_argc, _argv);
@@ -74,28 +73,24 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     return;
   }
 
-  if (program.is_subcommand_used(entity_command)) {
-    // FIXME: now actually use the argument
-    //    current_light = entity_command.get<string>("name");
-    //  cerr << "should render " << current_light << endl;
-  }
-  else {
+  if (!program.is_subcommand_used(entity_command) && !program.is_subcommand_used(panel_command)) {
     cerr << "no command given" << endl;
     return;
   }
 
   _backend.start();
 
-  cerr << "calling lv_init" << endl;
+  g_log << Logger::Debug << "calling lv_init()" << std::endl;
   lv_init();
 #if defined(VOORKANT_LVGL_SDL)
+  g_log << Logger::Debug << "calling sdl_init()" << std::endl;
   sdl_init();
 #elif defined(VOORKANT_LVGL_FBDEV)
+  g_log << Logger::Debug << "calling fbdev_init()" << std::endl;
   fbdev_init();
 #else
 #error "no useful VOORKANT_LVGL_* found"
 #endif
-  cerr << "called fbdev_init" << endl;
 
   /*Create a display buffer*/
   static lv_disp_draw_buf_t disp_buf;
@@ -182,34 +177,40 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   lv_label_set_text(right_btn_txt, LV_SYMBOL_RIGHT);
   lv_obj_add_event_cb(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);
 
-  // FIXME: does this actually need unique_ptr? I guess it might save some copying
-  std::vector<std::unique_ptr<UIEntity>> uielements;
+  if (program.is_subcommand_used(entity_command)) {
+    // FIXME: does this actually need unique_ptr? I guess it might save some copying
+    std::vector<std::unique_ptr<UIEntity>> uielements;
 
-  using MakeUIElementType = std::unique_ptr<UIEntity> (*)(std::shared_ptr<HAEntity>, lv_obj_t*);
+    using MakeUIElementType = std::unique_ptr<UIEntity> (*)(std::shared_ptr<HAEntity>, lv_obj_t*);
 
-  std::map<EntityType, MakeUIElementType> make_element_map{
-    {EntityType::Light, makeUIElement<UIRGBLight>},
-    {EntityType::Switch, makeUIElement<UISwitch>},
-    {EntityType::Fan, makeUIElement<UIButton>},
-    {EntityType::OTHER, makeUIElement<UIDummy>}};
+    std::map<EntityType, MakeUIElementType> make_element_map{
+      {EntityType::Light, makeUIElement<UIRGBLight>},
+      {EntityType::Switch, makeUIElement<UISwitch>},
+      {EntityType::Fan, makeUIElement<UIButton>},
+      {EntityType::OTHER, makeUIElement<UIDummy>}};
 
-  auto entities = _backend.getEntitiesByPattern(entity_command.get<string>("pattern"));
-  std::cerr << "Entities are: " << entities.size() << std::endl;
-  for (const auto& entity : entities) {
-    // FIXME: this is very simple and should move to something with panels in HA.
-    uielements.push_back(make_element_map[entity->getEntityType()](entity, cont_row));
+    auto entities = _backend.getEntitiesByPattern(entity_command.get<string>("pattern"));
+    g_log << Logger::Debug << "Entities are: " << entities.size() << std::endl;
+    for (const auto& entity : entities) {
+      // FIXME: this is very simple and should move to something with panels in HA.
+      uielements.push_back(make_element_map[entity->getEntityType()](entity, cont_row));
+    }
+
+    int i = 0;
+    while (true) {
+      usleep(5 * 1000); // 5000 usec = 5 ms
+      {
+        std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
+        lv_tick_inc(5); // 5 ms
+        lv_task_handler();
+      }
+      if (i++ == (1000 / 5)) {
+        cerr << "." << flush;
+        i = 0;
+      }
+    }
   }
-  int i = 0;
-  while (true) {
-    usleep(5 * 1000); // 5000 usec = 5 ms
-    {
-      std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
-      lv_tick_inc(5); // 5 ms
-      lv_task_handler();
-    }
-    if (i++ == (1000 / 5)) {
-      cerr << "." << flush;
-      i = 0;
-    }
+  else if (program.is_subcommand_used(panel_command)) {
+    g_log << Logger::Error << "We need to implement this" << std::endl;
   }
 }
