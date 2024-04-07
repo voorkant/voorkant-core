@@ -29,7 +29,7 @@ public:
     haentity = _entity;
     haentity->attach((IObserver*)this);
   }
-  void uiupdate() override
+  void update() override
   {
     g_log << Logger::Debug << "Received uiupdate for " << haentity->name << ":" << std::endl;
     g_log << Logger::Debug << haentity->getInfo() << std::endl;

@@ -32,7 +32,7 @@ class UIButton : public UIEntity
 {
 public:
   UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
-  void uiupdate() override;
+  void update() override;
 
 private:
   lv_obj_t* btn;
@@ -44,7 +44,7 @@ class UISwitch : public UIEntity
 public:
   UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
 
-  void uiupdate() override;
+  void update() override;
 
 private:
   lv_obj_t* sw;
@@ -55,7 +55,7 @@ class UIDummy : public UIEntity
 {
 public:
   UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
-  void uiupdate() override;
+  void update() override;
 
 private:
 };

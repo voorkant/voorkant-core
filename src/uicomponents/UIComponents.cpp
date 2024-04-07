@@ -1,4 +1,5 @@
 #include "UIComponents.hpp"
+#include "logger.hpp"
 
 UIEntity::~UIEntity()
 {
@@ -36,10 +37,10 @@ UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-  uiupdate();
+  update();
 };
 
-void UIButton::uiupdate()
+void UIButton::update()
 {
   auto state = entity->getJsonState();
 
@@ -84,10 +85,10 @@ UISwitch::UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_align(label, LV_ALIGN_LEFT_MID);
   lv_obj_set_width(label, uiEntityWidth - 65); // 50 + padding == switch width
 
-  uiupdate();
+  update();
 };
 
-void UISwitch::uiupdate()
+void UISwitch::update()
 {
   auto state = entity->getJsonState();
   {
@@ -141,12 +142,12 @@ UIDummy::UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     lv_obj_set_align(servicelabel, LV_ALIGN_CENTER);
   }
 
-  uiupdate();
+  update();
 };
 
-void UIDummy::uiupdate()
+void UIDummy::update()
 {
   auto state = entity->getJsonState();
-  std::cerr << "We received a UIupdate for " << entity->name << ":" << std::endl;
-  std::cerr << state.dump(2) << std::endl;
+  g_log << Logger::Debug << "We received a UIupdate for " << entity->name << ":" << std::endl;
+  g_log << Logger::Debug << state.dump(2) << std::endl;
 };
