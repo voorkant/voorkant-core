@@ -1,11 +1,7 @@
 #include "UIComponents.hpp"
+#include "logger.hpp"
 
-UIEntity::~UIEntity()
-{
-  entity->detach((IObserver*)this);
-};
-
-lv_obj_t* UIEntity::createLabel(lv_obj_t* _parent, std::string _text)
+lv_obj_t* UIComponent::createLabel(lv_obj_t* _parent, std::string _text)
 {
   lv_obj_t* label = lv_label_create(_parent);
   lv_label_set_text(label, _text.c_str());
@@ -14,9 +10,22 @@ lv_obj_t* UIEntity::createLabel(lv_obj_t* _parent, std::string _text)
   return label;
 }
 
-UIEntity::UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent)
+UIComponent::UIComponent(lv_obj_t* _parent) :
+  parentContainer(_parent)
 {
-  parentContainer = _parent;
+}
+UIComponent::~UIComponent()
+{
+}
+
+UIEntity::~UIEntity()
+{
+  entity->detach((IObserver*)this);
+};
+
+UIEntity::UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
+  UIComponent(_parent)
+{
   entity = _entity;
   entity->attach((IObserver*)this);
 };
@@ -36,10 +45,10 @@ UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-  uiupdate();
+  update();
 };
 
-void UIButton::uiupdate()
+void UIButton::update()
 {
   auto state = entity->getJsonState();
 
@@ -84,10 +93,10 @@ UISwitch::UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_align(label, LV_ALIGN_LEFT_MID);
   lv_obj_set_width(label, uiEntityWidth - 65); // 50 + padding == switch width
 
-  uiupdate();
+  update();
 };
 
-void UISwitch::uiupdate()
+void UISwitch::update()
 {
   auto state = entity->getJsonState();
   {
@@ -141,12 +150,12 @@ UIDummy::UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     lv_obj_set_align(servicelabel, LV_ALIGN_CENTER);
   }
 
-  uiupdate();
+  update();
 };
 
-void UIDummy::uiupdate()
+void UIDummy::update()
 {
   auto state = entity->getJsonState();
-  std::cerr << "We received a UIupdate for " << entity->name << ":" << std::endl;
-  std::cerr << state.dump(2) << std::endl;
+  g_log << Logger::Debug << "We received a UIupdate for " << entity->name << ":" << std::endl;
+  g_log << Logger::Debug << state.dump(2) << std::endl;
 };

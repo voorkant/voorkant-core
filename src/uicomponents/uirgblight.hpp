@@ -9,7 +9,7 @@ class UIRGBLight : public UIEntity
 public:
   UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
 
-  void uiupdate() override;
+  void update() override;
 
 private:
   // FIXME: we never free() the lv_obj_t*'s in code

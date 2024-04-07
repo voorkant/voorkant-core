@@ -86,7 +86,7 @@ void HAEntity::detach(IObserver* _observer)
 void HAEntity::notify()
 {
   for (const auto& obs : observers) {
-    obs->uiupdate();
+    obs->update();
   }
 }
 

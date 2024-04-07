@@ -13,26 +13,34 @@
 extern std::mutex g_lvgl_updatelock;
 
 // FIXME: we never free() the lv_obj_t*'s in code
-class UIEntity : public IObserver
+class UIComponent : public IObserver
+{
+public:
+  UIComponent(lv_obj_t* _parent);
+  ~UIComponent();
+
+protected:
+  lv_obj_t* createLabel(lv_obj_t* _parent, std::string _text);
+  lv_obj_t* parentContainer;
+  const lv_label_long_mode_t labelLongMode = LV_LABEL_LONG_SCROLL;
+};
+
+class UIEntity : public UIComponent
 {
 public:
   UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
   ~UIEntity();
 
 protected:
-  lv_obj_t* createLabel(lv_obj_t* _parent, std::string _text);
-
   std::shared_ptr<HAEntity> entity;
-  lv_obj_t* parentContainer;
-  const lv_coord_t uiEntityWidth = 250;
-  const lv_label_long_mode_t labelLongMode = LV_LABEL_LONG_SCROLL;
+  const lv_coord_t uiEntityWidth = (800 - (2 * 9)) / 3;
 };
 
 class UIButton : public UIEntity
 {
 public:
   UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
-  void uiupdate() override;
+  void update() override;
 
 private:
   lv_obj_t* btn;
@@ -44,7 +52,7 @@ class UISwitch : public UIEntity
 public:
   UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
 
-  void uiupdate() override;
+  void update() override;
 
 private:
   lv_obj_t* sw;
@@ -55,7 +63,7 @@ class UIDummy : public UIEntity
 {
 public:
   UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
-  void uiupdate() override;
+  void update() override;
 
 private:
 };
