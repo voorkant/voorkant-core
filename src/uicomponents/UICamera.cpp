@@ -19,6 +19,14 @@ UICamera::UICamera(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in update()
   imgpanel = lv_img_create(_parent);
   lv_img_set_src(imgpanel, "A:test.png");
+  // lv_obj_set_width(imgpanel, uiEntityWidth);
+  // lv_obj_set_height(imgpanel, 380);
+  lv_obj_set_style_pad_all(imgpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_align(imgpanel, LV_ALIGN_CENTER);
+  lv_obj_set_flex_flow(imgpanel, LV_FLEX_FLOW_COLUMN);
+  lv_obj_set_flex_align(imgpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+
+
   // lv_obj_align(imgpanel, LV_ALIGN_LEFT_MID, 20, 0);
 
   update();
