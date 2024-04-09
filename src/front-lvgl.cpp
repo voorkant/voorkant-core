@@ -191,6 +191,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     {EntityType::Light, makeUIElement<UIRGBLight>},
     {EntityType::Switch, makeUIElement<UISwitch>},
     {EntityType::Fan, makeUIElement<UIButton>},
+    {EntityType::Camera, makeUIElement<UICamera>},
     {EntityType::OTHER, makeUIElement<UIDummy>}};
 
   auto entities = _backend.getEntitiesByPattern(entity_command.get<string>("pattern"));
