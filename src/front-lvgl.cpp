@@ -179,10 +179,9 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   lv_obj_t* right_btn_txt = lv_label_create(right_btn);
   lv_label_set_text(right_btn_txt, LV_SYMBOL_RIGHT);
   lv_obj_add_event_cb(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);
-std::vector<std::unique_ptr<UIEntity>> uielements;
+  std::vector<std::unique_ptr<UIEntity>> uielements;
   if (program.is_subcommand_used(entity_command)) {
     // FIXME: does this actually need unique_ptr? I guess it might save some copying
-    
 
     using MakeUIElementType = std::unique_ptr<UIEntity> (*)(std::shared_ptr<HAEntity>, lv_obj_t*);
 
