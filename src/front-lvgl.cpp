@@ -1,8 +1,11 @@
 #include "front-lvgl.hpp"
+#include "Backend.hpp"
 #include "HAEntity.hpp"
 #include "logger.hpp"
 #include "uicomponents/UIComponents.hpp"
 #include "uicomponents/UILogBox.hpp"
+#include "uicomponents/uirgblight.hpp"
+#include <memory>
 #include <src/core/lv_event.h>
 #include <src/core/lv_obj.h>
 #include <src/core/lv_obj_pos.h>
@@ -176,10 +179,10 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   lv_obj_t* right_btn_txt = lv_label_create(right_btn);
   lv_label_set_text(right_btn_txt, LV_SYMBOL_RIGHT);
   lv_obj_add_event_cb(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);
-
+std::vector<std::unique_ptr<UIEntity>> uielements;
   if (program.is_subcommand_used(entity_command)) {
     // FIXME: does this actually need unique_ptr? I guess it might save some copying
-    std::vector<std::unique_ptr<UIEntity>> uielements;
+    
 
     using MakeUIElementType = std::unique_ptr<UIEntity> (*)(std::shared_ptr<HAEntity>, lv_obj_t*);
 
@@ -195,23 +198,67 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
       // FIXME: this is very simple and should move to something with panels in HA.
       uielements.push_back(make_element_map[entity->getEntityType()](entity, cont_row));
     }
-
-    int i = 0;
-    while (true) {
-      usleep(5 * 1000); // 5000 usec = 5 ms
-      {
-        std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
-        lv_tick_inc(5); // 5 ms
-        lv_task_handler();
-      }
-      if (i++ == (1000 / 5)) {
-        cerr << "." << flush;
-        i = 0;
-      }
-    }
   }
   else if (program.is_subcommand_used(dashboard_command)) {
-    g_log << Logger::Error << "We need to implement this" << std::endl;
-    json dus = _backend.getDashboardConfig(dashboard_command.get<string>("dashboard-name"));
+    json doc = _backend.getDashboardConfig(dashboard_command.get<string>("dashboard-name"));
+
+    // FIXME: lots of repeat code here, should do a <template> thing
+    json result = doc["result"];
+    for (auto view : result["views"]) {
+      for (auto card : view["cards"]) {
+        if (card["type"] == "button") {
+          if (card.contains("entity")) {
+            string entityname = card["entity"];
+            std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
+            std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
+            uielements.push_back(std::move(btn));
+          }
+          else {
+            g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
+          }
+        }
+        else if (card["type"] == "light") {
+          if (card.contains("entity")) {
+            string entityname = card["entity"];
+            std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
+            std::unique_ptr<UIEntity> btn = std::make_unique<UIRGBLight>(entity, cont_row);
+            uielements.push_back(std::move(btn));
+          }
+          else {
+            g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
+          }
+        }
+        else {
+          if (card.contains(("entity"))) {
+            g_log << Logger::Warning << "Card of type " << card["type"] << " found, but we have no matching UIEntity. Creating dummy for entity." << card["entity"] << std::endl;
+            string entityname = card["entity"];
+            std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
+            std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
+            uielements.push_back(std::move(dummy));
+          }
+          else {
+            g_log << Logger::Warning << "Card of type " << card["type"] << " found, couldn't find entity." << std::endl;
+          }
+        }
+      } // for card
+    } // for views
+  }
+  else {
+    g_log << Logger::Info << "We expected a command" << std::endl;
+    exit(1);
+  }
+
+  int i = 0;
+  while (true) {
+    usleep(5 * 1000); // 5000 usec = 5 ms
+    {
+      std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
+      lv_tick_inc(5); // 5 ms
+      lv_task_handler();
+    }
+    if (i++ == (1000 / 5)) {
+      cerr << "." << flush;
+      i = 0;
+    }
   }
 }

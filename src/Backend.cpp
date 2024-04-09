@@ -216,6 +216,7 @@ json HABackend::getDashboardConfig(const std::string& _dashboard)
   json dashboardConfig = doCommand("lovelace/config", url);
   g_log << Logger::Debug << "Output:" << std::endl;
   g_log << Logger::Debug << dashboardConfig.dump(2) << std::endl;
+  return dashboardConfig;
 }
 
 void HABackend::wsConnSend(json& _msg)
