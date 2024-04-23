@@ -5,6 +5,7 @@ On Debian 11 (bullseye), you need meson from backports.
 
 ```
 $ sudo apt install build-essential cmake meson ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev
+$ git submodule update --init
 $ meson setup build/
 $ meson compile -C build/
 ```
