@@ -201,6 +201,12 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   else if (program.is_subcommand_used(dashboard_command)) {
     json doc = _backend.getDashboardConfig(dashboard_command.get<string>("dashboard-name"));
 
+    if (doc.contains("error")) {
+      g_log << Logger::Error << "Failed to get dashboard configuration:" << std::endl;
+      g_log << Logger::Error << doc << std::endl;
+      exit(-1);
+    }
+
     // FIXME: lots of repeat code here, should do a <template> thing
     json result = doc["result"];
     for (auto view : result["views"]) {
