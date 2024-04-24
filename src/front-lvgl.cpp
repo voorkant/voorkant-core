@@ -211,7 +211,29 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     json result = doc["result"];
     for (auto view : result["views"]) {
       for (auto card : view["cards"]) {
-        if (card["type"] == "button") {
+        if (card["type"] == "entities") {
+          if (card.contains("entities")) { // array of objects with the entity name in it.
+            auto objs = card["entities"];
+            for (auto ent : objs) {
+              string entityname = ent["entity"];
+              std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
+              if (entity->getEntityType() == EntityType::Light) {
+                std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
+                uielements.push_back(std::move(btn));
+              }
+              else if (entity->getEntityType() == EntityType::Switch) {
+                std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
+                uielements.push_back(std::move(btn));
+              }
+              else {
+                std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
+                std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
+                uielements.push_back(std::move(dummy));
+              }
+            }
+          }
+        }
+        else if (card["type"] == "button") {
           if (card.contains("entity")) {
             string entityname = card["entity"];
             std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
