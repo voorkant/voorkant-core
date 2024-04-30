@@ -11,9 +11,7 @@
 using std::cerr;
 using std::string;
 
-HABackend::HABackend()
-{
-};
+HABackend::HABackend(){};
 
 HABackend& HABackend::GetInstance()
 {
