@@ -1,6 +1,7 @@
 #ifndef BACKEND_HPP
 #define BACKEND_HPP
 
+#include <cstddef>
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <map>
@@ -36,8 +37,14 @@ public:
   map<string, std::shared_ptr<HAEntity>> getEntities();
   void wsConnSend(json& _msg);
 
+  // Singleton pattern, so we don't want to clone or assign (from https://refactoring.guru/design-patterns/singleton/cpp/example)
+  HABackend(HABackend& other) = delete;
+  void operator=(const HABackend&) = delete;
+  static HABackend& GetInstance();
+
 private:
-  bool loaded;
+  bool loaded = false;
+  bool hasConnectCalled = false;
   std::mutex load_lock;
   std::condition_variable load_cv;
   WSConn* wc = nullptr;

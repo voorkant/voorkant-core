@@ -13,11 +13,9 @@
 
 #include "logger.hpp"
 
-using std::cerr;
-using std::endl;
 using std::string;
 
-extern void uithread(HABackend& _backend, int /* argc */, char*[] /* argv[] */);
+extern void uithread(int /* argc */, char*[] /* argv[] */);
 
 std::string getEnv(std::string _key)
 {
@@ -32,18 +30,17 @@ std::string getEnv(std::string _key)
 
 int main(int argc, char* argv[])
 {
-  HABackend backend;
   g_log.setLogLevel(Logger::LogLevel::Debug);
   g_log.setDoDetails(true);
   g_log << Logger::LogLevel::Info << "Starting!" << std::endl;
-  if (backend.connect({.url = getEnv("HA_WS_URL"), .token = getEnv("HA_API_TOKEN")})) {
+  if (HABackend::GetInstance().connect({.url = getEnv("HA_WS_URL"), .token = getEnv("HA_API_TOKEN")})) {
     g_log << Logger::LogLevel::Debug << "Connected to HA succesfully!" << std::endl;
     // we used to do this, which actually is quite pointless if main does nothing besides this (after connecting HA)
     //    std::thread ui(uithread, std::ref(backend), argc, argv);
     //    ui.join();
 
     // running the uithread in the main thread makes LVGL/SDL work on macOS
-    uithread(backend, argc, argv);
+    uithread(argc, argv);
     return 0;
   }
 

@@ -55,7 +55,7 @@ void btnRightPress(lv_event_t* _e)
   }
 };
 
-void uithread(HABackend& _backend, int _argc, char* _argv[])
+void uithread(int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("client-lvgl");
 
@@ -81,7 +81,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     return;
   }
 
-  _backend.start();
+  HABackend::GetInstance().start();
 
   g_log << Logger::Debug << "calling lv_init()" << std::endl;
   lv_init();
@@ -191,7 +191,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
       {EntityType::Fan, makeUIElement<UIButton>},
       {EntityType::OTHER, makeUIElement<UIDummy>}};
 
-    auto entities = _backend.getEntitiesByPattern(entity_command.get<string>("pattern"));
+    auto entities = HABackend::GetInstance().getEntitiesByPattern(entity_command.get<string>("pattern"));
     g_log << Logger::Debug << "Entities are: " << entities.size() << std::endl;
     for (const auto& entity : entities) {
       // FIXME: this is very simple and should move to something with panels in HA.
@@ -199,7 +199,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     }
   }
   else if (program.is_subcommand_used(dashboard_command)) {
-    json doc = _backend.getDashboardConfig(dashboard_command.get<string>("dashboard-name"));
+    json doc = HABackend::GetInstance().getDashboardConfig(dashboard_command.get<string>("dashboard-name"));
 
     if (doc.contains("error")) {
       g_log << Logger::Error << "Failed to get dashboard configuration:" << std::endl;
@@ -216,7 +216,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
             auto objs = card["entities"];
             for (auto ent : objs) {
               string entityname = ent["entity"];
-              std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
+              std::shared_ptr<HAEntity> entity = HABackend::GetInstance().getEntityByName(entityname);
               if (entity->getEntityType() == EntityType::Light) {
                 std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
                 uielements.push_back(std::move(btn));
@@ -226,7 +226,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
                 uielements.push_back(std::move(btn));
               }
               else {
-                std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
+                std::shared_ptr<HAEntity> entity = HABackend::GetInstance().getEntityByName(entityname);
                 std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
                 uielements.push_back(std::move(dummy));
               }
@@ -236,7 +236,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
         else if (card["type"] == "button") {
           if (card.contains("entity")) {
             string entityname = card["entity"];
-            std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
+            std::shared_ptr<HAEntity> entity = HABackend::GetInstance().getEntityByName(entityname);
             std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
             uielements.push_back(std::move(btn));
           }
@@ -247,7 +247,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
         else if (card["type"] == "light") {
           if (card.contains("entity")) {
             string entityname = card["entity"];
-            std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
+            std::shared_ptr<HAEntity> entity = HABackend::GetInstance().getEntityByName(entityname);
             std::unique_ptr<UIEntity> btn = std::make_unique<UIRGBLight>(entity, cont_row);
             uielements.push_back(std::move(btn));
           }
@@ -259,7 +259,7 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
           if (card.contains(("entity"))) {
             g_log << Logger::Warning << "Card of type " << card["type"] << " found, but we have no matching UIEntity. Creating dummy for entity." << card["entity"] << std::endl;
             string entityname = card["entity"];
-            std::shared_ptr<HAEntity> entity = _backend.getEntityByName(entityname);
+            std::shared_ptr<HAEntity> entity = HABackend::GetInstance().getEntityByName(entityname);
             std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
             uielements.push_back(std::move(dummy));
           }
