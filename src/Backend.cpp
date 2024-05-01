@@ -3,21 +3,25 @@
 #include <thread>
 #include "Backend.hpp"
 #include "HAEntity.hpp"
+#include "logger.hpp"
 #include "generated/domains.hpp"
 #include "main.hpp"
 #include <fnmatch.h>
 
 using std::cerr;
-using std::cout;
-using std::endl;
 using std::string;
-using std::thread;
 
 HABackend::HABackend(){};
 
+HABackend& HABackend::GetInstance()
+{
+  static HABackend instance;
+  return instance;
+}
+
 bool HABackend::connect(ConnectionDetails _conDetails)
 {
-  cerr << "[HABackend] Connecting to " << _conDetails.url << endl;
+  g_log << Logger::Debug << "[HABackend] Connecting to " << _conDetails.url << endl;
 
   wc = new WSConn(_conDetails.url);
   auto welcome = wc->recv();
@@ -29,17 +33,23 @@ bool HABackend::connect(ConnectionDetails _conDetails)
   wc->send(auth);
   json authresponse = json::parse(wc->recv());
   if (authresponse["type"] != "auth_ok") {
-    cerr << "Authentication failed, please check your HA_API_TOKEN" << endl;
+    g_log << Logger::Error << "Authentication failed, please check your HA_API_TOKEN" << endl;
     return false;
   }
 
+  hasConnectCalled = true;
   return true;
 };
 
 bool HABackend::start()
 {
+  if (!hasConnectCalled) {
+    // Should this be std::runtime_error?
+    g_log << Logger::Error << "Connect() needs to be called before start()" << endl;
+    return false;
+  }
   if (wc == nullptr) {
-    cerr << "We expect that you'd do a Connect() first." << endl;
+    g_log << Logger::Error << "We expect that you'd do a Connect() first." << endl;
     return false;
   }
   loaded = false;
@@ -206,6 +216,16 @@ std::shared_ptr<HAEntity> HABackend::getEntityByName(const std::string& _name)
   std::scoped_lock lk(entitieslock);
 
   return entities.at(_name);
+}
+
+json HABackend::getDashboardConfig(const std::string& _dashboard)
+{
+  json url;
+  url["url_path"] = _dashboard;
+  json dashboardConfig = doCommand("lovelace/config", url);
+  g_log << Logger::Debug << "Output:" << std::endl;
+  g_log << Logger::Debug << dashboardConfig.dump(2) << std::endl;
+  return dashboardConfig;
 }
 
 void HABackend::wsConnSend(json& _msg)

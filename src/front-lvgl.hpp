@@ -3,7 +3,6 @@
 
 #include "main.hpp"
 #include <iostream>
-#include <src/widgets/lv_slider.h>
 #include <string>
 #include <unistd.h>
 #include "ext/argparse/include/argparse/argparse.hpp"

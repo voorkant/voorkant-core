@@ -15,7 +15,6 @@ using std::string;
 using std::cerr;
 using std::cout;
 using std::endl;
-using std::flush;
 
 class SimpleObserver : public IObserver
 {
@@ -41,7 +40,7 @@ private:
 
 // static bool uithread_refresh_print_updates = false;
 
-void uithread(HABackend& _backend, int _argc, char* _argv[])
+void uithread(int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("client-cli");
   argparse::ArgumentParser subscribe_command("subscribe");
@@ -86,9 +85,9 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
       return;
     }
 
-    _backend.start();
+    HABackend::GetInstance().start();
 
-    auto haentities = _backend.getEntitiesByDomain(domain);
+    auto haentities = HABackend::GetInstance().getEntitiesByDomain(domain);
     std::vector<std::unique_ptr<SimpleObserver>> observers;
     for (const auto& haentity : haentities) {
       std::cerr << "Monitoring entity: " << haentity->name << std::endl;
@@ -101,18 +100,18 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     }
   }
   else if (program.is_subcommand_used(token_command)) {
-    string token = _backend.createLongToken(token_command.get<string>("name"));
+    string token = HABackend::GetInstance().createLongToken(token_command.get<string>("name"));
     cout << token << endl;
   }
   else if (program.is_subcommand_used(list_entities_command)) {
-    _backend.start();
-    for (const auto& [entityname, entity] : _backend.getEntities()) {
+    HABackend::GetInstance().start();
+    for (const auto& [entityname, entity] : HABackend::GetInstance().getEntities()) {
       cout << entityname << endl;
     }
   }
   else if (program.is_subcommand_used(dump_command)) {
     json data = json::parse(dump_command.get<string>("data"));
-    json res = _backend.doCommand(dump_command.get<string>("command"), data);
+    json res = HABackend::GetInstance().doCommand(dump_command.get<string>("command"), data);
     cout << res.dump(2) << endl;
   }
   else {

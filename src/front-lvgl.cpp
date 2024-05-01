@@ -1,8 +1,11 @@
 #include "front-lvgl.hpp"
+#include "Backend.hpp"
 #include "HAEntity.hpp"
 #include "logger.hpp"
 #include "uicomponents/UIComponents.hpp"
 #include "uicomponents/UILogBox.hpp"
+#include "uicomponents/uirgblight.hpp"
+#include <memory>
 #include <src/core/lv_event.h>
 #include <src/core/lv_obj.h>
 #include <src/core/lv_obj_pos.h>
@@ -38,8 +41,6 @@ void btnLeftPress(lv_event_t* _e)
   lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_CLICKED) {
     lv_coord_t x = lv_obj_get_scroll_x(cont_row);
-    cerr << "Left press: " << x << endl;
-
     // this is 807 because for whatever reason the snapping requires it to be 807....
     lv_obj_scroll_to_x(cont_row, x - 807, LV_ANIM_OFF);
   }
@@ -50,20 +51,21 @@ void btnRightPress(lv_event_t* _e)
   lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_CLICKED) {
     lv_coord_t x = lv_obj_get_scroll_x(cont_row);
-    cerr << "Right press: " << x << endl;
     lv_obj_scroll_to_x(cont_row, x + 807, LV_ANIM_OFF);
   }
 };
 
-void uithread(HABackend& _backend, int _argc, char* _argv[])
+void uithread(int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("client-lvgl");
 
   argparse::ArgumentParser entity_command("entity");
-  entity_command.add_argument("pattern")
-    .help("what entity to render, in a c++ regex");
-
+  entity_command.add_argument("pattern").help("what entity to render, in a c++ regex");
   program.add_subparser(entity_command);
+
+  argparse::ArgumentParser dashboard_command("dashboard");
+  dashboard_command.add_argument("dashboard-name").help("provide a Home Assistant panel name");
+  program.add_subparser(dashboard_command);
 
   try {
     program.parse_args(_argc, _argv);
@@ -74,28 +76,24 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
     return;
   }
 
-  if (program.is_subcommand_used(entity_command)) {
-    // FIXME: now actually use the argument
-    //    current_light = entity_command.get<string>("name");
-    //  cerr << "should render " << current_light << endl;
-  }
-  else {
+  if (!program.is_subcommand_used(entity_command) && !program.is_subcommand_used(dashboard_command)) {
     cerr << "no command given" << endl;
     return;
   }
 
-  _backend.start();
+  HABackend::GetInstance().start();
 
-  cerr << "calling lv_init" << endl;
+  g_log << Logger::Debug << "calling lv_init()" << std::endl;
   lv_init();
 #if defined(VOORKANT_LVGL_SDL)
+  g_log << Logger::Debug << "calling sdl_init()" << std::endl;
   sdl_init();
 #elif defined(VOORKANT_LVGL_FBDEV)
+  g_log << Logger::Debug << "calling fbdev_init()" << std::endl;
   fbdev_init();
 #else
 #error "no useful VOORKANT_LVGL_* found"
 #endif
-  cerr << "called fbdev_init" << endl;
 
   /*Create a display buffer*/
   static lv_disp_draw_buf_t disp_buf;
@@ -181,24 +179,102 @@ void uithread(HABackend& _backend, int _argc, char* _argv[])
   lv_obj_t* right_btn_txt = lv_label_create(right_btn);
   lv_label_set_text(right_btn_txt, LV_SYMBOL_RIGHT);
   lv_obj_add_event_cb(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);
-
-  // FIXME: does this actually need unique_ptr? I guess it might save some copying
   std::vector<std::unique_ptr<UIEntity>> uielements;
+  if (program.is_subcommand_used(entity_command)) {
+    // FIXME: does this actually need unique_ptr? I guess it might save some copying
 
-  using MakeUIElementType = std::unique_ptr<UIEntity> (*)(std::shared_ptr<HAEntity>, lv_obj_t*);
+    using MakeUIElementType = std::unique_ptr<UIEntity> (*)(std::shared_ptr<HAEntity>, lv_obj_t*);
 
-  std::map<EntityType, MakeUIElementType> make_element_map{
-    {EntityType::Light, makeUIElement<UIRGBLight>},
-    {EntityType::Switch, makeUIElement<UISwitch>},
-    {EntityType::Fan, makeUIElement<UIButton>},
-    {EntityType::OTHER, makeUIElement<UIDummy>}};
+    std::map<EntityType, MakeUIElementType> make_element_map{
+      {EntityType::Light, makeUIElement<UIRGBLight>},
+      {EntityType::Switch, makeUIElement<UISwitch>},
+      {EntityType::Fan, makeUIElement<UIButton>},
+      {EntityType::OTHER, makeUIElement<UIDummy>}};
 
-  auto entities = _backend.getEntitiesByPattern(entity_command.get<string>("pattern"));
-  std::cerr << "Entities are: " << entities.size() << std::endl;
-  for (const auto& entity : entities) {
-    // FIXME: this is very simple and should move to something with panels in HA.
-    uielements.push_back(make_element_map[entity->getEntityType()](entity, cont_row));
+    auto entities = HABackend::GetInstance().getEntitiesByPattern(entity_command.get<string>("pattern"));
+    g_log << Logger::Debug << "Entities are: " << entities.size() << std::endl;
+    for (const auto& entity : entities) {
+      // FIXME: this is very simple and should move to something with panels in HA.
+      uielements.push_back(make_element_map[entity->getEntityType()](entity, cont_row));
+    }
   }
+  else if (program.is_subcommand_used(dashboard_command)) {
+    json doc = HABackend::GetInstance().getDashboardConfig(dashboard_command.get<string>("dashboard-name"));
+
+    if (doc.contains("error")) {
+      g_log << Logger::Error << "Failed to get dashboard configuration:" << std::endl;
+      g_log << Logger::Error << doc << std::endl;
+      exit(-1);
+    }
+
+    // FIXME: lots of repeat code here, should do a <template> thing
+    json result = doc["result"];
+    for (auto view : result["views"]) {
+      for (auto card : view["cards"]) {
+        if (card["type"] == "entities") {
+          if (card.contains("entities")) { // array of objects with the entity name in it.
+            auto objs = card["entities"];
+            for (auto ent : objs) {
+              string entityname = ent["entity"];
+              std::shared_ptr<HAEntity> entity = HABackend::GetInstance().getEntityByName(entityname);
+              if (entity->getEntityType() == EntityType::Light) {
+                std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
+                uielements.push_back(std::move(btn));
+              }
+              else if (entity->getEntityType() == EntityType::Switch) {
+                std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
+                uielements.push_back(std::move(btn));
+              }
+              else {
+                std::shared_ptr<HAEntity> entity = HABackend::GetInstance().getEntityByName(entityname);
+                std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
+                uielements.push_back(std::move(dummy));
+              }
+            }
+          }
+        }
+        else if (card["type"] == "button") {
+          if (card.contains("entity")) {
+            string entityname = card["entity"];
+            std::shared_ptr<HAEntity> entity = HABackend::GetInstance().getEntityByName(entityname);
+            std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
+            uielements.push_back(std::move(btn));
+          }
+          else {
+            g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
+          }
+        }
+        else if (card["type"] == "light") {
+          if (card.contains("entity")) {
+            string entityname = card["entity"];
+            std::shared_ptr<HAEntity> entity = HABackend::GetInstance().getEntityByName(entityname);
+            std::unique_ptr<UIEntity> btn = std::make_unique<UIRGBLight>(entity, cont_row);
+            uielements.push_back(std::move(btn));
+          }
+          else {
+            g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
+          }
+        }
+        else {
+          if (card.contains(("entity"))) {
+            g_log << Logger::Warning << "Card of type " << card["type"] << " found, but we have no matching UIEntity. Creating dummy for entity." << card["entity"] << std::endl;
+            string entityname = card["entity"];
+            std::shared_ptr<HAEntity> entity = HABackend::GetInstance().getEntityByName(entityname);
+            std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
+            uielements.push_back(std::move(dummy));
+          }
+          else {
+            g_log << Logger::Warning << "Card of type " << card["type"] << " found, couldn't find entity." << std::endl;
+          }
+        }
+      } // for card
+    } // for views
+  }
+  else {
+    g_log << Logger::Info << "We expected a command" << std::endl;
+    exit(1);
+  }
+
   int i = 0;
   while (true) {
     usleep(5 * 1000); // 5000 usec = 5 ms
