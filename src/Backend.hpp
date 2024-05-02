@@ -38,9 +38,9 @@ public:
   void wsConnSend(json& _msg);
 
   // Singleton pattern, so we don't want to clone or assign (from https://refactoring.guru/design-patterns/singleton/cpp/example)
-  HABackend(HABackend& other) = delete;
+  HABackend(HABackend& _other) = delete;
   void operator=(const HABackend&) = delete;
-  static HABackend& GetInstance();
+  static HABackend& getInstance();
 
 private:
   bool loaded = false;

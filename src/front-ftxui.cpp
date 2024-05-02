@@ -22,7 +22,7 @@ void uithread(int /* argc */, char*[] /* argv[] */)
 
   using namespace ftxui;
 
-  HABackend::GetInstance().start();
+  HABackend::getInstance().start();
 
   int selected = 0;
   int selectedbutton;
@@ -38,7 +38,7 @@ void uithread(int /* argc */, char*[] /* argv[] */)
   auto renderer = Renderer(uirenderer, [&] {
     // std::scoped_lock lk(entrieslock, stateslock, domainslock);
 
-    auto entities = HABackend::GetInstance().getEntities();
+    auto entities = HABackend::getInstance().getEntities();
     entries.clear();
     for (auto& [name, entity] : entities) {
       entries.push_back(name);
@@ -48,7 +48,7 @@ void uithread(int /* argc */, char*[] /* argv[] */)
     // cerr<<"about to get services, selected=="<<selected<<" , entries.size=="<<entries.size()<<endl;
     if (selected >= 0 && entries.size() > 0) {
       string entity = entries.at(selected);
-      std::shared_ptr<HAEntity> haent = HABackend::GetInstance().getEntityByName(entity);
+      std::shared_ptr<HAEntity> haent = HABackend::getInstance().getEntityByName(entity);
       services = haent->getServices();
     }
 
@@ -63,11 +63,11 @@ void uithread(int /* argc */, char*[] /* argv[] */)
         json cmd;
 
         cmd["type"] = "call_service";
-        cmd["domain"] = HABackend::GetInstance().getEntityByName(entries.at(selected))->domain;
+        cmd["domain"] = HABackend::getInstance().getEntityByName(entries.at(selected))->domain;
         cmd["service"] = service->name;
         cmd["target"]["entity_id"] = entries.at(selected);
 
-        HABackend::GetInstance().wsConnSend(cmd);
+        HABackend::getInstance().wsConnSend(cmd);
       })); // FIXME: this use of entries.at is gross, should centralise the empty-entries-list fallback
     }
 
@@ -83,14 +83,14 @@ void uithread(int /* argc */, char*[] /* argv[] */)
 
     std::vector<Element> attrs;
     if (selected >= 0 && entries.size() > 0) {
-      for (const auto& attr : HABackend::GetInstance().getEntityByName(entries.at(selected))->attrVector()) {
+      for (const auto& attr : HABackend::getInstance().getEntityByName(entries.at(selected))->attrVector()) {
         attrs.push_back(text(attr));
       }
     }
 
     return vbox(
       hbox(text("selected = "), text(selected >= 0 && entries.size() ? entries.at(selected) : "")),
-      text(selected >= 0 && entries.size() > 0 ? HABackend::GetInstance().getEntityByName(entries.at(selected))->getInfo() : "no info"),
+      text(selected >= 0 && entries.size() > 0 ? HABackend::getInstance().getEntityByName(entries.at(selected))->getInfo() : "no info"),
       text(pressed),
       hbox({uirenderer->Render(), vbox(attrs)}));
   });

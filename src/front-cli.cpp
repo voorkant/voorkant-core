@@ -85,9 +85,9 @@ void uithread(int _argc, char* _argv[])
       return;
     }
 
-    HABackend::GetInstance().start();
+    HABackend::getInstance().start();
 
-    auto haentities = HABackend::GetInstance().getEntitiesByDomain(domain);
+    auto haentities = HABackend::getInstance().getEntitiesByDomain(domain);
     std::vector<std::unique_ptr<SimpleObserver>> observers;
     for (const auto& haentity : haentities) {
       std::cerr << "Monitoring entity: " << haentity->name << std::endl;
@@ -100,18 +100,18 @@ void uithread(int _argc, char* _argv[])
     }
   }
   else if (program.is_subcommand_used(token_command)) {
-    string token = HABackend::GetInstance().createLongToken(token_command.get<string>("name"));
+    string token = HABackend::getInstance().createLongToken(token_command.get<string>("name"));
     cout << token << endl;
   }
   else if (program.is_subcommand_used(list_entities_command)) {
-    HABackend::GetInstance().start();
-    for (const auto& [entityname, entity] : HABackend::GetInstance().getEntities()) {
+    HABackend::getInstance().start();
+    for (const auto& [entityname, entity] : HABackend::getInstance().getEntities()) {
       cout << entityname << endl;
     }
   }
   else if (program.is_subcommand_used(dump_command)) {
     json data = json::parse(dump_command.get<string>("data"));
-    json res = HABackend::GetInstance().doCommand(dump_command.get<string>("command"), data);
+    json res = HABackend::getInstance().doCommand(dump_command.get<string>("command"), data);
     cout << res.dump(2) << endl;
   }
   else {

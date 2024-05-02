@@ -13,7 +13,7 @@ using std::string;
 
 HABackend::HABackend(){};
 
-HABackend& HABackend::GetInstance()
+HABackend& HABackend::getInstance()
 {
   static HABackend instance;
   return instance;
@@ -222,10 +222,10 @@ json HABackend::getDashboardConfig(const std::string& _dashboard)
 {
   json url;
   url["url_path"] = _dashboard;
-  json dashboardConfig = doCommand("lovelace/config", url);
+  json dashboard_config = doCommand("lovelace/config", url);
   g_log << Logger::Debug << "Output:" << std::endl;
-  g_log << Logger::Debug << dashboardConfig.dump(2) << std::endl;
-  return dashboardConfig;
+  g_log << Logger::Debug << dashboard_config.dump(2) << std::endl;
+  return dashboard_config;
 }
 
 void HABackend::wsConnSend(json& _msg)

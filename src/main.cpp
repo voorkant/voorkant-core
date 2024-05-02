@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
   g_log.setLogLevel(Logger::LogLevel::Debug);
   g_log.setDoDetails(true);
   g_log << Logger::LogLevel::Info << "Starting!" << std::endl;
-  if (HABackend::GetInstance().connect({.url = getEnv("HA_WS_URL"), .token = getEnv("HA_API_TOKEN")})) {
+  if (HABackend::getInstance().connect({.url = getEnv("HA_WS_URL"), .token = getEnv("HA_API_TOKEN")})) {
     g_log << Logger::LogLevel::Debug << "Connected to HA succesfully!" << std::endl;
     // we used to do this, which actually is quite pointless if main does nothing besides this (after connecting HA)
     //    std::thread ui(uithread, std::ref(backend), argc, argv);
