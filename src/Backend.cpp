@@ -88,13 +88,8 @@ json HABackend::doCommand(const string& _command, const json& _data)
   json request;
   request = _data;
   request["type"] = _command;
-  wc->send(request);
-  auto response = wc->recv();
+  auto jsonresponse = wc->sendAndWait(request);
 
-  json jsonresponse = json::parse(response);
-  if (jsonresponse["id"] != request["id"]) {
-    throw std::runtime_error("Send out a command, but received something with a different ID.");
-  }
   return jsonresponse;
 }
 
@@ -130,7 +125,10 @@ void HABackend::threadrunner()
     json j = json::parse(msg);
 
     {
-
+      if (wc->hasWaiter(j["id"])) {
+        // FIXME: this block should not be here at all
+        wc->submitToWaiter(j);
+      }
       if (j["id"] == getstates["id"]) {
         std::scoped_lock lk(entitieslock);
         // response for initial getstates call
