@@ -48,7 +48,7 @@ private:
     void wait()
     {
       std::unique_lock lk(mutex);
-      cv.wait(lk, [this]{ return ready; });
+      cv.wait(lk, [this] { return ready; });
     }
 
     void notify()
