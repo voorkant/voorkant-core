@@ -33,7 +33,7 @@ jobs:
           name: ubuntu-build
           path: ${{github.workspace}}/build
   build-macos:
-    runs-on: macos-14
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
         with:
