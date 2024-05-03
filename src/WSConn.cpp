@@ -87,9 +87,51 @@ void WSConn::send(json& _msg)
   sendString(jmsg);
 }
 
+// FIXME: reduce code duplication versus ::send, or maybe make waiting a bool arg?
+json WSConn::sendAndWait(json& _msg)
+{
+  auto id = msgid;
+  {
+    std::scoped_lock lk(msgidlock);
+
+    if (id) {
+      // FIXME: at zero, we are authing, which does not get an id. this is a hack.
+      _msg["id"] = id;
+    }
+    std::cerr << "WSConn::send: " << _msg.dump() << endl;
+
+    msgid++;
+  }
+
+  auto jmsg = _msg.dump();
+
+  waiters[id]; // create the waiter
+  sendString(jmsg);
+  waiters[id].wait();
+
+  auto resp = waiters[id].response;
+  waiters.erase(id);
+
+  return resp;
+}
+
 void WSConn::sendString(std::string& _msg)
 {
   std::scoped_lock lk(wshandlelock);
   size_t sent;
   curl_ws_send(wshandle, _msg.c_str(), _msg.length(), &sent, 0, CURLWS_TEXT);
+}
+
+bool WSConn::hasWaiter(int _id)
+{
+  return waiters.count(_id) > 0;
+}
+
+void WSConn::submitToWaiter(json& _msg)
+{
+  int id = _msg["id"];
+
+  waiters[id].response = _msg;
+  waiters[id].ready = true;
+  waiters[id].notify();
 }
