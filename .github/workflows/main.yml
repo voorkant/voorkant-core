@@ -5,35 +5,35 @@ on:
   pull_request:
   schedule:
     # Weekly build (on saturday)
-    - cron: '0 0 * * 6'
+    - cron: "0 0 * * 6"
 
 jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-    - name: Update apt indexes
-      run: sudo apt-get update
-    - name: Install various apt dependencies
-      run: sudo apt-get install build-essential cmake ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev python3-pip
-    - name: Install meson
-      run: pip install meson
-    - name: Configure Meson
-      run: meson setup ${{github.workspace}}/build 
-    - name: Build
-      run: meson compile -C ${{github.workspace}}/build
-    - name: start HA in the background
-      run: scripts/background-ha.sh
-    - name: test client-cli
-      run: LD_LIBRARY_PATH=./build/subprojects/curl-8.5.0/build/lib/.libs/ HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN=$(cat scripts/docker/longtoken.txt) build/client-cli list-entities
-    - uses: actions/upload-artifact@v4
-      with:
-        name: ubuntu-build
-        path: ${{github.workspace}}/build
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Update apt indexes
+        run: sudo apt-get update
+      - name: Install various apt dependencies
+        run: sudo apt-get install build-essential cmake ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev python3-pip
+      - name: Install meson
+        run: pip install meson
+      - name: Configure Meson
+        run: meson setup ${{github.workspace}}/build
+      - name: Build
+        run: meson compile -C ${{github.workspace}}/build
+      - name: start HA in the background
+        run: scripts/background-ha.sh
+      - name: test client-cli
+        run: LD_LIBRARY_PATH=./build/subprojects/curl-8.5.0/build/lib/.libs/ HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN=$(cat scripts/docker/longtoken.txt) build/client-cli list-entities
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-build
+          path: ${{github.workspace}}/build
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,24 +53,24 @@ jobs:
     runs-on: ubuntu-latest
     container: debian:12
     steps:
-    - name: Update apt indexes
-      run: apt-get update
-    - name: Install various apt dependencies
-      run: apt-get install -y build-essential cmake ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev muon-meson git python3-pip clang-tidy clang-format
-    - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-    - name: Fix checkout permissions
-      run: chown -R root .
-    - name: Install meson
-      run: pip install --break-system-packages meson
-    - name: Configure Meson
-      run: meson setup build
-    - name: clang-format
-      run: ninja -C build clang-format
-    - name: muon-meson format
-      run: muon-meson fmt -i meson.build
-    - name: Check for formatting disagreements
-      run: git diff --exit-code
-    - name: run clang-tidy
-      run: ninja -vvvv -d explain -C build clang-tidy
+      - name: Update apt indexes
+        run: apt-get update
+      - name: Install various apt dependencies
+        run: apt-get install -y build-essential cmake ninja-build nlohmann-json3-dev pkg-config libssl-dev libsdl2-dev muon-meson git python3-pip clang-tidy clang-format
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Fix checkout permissions
+        run: chown -R root .
+      - name: Install meson
+        run: pip install --break-system-packages meson
+      - name: Configure Meson
+        run: meson setup build
+      - name: clang-format
+        run: ninja -C build clang-format
+      - name: muon-meson format
+        run: muon-meson fmt -i meson.build
+      - name: Check for formatting disagreements
+        run: git diff --exit-code
+      - name: run clang-tidy
+        run: ninja -vvvv -d explain -C build clang-tidy
