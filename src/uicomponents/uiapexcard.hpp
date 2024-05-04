@@ -8,7 +8,7 @@ class UIApexCard : public UIEntity
 public:
   UIApexCard(HABackend& _backend, const std::string _panel, int _index, lv_obj_t* _parent);
 
-  void uiupdate() override;
+  void update() override;
 
 private:
   // FIXME: we never free() the lv_obj_t*'s in code

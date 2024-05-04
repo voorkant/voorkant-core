@@ -282,10 +282,10 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
   //   btnColorTemp = createImageButton(&G_COLORTEMP24, UIApexCard::btnColorTempCB, LV_EVENT_CLICKED);
   // }
 
-  uiupdate();
+  update();
 }
 
-void UIApexCard::uiupdate()
+void UIApexCard::update()
 {
   lv_chart_refresh(chart);
   // auto state = entity->getJsonState();
