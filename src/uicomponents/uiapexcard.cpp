@@ -56,7 +56,7 @@ parse8601(std::istream&& is)
 }
 
 
-UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index, lv_obj_t* _parent) :
+UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   UIEntity(nullptr, _parent)
 {
 
@@ -107,7 +107,7 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
 
   sleep(1); // FIXME: Backend.cpp should not set loaded=true until the panel exists
 
-  auto apexcard = _backend.getPanel();
+  auto& backend = HABackend::getInstance();
 
   // // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
   flowpanel = lv_obj_create(_parent);
@@ -120,8 +120,8 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
 
   // lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
-  std::cerr<<"apexcard="<<apexcard<<std::endl;
-  lv_obj_t* label = createLabel(flowpanel, apexcard["header"]["title"]); // FIXME somehow this is not showing FIXME check show bool FIXME handle absence of title
+  std::cerr<<"apexcard="<<_card<<std::endl;
+  lv_obj_t* label = createLabel(flowpanel, _card["header"]["title"]); // FIXME somehow this is not showing FIXME check show bool FIXME handle absence of title
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
@@ -137,8 +137,8 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
   lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
 
-  std::cerr << apexcard << std::endl;
-  auto data = _backend.getEntityByName(apexcard["series"][0]["entity"].get<std::string>())->getJsonState()["attributes"]["prices"]; // FIXME: do multiple series, leave decision of what data to plot to the data_generator JS
+  std::cerr << _card << std::endl;
+  auto data = backend.getEntityByName(_card["series"][0]["entity"].get<std::string>())->getJsonState()["attributes"]["prices"]; // FIXME: do multiple series, leave decision of what data to plot to the data_generator JS
 
   auto min = std::numeric_limits<double>::max();
   auto max = std::numeric_limits<double>::min();
@@ -171,6 +171,12 @@ UIApexCard::UIApexCard(HABackend& _backend, const std::string _panel, int _index
   std::cerr << values.size() << std::endl;
   const auto float_factor = 1000.0; // milli-euros
 
+  if (values.empty()) {
+    values.push_back(std::make_pair(0, 0)); // FIXME: hack to avoid a crash inside LVGL with 0 chart points
+    values.push_back(std::make_pair(3600*24*365*10, 100)); // FIXME: hack to avoid a crash inside LVGL with 0 chart points
+    min = 0;
+    max = 100;
+  }
   lv_chart_set_point_count(chart, values.size()); // hours
   lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, min * float_factor, max * float_factor); // FIXME/FIXTHEM: lvgl 8.3 docs say it's LV_CHART_AXIS_PRIMARY which is just wrong
   lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, values.size(), 1, true, 40); // major ticks point 10 px down, minor 5. values.size() major ticks, and 1 minor (actually means zero!) in between those. [true] labels on major ticks. 40px for labels.

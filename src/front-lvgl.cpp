@@ -256,6 +256,9 @@ void uithread(int _argc, char* _argv[])
           }
         }
         else if (card["type"] == "custom:apexcharts-card") {
+
+          std::unique_ptr<UIEntity> apex = std::make_unique<UIApexCard>(card, cont_row);
+          uielements.push_back(std::move(apex));
           g_log << Logger::Warning << "got apex card" << std::endl;
         }
         else {
