@@ -24,7 +24,7 @@ void UIApexCard::drawEventCB(lv_event_t* _e)
     auto timestamp = apexcard->values[index].first; // FIXME: check index before we, well, index?
     struct tm local_timestamp;
     localtime_r(&timestamp, &local_timestamp);
-    char timebuf[100]="";
+    char timebuf[100] = "";
     if (local_timestamp.tm_hour == 0) {
       strftime(timebuf, sizeof(timebuf), "%d %b", &local_timestamp);
     }
@@ -40,21 +40,19 @@ void UIApexCard::drawEventCB(lv_event_t* _e)
 date::sys_time<std::chrono::milliseconds>
 parse8601(std::istream&& is)
 {
-    std::string save;
-    is >> save;
-    std::istringstream in{save};
-    date::sys_time<std::chrono::milliseconds> tp;
-    in >> date::parse("%FT%TZ", tp);
-    if (in.fail())
-    {
-        in.clear();
-        in.exceptions(std::ios::failbit);
-        in.str(save);
-        in >> date::parse("%FT%T%Ez", tp);
-    }
-    return tp;
+  std::string save;
+  is >> save;
+  std::istringstream in{save};
+  date::sys_time<std::chrono::milliseconds> tp;
+  in >> date::parse("%FT%TZ", tp);
+  if (in.fail()) {
+    in.clear();
+    in.exceptions(std::ios::failbit);
+    in.str(save);
+    in >> date::parse("%FT%T%Ez", tp);
+  }
+  return tp;
 }
-
 
 UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   UIEntity(nullptr, _parent)
@@ -72,7 +70,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
 
   // lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
-  std::cerr<<"apexcard="<<_card<<std::endl;
+  std::cerr << "apexcard=" << _card << std::endl;
   lv_obj_t* label = createLabel(flowpanel, _card["header"]["title"]); // FIXME somehow this is not showing FIXME check show bool FIXME handle absence of title
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_CENTER);
@@ -103,13 +101,13 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   for (const auto& v : data) {
     std::cerr << "." << std::endl;
     auto from = v["from"].get<string>();
-    std::cerr<<"from="<<from<<std::endl;
+    std::cerr << "from=" << from << std::endl;
     auto fromt = parse8601(std::istringstream{from});
     auto fromtu = fromt.time_since_epoch(); // unix epoch time in milliseconds
 
-    auto pair = std::make_pair<time_t, double>(fromtu.count()/1000, v["price"].get<double>());
+    auto pair = std::make_pair<time_t, double>(fromtu.count() / 1000, v["price"].get<double>());
 
-    if (fromtu.count()/1000 <= now.tv_sec) {
+    if (fromtu.count() / 1000 <= now.tv_sec) {
       nowindex = counter;
     }
 
@@ -125,7 +123,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
 
   if (values.empty()) {
     values.push_back(std::make_pair(0, 0)); // FIXME: hack to avoid a crash inside LVGL with 0 chart points
-    values.push_back(std::make_pair(3600*24*365*10, 100)); // FIXME: hack to avoid a crash inside LVGL with 0 chart points
+    values.push_back(std::make_pair(3600 * 24 * 365 * 10, 100)); // FIXME: hack to avoid a crash inside LVGL with 0 chart points
     min = 0;
     max = 100;
   }
