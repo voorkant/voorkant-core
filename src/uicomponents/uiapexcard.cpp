@@ -59,52 +59,6 @@ parse8601(std::istream&& is)
 UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   UIEntity(nullptr, _parent)
 {
-
-  // auto state = entity->getJsonState();
-  // std::cerr << "INITIAL STATE FOR " << _entity->name << ":" << state.dump(2) << std::endl;
-
-  // if (!state.contains("attributes")) {
-  //   throw std::runtime_error("RGBLight can't operate with a state that has no attributes");
-  // }
-
-  // auto attributes = state["attributes"];
-  // if (!attributes.contains("supported_color_modes") || !attributes["supported_color_modes"].is_array()) {
-  //   throw std::runtime_error("RGBLight really needs to know the supported_color_modes as an array");
-  // }
-  // std::vector<std::string> supported_color_modes = attributes["supported_color_modes"].get<std::vector<string>>();
-
-  // // FIXME: we get all the supported color modes here, but we don't support all of them. Missing is RGBW, RGBWW and WHITE
-  // for (auto& mode : supported_color_modes) {
-  //   std::cerr << "    supported color mode:" << mode << std::endl;
-  //   std::transform(mode.begin(), mode.end(), mode.begin(), [](unsigned char _c) { return std::tolower(_c); }); // this needed?
-  //   if (mode == "unknown") {
-  //     throw std::runtime_error("support color mode is 'unknown', we really can't deal with that.");
-  //   }
-  //   if (mode == "brightness") {
-  //     showBrightness = true;
-  //   }
-  //   if (mode == "color_temp") { // FIXME: HA docs say "and it's color temperature is present in the state".
-  //     showBrightness = true;
-  //     showColorTemp = true;
-  //   }
-  //   if (mode == "hs") {
-  //     showColorWheel = true;
-  //     showBrightness = true;
-  //   }
-  //   if (mode == "rgbw") {
-  //     showColorWheel = true;
-  //     showBrightness = true;
-  //   }
-  //   if (mode == "rgb" || mode == "rgbww") {
-  //     showColorWheel = true;
-  //     showBrightness = true;
-  //     showColorTemp = true;
-  //   }
-  //   if (mode == "white") {
-  //     showWhite = true;
-  //   }
-  // }
-
   auto& backend = HABackend::getInstance();
 
   // // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
