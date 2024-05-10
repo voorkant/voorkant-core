@@ -36,7 +36,6 @@ public:
   std::vector<std::shared_ptr<HAEntity>> getEntitiesByPattern(const std::string& _pattern);
   map<string, std::shared_ptr<HAEntity>> getEntities();
   void wsConnSend(json& _msg);
-  json getPanel();
 
   // Singleton pattern, so we don't want to clone or assign (from https://refactoring.guru/design-patterns/singleton/cpp/example)
   HABackend(HABackend& _other) = delete;
@@ -56,7 +55,6 @@ private:
   std::mutex entitieslock;
   map<string, std::shared_ptr<HADomain>> domains;
   std::mutex domainslock;
-  json panel; // FIXME: actually holds a single card right now
 };
 
 #endif

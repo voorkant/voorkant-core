@@ -105,8 +105,6 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   //   }
   // }
 
-  sleep(1); // FIXME: Backend.cpp should not set loaded=true until the panel exists
-
   auto& backend = HABackend::getInstance();
 
   // // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()

@@ -186,11 +186,6 @@ map<string, std::shared_ptr<HAEntity>> HABackend::getEntities()
   return entities;
 }
 
-json HABackend::getPanel()
-{
-  return panel;
-}
-
 std::vector<std::shared_ptr<HAEntity>> HABackend::getEntitiesByDomain(const std::string& _domain)
 {
   std::scoped_lock lk(entitieslock);
