@@ -62,7 +62,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   // // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
   flowpanel = lv_obj_create(_parent);
   lv_obj_set_width(flowpanel, uiEntityWidth * 3);
-  lv_obj_set_height(flowpanel, 450);
+  lv_obj_set_height(flowpanel, /* MY_DISP_VER_RES */ 480 * 0.8);
   // lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   // lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
   // lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
@@ -77,7 +77,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
   chart = lv_chart_create(flowpanel);
-  lv_obj_set_size(chart, uiEntityWidth * 3 - 100, 350);
+  lv_obj_set_size(chart, uiEntityWidth * 3 - 100, /* MY_DISP_VER_RES */ 480 * 0.65);
   // lv_obj_set_width(chart, LV_PCT(100));
   // lv_obj_set_align(chart, LV_ALIGN_CENTER);
 
