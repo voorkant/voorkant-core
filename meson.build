@@ -191,8 +191,7 @@ executable(
 )
 
 if get_option('front-lvgl').enabled()
-    date_dep = dependency('date')
-    tz_dep = dependency('tz')
+    date_dep = dependency('date', default_options: ['default_library=static'])
 
     executable(
         'client-lvgl',
@@ -226,7 +225,6 @@ if get_option('front-lvgl').enabled()
             zlib_dep,
             libatomic,
             date_dep,
-            tz_dep,
             quickjs_dep,
         ],
         include_directories: incdir,
