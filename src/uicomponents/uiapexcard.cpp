@@ -7,6 +7,9 @@
 #include <time.h>
 #include <date/date.h>
 
+#include "quickjs.h"
+#include "quickjs-libc.h"
+
 // FIXME: we do a whole lot of json parsing in this file, that we should be doing somewhere else.
 
 static auto const G_TICK_DIVIDER = 12; // if values.size() doesn't divide cleanly by this, your graph will suck
@@ -88,7 +91,33 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
 
   std::cerr << _card << std::endl;
-  auto data = backend.getEntityByName(_card["series"][0]["entity"].get<std::string>())->getJsonState()["attributes"]["prices"]; // FIXME: do multiple series, leave decision of what data to plot to the data_generator JS
+  std::string data_generator = _card["series"][0]["data_generator"].get<std::string>();
+  std::cerr << "data_generator:" << data_generator << std::endl;
+  // auto data = backend.getEntityByName(_card["series"][0]["entity"].get<std::string>())->getJsonState()["attributes"]["prices"]; // FIXME: do multiple series, leave decision of what data to plot to the data_generator JS
+  auto entity = backend.getEntityByName(_card["series"][0]["entity"].get<std::string>())->getJsonState(); // FIXME: do multiple series, leave decision of what data to plot to the data_generator JS
+
+  auto qjsrt = JS_NewRuntime();
+  auto qjsc = JS_NewContext(qjsrt);
+
+  js_std_add_helpers(qjsc, -1, NULL); // this gives us console.log
+
+  // std::string c("JSON.stringify({'a':0.5})");
+  std::string f = std::string("JSON.stringify((function(){ ") + data_generator + "})())";
+  std::string e = "entity = " + entity.dump();
+  std::string c = e + ";\n" + f;
+  std::cerr<<"JS_EVAL["<<c<<"]"<<std::endl;
+  auto ret = JS_Eval(qjsc, c.data(), c.size(), "<internal>", 0);
+
+  if (JS_IsException(ret)) {
+    std::cerr<<"exception"<<std::endl;
+    js_std_dump_error(qjsc);
+  }
+  auto rets = JS_ToCString(qjsc, ret);
+  std::cerr<<"rets="<<rets<<std::endl;
+  auto data = json::parse(rets);
+
+  JS_FreeValue(qjsc, ret);
+  std::cerr<<"/JS_EVAL"<<std::endl;
 
   auto min = std::numeric_limits<double>::max();
   auto max = std::numeric_limits<double>::min();
@@ -100,12 +129,12 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   gettimeofday(&now, nullptr);
   for (const auto& v : data) {
     std::cerr << "." << std::endl;
-    auto from = v["from"].get<string>();
+    auto from = v[0].get<string>();
     std::cerr << "from=" << from << std::endl;
     auto fromt = parse8601(std::istringstream{from});
     auto fromtu = fromt.time_since_epoch(); // unix epoch time in milliseconds
 
-    auto pair = std::make_pair<time_t, double>(fromtu.count() / 1000, v["price"].get<double>());
+    auto pair = std::make_pair<time_t, double>(fromtu.count() / 1000, v[1].get<double>());
 
     if (fromtu.count() / 1000 <= now.tv_sec) {
       nowindex = counter;

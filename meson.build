@@ -113,6 +113,11 @@ if get_option('front-lvgl').enabled()
     lvgl_drivers_proj = cmake.subproject('lv_drivers', options: cmake_options)
     lvgl_drivers_proj2 = cmake.subproject('lv_drivers', options: cmake_options)
     lvgl_drivers_dep = lvgl_drivers_proj.dependency('lv_drivers')
+    quickjs_options = cmake.subproject_options()
+    quickjs_options.add_cmake_defines({'BUILD_QJS_LIBC': true})
+    quickjs_options.add_cmake_defines({'BUILD_STATIC_QJS_EXE': true}) # FIXME: remove
+    quickjs_proj = cmake.subproject('quickjs', options: quickjs_options)
+    quickjs_dep = quickjs_proj.dependency('qjs')
 endif
 
 incdir = include_directories('./src/')
@@ -222,6 +227,7 @@ if get_option('front-lvgl').enabled()
             libatomic,
             date_dep,
             tz_dep,
+            quickjs_dep,
         ],
         include_directories: incdir,
         cpp_args: [
