@@ -116,7 +116,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   std::cerr<<"rets="<<rets<<std::endl;
   auto data = json::parse(rets);
 
-  JS_FreeValue(qjsc, ret);
+  JS_FreeValue(qjsc, ret); // this also invalidates `rets`, but we parsed it into `data` just above
   std::cerr<<"/JS_EVAL"<<std::endl;
 
   auto min = std::numeric_limits<double>::max();
@@ -129,10 +129,27 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   gettimeofday(&now, nullptr);
   for (const auto& v : data) {
     std::cerr << "." << std::endl;
-    auto from = v[0].get<string>();
-    std::cerr << "from=" << from << std::endl;
-    auto fromt = parse8601(std::istringstream{from});
-    auto fromtu = fromt.time_since_epoch(); // unix epoch time in milliseconds
+
+    std::chrono::duration<long, std::milli> fromtu;
+    // the apexcard docs say v[0] is a milliseconds-since-epoch value but some configs stick date strings in there
+    switch (v[0].type()) {
+      case nlohmann::detail::value_t::string :
+        {
+          auto from = v[0].get<string>();
+          std::cerr << "from=" << from << std::endl;
+          auto fromt = parse8601(std::istringstream{from});
+          fromtu = fromt.time_since_epoch(); // unix epoch time in milliseconds
+        }
+        break;
+      case nlohmann::detail::value_t::number_integer :
+      case nlohmann::detail::value_t::number_unsigned :
+      case nlohmann::detail::value_t::number_float :
+        fromtu = std::chrono::duration<long, std::milli>(v[0].get<long>());
+        break;
+      default:
+        break;
+    }
+    // if (v[0].type() == json::value_t::
 
     auto pair = std::make_pair<time_t, double>(fromtu.count() / 1000, v[1].get<double>());
 
