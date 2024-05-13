@@ -132,6 +132,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
 
     std::chrono::duration<long, std::milli> fromtu;
     // the apexcard docs say v[0] is a milliseconds-since-epoch value but some configs stick date strings in there
+    // Ruben suggests we could also add a bit of post-processing after data_generator that always returns ecma epoch time numbers
     switch (v[0].type()) {
       case nlohmann::detail::value_t::string :
         {
