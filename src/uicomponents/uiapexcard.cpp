@@ -69,20 +69,20 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_obj_set_width(flowpanel, uiEntityWidth * 3);
   lv_obj_set_height(flowpanel, /* MY_DISP_VER_RES */ 480 * 0.8);
   // lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  // lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
-  // lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
-  // lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+  lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
+  lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
+  lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
 
   // lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
   g_log << Logger::LogLevel::Debug << "apexcard=" << _card << std::endl;
-  lv_obj_t* label = createLabel(flowpanel, _card["header"]["title"]); // FIXME somehow this is not showing FIXME check show bool FIXME handle absence of title FIXME once we figure out object cleanup, stick this in the right spot
+  lv_obj_t* label = createLabel(flowpanel, _card["header"]["title"]); // FIXME check show bool FIXME handle absence of title FIXME once we figure out object cleanup, stick this in the right spot
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
   chart = lv_chart_create(flowpanel);
-  lv_obj_set_size(chart, uiEntityWidth * 3 - 100, /* MY_DISP_VER_RES */ 480 * 0.65);
+  lv_obj_set_size(chart, uiEntityWidth * 3 - 100, /* MY_DISP_VER_RES */ 480 * 0.65 - 30);
   // lv_obj_set_width(chart, LV_PCT(100));
   // lv_obj_set_align(chart, LV_ALIGN_CENTER);
 
