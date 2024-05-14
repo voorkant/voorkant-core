@@ -76,7 +76,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   // lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
   g_log << Logger::LogLevel::Debug << "apexcard=" << _card << std::endl;
-  lv_obj_t* label = createLabel(flowpanel, _card["header"]["title"]); // FIXME somehow this is not showing FIXME check show bool FIXME handle absence of title
+  lv_obj_t* label = createLabel(flowpanel, _card["header"]["title"]); // FIXME somehow this is not showing FIXME check show bool FIXME handle absence of title FIXME once we figure out object cleanup, stick this in the right spot
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
