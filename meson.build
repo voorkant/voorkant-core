@@ -94,6 +94,16 @@ cmake_options.append_compile_args(
     '-I/' + brew_prefix + '/include',
 )
 
+if cpp.links(
+    '''int main(int argc, char **argv) { return 0; }''',
+    args: '-latomic',
+    name: 'libatomic',
+)
+    libatomic = declare_dependency(link_args: '-latomic')
+else
+    libatomic = dependency('', required: false)
+endif
+
 if get_option('front-lvgl').enabled()
     if get_option('lvgl-driver') == 'sdl'
         sdl2_dep = dependency('sdl2')
@@ -115,7 +125,9 @@ if get_option('front-lvgl').enabled()
     lvgl_drivers_dep = lvgl_drivers_proj.dependency('lv_drivers')
     quickjs_options = cmake.subproject_options()
     quickjs_options.add_cmake_defines({'BUILD_QJS_LIBC': true})
-    quickjs_options.add_cmake_defines({'BUILD_STATIC_QJS_EXE': true}) # FIXME: remove
+    if libatomic.found()
+        quickjs_options.append_compile_args('c', '-latomic')
+    endif
     quickjs_proj = cmake.subproject('quickjs', options: quickjs_options)
     quickjs_dep = quickjs_proj.dependency('qjs')
 endif
@@ -124,17 +136,6 @@ incdir = include_directories('./src/')
 
 openssl_dep = dependency('openssl')
 zlib_dep = dependency('zlib')
-
-if cpp.links(
-    '''int main(int argc, char **argv) { return 0; }''',
-    args: '-latomic',
-    name: 'libatomic',
-)
-    libatomic = declare_dependency(link_args: '-latomic')
-else
-    libatomic = []
-endif
-
 
 if get_option('front-ftxui').enabled()
     ftxui_screen_dep = dependency('ftxui-screen')
