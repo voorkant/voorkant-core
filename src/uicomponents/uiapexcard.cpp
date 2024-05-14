@@ -1,4 +1,5 @@
 #include "uiapexcard.hpp"
+#include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
 #include <src/extra/widgets/chart/lv_chart.h>
 #include <src/misc/lv_area.h>
@@ -40,6 +41,7 @@ void UIApexCard::drawEventCB(lv_event_t* _e)
 }
 
 // https://stackoverflow.com/a/38839725
+// FIXME would be much easier to handle this in JS
 date::sys_time<std::chrono::milliseconds>
 parse8601(std::istream&& is)
 {
@@ -73,7 +75,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
 
   // lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
-  std::cerr << "apexcard=" << _card << std::endl;
+  g_log << Logger::LogLevel::Debug << "apexcard=" << _card << std::endl;
   lv_obj_t* label = createLabel(flowpanel, _card["header"]["title"]); // FIXME somehow this is not showing FIXME check show bool FIXME handle absence of title
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_CENTER);
@@ -105,7 +107,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   std::string f = std::string("JSON.stringify((function(){ ") + data_generator + "})())";
   std::string e = "entity = " + entity.dump();
   std::string c = e + ";\n" + f;
-  std::cerr<<"JS_EVAL["<<c<<"]"<<std::endl;
+  g_log << Logger::LogLevel::Debug << "JS_EVAL[" << c << "]" << std::endl;
   auto ret = JS_Eval(qjsc, c.data(), c.size(), "<internal>", 0);
 
   if (JS_IsException(ret)) {
@@ -113,7 +115,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
     js_std_dump_error(qjsc);
   }
   auto rets = JS_ToCString(qjsc, ret);
-  std::cerr<<"rets="<<rets<<std::endl;
+  g_log << Logger::LogLevel::Debug <<"rets="<<rets<<std::endl;
   auto data = json::parse(rets);
 
   JS_FreeValue(qjsc, ret); // this also invalidates `rets`, but we parsed it into `data` just above

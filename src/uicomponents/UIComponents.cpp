@@ -27,6 +27,10 @@ UIEntity::UIEntity(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIComponent(_parent)
 {
   entity = _entity;
+
+  // this `if` is here because uiapexcard does not know what to subscribe to before it has parsed its config.
+  // perhaps even more importantly, once it does know, it might want to subscribe to multiple things
+  // FIXME: so perhaps subscription should be handled in a more flexible way instead of right here in the constructor
   if (entity) {
     entity->attach((IObserver*)this);
   }
