@@ -111,15 +111,15 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   auto ret = JS_Eval(qjsc, c.data(), c.size(), "<internal>", 0);
 
   if (JS_IsException(ret)) {
-    std::cerr<<"exception"<<std::endl;
+    std::cerr << "exception" << std::endl;
     js_std_dump_error(qjsc);
   }
   auto rets = JS_ToCString(qjsc, ret);
-  g_log << Logger::LogLevel::Debug <<"rets="<<rets<<std::endl;
+  g_log << Logger::LogLevel::Debug << "rets=" << rets << std::endl;
   auto data = json::parse(rets);
 
   JS_FreeValue(qjsc, ret); // this also invalidates `rets`, but we parsed it into `data` just above
-  std::cerr<<"/JS_EVAL"<<std::endl;
+  std::cerr << "/JS_EVAL" << std::endl;
 
   auto min = std::numeric_limits<double>::max();
   auto max = std::numeric_limits<double>::min();
@@ -136,21 +136,19 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
     // the apexcard docs say v[0] is a milliseconds-since-epoch value but some configs stick date strings in there
     // Ruben suggests we could also add a bit of post-processing after data_generator that always returns ecma epoch time numbers
     switch (v[0].type()) {
-      case nlohmann::detail::value_t::string :
-        {
-          auto from = v[0].get<string>();
-          std::cerr << "from=" << from << std::endl;
-          auto fromt = parse8601(std::istringstream{from});
-          fromtu = fromt.time_since_epoch(); // unix epoch time in milliseconds
-        }
-        break;
-      case nlohmann::detail::value_t::number_integer :
-      case nlohmann::detail::value_t::number_unsigned :
-      case nlohmann::detail::value_t::number_float :
-        fromtu = std::chrono::duration<long, std::milli>(v[0].get<long>());
-        break;
-      default:
-        break;
+    case nlohmann::detail::value_t::string: {
+      auto from = v[0].get<string>();
+      std::cerr << "from=" << from << std::endl;
+      auto fromt = parse8601(std::istringstream{from});
+      fromtu = fromt.time_since_epoch(); // unix epoch time in milliseconds
+    } break;
+    case nlohmann::detail::value_t::number_integer:
+    case nlohmann::detail::value_t::number_unsigned:
+    case nlohmann::detail::value_t::number_float:
+      fromtu = std::chrono::duration<long, std::milli>(v[0].get<long>());
+      break;
+    default:
+      break;
     }
     // if (v[0].type() == json::value_t::
 
