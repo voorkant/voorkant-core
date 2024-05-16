@@ -96,7 +96,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   std::string data_generator = _card["series"][0]["data_generator"].get<std::string>();
   std::cerr << "data_generator:" << data_generator << std::endl;
   // auto data = backend.getEntityByName(_card["series"][0]["entity"].get<std::string>())->getJsonState()["attributes"]["prices"]; // FIXME: do multiple series, leave decision of what data to plot to the data_generator JS
-  auto entity = backend.getEntityByName(_card["series"][0]["entity"].get<std::string>())->getJsonState(); // FIXME: do multiple series, leave decision of what data to plot to the data_generator JS
+  auto entity = backend.getEntityByName(_card["series"][0]["entity"].get<std::string>())->getJsonState(); // FIXME: do multiple series, leave decision of what data to plot to the data_generator JS, handle absence of series key
 
   auto qjsrt = JS_NewRuntime();
   auto qjsc = JS_NewContext(qjsrt);
