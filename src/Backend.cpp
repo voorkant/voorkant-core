@@ -145,6 +145,7 @@ void HABackend::threadrunner()
           // FIXME: we should check if the domain actually exists before just calling for it.
           entities[entity_id] = std::make_shared<HAEntity>(evd, domains[domain], this); // FIXME: we share `this` entirely unprotected from threading mistakes here
         }
+        // FIXME: I wonder if this lock is held since the previous {
         std::unique_lock<std::mutex> lck(load_lock);
         loaded = true;
         load_cv.notify_all();
@@ -202,7 +203,7 @@ std::vector<std::shared_ptr<HAEntity>> HABackend::getEntitiesByPattern(const std
   std::scoped_lock lk(entitieslock);
   std::vector<std::shared_ptr<HAEntity>> ret;
   for (auto& [id, entity] : entities) {
-    if (fnmatch(_pattern.c_str(), entity->fullname.c_str(), FNM_CASEFOLD) == 0) {
+    if (fnmatch(_pattern.c_str(), entity->id.c_str(), FNM_CASEFOLD) == 0) {
       ret.push_back(entity);
     }
   }

@@ -10,3 +10,6 @@
 [submodule "src/ext/magic_enum"]
 	path = src/ext/magic_enum
 	url = https://github.com/Neargye/magic_enum
+[submodule "subprojects/quickjs"]
+	path = subprojects/quickjs
+	url = https://github.com/quickjs-ng/quickjs

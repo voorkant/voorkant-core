@@ -52,3 +52,5 @@ If it hangs, `killall -9` it and try to find out how you caused that :-)
 | nlohmann/json | MIT            | header assumed present on system (perhaps it should be a meson wrap instead)
 | openssl       | Apache (in v3) | assumed present on system |
 | SDL2          | zlib           | assumed present on system |
+| quickjs-ng    | MIT            | git submodule    |
+| hinnant-date  | MIT            | meson wrap       |
