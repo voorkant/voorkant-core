@@ -1,5 +1,7 @@
 #include "UIComponents.hpp"
 #include "logger.hpp"
+#include <src/misc/lv_area.h>
+#include <src/widgets/lv_label.h>
 
 lv_obj_t* UIComponent::createLabel(lv_obj_t* _parent, std::string _text)
 {
@@ -148,6 +150,10 @@ UIDummy::UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_width(extratext, LV_PCT(100));
   lv_obj_set_align(extratext, LV_ALIGN_CENTER);
 
+  extratext2 = createLabel(flowpanel, "State:");
+  lv_obj_set_width(extratext, LV_PCT(100));
+  lv_obj_set_align(extratext, LV_ALIGN_LEFT_MID);
+
   const auto& services = _entity->getServices();
   for (const auto& service : services) {
     string txt = "Service: ";
@@ -164,4 +170,6 @@ void UIDummy::update()
   auto state = entity->getJsonState();
   g_log << Logger::Debug << "We received a UIupdate for " << entity->name << ":" << std::endl;
   // g_log << Logger::Debug << state.dump(2) << std::endl; - commented because of #93
+  string s = "State: " + state["state"].get<string>();
+  lv_label_set_text(extratext2, s.data());
 };
