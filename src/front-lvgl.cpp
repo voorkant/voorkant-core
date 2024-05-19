@@ -215,7 +215,13 @@ void uithread(int _argc, char* _argv[])
           if (card.contains("entities")) { // array of objects with the entity name in it.
             auto objs = card["entities"];
             for (auto ent : objs) {
-              string entityname = ent["entity"];
+              string entityname;
+              if (ent.type() == json::value_t::string) {
+                entityname = ent;
+              }
+              else {
+                entityname = ent["entity"];
+              }
               std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
               if (entity->getEntityType() == EntityType::Light) {
                 std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
