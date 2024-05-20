@@ -157,5 +157,5 @@ void UIDummy::update()
 {
   auto state = entity->getJsonState();
   g_log << Logger::Debug << "We received a UIupdate for " << entity->name << ":" << std::endl;
-  g_log << Logger::Debug << state.dump(2) << std::endl;
+  // g_log << Logger::Debug << state.dump(2) << std::endl; - commented because of #93
 };
