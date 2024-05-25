@@ -27,7 +27,6 @@
           "name": "HA_WS_URL",
           "value": "ws://localhost:8123/api/websocket"
         },
-
       ],
       "stopAtEntry": false,
       "preLaunchTask": "Meson: Build all targets",
