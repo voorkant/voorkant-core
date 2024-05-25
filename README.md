@@ -14,8 +14,7 @@ $ meson compile -C build/
 
 In the `scripts/` directory, there's a `tmux.sh` file that can be used to start up a HA docker container and complete the registration steps.
 It then spits out the HA_WS_URL and HA_API_TOKEN.
-If `client-cli` already exists, then it will spit out a Long-Lived token and you do not need to create it manually.
-
+If `voorkant-cli` already exists, then it will spit out a Long-Lived token and you do not need to create it manually.
 
 # Prepare HA
 
@@ -30,13 +29,13 @@ Don't forget to save it - I keep it in a file called `.secrets` that I can sourc
 $ export HA_WS_URL=ws://homeassistant.local:8123/api/websocket
 $ export HA_API_TOKEN=xxxx
 $ # or run `. .secrets` if you put those lines in there
-$ build/client-ftxui
+$ build/voorkant-ftxui
 ```
 
 Push q or ctrl-C to exit.
 
-Besides `client-ftxui`, there is `client-cli` which has simpler line based output.
-`client-lvgl` is the nice UI.
+Besides `voorkant-ftxui`, there is `voorkant-cli` which has simpler line based output.
+`voorkant-lvgl` is the nice UI.
 
 If it hangs, `killall -9` it and try to find out how you caused that :-)
 
