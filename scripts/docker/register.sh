@@ -35,13 +35,13 @@ if [ "${MSG}" != "User step already done" ]; then
 
 
     CLI=""
-    if [ -x "../../build/client-cli" ]
+    if [ -x "../../build/voorkant-cli" ]
     then
-        CLI="../../build/client-cli"
+        CLI="../../build/voorkant-cli"
     fi
-    if [ -x "../../builddir/client-cli" ]
+    if [ -x "../../builddir/voorkant-cli" ]
     then
-        CLI="../../builddir/client-cli"
+        CLI="../../builddir/voorkant-cli"
     fi
     if [ -x ${CLI} ]
     then
@@ -49,7 +49,7 @@ if [ "${MSG}" != "User step already done" ]; then
         echo "Providing long lived token"
         echo HA_WS_URL=ws://0.0.0.0:8123/api/websocket HA_API_TOKEN="`cat longtoken.txt`"
     else
-        echo "WARNING - could not find build/client-cli. Providing SHORT lived token"
+        echo "WARNING - could not find build/voorkant-cli. Providing SHORT lived token"
         echo HA_WS_URL=ws://0.0.0.0:8123/api/websocket HA_API_TOKEN="${TOKEN}"
     fi
 else
