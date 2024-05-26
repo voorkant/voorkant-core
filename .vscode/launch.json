@@ -16,7 +16,7 @@
         "dashboard",
         "dashboard-test"
       ],
-      "program": "${workspaceRoot}/${config:mesonbuild.buildFolder}/client-lvgl",
+      "program": "${workspaceRoot}/${config:mesonbuild.buildFolder}/voorkant-lvgl",
       "cwd": "${workspaceRoot}/${config:mesonbuild.buildFolder}",
       "environment": [
         {

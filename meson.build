@@ -1,5 +1,5 @@
 project(
-    'client',
+    'voorkant',
     ['cpp', 'c'],
     version: '0.1',
     default_options: ['warning_level=3', 'cpp_std=c++20'],
@@ -143,7 +143,7 @@ if get_option('front-ftxui').enabled()
     ftxui_component_dep = dependency('ftxui-component')
 
     executable(
-        'client-ftxui',
+        'voorkant-ftxui',
         [
             'src/main.cpp',
             'src/logger.cpp',
@@ -169,7 +169,7 @@ if get_option('front-ftxui').enabled()
 endif
 
 executable(
-    'client-cli',
+    'voorkant-cli',
     [
         'src/main.cpp',
         'src/logger.cpp',
@@ -195,7 +195,7 @@ if get_option('front-lvgl').enabled()
     date_dep = dependency('date', default_options: ['default_library=static'])
 
     executable(
-        'client-lvgl',
+        'voorkant-lvgl',
         [
             'src/main.cpp',
             'src/logger.cpp',

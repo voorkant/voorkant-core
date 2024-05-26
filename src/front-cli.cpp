@@ -42,7 +42,7 @@ private:
 
 void uithread(int _argc, char* _argv[])
 {
-  argparse::ArgumentParser program("client-cli");
+  argparse::ArgumentParser program("voorkant-cli");
   argparse::ArgumentParser subscribe_command("subscribe");
   subscribe_command.add_argument("domain")
     .help("specific a HA domain"); // maybe .remaining() so you can subscribe multiple?
@@ -57,7 +57,7 @@ void uithread(int _argc, char* _argv[])
   program.add_subparser(list_entities_command);
 
   /* usage example for dump-command with data:
-   * build/client-cli dump-command call_service '{"domain":"light","service":"toggle","target":{"entity_id":"light.bed_light"}}'
+   * build/voorkant-cli dump-command call_service '{"domain":"light","service":"toggle","target":{"entity_id":"light.bed_light"}}'
    */
   argparse::ArgumentParser dump_command("dump-command");
   dump_command.add_argument("command").help("the command to execute");
