@@ -148,18 +148,18 @@ UIDummy::UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   string text = "Domain: ";
   lv_obj_t* extratext = createLabel(flowpanel, text.append(_entity->domain));
   lv_obj_set_width(extratext, LV_PCT(100));
-  lv_obj_set_align(extratext, LV_ALIGN_CENTER);
+  lv_obj_set_align(extratext, LV_ALIGN_LEFT_MID);
 
   extratext2 = createLabel(flowpanel, "State:");
-  lv_obj_set_width(extratext, LV_PCT(100));
-  lv_obj_set_align(extratext, LV_ALIGN_LEFT_MID);
+  lv_obj_set_width(extratext2, LV_PCT(100));
+  lv_obj_set_align(extratext2, LV_ALIGN_LEFT_MID);
 
   const auto& services = _entity->getServices();
   for (const auto& service : services) {
     string txt = "Service: ";
     lv_obj_t* servicelabel = createLabel(flowpanel, txt.append(service->name));
     lv_obj_set_width(servicelabel, LV_PCT(100));
-    lv_obj_set_align(servicelabel, LV_ALIGN_CENTER);
+    lv_obj_set_align(servicelabel, LV_ALIGN_LEFT_MID);
   }
 
   update();
