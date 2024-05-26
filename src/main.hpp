@@ -16,3 +16,5 @@ using std::string;
 using json = nlohmann::json;
 
 std::string getEnv(std::string _key);
+
+std::string getVersion(void);

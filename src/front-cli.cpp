@@ -43,6 +43,8 @@ private:
 void uithread(int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("voorkant-cli");
+  argparse::ArgumentParser version_command("version");
+  program.add_subparser(version_command);
   argparse::ArgumentParser subscribe_command("subscribe");
   subscribe_command.add_argument("domain")
     .help("specific a HA domain"); // maybe .remaining() so you can subscribe multiple?
@@ -74,7 +76,11 @@ void uithread(int _argc, char* _argv[])
     return;
   }
 
-  if (program.is_subcommand_used(subscribe_command)) {
+  if (program.is_subcommand_used(version_command)) {
+    cout << getVersion() << endl;
+    return;
+  }
+  else if (program.is_subcommand_used(subscribe_command)) {
     // FIXME: now actually use the argument
     string domain = subscribe_command.get<string>("domain");
     if (!domain.empty()) {
