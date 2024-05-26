@@ -1,5 +1,7 @@
 #include "UIComponents.hpp"
 #include "logger.hpp"
+#include <src/misc/lv_area.h>
+#include <src/widgets/lv_label.h>
 
 lv_obj_t* UIComponent::createLabel(lv_obj_t* _parent, std::string _text)
 {
@@ -146,14 +148,18 @@ UIDummy::UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   string text = "Domain: ";
   lv_obj_t* extratext = createLabel(flowpanel, text.append(_entity->domain));
   lv_obj_set_width(extratext, LV_PCT(100));
-  lv_obj_set_align(extratext, LV_ALIGN_CENTER);
+  lv_obj_set_align(extratext, LV_ALIGN_LEFT_MID);
+
+  extratext2 = createLabel(flowpanel, "State:");
+  lv_obj_set_width(extratext2, LV_PCT(100));
+  lv_obj_set_align(extratext2, LV_ALIGN_LEFT_MID);
 
   const auto& services = _entity->getServices();
   for (const auto& service : services) {
     string txt = "Service: ";
     lv_obj_t* servicelabel = createLabel(flowpanel, txt.append(service->name));
     lv_obj_set_width(servicelabel, LV_PCT(100));
-    lv_obj_set_align(servicelabel, LV_ALIGN_CENTER);
+    lv_obj_set_align(servicelabel, LV_ALIGN_LEFT_MID);
   }
 
   update();
@@ -164,4 +170,6 @@ void UIDummy::update()
   auto state = entity->getJsonState();
   g_log << Logger::Debug << "We received a UIupdate for " << entity->name << ":" << std::endl;
   // g_log << Logger::Debug << state.dump(2) << std::endl; - commented because of #93
+  string s = "State: " + state["state"].get<string>();
+  lv_label_set_text(extratext2, s.data());
 };

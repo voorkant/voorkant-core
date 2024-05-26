@@ -66,6 +66,7 @@ public:
   void update() override;
 
 private:
+  lv_obj_t* extratext2;
 };
 
 #endif
