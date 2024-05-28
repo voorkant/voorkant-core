@@ -60,7 +60,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
       showColorWheel = true;
       showBrightness = true;
     }
-    if (mode == "rgb" || mode == "rgbww") {
+    if (mode == "rgb" || mode == "rgbww" || mode == "xy") {
       showColorWheel = true;
       showBrightness = true;
       showColorTemp = true;
