@@ -1,0 +1,10 @@
+#include <string>
+
+namespace voorkant {
+std::string version = "@VCS_TAG@";
+}
+
+std::string getVersion(void)
+{
+	return voorkant::version;
+}

@@ -5,6 +5,8 @@ project(
     default_options: ['warning_level=3', 'cpp_std=c++20'],
 )
 
+version_file = vcs_tag(input: 'src/version.cpp.in', output: 'version.cpp')
+
 cpp = meson.get_compiler('cpp')
 
 json_dep = dependency('nlohmann_json')
@@ -61,8 +63,6 @@ curl_dep = dependency(
     ],
 )
 
-
-
 brew_prefix = '/opt/homebrew/include'
 brew = find_program('brew', required: false)
 if brew.found()
@@ -71,7 +71,6 @@ if brew.found()
         brew_prefix = cmd_brew_prefix.stdout().strip()
     endif
 endif
-
 
 cmake = import('cmake')
 cmake_options = cmake.subproject_options()
@@ -179,6 +178,7 @@ executable(
         'src/WSConn.cpp',
         'src/front-cli.cpp',
         'src/generated/domains.hpp',
+        version_file,
     ],
     install: true,
     dependencies: [
