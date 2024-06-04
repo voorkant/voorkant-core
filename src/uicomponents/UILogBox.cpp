@@ -24,5 +24,7 @@ UILogBox::~UILogBox()
 
 void UILogBox::update()
 {
+  std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
+
   lv_textarea_set_text(log_box, g_log.getForLogBox().c_str());
 }
