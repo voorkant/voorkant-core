@@ -305,6 +305,7 @@ void uithread(int _argc, char* _argv[])
       lv_tick_inc(5); // 5 ms
       lv_task_handler();
     }
+    logbox.updateIfNeeded();
     if (i++ == (1000 / 5)) {
       cerr << "." << flush;
       i = 0;
