@@ -171,5 +171,8 @@ void UIDummy::update()
   g_log << Logger::Debug << "We received a UIupdate for " << entity->name << ":" << std::endl;
   // g_log << Logger::Debug << state.dump(2) << std::endl; - commented because of #93
   string s = "State: " + state["state"].get<string>();
-  lv_label_set_text(extratext2, s.data());
+  {
+    std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
+    lv_label_set_text(extratext2, s.data());
+  }
 };

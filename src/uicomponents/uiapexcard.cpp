@@ -290,6 +290,8 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
 
 void UIApexCard::update()
 {
+  std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
+
   lv_chart_refresh(chart);
   // auto state = entity->getJsonState();
   // string colormode = getColorMode();
