@@ -299,6 +299,9 @@ void uithread(int _argc, char* _argv[])
   LV_LOG_ERROR("testing logbox");
 
   while (true) {
+    // FIXME: fixed sleeps + non-fixed actions between the sleeps means we don't run the ticks as often as we say we do
+    // possibly helpful (thanks dwfreed): https://en.cppreference.com/w/cpp/thread/sleep_until
+
     usleep(5 * 1000); // 5000 usec = 5 ms
     {
       std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
