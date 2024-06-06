@@ -24,5 +24,20 @@ UILogBox::~UILogBox()
 
 void UILogBox::update()
 {
-  lv_textarea_set_text(log_box, g_log.getForLogBox().c_str());
+  // because we also log entries from LVGL, update might be called exactly while LVGL is rendering
+  // if we update text without the lvlock at that point, lvgl throws a (non-fatal) error and our text is not rendered now
+  // if we try grabbing lvlock during the render, while this thread already has it, terrible things happen
+  // so instead we mark ourselves dirty and uithread will poke us soon
+  dirty = true;
+}
+
+void UILogBox::updateIfNeeded()
+{
+  if (dirty) { // i feel like dirty itself should be locked, but the worst that could happen is sometimes missing an update, without causing deadlocks
+    dirty = false;
+
+    std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
+
+    lv_textarea_set_text(log_box, g_log.getForLogBox().c_str());
+  }
 }

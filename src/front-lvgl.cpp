@@ -55,6 +55,11 @@ void btnRightPress(lv_event_t* _e)
   }
 };
 
+void lvLogCallback(const char* buf)
+{
+  g_log << Logger::Error << buf << endl;
+}
+
 void uithread(int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("voorkant-lvgl");
@@ -179,6 +184,9 @@ void uithread(int _argc, char* _argv[])
   lv_obj_t* right_btn_txt = lv_label_create(right_btn);
   lv_label_set_text(right_btn_txt, LV_SYMBOL_RIGHT);
   lv_obj_add_event_cb(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);
+
+  lv_log_register_print_cb(lvLogCallback);
+
   std::vector<std::unique_ptr<UIEntity>> uielements;
   if (program.is_subcommand_used(entity_command)) {
     // FIXME: does this actually need unique_ptr? I guess it might save some copying
@@ -288,6 +296,8 @@ void uithread(int _argc, char* _argv[])
   }
 
   int i = 0;
+  LV_LOG_ERROR("testing logbox");
+
   while (true) {
     usleep(5 * 1000); // 5000 usec = 5 ms
     {
@@ -295,6 +305,7 @@ void uithread(int _argc, char* _argv[])
       lv_tick_inc(5); // 5 ms
       lv_task_handler();
     }
+    logbox.updateIfNeeded();
     if (i++ == (1000 / 5)) {
       cerr << "." << flush;
       i = 0;
