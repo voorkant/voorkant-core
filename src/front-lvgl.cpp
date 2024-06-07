@@ -197,6 +197,7 @@ void uithread(int _argc, char* _argv[])
       {EntityType::Light, makeUIElement<UIRGBLight>},
       {EntityType::Switch, makeUIElement<UISwitch>},
       {EntityType::Fan, makeUIElement<UIButton>},
+      {EntityType::Sensor, makeUIElement<UISensor>},
       {EntityType::OTHER, makeUIElement<UIDummy>}};
 
     auto entities = HABackend::getInstance().getEntitiesByPattern(entity_command.get<string>("pattern"));
@@ -238,6 +239,10 @@ void uithread(int _argc, char* _argv[])
               else if (entity->getEntityType() == EntityType::Switch) {
                 std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
                 uielements.push_back(std::move(btn));
+              }
+              else if (entity->getEntityType() == EntityType::Sensor) {
+                std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row);
+                uielements.push_back(std::move(sensor));
               }
               else {
                 std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);

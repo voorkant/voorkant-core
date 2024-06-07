@@ -69,4 +69,16 @@ private:
   lv_obj_t* extratext2;
 };
 
+class UISensor : public UIEntity
+{
+public:
+  UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
+  void update() override;
+
+private:
+  lv_obj_t* extratext2;
+  static void clickCB(lv_event_t* _e);
+};
+
 #endif
+
