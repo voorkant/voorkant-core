@@ -3,3 +3,4 @@ RUN apt-get update
 RUN apt-get -yy install build-essential git cmake ninja-build nlohmann-json3-dev pkg-config libssl-dev
 RUN apt-get -yy install python3-pip
 RUN pip install --break-system-packages meson
+RUN git config --global --add safe.directory '*'  # this makes meson's vcs_tag() work
