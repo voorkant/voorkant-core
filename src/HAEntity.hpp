@@ -21,6 +21,7 @@ enum class EntityType
   Light,
   Switch,
   Fan,
+  Sensor,
   OTHER,
 };
 
