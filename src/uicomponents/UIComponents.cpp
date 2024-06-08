@@ -134,7 +134,7 @@ UIDummy::UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 {
   lv_obj_t* flowpanel = lv_obj_create(_parent);
   lv_obj_set_width(flowpanel, uiEntityWidth);
-  lv_obj_set_height(flowpanel, 80);
+  lv_obj_set_height(flowpanel, 85);
   lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
   lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
