@@ -8,7 +8,7 @@ extern const lv_img_dsc_t G_WHITE24;
 
 lv_obj_t* UIRGBLight::createImageButton(const void* _imgOrSymbol, lv_event_cb_t _callbackEvent, lv_event_code_t _eventCode, bool _toggle)
 {
-  lv_obj_t* btn = lv_btn_create(btns);
+  lv_obj_t* btn = lv_button_create(btns);
   lv_obj_set_size(btn, 50, 40);
   lv_obj_set_style_pad_all(btn, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   if (_toggle) {
