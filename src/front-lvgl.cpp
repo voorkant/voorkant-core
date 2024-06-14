@@ -171,14 +171,14 @@ void uithread(int _argc, char* _argv[])
   lv_obj_t* left_btn = lv_btn_create(bottom_row);
   lv_obj_t* left_btn_txt = lv_label_create(left_btn);
   lv_label_set_text(left_btn_txt, LV_SYMBOL_LEFT);
-  lv_obj_add_event_cb(left_btn, btnLeftPress, LV_EVENT_CLICKED, NULL);
+  lv_obj_add_event(left_btn, btnLeftPress, LV_EVENT_CLICKED, NULL);
 
   UILogBox logbox(bottom_row);
 
   lv_obj_t* right_btn = lv_btn_create(bottom_row);
   lv_obj_t* right_btn_txt = lv_label_create(right_btn);
   lv_label_set_text(right_btn_txt, LV_SYMBOL_RIGHT);
-  lv_obj_add_event_cb(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);
+  lv_obj_add_event(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);
 
   lv_log_register_print_cb(lvLogCallback);
 
