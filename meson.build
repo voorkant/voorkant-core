@@ -119,9 +119,6 @@ if get_option('front-lvgl').enabled()
     lvgl_proj = cmake.subproject('lvgl', options: cmake_options)
     lvgl_dep = lvgl_proj.dependency('lvgl')
 
-    lvgl_drivers_proj = cmake.subproject('lv_drivers', options: cmake_options)
-    lvgl_drivers_proj2 = cmake.subproject('lv_drivers', options: cmake_options)
-    lvgl_drivers_dep = lvgl_drivers_proj.dependency('lv_drivers')
     quickjs_options = cmake.subproject_options()
     quickjs_options.add_cmake_defines({'BUILD_QJS_LIBC': true})
     if libatomic.found()
@@ -220,7 +217,6 @@ if get_option('front-lvgl').enabled()
             thread_dep,
             curl_dep,
             lvgl_dep,
-            lvgl_drivers_dep,
             sdl2_dep,
             openssl_dep,
             zlib_dep,
