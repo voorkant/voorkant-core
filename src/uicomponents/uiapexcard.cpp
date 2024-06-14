@@ -341,7 +341,7 @@ void UIApexCard::update()
   //     }
   //   }
   //   else {
-  //     lv_obj_clear_state(btnOnOff, LV_STATE_CHECKED);
+  //     lv_obj_remove_state(btnOnOff, LV_STATE_CHECKED);
   //     lv_slider_set_value(brightnessSlider, 0, LV_ANIM_OFF);
   //     lv_label_set_text(brightnessLabel, "Off");
   //   }
