@@ -66,7 +66,7 @@ void UIButton::update()
       lv_obj_add_state(btn, LV_STATE_CHECKED);
     }
     else {
-      lv_obj_clear_state(btn, LV_STATE_CHECKED);
+      lv_obj_remove_state(btn, LV_STATE_CHECKED);
     }
   }
 };
@@ -113,7 +113,7 @@ void UISwitch::update()
       lv_obj_add_state(sw, LV_STATE_CHECKED);
     }
     else {
-      lv_obj_clear_state(sw, LV_STATE_CHECKED);
+      lv_obj_remove_state(sw, LV_STATE_CHECKED);
     }
   }
 };
