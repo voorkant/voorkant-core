@@ -1,9 +1,9 @@
 #include "uirgblight.hpp"
 
-extern const lv_img_dsc_t G_COLORTEMP24;
-extern const lv_img_dsc_t G_COLORWHEEL24;
-extern const lv_img_dsc_t G_BRIGHTNESS24;
-extern const lv_img_dsc_t G_WHITE24;
+extern const lv_image_dsc_t G_COLORTEMP24;
+extern const lv_image_dsc_t G_COLORWHEEL24;
+extern const lv_image_dsc_t G_BRIGHTNESS24;
+extern const lv_image_dsc_t G_WHITE24;
 // FIXME: we do a whole lot of json parsing in this file, that we should be doing somewhere else.
 
 lv_obj_t* UIRGBLight::createImageButton(const void* _imgOrSymbol, lv_event_cb_t _callbackEvent, lv_event_code_t _eventCode, bool _toggle)
@@ -15,8 +15,8 @@ lv_obj_t* UIRGBLight::createImageButton(const void* _imgOrSymbol, lv_event_cb_t 
     lv_obj_add_flag(btn, LV_OBJ_FLAG_CHECKABLE);
   }
   lv_obj_add_event(btn, _callbackEvent, _eventCode, reinterpret_cast<void*>(this));
-  lv_obj_t* img_on_button = lv_img_create(btn);
-  lv_img_set_src(img_on_button, _imgOrSymbol);
+  lv_obj_t* img_on_button = lv_image_create(btn);
+  lv_image_set_src(img_on_button, _imgOrSymbol);
   lv_obj_set_align(img_on_button, LV_ALIGN_CENTER);
   return btn;
 }

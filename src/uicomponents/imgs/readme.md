@@ -27,4 +27,4 @@ The .c file has some small modifications, because of clang-format, and in the in
 
 We also store the original pictures in this folder, so that we can always go back to them. In some cases the orginal is a SVG, that we then first save as a PNG.
 
-The .cpp files here are generated, but they have to be modified to work. The `lv_img_header_t` in the generated code is not accepted by our CPP, so we modify that manually.
+The .cpp files here are generated, but they have to be modified to work. The `lv_image_header_t` in the generated code is not accepted by our CPP, so we modify that manually.
