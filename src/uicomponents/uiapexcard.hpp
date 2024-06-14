@@ -1,7 +1,5 @@
 #pragma once
 #include "UIComponents.hpp"
-#include <src/core/lv_event.h>
-#include <src/draw/lv_img_buf.h>
 
 class UIApexCard : public UIEntity
 {
