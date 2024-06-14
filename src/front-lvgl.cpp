@@ -96,13 +96,13 @@ void uithread(int _argc, char* _argv[])
 #endif
 
   /*Create a display buffer*/
-  static lv_disp_draw_buf_t disp_buf;
+  static lv_display_draw_buf_t disp_buf;
   static lv_color_t buf_1[DISP_BUF_SIZE];
   static lv_color_t buf_2[DISP_BUF_SIZE];
-  lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, DISP_BUF_SIZE);
+  lv_display_draw_buf_init(&disp_buf, buf_1, buf_2, DISP_BUF_SIZE);
 
-  lv_disp_drv_t disp_drv; /*A variable to hold the drivers. Can be local variable*/
-  lv_disp_drv_init(&disp_drv); /*Basic initialization*/
+  lv_display_drv_t disp_drv; /*A variable to hold the drivers. Can be local variable*/
+  lv_display_drv_init(&disp_drv); /*Basic initialization*/
   disp_drv.hor_res = MY_DISP_HOR_RES;
   disp_drv.ver_res = MY_DISP_VER_RES;
   disp_drv.draw_buf = &disp_buf; /*Set an initialized buffer*/
@@ -113,8 +113,8 @@ void uithread(int _argc, char* _argv[])
 #else
 #error "no useful VOORKANT_LVGL_* found"
 #endif
-  /*lv_disp_t* disp;*/
-  /*disp = */ lv_disp_drv_register(&disp_drv); /*Register the driver and save the created display objects*/
+  /*lv_display_t* disp;*/
+  /*disp = */ lv_display_drv_register(&disp_drv); /*Register the driver and save the created display objects*/
 
 // #if 0
 #if defined(VOORKANT_LVGL_FBDEV)
