@@ -42,7 +42,7 @@ UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
 {
   // FIXME: This code is duplicated in UISwitch, consider this after another few UIentities
-  btn = lv_btn_create(_parent);
+  btn = lv_button_create(_parent);
   lv_obj_set_size(btn, uiEntityWidth, 50);
   lv_obj_center(btn);
   lv_obj_set_style_pad_all(btn, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
