@@ -87,7 +87,7 @@ void uithread(int _argc, char* _argv[])
   lv_init();
 #if defined(VOORKANT_LVGL_SDL)
   g_log << Logger::Debug << "calling sdl_init()" << std::endl;
-  sdl_init();
+  // sdl_init();
 #elif defined(VOORKANT_LVGL_FBDEV)
   g_log << Logger::Debug << "calling fbdev_init()" << std::endl;
   fbdev_init();
@@ -96,20 +96,20 @@ void uithread(int _argc, char* _argv[])
 #endif
 
   /*Create a display buffer*/
-  static lv_display_draw_buf_t disp_buf;
+  static lv_display_t* disp = lv_display_create(MY_DISP_HOR_RES, MY_DISP_VER_RES);
   static lv_color_t buf_1[DISP_BUF_SIZE];
   static lv_color_t buf_2[DISP_BUF_SIZE];
-  lv_display_draw_buf_init(&disp_buf, buf_1, buf_2, DISP_BUF_SIZE);
+  lv_display_set_buffers(disp, buf_1, buf_2, DISP_BUF_SIZE, LV_DISPLAY_RENDER_MODE_PARTIAL); // FIXME ponder what mode we want
 
-  lv_display_drv_t disp_drv; /*A variable to hold the drivers. Can be local variable*/
-  lv_display_drv_init(&disp_drv); /*Basic initialization*/
-  disp_drv.hor_res = MY_DISP_HOR_RES;
-  disp_drv.ver_res = MY_DISP_VER_RES;
-  disp_drv.draw_buf = &disp_buf; /*Set an initialized buffer*/
+  // lv_display_drv_t disp_drv; /*A variable to hold the drivers. Can be local variable*/
+  // lv_display_drv_init(&disp_drv); /*Basic initialization*/
+  // disp_drv.hor_res = MY_DISP_HOR_RES;
+  // disp_drv.ver_res = MY_DISP_VER_RES;
+  // disp_drv.draw_buf = &disp_buf; /*Set an initialized buffer*/
 #if defined(VOORKANT_LVGL_SDL)
-  disp_drv.flush_cb = sdl_display_flush;
+  // lv_display_set_flush_cb(disp, sdl_display_flush);
 #elif defined(VOORKANT_LVGL_FBDEV)
-  disp_drv.flush_cb = fbdev_flush; /*Set a flush callback to draw to the display*/
+  // lv_display_set_flush_cb(disp, fbdev_flush);
 #else
 #error "no useful VOORKANT_LVGL_* found"
 #endif
