@@ -1,7 +1,6 @@
 #include "uiapexcard.hpp"
 #include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
-#include <src/extra/widgets/chart/lv_chart.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_color.h>
 #include <chrono>

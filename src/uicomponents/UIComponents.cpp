@@ -1,10 +1,7 @@
 #include "UIComponents.hpp"
 #include "logger.hpp"
-#include <src/core/lv_event.h>
 #include <src/core/lv_obj_pos.h>
 #include <src/misc/lv_area.h>
-#include <src/misc/lv_txt.h>
-#include <src/widgets/lv_label.h>
 
 lv_obj_t* UIComponent::createLabel(lv_obj_t* _parent, std::string _text)
 {

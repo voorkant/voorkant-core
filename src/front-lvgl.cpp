@@ -6,19 +6,14 @@
 #include "uicomponents/UILogBox.hpp"
 #include "uicomponents/uirgblight.hpp"
 #include <memory>
-#include <src/core/lv_event.h>
 #include <src/core/lv_obj.h>
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_scroll.h>
 #include <src/core/lv_obj_style.h>
-#include <src/extra/layouts/flex/lv_flex.h>
 #include <src/font/lv_symbol_def.h>
 #include <src/misc/lv_anim.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_style.h>
-#include <src/widgets/lv_btn.h>
-#include <src/widgets/lv_label.h>
-#include <src/widgets/lv_textarea.h>
 
 // make sure these numbers align with SDL_HOR_RES/SDL_VER_RES
 #define MY_DISP_HOR_RES 800
