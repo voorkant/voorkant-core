@@ -268,7 +268,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   // lv_obj_set_align(btns, LV_ALIGN_CENTER);
   // lv_obj_set_flex_flow(btns, LV_FLEX_FLOW_ROW);
   // lv_obj_set_flex_align(btns, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-  // lv_obj_clear_flag(btns, LV_OBJ_FLAG_SCROLLABLE);
+  // lv_obj_remove_flag(btns, LV_OBJ_FLAG_SCROLLABLE);
 
   // btnOnOff = createImageButton(LV_SYMBOL_POWER, UIApexCard::btnOnOffCB, LV_EVENT_VALUE_CHANGED, true);
 
