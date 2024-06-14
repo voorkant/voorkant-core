@@ -14,7 +14,7 @@ lv_obj_t* UIRGBLight::createImageButton(const void* _imgOrSymbol, lv_event_cb_t 
   if (_toggle) {
     lv_obj_add_flag(btn, LV_OBJ_FLAG_CHECKABLE);
   }
-  lv_obj_add_event(btn, _callbackEvent, _eventCode, reinterpret_cast<void*>(this));
+  lv_obj_add_event_cb(btn, _callbackEvent, _eventCode, reinterpret_cast<void*>(this));
   lv_obj_t* img_on_button = lv_image_create(btn);
   lv_image_set_src(img_on_button, _imgOrSymbol);
   lv_obj_set_align(img_on_button, LV_ALIGN_CENTER);
@@ -92,7 +92,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_style_text_align(brightnessLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
   tilecontainer = lv_tileview_create(flowpanel);
-  lv_obj_add_event(tilecontainer, UIRGBLight::changeTileCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
+  lv_obj_add_event_cb(tilecontainer, UIRGBLight::changeTileCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
   lv_obj_set_height(tilecontainer, uiEntityWidth);
 
   lv_coord_t sliderheight = widthheight - (lv_coord_t)25;
@@ -104,7 +104,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     lv_obj_set_width(brightnessSlider, 50);
     lv_obj_set_align(brightnessSlider, LV_ALIGN_CENTER);
     lv_slider_set_range(brightnessSlider, 0, 255);
-    lv_obj_add_event(brightnessSlider, UIRGBLight::slideBrightnessCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
+    lv_obj_add_event_cb(brightnessSlider, UIRGBLight::slideBrightnessCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
   }
 
   if (showColorWheel) {
@@ -113,7 +113,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     lv_obj_set_size(cw, widthheight, widthheight);
     lv_obj_set_align(cw, LV_ALIGN_CENTER);
     lv_colorwheel_set_mode_fixed(cw, false);
-    lv_obj_add_event(cw, UIRGBLight::changeColorWheelCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
+    lv_obj_add_event_cb(cw, UIRGBLight::changeColorWheelCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
     lv_obj_set_style_arc_width(cw, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(cw, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
     lv_obj_set_style_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
@@ -136,7 +136,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     int max_color_temp = getIntAttribute("max_color_temp_kelvin", 6500);
     // FIXME: for whatever reason we can't get this to work the opposite way around, which is what HA does
     lv_slider_set_range(colortempSlider, min_color_temp, max_color_temp);
-    lv_obj_add_event(colortempSlider, UIRGBLight::slideColorTempCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
+    lv_obj_add_event_cb(colortempSlider, UIRGBLight::slideColorTempCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
   }
 
   btns = lv_obj_create(flowpanel);
