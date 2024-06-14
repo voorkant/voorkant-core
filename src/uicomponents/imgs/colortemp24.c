@@ -6948,10 +6948,7 @@ const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_COLORTEMP
 
 const lv_image_dsc_t G_COLORTEMP24 = {
   .header.cf = LV_COLOR_FORMAT_ARGB8888,
-  .header.always_zero = 0,
-  .header.reserved = 0,
   .header.w = 24,
   .header.h = 24,
-  .data_size = 576 * LV_IMG_PX_SIZE_ALPHA_BYTE,
   .data = G_COLORTEMP24_MAP,
 };
