@@ -97,10 +97,10 @@ void uithread(int _argc, char* _argv[])
 #endif
 
   /*Create a display buffer*/
-  static lv_display_t* disp = lv_display_create(MY_DISP_HOR_RES, MY_DISP_VER_RES);
+  static lv_display_t* disp = lv_sdl_window_create(MY_DISP_HOR_RES, MY_DISP_VER_RES);
   static lv_color_t buf_1[DISP_BUF_SIZE];
   static lv_color_t buf_2[DISP_BUF_SIZE];
-  lv_display_set_buffers(disp, buf_1, buf_2, DISP_BUF_SIZE, LV_DISPLAY_RENDER_MODE_PARTIAL); // FIXME ponder what mode we want
+  // lv_display_set_buffers(disp, buf_1, buf_2, DISP_BUF_SIZE, LV_DISPLAY_RENDER_MODE_PARTIAL); // FIXME ponder what mode we want
 
   // lv_display_drv_t disp_drv; /*A variable to hold the drivers. Can be local variable*/
   // lv_display_drv_init(&disp_drv); /*Basic initialization*/
@@ -121,8 +121,8 @@ void uithread(int _argc, char* _argv[])
 #if defined(VOORKANT_LVGL_FBDEV)
   evdev_init();
 #endif
-  lv_indev_t* indev = lv_indev_create();
-  lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+  lv_indev_t* indev = lv_sdl_mouse_create();
+  // lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
 #if defined(VOORKANT_LVGL_SDL)
   // lv_indev_set_read_cb(indev, sdl_mouse_read);
 #elif defined(VOORKANT_LVGL_FBDEV)
