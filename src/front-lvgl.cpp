@@ -51,9 +51,9 @@ void btnRightPress(lv_event_t* _e)
   }
 };
 
-void lvLogCallback(const char* buf)
+void lvLogCallback(lv_log_level_t _level, const char* _buf) // FIXME use level
 {
-  g_log << Logger::Error << buf << endl;
+  g_log << Logger::Error << _buf << endl;
 }
 
 void uithread(int _argc, char* _argv[])
