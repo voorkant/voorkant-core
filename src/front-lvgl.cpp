@@ -11,6 +11,7 @@
 #include <src/core/lv_obj_scroll.h>
 #include <src/core/lv_obj_style.h>
 #include <src/font/lv_symbol_def.h>
+#include <src/indev/lv_indev.h>
 #include <src/misc/lv_anim.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_style.h>
@@ -114,23 +115,22 @@ void uithread(int _argc, char* _argv[])
 #error "no useful VOORKANT_LVGL_* found"
 #endif
   /*lv_display_t* disp;*/
-  /*disp = */ lv_display_drv_register(&disp_drv); /*Register the driver and save the created display objects*/
+  // /*disp = */ lv_display_drv_register(&disp_drv); /*Register the driver and save the created display objects*/
 
 // #if 0
 #if defined(VOORKANT_LVGL_FBDEV)
   evdev_init();
 #endif
-  lv_indev_drv_t enc_drv;
-  lv_indev_drv_init(&enc_drv);
-  enc_drv.type = LV_INDEV_TYPE_POINTER;
+  lv_indev_t* indev = lv_indev_create();
+  lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
 #if defined(VOORKANT_LVGL_SDL)
-  enc_drv.read_cb = sdl_mouse_read;
+  // lv_indev_set_read_cb(indev, sdl_mouse_read);
 #elif defined(VOORKANT_LVGL_FBDEV)
-  enc_drv.read_cb = evdev_read;
+  // enc_drv.read_cb = evdev_read;
 #else
 #error "no useful VOORKANT_LVGL_* found"
 #endif
-  /*lv_indev_t* enc_indev = */ lv_indev_drv_register(&enc_drv);
+  // /*lv_indev_t* enc_indev = */ lv_indev_drv_register(&enc_drv);
   // #endif
   // lv_indev_set_group(enc_indev, g);
   // lv_group_t* g = lv_group_create();
