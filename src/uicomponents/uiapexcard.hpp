@@ -10,6 +10,7 @@ public:
 
 private:
   // FIXME: we never free() the lv_obj_t*'s in code
+  lv_obj_t* chart_and_y_axis;
   lv_obj_t* chart;
   lv_obj_t* flowpanel;
   lv_chart_series_t* ser1;

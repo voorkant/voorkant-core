@@ -1,9 +1,11 @@
 #include "uiapexcard.hpp"
 #include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
+#include <src/core/lv_obj_style.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_color.h>
 #include <chrono>
+#include <src/widgets/scale/lv_scale.h>
 #include <time.h>
 #include <date/date.h>
 
@@ -83,8 +85,16 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
-  chart = lv_chart_create(flowpanel);
-  lv_obj_set_size(chart, uiEntityWidth * 3 - 100, /* MY_DISP_VER_RES */ 480 * 0.65 - 30);
+  chart_and_y_axis = lv_obj_create(flowpanel);
+  lv_obj_set_size(chart_and_y_axis, uiEntityWidth * 3 - 100, /* MY_DISP_VER_RES */ 480 * 0.65 - 30);
+  lv_obj_set_align(chart_and_y_axis, LV_ALIGN_CENTER);
+  lv_obj_set_flex_flow(chart_and_y_axis, LV_FLEX_FLOW_ROW);
+  lv_obj_set_flex_align(chart_and_y_axis, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+
+  lv_obj_t* scale_y = lv_scale_create(chart_and_y_axis);
+
+  chart = lv_chart_create(chart_and_y_axis);
+  lv_obj_set_size(chart, uiEntityWidth * 3 - 100 - 25, /* MY_DISP_VER_RES */ 480 * 0.65 - 30);
   // lv_obj_set_width(chart, LV_PCT(100));
   // lv_obj_set_align(chart, LV_ALIGN_CENTER);
 
@@ -178,6 +188,23 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   }
   lv_chart_set_point_count(chart, values.size()); // hours
   lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, min * float_factor, max * float_factor); // FIXME/FIXTHEM: lvgl 8.3 docs say it's LV_CHART_AXIS_PRIMARY which is just wrong
+  lv_obj_t* scale_x = lv_scale_create(flowpanel);
+  lv_scale_set_mode(scale_x, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
+  lv_obj_set_size(scale_x, uiEntityWidth * 3 - 100, 25);
+  lv_scale_set_total_tick_count(scale_x, values.size());
+  lv_scale_set_major_tick_every(scale_x, 1);
+  lv_scale_set_label_show(scale_x, true);
+  lv_obj_set_style_pad_hor(scale_x, lv_chart_get_first_point_center_offset(chart), 0);
+
+  lv_scale_set_mode(scale_y, LV_SCALE_MODE_VERTICAL_LEFT);
+  lv_obj_set_size(scale_y, 25, 480 * 0.65 - 30);
+  lv_scale_set_total_tick_count(scale_y, 10);
+  lv_scale_set_major_tick_every(scale_y, 1);
+  lv_scale_set_label_show(scale_y, true);
+  lv_obj_set_style_pad_hor(scale_y, lv_chart_get_first_point_center_offset(chart), 0);
+  lv_obj_set_style_pad_ver(scale_y, 0, 0);
+
+
   // lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, values.size(), 1, true, 40); // major ticks point 10 px down, minor 5. values.size() major ticks, and 1 minor (actually means zero!) in between those. [true] labels on major ticks. 40px for labels.
   // lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
 
