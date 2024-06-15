@@ -14,9 +14,11 @@
 
 static auto const G_TICK_DIVIDER = 12; // if values.size() doesn't divide cleanly by this, your graph will suck
 
+#if 0
 void UIApexCard::drawEventCB(lv_event_t* _e)
 {
-  lv_obj_draw_part_dsc_t* dsc = lv_event_get_draw_part_dsc(_e);
+  lv_draw_task_t* task = lv_event_get_draw_task(_e);
+  lv_draw_dsc_base_t* dsc = task->draw_dsc;
   if (!lv_obj_draw_part_check_type(dsc, &lv_chart_class, LV_CHART_DRAW_PART_TICK_LABEL))
     return;
 
@@ -38,6 +40,7 @@ void UIApexCard::drawEventCB(lv_event_t* _e)
     lv_snprintf(dsc->text, dsc->text_length, "%s", timebuf); // is there something simpler than snprintf if we already have the string?
   }
 }
+#endif
 
 // https://stackoverflow.com/a/38839725
 // FIXME would be much easier to handle this in JS
@@ -89,7 +92,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   std::cerr << "lv_obj_get_content_height(chart)=" << lv_obj_get_content_height(chart) << std::endl;
   lv_obj_center(chart);
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
-  lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
+  // lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
 
   std::cerr << _card << std::endl;
   std::string data_generator = _card["series"][0]["data_generator"].get<std::string>();
@@ -175,8 +178,8 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   }
   lv_chart_set_point_count(chart, values.size()); // hours
   lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, min * float_factor, max * float_factor); // FIXME/FIXTHEM: lvgl 8.3 docs say it's LV_CHART_AXIS_PRIMARY which is just wrong
-  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, values.size(), 1, true, 40); // major ticks point 10 px down, minor 5. values.size() major ticks, and 1 minor (actually means zero!) in between those. [true] labels on major ticks. 40px for labels.
-  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
+  // lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, values.size(), 1, true, 40); // major ticks point 10 px down, minor 5. values.size() major ticks, and 1 minor (actually means zero!) in between those. [true] labels on major ticks. 40px for labels.
+  // lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
 
   ser1 = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_BLUE), LV_CHART_AXIS_PRIMARY_Y);
   lv_coord_t* ser1_array = lv_chart_get_y_array(chart, ser1);
