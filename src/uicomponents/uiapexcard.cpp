@@ -77,7 +77,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
   // lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
   // lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
-  static int32_t column_dsc[] = {25, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};   /*2 columns with 100 and 400 ps width*/
+  static int32_t column_dsc[] = {40, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};   /*2 columns with 100 and 400 ps width*/
   static int32_t row_dsc[] = {25, LV_GRID_FR(1), 25, LV_GRID_TEMPLATE_LAST}; /*3 100 px tall rows*/
   lv_obj_set_grid_dsc_array(flowpanel, column_dsc, row_dsc);
   lv_obj_set_layout(flowpanel, LV_LAYOUT_GRID);
@@ -204,7 +204,9 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
 
   lv_obj_set_size(scale_x, lv_obj_get_width(chart), 25);
   lv_scale_set_total_tick_count(scale_x, values.size());
-  lv_scale_set_major_tick_every(scale_x, 1);
+  lv_scale_set_major_tick_every(scale_x, 3);
+  lv_obj_set_style_length(scale_x, 5, LV_PART_INDICATOR);
+  lv_obj_set_style_length(scale_x, 2, LV_PART_ITEMS);
   lv_scale_set_range(scale_x, 0, values.size() - 1);
   lv_scale_set_label_show(scale_x, true);
   lv_obj_set_style_pad_hor(scale_x, lv_chart_get_first_point_center_offset(chart), 0);
@@ -213,8 +215,10 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_scale_set_mode(scale_y, LV_SCALE_MODE_VERTICAL_LEFT);
   lv_scale_set_range(scale_y, min * float_factor, max * float_factor);
   lv_obj_set_size(scale_y, 25, lv_obj_get_height(chart));
-  lv_scale_set_total_tick_count(scale_y, 10);
-  lv_scale_set_major_tick_every(scale_y, 1);
+  lv_scale_set_total_tick_count(scale_y, 11);
+  lv_scale_set_major_tick_every(scale_y, 2);
+  lv_obj_set_style_length(scale_y, 5, LV_PART_INDICATOR);
+  lv_obj_set_style_length(scale_y, 2, LV_PART_ITEMS);
   lv_scale_set_label_show(scale_y, true);
   lv_obj_set_style_pad_hor(scale_y, lv_chart_get_first_point_center_offset(chart), 0);
   lv_obj_set_style_pad_ver(scale_y, 0, 0);
