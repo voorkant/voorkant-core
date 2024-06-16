@@ -2,6 +2,7 @@
 #include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_style.h>
+#include <src/layouts/grid/lv_grid.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_color.h>
 #include <chrono>
@@ -74,33 +75,41 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_obj_set_height(flowpanel, /* MY_DISP_VER_RES */ 480 * 0.8);
   // lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
-  lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
-  lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+  // lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
+  // lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+  static int32_t column_dsc[] = {25, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};   /*2 columns with 100 and 400 ps width*/
+  static int32_t row_dsc[] = {25, LV_GRID_FR(1), 25, LV_GRID_TEMPLATE_LAST}; /*3 100 px tall rows*/
+  lv_obj_set_grid_dsc_array(flowpanel, column_dsc, row_dsc);
+  lv_obj_set_layout(flowpanel, LV_LAYOUT_GRID);
 
   // lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
   g_log << Logger::LogLevel::Debug << "apexcard=" << _card << std::endl;
   lv_obj_t* label = createLabel(flowpanel, _card["header"]["title"]); // FIXME check show bool FIXME handle absence of title FIXME once we figure out object cleanup, stick this in the right spot
   lv_obj_set_width(label, LV_PCT(100));
-  lv_obj_set_align(label, LV_ALIGN_CENTER);
+  // lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+  lv_obj_set_grid_cell(label, LV_GRID_ALIGN_CENTER, 0, 2, LV_GRID_ALIGN_CENTER, 0, 1);
 
-  chart_and_y_axis = lv_obj_create(flowpanel);
-  lv_obj_set_size(chart_and_y_axis, uiEntityWidth * 3 - 100, /* MY_DISP_VER_RES */ 480 * 0.65 - 30);
-  lv_obj_set_align(chart_and_y_axis, LV_ALIGN_CENTER);
-  lv_obj_set_flex_flow(chart_and_y_axis, LV_FLEX_FLOW_ROW);
-  lv_obj_set_flex_align(chart_and_y_axis, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+  // chart_and_y_axis = lv_obj_create(flowpanel);
+  // lv_obj_set_size(chart_and_y_axis, uiEntityWidth * 3 - 100, /* MY_DISP_VER_RES */ 480 * 0.65 - 30 - 25);
+  // lv_obj_set_align(chart_and_y_axis, LV_ALIGN_CENTER);
+  // lv_obj_set_grid_cell(chart_and_y_axis, LV_GRID_ALIGN_CENTER, 0, 1, LV_GRID_ALIGN_CENTER, 1, 1);
+  // lv_obj_set_flex_align(chart_and_y_axis, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+  // lv_obj_set_style_border_width(chart_and_y_axis, 0, LV_PART_MAIN);
 
-  lv_obj_t* scale_y = lv_scale_create(chart_and_y_axis);
+  lv_obj_t* scale_y = lv_scale_create(flowpanel);
+  lv_obj_set_grid_cell(scale_y, LV_GRID_ALIGN_CENTER, 0, 1, LV_GRID_ALIGN_CENTER, 1, 1);
 
-  chart = lv_chart_create(chart_and_y_axis);
-  lv_obj_set_size(chart, uiEntityWidth * 3 - 100 - 25, /* MY_DISP_VER_RES */ 480 * 0.65 - 30);
+  chart = lv_chart_create(flowpanel);
+  lv_obj_set_grid_cell(chart, LV_GRID_ALIGN_CENTER, 1, 1, LV_GRID_ALIGN_CENTER, 1, 1);
+  // lv_obj_set_size(chart, uiEntityWidth * 3 - 100 - 25, /* MY_DISP_VER_RES */ 480 * 0.65 - 30);
   // lv_obj_set_width(chart, LV_PCT(100));
   // lv_obj_set_align(chart, LV_ALIGN_CENTER);
 
   std::cerr << "lv_obj_get_content_width(chart)=" << lv_obj_get_content_width(chart) << std::endl;
   std::cerr << "lv_obj_get_content_height(chart)=" << lv_obj_get_content_height(chart) << std::endl;
-  lv_obj_center(chart);
+  // lv_obj_center(chart);
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
   // lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
 
@@ -189,15 +198,21 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_chart_set_point_count(chart, values.size()); // hours
   lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, min * float_factor, max * float_factor); // FIXME/FIXTHEM: lvgl 8.3 docs say it's LV_CHART_AXIS_PRIMARY which is just wrong
   lv_obj_t* scale_x = lv_scale_create(flowpanel);
+
   lv_scale_set_mode(scale_x, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
-  lv_obj_set_size(scale_x, uiEntityWidth * 3 - 100, 25);
+  lv_obj_update_layout(chart); // this makes lv_chart_get_point_pos_by_id work later
+
+  lv_obj_set_size(scale_x, lv_obj_get_width(chart), 25);
   lv_scale_set_total_tick_count(scale_x, values.size());
   lv_scale_set_major_tick_every(scale_x, 1);
+  lv_scale_set_range(scale_x, 0, values.size() - 1);
   lv_scale_set_label_show(scale_x, true);
   lv_obj_set_style_pad_hor(scale_x, lv_chart_get_first_point_center_offset(chart), 0);
+  lv_obj_set_grid_cell(scale_x, LV_GRID_ALIGN_CENTER, 1, 1, LV_GRID_ALIGN_CENTER, 2, 1);
 
   lv_scale_set_mode(scale_y, LV_SCALE_MODE_VERTICAL_LEFT);
-  lv_obj_set_size(scale_y, 25, 480 * 0.65 - 30);
+  lv_scale_set_range(scale_y, min * float_factor, max * float_factor);
+  lv_obj_set_size(scale_y, 25, lv_obj_get_height(chart));
   lv_scale_set_total_tick_count(scale_y, 10);
   lv_scale_set_major_tick_every(scale_y, 1);
   lv_scale_set_label_show(scale_y, true);
