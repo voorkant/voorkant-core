@@ -13,6 +13,10 @@ private:
   // lv_obj_t* chart_and_y_axis;
   lv_obj_t* chart;
   lv_obj_t* flowpanel;
+  lv_obj_t* scale_y;
+  lv_obj_t* scale_x;
+  std::vector<std::string> labels_x;
+  std::vector<const char*> labels_x_charp;
   lv_chart_series_t* ser1;
 
   std::vector<std::pair<time_t, double>> values; // return [record.from, record.price];
