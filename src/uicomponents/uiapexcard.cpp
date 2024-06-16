@@ -202,15 +202,43 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_scale_set_mode(scale_x, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
   lv_obj_update_layout(chart); // this makes lv_chart_get_point_pos_by_id work later
 
+  const uint32_t scale_x_tick_interval=6;
   lv_obj_set_size(scale_x, lv_obj_get_width(chart), 25);
   lv_scale_set_total_tick_count(scale_x, values.size());
-  lv_scale_set_major_tick_every(scale_x, 3);
+  lv_scale_set_major_tick_every(scale_x, scale_x_tick_interval);
   lv_obj_set_style_length(scale_x, 5, LV_PART_INDICATOR);
   lv_obj_set_style_length(scale_x, 2, LV_PART_ITEMS);
   lv_scale_set_range(scale_x, 0, values.size() - 1);
   lv_scale_set_label_show(scale_x, true);
   lv_obj_set_style_pad_hor(scale_x, lv_chart_get_first_point_center_offset(chart), 0);
   lv_obj_set_grid_cell(scale_x, LV_GRID_ALIGN_CENTER, 1, 1, LV_GRID_ALIGN_CENTER, 2, 1);
+
+  labels_x.clear();
+  for (int index = 0; index < values.size(); index += scale_x_tick_interval)
+  {
+    auto timestamp = values[index].first; // FIXME: check index before we, well, index?
+    struct tm local_timestamp;
+    localtime_r(&timestamp, &local_timestamp);
+    char timebuf[100] = "";
+    if (local_timestamp.tm_hour == 0) {
+      strftime(timebuf, sizeof(timebuf), "%d %b", &local_timestamp);
+      labels_x.emplace_back(std::string(timebuf));
+    }
+    else if (index % scale_x_tick_interval == 0) {
+      strftime(timebuf, sizeof(timebuf), "%H:%M", &local_timestamp);
+      labels_x.emplace_back(std::string(timebuf));
+    }
+  }
+
+  labels_x_charp.clear();
+  for (int index = 0; index < labels_x.size(); index++)
+  {
+    labels_x_charp.push_back(labels_x[index].data());
+  }
+  labels_x_charp.push_back(nullptr);
+
+  // static const char *labels_x[17] = {"FOO", "bar", "FOO", "bar", "FOO", "bar", "FOO", "bar", "FOO", "bar", "FOO", "bar", "FOO", "bar", "FOO", "bar", NULL};
+  lv_scale_set_text_src(scale_x, labels_x_charp.data());
 
   lv_scale_set_mode(scale_y, LV_SCALE_MODE_VERTICAL_LEFT);
   lv_scale_set_range(scale_y, min * float_factor, max * float_factor);
