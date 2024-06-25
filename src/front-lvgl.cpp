@@ -189,7 +189,7 @@ void uithread(int _argc, char* _argv[])
     using MakeUIElementType = std::unique_ptr<UIEntity> (*)(std::shared_ptr<HAEntity>, lv_obj_t*);
 
     std::map<EntityType, MakeUIElementType> make_element_map{
-      // {EntityType::Light, makeUIElement<UIRGBLight>},
+      {EntityType::Light, makeUIElement<UIRGBLight>},
       {EntityType::Switch, makeUIElement<UISwitch>},
       {EntityType::Fan, makeUIElement<UIButton>},
       {EntityType::OTHER, makeUIElement<UIDummy>}};
@@ -253,7 +253,6 @@ void uithread(int _argc, char* _argv[])
             g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
           }
         }
-#if 0
         else if (card["type"] == "light") {
           if (card.contains("entity")) {
             string entityname = card["entity"];
@@ -265,7 +264,6 @@ void uithread(int _argc, char* _argv[])
             g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
           }
         }
-#endif
         else if (card["type"] == "custom:apexcharts-card") {
 
           std::unique_ptr<UIEntity> apex = std::make_unique<UIApexCard>(card, cont_row);

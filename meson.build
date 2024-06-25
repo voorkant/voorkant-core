@@ -203,6 +203,7 @@ if get_option('front-lvgl').enabled()
             'src/uicomponents/imgs/colortemp24.c',
             'src/uicomponents/imgs/brightness24.c',
             'src/uicomponents/imgs/white24.c',
+            'src/uicomponents/uirgblight.cpp',
             'src/uicomponents/UILogBox.cpp',
             'src/uicomponents/uiapexcard.cpp',
             'src/uicomponents/UIComponents.cpp',
