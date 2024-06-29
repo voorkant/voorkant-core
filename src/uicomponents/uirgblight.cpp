@@ -1,4 +1,8 @@
 #include "uirgblight.hpp"
+#include "logger.hpp"
+#include <src/core/lv_obj_pos.h>
+#include <src/misc/lv_event.h>
+#include <src/widgets/image/lv_image.h>
 
 extern const lv_image_dsc_t G_COLORTEMP24;
 extern const lv_image_dsc_t G_COLORWHEEL24;
@@ -109,17 +113,20 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   if (showColorWheel) {
     lv_obj_t* cw_tile = lv_tileview_add_tile(tilecontainer, 1, 0, LV_DIR_HOR);
-    cw = lv_colorwheel_create(cw_tile, true);
+    cw = lv_image_create(cw_tile);
     lv_obj_set_size(cw, widthheight, widthheight);
     lv_obj_set_align(cw, LV_ALIGN_CENTER);
-    lv_colorwheel_set_mode_fixed(cw, false);
-    lv_obj_add_event_cb(cw, UIRGBLight::changeColorWheelCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
-    lv_obj_set_style_arc_width(cw, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_color(cw, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-    lv_obj_set_style_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_width(cw, 3, LV_PART_KNOB | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_all(cw, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_image_set_src(cw, LV_SYMBOL_OK);
+    lv_obj_set_size(cw, widthheight, widthheight);
+    // lv_colorwheel_set_mode_fixed(cw, false);
+
+    lv_obj_add_event_cb(cw_tile, UIRGBLight::changeColorWheelCB, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
+    // lv_obj_set_style_arc_width(cw, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
+    // lv_obj_set_style_border_color(cw, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
+    // lv_obj_set_style_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+    // lv_obj_set_style_border_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+    // lv_obj_set_style_border_width(cw, 3, LV_PART_KNOB | LV_STATE_DEFAULT);
+    // lv_obj_set_style_pad_all(cw, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
   }
 
   if (showColorTemp) {
@@ -190,7 +197,7 @@ void UIRGBLight::update()
         hsv_val.h = vec_hs.at(0);
         hsv_val.s = vec_hs.at(1);
         hsv_val.v = brightness_percent;
-        lv_colorwheel_set_hsv(cw, hsv_val);
+        // lv_colorwheel_set_hsv(cw, hsv_val);
       }
       else if (colormode == "color_temp") {
         int colortemp = state["attributes"]["color_temp_kelvin"].get<int>();
@@ -213,7 +220,7 @@ void UIRGBLight::update()
           rgb[cnt] = col;
           cnt++;
         }
-        lv_colorwheel_set_rgb(cw, lv_color_make(rgb[0], rgb[1], rgb[2]));
+        // lv_colorwheel_set_rgb(cw, lv_color_make(rgb[0], rgb[1], rgb[2]));
       }
     }
     else {
@@ -297,7 +304,7 @@ void UIRGBLight::slideBrightnessCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_VALUE_CHANGED) {
-    auto slidervalue = lv_slider_get_value(_e->target);
+    auto slidervalue = lv_slider_get_value(lv_event_get_target_obj(_e));
 
     std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
     HADomains::Light light(ent);
@@ -315,7 +322,7 @@ void UIRGBLight::slideColorTempCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_VALUE_CHANGED) {
-    auto slidervalue = lv_slider_get_value(_e->target);
+    auto slidervalue = lv_slider_get_value(lv_event_get_target_obj(_e));
 
     std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
     HADomains::Light light(ent);
@@ -362,14 +369,33 @@ void UIRGBLight::changeTileCB(lv_event_t* _e)
 void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
-  if (code == LV_EVENT_VALUE_CHANGED) {
 
-    lv_obj_t* colorwheel = _e->target;
-    lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
-    lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
+  g_log << Logger::Debug << "color wheel got event " << code << std::endl;
+
+  if (code == LV_EVENT_CLICKED) {
+    lv_obj_t* colorwheel = lv_event_get_target_obj(_e);
+    g_log << Logger::Debug << "color wheel got click" << std::endl;
+    lv_point_t point;
+    lv_indev_get_point(lv_indev_active(), &point);
+    g_log << Logger::Debug << "point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
+    lv_area_t area;
+    lv_obj_get_coords(colorwheel, &area);
+    g_log << Logger::Debug << "area(";
+    g_log << "x1,y1=" << area.x1 << "," << area.y1 << ", ";
+    g_log << "x2,y2=" << area.x2 << "," << area.y2;
+    g_log << ")" << std::endl;
+
+    point.x -= area.x1;
+    point.y -= area.y1;
+    g_log << Logger::Debug << "adjusted point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
+
+    // lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
+    lv_color_t color_rgb = {128,128,128};
+    // lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
+    lv_color_hsv_t color_hsv = {128, 128, 128};
 
     std::cerr << "HSV (H/S/V):" << color_hsv.h << "/" << (uint16_t)color_hsv.s << "/" << (uint16_t)color_hsv.v << std::endl;
-    std::cerr << "RGB (R/G/B):" << color_rgb.ch.red << "/" << color_rgb.ch.green << "/" << color_rgb.ch.blue << std::endl;
+    std::cerr << "RGB (R/G/B):" << color_rgb.red << "/" << color_rgb.green << "/" << color_rgb.blue << std::endl;
 
     UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
     HADomains::Light light(rgb_light->entity);
@@ -388,9 +414,9 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     }
     else {
       unsigned short rgb[3];
-      rgb[0] = (unsigned short)color_rgb.ch.red;
-      rgb[1] = (unsigned short)color_rgb.ch.green;
-      rgb[2] = (unsigned short)color_rgb.ch.blue;
+      rgb[0] = (unsigned short)color_rgb.red;
+      rgb[1] = (unsigned short)color_rgb.green;
+      rgb[2] = (unsigned short)color_rgb.blue;
 
       light.turnOn({.rgb_color = rgb});
     }
