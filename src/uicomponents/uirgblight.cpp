@@ -385,9 +385,32 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     g_log << "x2,y2=" << area.x2 << "," << area.y2;
     g_log << ")" << std::endl;
 
-    point.x -= area.x1;
-    point.y -= area.y1;
+    lv_area_t orig_area = area;
+
+    point.x -= orig_area.x1;
+    point.y -= orig_area.y1;
+
+    area.x1 -= orig_area.x1;
+    area.y1 -= orig_area.y1;
+    area.x2 -= orig_area.x1;
+    area.y2 -= orig_area.y1;
+
+    // both point and area are now (0,0) based
+
     g_log << Logger::Debug << "adjusted point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
+    g_log << Logger::Debug << "adjusted area(";
+    g_log << "x1,y1=" << area.x1 << "," << area.y1 << ", ";
+    g_log << "x2,y2=" << area.x2 << "," << area.y2;
+    g_log << ")" << std::endl;
+
+    point.x -= area.x2/2;
+    point.y -= area.y2/2;
+
+    g_log << Logger::Debug << "readjusted point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
+
+    float angle = atan2f(point.x, point.y);
+
+    g_log << Logger::Debug << "angle="<<angle << std::endl;
 
     // lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
     lv_color_t color_rgb = {128,128,128};
