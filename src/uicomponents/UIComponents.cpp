@@ -1,7 +1,6 @@
 #include "UIComponents.hpp"
 #include "logger.hpp"
 #include <src/misc/lv_area.h>
-#include <src/widgets/lv_label.h>
 
 lv_obj_t* UIComponent::createLabel(lv_obj_t* _parent, std::string _text)
 {
@@ -42,7 +41,7 @@ UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
 {
   // FIXME: This code is duplicated in UISwitch, consider this after another few UIentities
-  btn = lv_btn_create(_parent);
+  btn = lv_button_create(_parent);
   lv_obj_set_size(btn, uiEntityWidth, 50);
   lv_obj_center(btn);
   lv_obj_set_style_pad_all(btn, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -66,7 +65,7 @@ void UIButton::update()
       lv_obj_add_state(btn, LV_STATE_CHECKED);
     }
     else {
-      lv_obj_clear_state(btn, LV_STATE_CHECKED);
+      lv_obj_remove_state(btn, LV_STATE_CHECKED);
     }
   }
 };
@@ -89,7 +88,7 @@ UISwitch::UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_t* switchcontainer = lv_obj_create(_parent);
   lv_obj_set_width(switchcontainer, uiEntityWidth);
   lv_obj_set_height(switchcontainer, 50);
-  lv_obj_clear_flag(switchcontainer, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_remove_flag(switchcontainer, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_style_pad_all(switchcontainer, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
 
   sw = lv_switch_create(switchcontainer);
@@ -113,7 +112,7 @@ void UISwitch::update()
       lv_obj_add_state(sw, LV_STATE_CHECKED);
     }
     else {
-      lv_obj_clear_state(sw, LV_STATE_CHECKED);
+      lv_obj_remove_state(sw, LV_STATE_CHECKED);
     }
   }
 };

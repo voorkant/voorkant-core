@@ -10,8 +10,7 @@
 // FIXME: the shape of this `if defined`/`elif defined`/.. error maybe itself could be a macro?
 
 #if defined(VOORKANT_LVGL_SDL)
-#include <sdl/sdl_common.h>
-#include "sdl/sdl.h"
+// no includes necessary in lvgl9?
 #elif defined(VOORKANT_LVGL_FBDEV)
 #include <display/fbdev.h>
 #include <indev/evdev.h>
@@ -20,9 +19,7 @@
 #endif
 
 #include <lvgl.h>
-#include <src/core/lv_disp.h>
 #include <utility>
-#include "sdl/sdl.h"
 #include "uicomponents/UIComponents.hpp"
 #include "uicomponents/uirgblight.hpp"
 #include "uicomponents/uiapexcard.hpp"
