@@ -408,9 +408,13 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 
     g_log << Logger::Debug << "readjusted point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
 
-    float angle = atan2f(point.x, point.y);
+    float rangle = atan2f(point.x, point.y);
+    int dangle = rangle * (180.0 / M_PI);
+    g_log << Logger::Debug << "rangle="<<rangle << ", dangle="<<dangle << std::endl;
 
-    g_log << Logger::Debug << "angle="<<angle << std::endl;
+    int hvalue = (360 - (dangle+270) + 360) % 360;
+
+    g_log << Logger::Debug << "rangle="<<rangle << ", dangle="<<dangle << ", hvalue="<<hvalue<< std::endl;
 
     // lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
     lv_color_t color_rgb = {128,128,128};
