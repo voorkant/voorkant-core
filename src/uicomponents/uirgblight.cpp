@@ -412,14 +412,14 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     int dangle = rangle * (180.0 / M_PI);
     g_log << Logger::Debug << "rangle="<<rangle << ", dangle="<<dangle << std::endl;
 
-    int hvalue = (360 - (dangle+270) + 360) % 360;
+    uint16_t hvalue = (360 - (dangle+270) + 360) % 360;
 
     g_log << Logger::Debug << "rangle="<<rangle << ", dangle="<<dangle << ", hvalue="<<hvalue<< std::endl;
 
     // lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
     lv_color_t color_rgb = {128,128,128};
     // lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
-    lv_color_hsv_t color_hsv = {128, 128, 128};
+    lv_color_hsv_t color_hsv = {hvalue, 80, 100};
 
     std::cerr << "HSV (H/S/V):" << color_hsv.h << "/" << (uint16_t)color_hsv.s << "/" << (uint16_t)color_hsv.v << std::endl;
     std::cerr << "RGB (R/G/B):" << color_rgb.red << "/" << color_rgb.green << "/" << color_rgb.blue << std::endl;
