@@ -430,7 +430,7 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     std::string colormode = rgb_light->getColorMode();
 
     std::cerr << "HA Entity color mode: " << colormode << std::endl;
-    if (colormode == "hs") {
+    // if (colormode == "hs") {
       unsigned int hs[2];
       hs[0] = color_hsv.h;
       hs[1] = color_hsv.s;
@@ -438,15 +438,15 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
       args.hs_color = hs;
       args.brightness_pct = color_hsv.v;
       light.turnOn(args);
-    }
-    else {
-      unsigned short rgb[3];
-      rgb[0] = (unsigned short)color_rgb.red;
-      rgb[1] = (unsigned short)color_rgb.green;
-      rgb[2] = (unsigned short)color_rgb.blue;
+    // }
+    // else {
+    //   unsigned short rgb[3];
+    //   rgb[0] = (unsigned short)color_rgb.red;
+    //   rgb[1] = (unsigned short)color_rgb.green;
+    //   rgb[2] = (unsigned short)color_rgb.blue;
 
-      light.turnOn({.rgb_color = rgb});
-    }
+    //   light.turnOn({.rgb_color = rgb});
+    // }
 
     // FIXME: color_rgb (which is lv_color_t) depends on the LV_COLOR_DEPTH, and thus this code needs to handle the cast to uint_t
   }
