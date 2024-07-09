@@ -416,6 +416,21 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 
     g_log << Logger::Debug << "rangle="<<rangle << ", dangle="<<dangle << ", hvalue="<<hvalue<< std::endl;
 
+    float xf = point.x;
+    float yf = point.y;
+
+    xf /= area.x2/2;
+    yf /= area.y2/2;
+
+    xf *= 100;
+    yf *= 100;
+
+    float r = sqrt(xf*xf + yf*yf);
+
+    g_log << Logger::Debug << "xf="<<xf << ", yf="<<yf << ", r="<< r << std::endl;
+
+
+
     // lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
     lv_color_t color_rgb = {128,128,128};
     // lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
