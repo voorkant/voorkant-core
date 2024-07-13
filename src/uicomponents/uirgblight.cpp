@@ -434,7 +434,7 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     // lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
     lv_color_t color_rgb = {128,128,128};
     // lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
-    lv_color_hsv_t color_hsv = {hvalue, 80, 100};
+    lv_color_hsv_t color_hsv = {hvalue, r, 100};
 
     std::cerr << "HSV (H/S/V):" << color_hsv.h << "/" << (uint16_t)color_hsv.s << "/" << (uint16_t)color_hsv.v << std::endl;
     std::cerr << "RGB (R/G/B):" << color_rgb.red << "/" << color_rgb.green << "/" << color_rgb.blue << std::endl;
