@@ -127,6 +127,8 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     // lv_obj_set_style_border_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
     // lv_obj_set_style_border_width(cw, 3, LV_PART_KNOB | LV_STATE_DEFAULT);
     // lv_obj_set_style_pad_all(cw, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+    cwCircle = lv_obj_create(cw_tile);
+    lv_obj_add_flag(cwCircle, LV_OBJ_FLAG_EVENT_BUBBLE);
   }
 
   if (showColorTemp) {
@@ -373,7 +375,8 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
   g_log << Logger::Debug << "color wheel got event " << code << std::endl;
 
   if (code == LV_EVENT_CLICKED) {
-    lv_obj_t* colorwheel = lv_event_get_target_obj(_e);
+    lv_obj_t* colorwheel = lv_event_get_current_target_obj(_e);
+
     g_log << Logger::Debug << "color wheel got click" << std::endl;
     lv_point_t point;
     lv_indev_get_point(lv_indev_active(), &point);
@@ -389,6 +392,8 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 
     point.x -= orig_area.x1;
     point.y -= orig_area.y1;
+
+    lv_point_t circlepos = point;
 
     area.x1 -= orig_area.x1;
     area.y1 -= orig_area.y1;
@@ -434,7 +439,7 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     // lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
     lv_color_t color_rgb = {128,128,128};
     // lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
-    lv_color_hsv_t color_hsv = {hvalue, r, 100};
+    lv_color_hsv_t color_hsv = {hvalue, static_cast<uint8_t>(r), 100};
 
     std::cerr << "HSV (H/S/V):" << color_hsv.h << "/" << (uint16_t)color_hsv.s << "/" << (uint16_t)color_hsv.v << std::endl;
     std::cerr << "RGB (R/G/B):" << color_rgb.red << "/" << color_rgb.green << "/" << color_rgb.blue << std::endl;
@@ -464,6 +469,9 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     // }
 
     // FIXME: color_rgb (which is lv_color_t) depends on the LV_COLOR_DEPTH, and thus this code needs to handle the cast to uint_t
+
+    lv_obj_set_size(rgb_light->cwCircle, 20, 20);
+    lv_obj_set_pos(rgb_light->cwCircle, circlepos.x-10, circlepos.y-10);
   }
 }
 

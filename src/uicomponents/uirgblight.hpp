@@ -17,6 +17,7 @@ private:
   lv_obj_t* btnColorTemp;
   lv_obj_t* btnWhite;
   lv_obj_t* cw;
+  lv_obj_t* cwCircle;
   lv_obj_t* brightnessSlider;
   lv_obj_t* colortempSlider;
   lv_obj_t* tilecontainer;
