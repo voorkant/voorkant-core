@@ -1,7 +1,9 @@
 #include "uirgblight.hpp"
 #include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
+#include <src/misc/lv_color.h>
 #include <src/misc/lv_event.h>
+#include <src/widgets/canvas/lv_canvas.h>
 #include <src/widgets/image/lv_image.h>
 
 extern const lv_image_dsc_t G_COLORTEMP24;
@@ -113,12 +115,16 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   if (showColorWheel) {
     lv_obj_t* cw_tile = lv_tileview_add_tile(tilecontainer, 1, 0, LV_DIR_HOR);
-    cw = lv_image_create(cw_tile);
+    cwHSbuf.resize(widthheight * widthheight * 2); // FIXME 2 is only correct for 565 (which we are using now)
+    cw = lv_canvas_create(cw_tile);
+    lv_canvas_set_buffer(cw, cwHSbuf.data(), widthheight, widthheight, LV_COLOR_FORMAT_RGB565);
     lv_obj_set_size(cw, widthheight, widthheight);
     lv_obj_set_align(cw, LV_ALIGN_CENTER);
-    lv_image_set_src(cw, LV_SYMBOL_OK);
+    // lv_image_set_src(cw, LV_SYMBOL_OK);
     lv_obj_set_size(cw, widthheight, widthheight);
     // lv_colorwheel_set_mode_fixed(cw, false);
+    lv_canvas_fill_bg(cw, lv_color_hex(0xffffff), LV_OPA_MIN);
+    lv_canvas_set_px(cw, 25, 25, lv_palette_main(LV_PALETTE_BLUE), LV_OPA_50);
 
     lv_obj_add_event_cb(cw_tile, UIRGBLight::changeColorWheelCB, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
     // lv_obj_set_style_arc_width(cw, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -127,8 +133,9 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     // lv_obj_set_style_border_opa(cw, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
     // lv_obj_set_style_border_width(cw, 3, LV_PART_KNOB | LV_STATE_DEFAULT);
     // lv_obj_set_style_pad_all(cw, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-    cwCircle = lv_obj_create(cw_tile);
+    cwCircle = lv_obj_create(cw);
     lv_obj_add_flag(cwCircle, LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_set_size(cwCircle, 20, 20);
   }
 
   if (showColorTemp) {
@@ -375,14 +382,16 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
   g_log << Logger::Debug << "color wheel got event " << code << std::endl;
 
   if (code == LV_EVENT_CLICKED) {
-    lv_obj_t* colorwheel = lv_event_get_current_target_obj(_e);
+    // lv_obj_t* colorwheel = lv_event_get_current_target_obj(_e);
+
+    UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
 
     g_log << Logger::Debug << "color wheel got click" << std::endl;
     lv_point_t point;
     lv_indev_get_point(lv_indev_active(), &point);
     g_log << Logger::Debug << "point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
     lv_area_t area;
-    lv_obj_get_coords(colorwheel, &area);
+    lv_obj_get_coords(rgb_light->cw, &area);
     g_log << Logger::Debug << "area(";
     g_log << "x1,y1=" << area.x1 << "," << area.y1 << ", ";
     g_log << "x2,y2=" << area.x2 << "," << area.y2;
@@ -444,7 +453,6 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     std::cerr << "HSV (H/S/V):" << color_hsv.h << "/" << (uint16_t)color_hsv.s << "/" << (uint16_t)color_hsv.v << std::endl;
     std::cerr << "RGB (R/G/B):" << color_rgb.red << "/" << color_rgb.green << "/" << color_rgb.blue << std::endl;
 
-    UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
     HADomains::Light light(rgb_light->entity);
 
     std::string colormode = rgb_light->getColorMode();
@@ -470,8 +478,9 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 
     // FIXME: color_rgb (which is lv_color_t) depends on the LV_COLOR_DEPTH, and thus this code needs to handle the cast to uint_t
 
-    lv_obj_set_size(rgb_light->cwCircle, 20, 20);
     lv_obj_set_pos(rgb_light->cwCircle, circlepos.x-10, circlepos.y-10);
+    lv_canvas_set_px(rgb_light->cw, circlepos.x, circlepos.y, lv_palette_main(LV_PALETTE_BLUE), LV_OPA_50);
+
   }
 }
 

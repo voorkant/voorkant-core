@@ -17,6 +17,7 @@ private:
   lv_obj_t* btnColorTemp;
   lv_obj_t* btnWhite;
   lv_obj_t* cw;
+  std::vector<uint8_t> cwHSbuf;
   lv_obj_t* cwCircle;
   lv_obj_t* brightnessSlider;
   lv_obj_t* colortempSlider;
