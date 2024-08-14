@@ -100,7 +100,7 @@ void uithread(int _argc, char* _argv[])
 #if defined(VOORKANT_LVGL_SDL)
   static lv_display_t* disp = lv_sdl_window_create(MY_DISP_HOR_RES, MY_DISP_VER_RES);
 #elif defined(VOORKANT_LVGL_FBDEV)
-  static lv_display_t * disp = lv_linux_fbdev_create();
+  static lv_display_t* disp = lv_linux_fbdev_create();
   lv_linux_fbdev_set_file(disp, "/dev/fb0");
 #endif
   // static lv_color_t buf_1[DISP_BUF_SIZE];

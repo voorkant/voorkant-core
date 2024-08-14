@@ -417,36 +417,34 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     g_log << "x2,y2=" << area.x2 << "," << area.y2;
     g_log << ")" << std::endl;
 
-    point.x -= area.x2/2;
-    point.y -= area.y2/2;
+    point.x -= area.x2 / 2;
+    point.y -= area.y2 / 2;
 
     g_log << Logger::Debug << "readjusted point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
 
     float rangle = atan2f(point.x, point.y);
     int dangle = rangle * (180.0 / M_PI);
-    g_log << Logger::Debug << "rangle="<<rangle << ", dangle="<<dangle << std::endl;
+    g_log << Logger::Debug << "rangle=" << rangle << ", dangle=" << dangle << std::endl;
 
-    uint16_t hvalue = (360 - (dangle+270) + 360) % 360;
+    uint16_t hvalue = (360 - (dangle + 270) + 360) % 360;
 
-    g_log << Logger::Debug << "rangle="<<rangle << ", dangle="<<dangle << ", hvalue="<<hvalue<< std::endl;
+    g_log << Logger::Debug << "rangle=" << rangle << ", dangle=" << dangle << ", hvalue=" << hvalue << std::endl;
 
     float xf = point.x;
     float yf = point.y;
 
-    xf /= area.x2/2;
-    yf /= area.y2/2;
+    xf /= area.x2 / 2;
+    yf /= area.y2 / 2;
 
     xf *= 100;
     yf *= 100;
 
-    float r = sqrt(xf*xf + yf*yf);
+    float r = sqrt(xf * xf + yf * yf);
 
-    g_log << Logger::Debug << "xf="<<xf << ", yf="<<yf << ", r="<< r << std::endl;
-
-
+    g_log << Logger::Debug << "xf=" << xf << ", yf=" << yf << ", r=" << r << std::endl;
 
     // lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
-    lv_color_t color_rgb = {128,128,128};
+    lv_color_t color_rgb = {128, 128, 128};
     // lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
     lv_color_hsv_t color_hsv = {hvalue, static_cast<uint8_t>(r), 100};
 
@@ -459,13 +457,13 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 
     std::cerr << "HA Entity color mode: " << colormode << std::endl;
     // if (colormode == "hs") {
-      unsigned int hs[2];
-      hs[0] = color_hsv.h;
-      hs[1] = color_hsv.s;
-      HADomains::Light::TurnOnArgs args;
-      args.hs_color = hs;
-      args.brightness_pct = color_hsv.v;
-      light.turnOn(args);
+    unsigned int hs[2];
+    hs[0] = color_hsv.h;
+    hs[1] = color_hsv.s;
+    HADomains::Light::TurnOnArgs args;
+    args.hs_color = hs;
+    args.brightness_pct = color_hsv.v;
+    light.turnOn(args);
     // }
     // else {
     //   unsigned short rgb[3];
@@ -478,9 +476,8 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 
     // FIXME: color_rgb (which is lv_color_t) depends on the LV_COLOR_DEPTH, and thus this code needs to handle the cast to uint_t
 
-    lv_obj_set_pos(rgb_light->cwCircle, circlepos.x-10, circlepos.y-10);
+    lv_obj_set_pos(rgb_light->cwCircle, circlepos.x - 10, circlepos.y - 10);
     lv_canvas_set_px(rgb_light->cw, circlepos.x, circlepos.y, lv_palette_main(LV_PALETTE_BLUE), LV_OPA_50);
-
   }
 }
 

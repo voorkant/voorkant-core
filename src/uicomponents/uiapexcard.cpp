@@ -77,7 +77,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
   // lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
   // lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
-  static int32_t column_dsc[] = {40, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};   /*2 columns with 100 and 400 ps width*/
+  static int32_t column_dsc[] = {40, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST}; /*2 columns with 100 and 400 ps width*/
   static int32_t row_dsc[] = {25, LV_GRID_FR(1), 25, LV_GRID_TEMPLATE_LAST}; /*3 100 px tall rows*/
   lv_obj_set_grid_dsc_array(flowpanel, column_dsc, row_dsc);
   lv_obj_set_layout(flowpanel, LV_LAYOUT_GRID);
@@ -202,7 +202,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_scale_set_mode(scale_x, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
   lv_obj_update_layout(chart); // this makes lv_chart_get_point_pos_by_id work later
 
-  const uint32_t scale_x_tick_interval=6;
+  const uint32_t scale_x_tick_interval = 6;
   lv_obj_set_size(scale_x, lv_obj_get_width(chart), 25);
   lv_scale_set_total_tick_count(scale_x, values.size());
   lv_scale_set_major_tick_every(scale_x, scale_x_tick_interval);
@@ -214,8 +214,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_obj_set_grid_cell(scale_x, LV_GRID_ALIGN_CENTER, 1, 1, LV_GRID_ALIGN_CENTER, 2, 1);
 
   labels_x.clear();
-  for (int index = 0; index < values.size(); index += scale_x_tick_interval)
-  {
+  for (int index = 0; index < values.size(); index += scale_x_tick_interval) {
     auto timestamp = values[index].first; // FIXME: check index before we, well, index?
     struct tm local_timestamp;
     localtime_r(&timestamp, &local_timestamp);
@@ -231,8 +230,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   }
 
   labels_x_charp.clear();
-  for (int index = 0; index < labels_x.size(); index++)
-  {
+  for (int index = 0; index < labels_x.size(); index++) {
     labels_x_charp.push_back(labels_x[index].data());
   }
   labels_x_charp.push_back(nullptr);
@@ -250,7 +248,6 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_scale_set_label_show(scale_y, true);
   lv_obj_set_style_pad_hor(scale_y, lv_chart_get_first_point_center_offset(chart), 0);
   lv_obj_set_style_pad_ver(scale_y, 0, 0);
-
 
   // lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, values.size(), 1, true, 40); // major ticks point 10 px down, minor 5. values.size() major ticks, and 1 minor (actually means zero!) in between those. [true] labels on major ticks. 40px for labels.
   // lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
