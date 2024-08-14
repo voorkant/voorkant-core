@@ -12,8 +12,8 @@
 #if defined(VOORKANT_LVGL_SDL)
 // no includes necessary in lvgl9?
 #elif defined(VOORKANT_LVGL_FBDEV)
-#include <display/fbdev.h>
-#include <indev/evdev.h>
+// #include <display/fbdev.h>
+// #include <indev/evdev.h>
 #else
 #error "no useful VOORKANT_LVGL_* found"
 #endif
