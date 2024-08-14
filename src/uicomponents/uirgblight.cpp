@@ -426,6 +426,8 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     int dangle = rangle * (180.0 / M_PI);
     g_log << Logger::Debug << "rangle=" << rangle << ", dangle=" << dangle << std::endl;
 
+    // with reference to https://github.com/home-assistant/frontend/blob/master/src/components/ha-hs-color-picker.ts (as of commit 6341226)
+    // doing atan2(y, x) in line 18, i wonder if the line below can be a lot simpler if we also swap x,y in our atan above
     uint16_t hvalue = (360 - (dangle + 270) + 360) % 360;
 
     g_log << Logger::Debug << "rangle=" << rangle << ", dangle=" << dangle << ", hvalue=" << hvalue << std::endl;
