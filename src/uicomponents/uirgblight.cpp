@@ -375,6 +375,22 @@ void UIRGBLight::changeTileCB(lv_event_t* _e)
   }
 };
 
+namespace {
+// assumes x,y are normalised to [-100..100]
+lv_color_hsv_t nxy2hs(float _x, float _y) {
+  lv_color_hsv_t ret;
+
+  float rangle = atan2f(_y, _x);
+  int dangle = rangle * (180.0 / M_PI);
+
+  ret.h = (dangle + 360) % 360; // normalize from [-180..180]-ish to [0..359]
+  ret.s = static_cast<uint8_t>(sqrt(_x * _x + _y * _y));
+  ret.v = 100;
+
+  return ret;
+}
+}
+
 void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
@@ -411,24 +427,16 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 
     // both point and area are now (0,0) based
 
-    g_log << Logger::Debug << "adjusted point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
-    g_log << Logger::Debug << "adjusted area(";
-    g_log << "x1,y1=" << area.x1 << "," << area.y1 << ", ";
-    g_log << "x2,y2=" << area.x2 << "," << area.y2;
-    g_log << ")" << std::endl;
+    // g_log << Logger::Debug << "adjusted point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
+    // g_log << Logger::Debug << "adjusted area(";
+    // g_log << "x1,y1=" << area.x1 << "," << area.y1 << ", ";
+    // g_log << "x2,y2=" << area.x2 << "," << area.y2;
+    // g_log << ")" << std::endl;
 
     point.x -= area.x2 / 2;
     point.y -= area.y2 / 2;
 
-    g_log << Logger::Debug << "readjusted point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
-
-    float rangle = atan2f(point.y, point.x);
-    int dangle = rangle * (180.0 / M_PI);
-    g_log << Logger::Debug << "rangle=" << rangle << ", dangle=" << dangle << std::endl;
-
-    uint16_t hvalue = (dangle + 360) % 360;
-
-    g_log << Logger::Debug << "rangle=" << rangle << ", dangle=" << dangle << ", hvalue=" << hvalue << std::endl;
+    // g_log << Logger::Debug << "readjusted point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
 
     float xf = point.x;
     float yf = point.y;
@@ -439,14 +447,11 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     xf *= 100;
     yf *= 100;
 
-    float r = sqrt(xf * xf + yf * yf);
-
-    g_log << Logger::Debug << "xf=" << xf << ", yf=" << yf << ", r=" << r << std::endl;
-
     // lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
-    lv_color_t color_rgb = {128, 128, 128};
     // lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
-    lv_color_hsv_t color_hsv = {hvalue, static_cast<uint8_t>(r), 100};
+    // lv_color_hsv_t color_hsv = {hvalue, static_cast<uint8_t>(r), 100};
+    lv_color_hsv_t color_hsv = nxy2hs(xf, yf);
+    lv_color_t color_rgb = lv_color_hsv_to_rgb(color_hsv.h, color_hsv.s, color_hsv.v);
 
     std::cerr << "HSV (H/S/V):" << color_hsv.h << "/" << (uint16_t)color_hsv.s << "/" << (uint16_t)color_hsv.v << std::endl;
     std::cerr << "RGB (R/G/B):" << color_rgb.red << "/" << color_rgb.green << "/" << color_rgb.blue << std::endl;
@@ -477,7 +482,7 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     // FIXME: color_rgb (which is lv_color_t) depends on the LV_COLOR_DEPTH, and thus this code needs to handle the cast to uint_t
 
     lv_obj_set_pos(rgb_light->cwCircle, circlepos.x - 10, circlepos.y - 10);
-    lv_canvas_set_px(rgb_light->cw, circlepos.x, circlepos.y, lv_color_hsv_to_rgb(color_hsv.h, color_hsv.s, 100), LV_OPA_50);
+    lv_canvas_set_px(rgb_light->cw, circlepos.x, circlepos.y, color_rgb, LV_OPA_50);
   }
 }
 
