@@ -477,7 +477,7 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     // FIXME: color_rgb (which is lv_color_t) depends on the LV_COLOR_DEPTH, and thus this code needs to handle the cast to uint_t
 
     lv_obj_set_pos(rgb_light->cwCircle, circlepos.x - 10, circlepos.y - 10);
-    lv_canvas_set_px(rgb_light->cw, circlepos.x, circlepos.y, lv_palette_main(LV_PALETTE_BLUE), LV_OPA_50);
+    lv_canvas_set_px(rgb_light->cw, circlepos.x, circlepos.y, lv_color_hsv_to_rgb(color_hsv.h, color_hsv.s, 100), LV_OPA_50);
   }
 }
 
