@@ -389,6 +389,26 @@ lv_color_hsv_t nxy2hs(float _x, float _y) {
 
   return ret;
 }
+
+// input: point (0,0) is the top left corner of area
+// output: point x,y are adjusted to [-100..100] in the area
+lv_point_t normalisePointInArea(const lv_point_t &_point, const lv_area_t &_area) {
+  lv_point_t ret = _point;
+
+  // move 0,0 to area center
+  ret.x -= _area.x2 / 2;
+  ret.y -= _area.y2 / 2;
+
+  // multiply first - these are 32 bit ints, we have room but don't want to lose precision now
+  ret.x *= 100;
+  ret.y *= 100;
+
+  // then normalise
+  ret.x /= _area.x2 / 2;
+  ret.y /= _area.y2 / 2;
+
+  return ret;
+}
 }
 
 void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
@@ -433,24 +453,16 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     // g_log << "x2,y2=" << area.x2 << "," << area.y2;
     // g_log << ")" << std::endl;
 
+    lv_point_t nxy = normalisePointInArea(point, area);
     point.x -= area.x2 / 2;
     point.y -= area.y2 / 2;
 
     // g_log << Logger::Debug << "readjusted point(x=" << point.x << ", y=" << point.y << ")" << std::endl;
 
-    float xf = point.x;
-    float yf = point.y;
-
-    xf /= area.x2 / 2;
-    yf /= area.y2 / 2;
-
-    xf *= 100;
-    yf *= 100;
-
     // lv_color_t color_rgb = lv_colorwheel_get_rgb(colorwheel);
     // lv_color_hsv_t color_hsv = lv_colorwheel_get_hsv(colorwheel);
     // lv_color_hsv_t color_hsv = {hvalue, static_cast<uint8_t>(r), 100};
-    lv_color_hsv_t color_hsv = nxy2hs(xf, yf);
+    lv_color_hsv_t color_hsv = nxy2hs(nxy.x, nxy.y);
     lv_color_t color_rgb = lv_color_hsv_to_rgb(color_hsv.h, color_hsv.s, color_hsv.v);
 
     std::cerr << "HSV (H/S/V):" << color_hsv.h << "/" << (uint16_t)color_hsv.s << "/" << (uint16_t)color_hsv.v << std::endl;
