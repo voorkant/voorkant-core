@@ -27,6 +27,42 @@ lv_obj_t* UIRGBLight::createImageButton(const void* _imgOrSymbol, lv_event_cb_t 
   return btn;
 }
 
+namespace {
+// assumes x,y are normalised to [-100..100]
+lv_color_hsv_t nxy2hs(float _x, float _y) {
+  lv_color_hsv_t ret;
+
+  float rangle = atan2f(_y, _x);
+  int dangle = rangle * (180.0 / M_PI);
+
+  ret.h = (dangle + 360) % 360; // normalize from [-180..180]-ish to [0..359]
+  ret.s = static_cast<uint8_t>(sqrt(_x * _x + _y * _y));
+  ret.v = 100;
+
+  return ret;
+}
+
+// input: point (0,0) is the top left corner of area
+// output: point x,y are adjusted to [-100..100] in the area
+lv_point_t normalisePointInArea(const lv_point_t &_point, const lv_area_t &_area) {
+  lv_point_t ret = _point;
+
+  // move 0,0 to area center
+  ret.x -= _area.x2 / 2;
+  ret.y -= _area.y2 / 2;
+
+  // multiply first - these are 32 bit ints, we have room but don't want to lose precision now
+  ret.x *= 100;
+  ret.y *= 100;
+
+  // then normalise
+  ret.x /= _area.x2 / 2;
+  ret.y /= _area.y2 / 2;
+
+  return ret;
+}
+}
+
 UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
 {
@@ -124,7 +160,18 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     lv_obj_set_size(cw, widthheight, widthheight);
     // lv_colorwheel_set_mode_fixed(cw, false);
     lv_canvas_fill_bg(cw, lv_color_hex(0xffffff), LV_OPA_MIN);
-    lv_canvas_set_px(cw, 25, 25, lv_palette_main(LV_PALETTE_BLUE), LV_OPA_50);
+    // lv_canvas_set_px(cw, 25, 25, lv_palette_main(LV_PALETTE_BLUE), LV_OPA_50);
+    lv_area_t area = {0, 0, widthheight, widthheight};
+
+    for (int x=0; x < widthheight ; x++) {
+      for (int y=0; y < widthheight ; y++) {
+        lv_point_t xy = {x, y};
+        lv_point_t nxy = normalisePointInArea(xy, area);
+        lv_color_hsv_t color_hsv = nxy2hs(nxy.x, nxy.y);
+        lv_color_t color_rgb = lv_color_hsv_to_rgb(color_hsv.h, color_hsv.s, color_hsv.v);
+        lv_canvas_set_px(cw, x, y, color_rgb, LV_OPA_50);
+      }
+    }
 
     lv_obj_add_event_cb(cw_tile, UIRGBLight::changeColorWheelCB, LV_EVENT_CLICKED, reinterpret_cast<void*>(this));
     // lv_obj_set_style_arc_width(cw, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -374,42 +421,6 @@ void UIRGBLight::changeTileCB(lv_event_t* _e)
     }
   }
 };
-
-namespace {
-// assumes x,y are normalised to [-100..100]
-lv_color_hsv_t nxy2hs(float _x, float _y) {
-  lv_color_hsv_t ret;
-
-  float rangle = atan2f(_y, _x);
-  int dangle = rangle * (180.0 / M_PI);
-
-  ret.h = (dangle + 360) % 360; // normalize from [-180..180]-ish to [0..359]
-  ret.s = static_cast<uint8_t>(sqrt(_x * _x + _y * _y));
-  ret.v = 100;
-
-  return ret;
-}
-
-// input: point (0,0) is the top left corner of area
-// output: point x,y are adjusted to [-100..100] in the area
-lv_point_t normalisePointInArea(const lv_point_t &_point, const lv_area_t &_area) {
-  lv_point_t ret = _point;
-
-  // move 0,0 to area center
-  ret.x -= _area.x2 / 2;
-  ret.y -= _area.y2 / 2;
-
-  // multiply first - these are 32 bit ints, we have room but don't want to lose precision now
-  ret.x *= 100;
-  ret.y *= 100;
-
-  // then normalise
-  ret.x /= _area.x2 / 2;
-  ret.y /= _area.y2 / 2;
-
-  return ret;
-}
-}
 
 void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 {
