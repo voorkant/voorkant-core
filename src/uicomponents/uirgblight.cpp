@@ -27,9 +27,11 @@ lv_obj_t* UIRGBLight::createImageButton(const void* _imgOrSymbol, lv_event_cb_t 
   return btn;
 }
 
-namespace {
+namespace
+{
 // assumes x,y are normalised to [-100..100]
-lv_color_hsv_t nxy2hs(float _x, float _y) {
+lv_color_hsv_t nxy2hs(float _x, float _y)
+{
   lv_color_hsv_t ret;
 
   float rangle = atan2f(_y, _x);
@@ -44,7 +46,8 @@ lv_color_hsv_t nxy2hs(float _x, float _y) {
 
 // input: point (0,0) is the top left corner of area
 // output: point x,y are adjusted to [-100..100] in the area
-lv_point_t normalisePointInArea(const lv_point_t &_point, const lv_area_t &_area) {
+lv_point_t normalisePointInArea(const lv_point_t& _point, const lv_area_t& _area)
+{
   lv_point_t ret = _point;
 
   // move 0,0 to area center
@@ -163,8 +166,8 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     // lv_canvas_set_px(cw, 25, 25, lv_palette_main(LV_PALETTE_BLUE), LV_OPA_50);
     lv_area_t area = {0, 0, widthheight, widthheight};
 
-    for (int x=0; x < widthheight ; x++) {
-      for (int y=0; y < widthheight ; y++) {
+    for (int x = 0; x < widthheight; x++) {
+      for (int y = 0; y < widthheight; y++) {
         lv_point_t xy = {x, y};
         lv_point_t nxy = normalisePointInArea(xy, area);
         lv_color_hsv_t color_hsv = nxy2hs(nxy.x, nxy.y);
