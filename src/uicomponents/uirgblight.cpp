@@ -168,6 +168,9 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
         lv_point_t xy = {x, y};
         lv_point_t nxy = normalisePointInArea(xy, area);
         lv_color_hsv_t color_hsv = nxy2hs(nxy.x, nxy.y);
+        if (color_hsv.s > 100) {
+          continue;
+        }
         lv_color_t color_rgb = lv_color_hsv_to_rgb(color_hsv.h, color_hsv.s, color_hsv.v);
         lv_canvas_set_px(cw, x, y, color_rgb, LV_OPA_50);
       }
