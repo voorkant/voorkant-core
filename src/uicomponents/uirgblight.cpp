@@ -1,6 +1,7 @@
 #include "uirgblight.hpp"
 #include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
+#include <src/misc/lv_area.h>
 #include <src/misc/lv_color.h>
 #include <src/misc/lv_event.h>
 #include <src/widgets/canvas/lv_canvas.h>
@@ -40,6 +41,41 @@ lv_color_hsv_t nxy2hs(float _x, float _y)
   ret.h = (dangle + 360) % 360; // normalize from [-180..180]-ish to [0..359]
   ret.s = static_cast<uint8_t>(sqrt(_x * _x + _y * _y));
   ret.v = 100;
+
+  return ret;
+}
+
+// hs to xy in area, so usable for plotting
+lv_point_t hs2xy(const lv_color_hsv_t& _hsv, const lv_area_t& _area)
+{
+  lv_point_t ret;
+
+  float dangle = _hsv.h;
+  float rangle = dangle / (180.0 / M_PI);
+  cout<<"rangle="<<rangle<<", cos="<<cos(rangle)<<", sin="<<sin(rangle);
+
+  // [-1, -1] to [+1, +1]
+  float x = cos(rangle);
+  float y = sin(rangle);
+  cout<<", x="<<x<<", y="<<y;
+
+  // [0, 0] to [2, 2]
+  x += 1.0;
+  y += 1.0;
+  cout<<", x="<<x<<", y="<<y;
+
+  // [0, 0] to [1, 1]
+  x /= 2.0;
+  y /= 2.0;
+  cout<<", x="<<x<<", y="<<y;
+
+  // [0, 0] to [xsize, ysize]
+  x *= _area.x2;
+  y *= _area.y2;
+  cout<<", x="<<x<<", y="<<y<<endl;
+
+  ret.x = x;
+  ret.y = y;
 
   return ret;
 }
@@ -259,6 +295,13 @@ void UIRGBLight::update()
         hsv_val.h = vec_hs.at(0);
         hsv_val.s = vec_hs.at(1);
         hsv_val.v = brightness_percent;
+        lv_area_t area;
+        area.x2 = lv_obj_get_width(cw);
+        area.y2 = lv_obj_get_height(cw);
+        lv_point_t circlepos = hs2xy(hsv_val, area);
+        cerr<<"update circlepos.x="<<circlepos.x<<", .y="<<circlepos.y<<endl;
+        lv_obj_set_pos(cwCircle, circlepos.x - 10, circlepos.y - 10);
+
         // lv_colorwheel_set_hsv(cw, hsv_val);
       }
       else if (colormode == "color_temp") {
@@ -510,8 +553,9 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 
     // FIXME: color_rgb (which is lv_color_t) depends on the LV_COLOR_DEPTH, and thus this code needs to handle the cast to uint_t
 
+    cerr<<"circlepos.x="<<circlepos.x<<", .y="<<circlepos.y<<endl;
     lv_obj_set_pos(rgb_light->cwCircle, circlepos.x - 10, circlepos.y - 10);
-    lv_canvas_set_px(rgb_light->cw, circlepos.x, circlepos.y, color_rgb, LV_OPA_50);
+    // lv_canvas_set_px(rgb_light->cw, circlepos.x, circlepos.y, color_rgb, LV_OPA_50);
   }
 }
 
