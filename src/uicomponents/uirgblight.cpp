@@ -59,6 +59,11 @@ lv_point_t hs2xy(const lv_color_hsv_t& _hsv, const lv_area_t& _area)
   float y = sin(rangle);
   cout<<", x="<<x<<", y="<<y;
 
+  // scale to saturation
+  x *= (_hsv.s/100.0);
+  y *= (_hsv.s/100.0);
+  cout<<", x="<<x<<", y="<<y<<endl;
+
   // [0, 0] to [2, 2]
   x += 1.0;
   y += 1.0;
@@ -70,6 +75,7 @@ lv_point_t hs2xy(const lv_color_hsv_t& _hsv, const lv_area_t& _area)
   cout<<", x="<<x<<", y="<<y;
 
   // [0, 0] to [xsize, ysize]
+  // this puts us on the outer edge at the right angle
   x *= _area.x2;
   y *= _area.y2;
   cout<<", x="<<x<<", y="<<y<<endl;
@@ -498,7 +504,7 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     point.x -= orig_area.x1;
     point.y -= orig_area.y1;
 
-    lv_point_t circlepos = point;
+    // lv_point_t circlepos = point;
 
     area.x1 -= orig_area.x1;
     area.y1 -= orig_area.y1;
@@ -553,8 +559,8 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
 
     // FIXME: color_rgb (which is lv_color_t) depends on the LV_COLOR_DEPTH, and thus this code needs to handle the cast to uint_t
 
-    cerr<<"circlepos.x="<<circlepos.x<<", .y="<<circlepos.y<<endl;
-    lv_obj_set_pos(rgb_light->cwCircle, circlepos.x - 10, circlepos.y - 10);
+    // cerr<<"circlepos.x="<<circlepos.x<<", .y="<<circlepos.y<<endl;
+    // lv_obj_set_pos(rgb_light->cwCircle, circlepos.x - 10, circlepos.y - 10);
     // lv_canvas_set_px(rgb_light->cw, circlepos.x, circlepos.y, color_rgb, LV_OPA_50);
   }
 }
