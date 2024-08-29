@@ -545,7 +545,7 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
     hs[1] = color_hsv.s;
     HADomains::Light::TurnOnArgs args;
     args.hs_color = hs;
-    args.brightness_pct = color_hsv.v;
+    // args.brightness_pct = color_hsv.v;
     light.turnOn(args);
     // }
     // else {
