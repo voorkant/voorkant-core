@@ -52,33 +52,33 @@ lv_point_t hs2xy(const lv_color_hsv_t& _hsv, const lv_area_t& _area)
 
   float dangle = _hsv.h;
   float rangle = dangle / (180.0 / M_PI);
-  cout<<"rangle="<<rangle<<", cos="<<cos(rangle)<<", sin="<<sin(rangle);
+  cout << "rangle=" << rangle << ", cos=" << cos(rangle) << ", sin=" << sin(rangle);
 
   // [-1, -1] to [+1, +1]
   float x = cos(rangle);
   float y = sin(rangle);
-  cout<<", x="<<x<<", y="<<y;
+  cout << ", x=" << x << ", y=" << y;
 
   // scale to saturation
-  x *= (_hsv.s/100.0);
-  y *= (_hsv.s/100.0);
-  cout<<", x="<<x<<", y="<<y<<endl;
+  x *= (_hsv.s / 100.0);
+  y *= (_hsv.s / 100.0);
+  cout << ", x=" << x << ", y=" << y << endl;
 
   // [0, 0] to [2, 2]
   x += 1.0;
   y += 1.0;
-  cout<<", x="<<x<<", y="<<y;
+  cout << ", x=" << x << ", y=" << y;
 
   // [0, 0] to [1, 1]
   x /= 2.0;
   y /= 2.0;
-  cout<<", x="<<x<<", y="<<y;
+  cout << ", x=" << x << ", y=" << y;
 
   // [0, 0] to [xsize, ysize]
   // this puts us on the outer edge at the right angle
   x *= _area.x2;
   y *= _area.y2;
-  cout<<", x="<<x<<", y="<<y<<endl;
+  cout << ", x=" << x << ", y=" << y << endl;
 
   ret.x = x;
   ret.y = y;
@@ -305,7 +305,7 @@ void UIRGBLight::update()
         area.x2 = lv_obj_get_width(cw);
         area.y2 = lv_obj_get_height(cw);
         lv_point_t circlepos = hs2xy(hsv_val, area);
-        cerr<<"update circlepos.x="<<circlepos.x<<", .y="<<circlepos.y<<endl;
+        cerr << "update circlepos.x=" << circlepos.x << ", .y=" << circlepos.y << endl;
         lv_obj_set_pos(cwCircle, circlepos.x - 10, circlepos.y - 10);
 
         // lv_colorwheel_set_hsv(cw, hsv_val);
