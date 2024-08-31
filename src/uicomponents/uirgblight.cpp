@@ -287,15 +287,16 @@ void UIRGBLight::update()
   {
     std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
     if (state["state"] == "on") { // FIXME: We should get rid of parsing JSON here
+      auto attrs = state["attributes"];
       lv_obj_add_state(btnOnOff, LV_STATE_CHECKED);
-      int brightness = state["attributes"]["brightness"].get<int>(); // brightness is NULL If the thing is off
+      int brightness = attrs["brightness"].get<int>(); // brightness is NULL If the thing is off
       lv_slider_set_value(brightnessSlider, brightness, LV_ANIM_OFF);
       int brightness_percent = static_cast<int>(brightness / 2.55);
       std::string str_brightness_percent = std::to_string(brightness_percent);
       lv_label_set_text(brightnessLabel, (str_brightness_percent + "%").c_str());
-      if (colormode == "hs") {
+      if (attrs.contains("hs_color")) {
 
-        std::vector<int> vec_hs = state["attributes"]["hs_color"];
+        std::vector<int> vec_hs = attrs["hs_color"];
 
         lv_color_hsv_t hsv_val;
         hsv_val.h = vec_hs.at(0);
@@ -310,29 +311,29 @@ void UIRGBLight::update()
 
         // lv_colorwheel_set_hsv(cw, hsv_val);
       }
-      else if (colormode == "color_temp") {
+      if (attrs.contains("color_temp") && !attrs["color_temp"].is_null()) {
         int colortemp = state["attributes"]["color_temp_kelvin"].get<int>();
         std::cerr << "colormode == color temp and colortemp itself is: " << colortemp << std::endl;
-        //   lv_slider_set_value(colortempSlider, colortemp, LV_ANIM_OFF);
+        // FIXME  lv_slider_set_value(colortempSlider, colortemp, LV_ANIM_OFF);
       }
-      else if (colormode == "brightness") {
-        std::cerr << "BRIGHTNESS" << std::endl;
-      }
-      else if (colormode == "white") {
-        std::cerr << "WHITE" << std::endl;
-      }
-      else {
-        std::cerr << " NO COLOR MODE " << colormode << " SO USING RGB" << std::endl;
-        std::vector<int> vec_rgb = state["attributes"]["rgb_color"];
+      // else if (colormode == "brightness") {
+      //   std::cerr << "BRIGHTNESS" << std::endl;
+      // }
+      // else if (colormode == "white") {
+      //   std::cerr << "WHITE" << std::endl;
+      // }
+      // else {
+      //   std::cerr << " NO COLOR MODE " << colormode << " SO USING RGB" << std::endl;
+      //   std::vector<int> vec_rgb = state["attributes"]["rgb_color"];
 
-        int rgb[3];
-        short cnt = 0;
-        for (auto col : vec_rgb) {
-          rgb[cnt] = col;
-          cnt++;
-        }
-        // lv_colorwheel_set_rgb(cw, lv_color_make(rgb[0], rgb[1], rgb[2]));
-      }
+      //   int rgb[3];
+      //   short cnt = 0;
+      //   for (auto col : vec_rgb) {
+      //     rgb[cnt] = col;
+      //     cnt++;
+      //   }
+      //   // lv_colorwheel_set_rgb(cw, lv_color_make(rgb[0], rgb[1], rgb[2]));
+      // }
     }
     else {
       lv_obj_remove_state(btnOnOff, LV_STATE_CHECKED);
