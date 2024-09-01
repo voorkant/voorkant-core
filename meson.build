@@ -213,6 +213,7 @@ if get_option('front-lvgl').enabled()
             'src/front-lvgl.cpp',
             'src/lv_conf.h',
             'src/generated/domains.hpp',
+            version_file
         ],
         install: true,
         dependencies: [
