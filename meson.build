@@ -151,6 +151,7 @@ if get_option('front-ftxui').enabled()
             'src/WSConn.cpp',
             'src/front-ftxui.cpp',
             'src/generated/domains.hpp',
+            version_file
         ],
         install: true,
         dependencies: [
