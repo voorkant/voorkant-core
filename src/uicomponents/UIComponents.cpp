@@ -213,6 +213,8 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
 void UISensor::update()
 {
+  std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
+
   auto state = entity->getJsonState();
   g_log << Logger::Debug << "We received a UIupdate for " << entity->name << ":" << std::endl;
   // g_log << Logger::Debug << state.dump(2) << std::endl; // - commented because of #93
