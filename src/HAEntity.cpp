@@ -1,5 +1,6 @@
 #include "HAEntity.hpp"
 #include "Backend.hpp"
+#include "logger.hpp"
 
 using std::cerr;
 using std::endl;
@@ -86,7 +87,12 @@ void HAEntity::detach(IObserver* _observer)
 void HAEntity::notify()
 {
   for (const auto& obs : observers) {
-    obs->update();
+    try {
+      obs->update();
+    }
+    catch (std::exception& e) {
+      g_log << Logger::LogLevel::Error << "observer threw exception: " << e.what() << endl;
+    }
   }
 }
 
