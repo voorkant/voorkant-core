@@ -245,8 +245,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
     lv_obj_set_align(colortempSlider, LV_ALIGN_CENTER);
     int min_color_temp = getIntAttribute("min_color_temp_kelvin", 2000);
     int max_color_temp = getIntAttribute("max_color_temp_kelvin", 6500);
-    // FIXME: for whatever reason we can't get this to work the opposite way around, which is what HA does
-    lv_slider_set_range(colortempSlider, min_color_temp, max_color_temp);
+    lv_slider_set_range(colortempSlider, max_color_temp, min_color_temp);
     lv_obj_add_event_cb(colortempSlider, UIRGBLight::slideColorTempCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
   }
 
