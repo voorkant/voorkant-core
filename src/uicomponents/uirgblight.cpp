@@ -314,7 +314,7 @@ void UIRGBLight::update()
       if (attrs.contains("color_temp") && !attrs["color_temp"].is_null()) {
         int colortemp = state["attributes"]["color_temp_kelvin"].get<int>();
         std::cerr << "colormode == color temp and colortemp itself is: " << colortemp << std::endl;
-        // FIXME  lv_slider_set_value(colortempSlider, colortemp, LV_ANIM_OFF);
+        lv_slider_set_value(colortempSlider, colortemp, LV_ANIM_OFF);
       }
       // else if (colormode == "brightness") {
       //   std::cerr << "BRIGHTNESS" << std::endl;
