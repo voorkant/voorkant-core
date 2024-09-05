@@ -2,8 +2,6 @@
 #include "Observer.hpp"
 #include "logger.hpp"
 #include "uicomponents/UIComponents.hpp"
-#include <src/lv_api_map.h>
-#include <src/widgets/lv_textarea.h>
 
 UILogBox::UILogBox(lv_obj_t* _parent) :
   UIComponent(_parent)

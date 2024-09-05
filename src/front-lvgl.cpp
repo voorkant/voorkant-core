@@ -6,19 +6,15 @@
 #include "uicomponents/UILogBox.hpp"
 #include "uicomponents/uirgblight.hpp"
 #include <memory>
-#include <src/core/lv_event.h>
 #include <src/core/lv_obj.h>
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_scroll.h>
 #include <src/core/lv_obj_style.h>
-#include <src/extra/layouts/flex/lv_flex.h>
 #include <src/font/lv_symbol_def.h>
+#include <src/indev/lv_indev.h>
 #include <src/misc/lv_anim.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_style.h>
-#include <src/widgets/lv_btn.h>
-#include <src/widgets/lv_label.h>
-#include <src/widgets/lv_textarea.h>
 
 // make sure these numbers align with SDL_HOR_RES/SDL_VER_RES
 #define MY_DISP_HOR_RES 800
@@ -55,9 +51,9 @@ void btnRightPress(lv_event_t* _e)
   }
 };
 
-void lvLogCallback(const char* buf)
+void lvLogCallback(lv_log_level_t _level, const char* _buf) // FIXME use level
 {
-  g_log << Logger::Error << buf << endl;
+  g_log << Logger::Error << _buf << endl;
 }
 
 void uithread(int _argc, char* _argv[])
@@ -92,50 +88,57 @@ void uithread(int _argc, char* _argv[])
   lv_init();
 #if defined(VOORKANT_LVGL_SDL)
   g_log << Logger::Debug << "calling sdl_init()" << std::endl;
-  sdl_init();
+  // sdl_init();
 #elif defined(VOORKANT_LVGL_FBDEV)
   g_log << Logger::Debug << "calling fbdev_init()" << std::endl;
-  fbdev_init();
+  // fbdev_init();
 #else
 #error "no useful VOORKANT_LVGL_* found"
 #endif
 
   /*Create a display buffer*/
-  static lv_disp_draw_buf_t disp_buf;
-  static lv_color_t buf_1[DISP_BUF_SIZE];
-  static lv_color_t buf_2[DISP_BUF_SIZE];
-  lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, DISP_BUF_SIZE);
-
-  lv_disp_drv_t disp_drv; /*A variable to hold the drivers. Can be local variable*/
-  lv_disp_drv_init(&disp_drv); /*Basic initialization*/
-  disp_drv.hor_res = MY_DISP_HOR_RES;
-  disp_drv.ver_res = MY_DISP_VER_RES;
-  disp_drv.draw_buf = &disp_buf; /*Set an initialized buffer*/
 #if defined(VOORKANT_LVGL_SDL)
-  disp_drv.flush_cb = sdl_display_flush;
+  static lv_display_t* disp = lv_sdl_window_create(MY_DISP_HOR_RES, MY_DISP_VER_RES);
 #elif defined(VOORKANT_LVGL_FBDEV)
-  disp_drv.flush_cb = fbdev_flush; /*Set a flush callback to draw to the display*/
+  static lv_display_t* disp = lv_linux_fbdev_create();
+  lv_linux_fbdev_set_file(disp, "/dev/fb0");
+#endif
+  // static lv_color_t buf_1[DISP_BUF_SIZE];
+  // static lv_color_t buf_2[DISP_BUF_SIZE];
+  // lv_display_set_buffers(disp, buf_1, buf_2, DISP_BUF_SIZE, LV_DISPLAY_RENDER_MODE_PARTIAL); // FIXME ponder what mode we want
+
+  // lv_display_drv_t disp_drv; /*A variable to hold the drivers. Can be local variable*/
+  // lv_display_drv_init(&disp_drv); /*Basic initialization*/
+  // disp_drv.hor_res = MY_DISP_HOR_RES;
+  // disp_drv.ver_res = MY_DISP_VER_RES;
+  // disp_drv.draw_buf = &disp_buf; /*Set an initialized buffer*/
+#if defined(VOORKANT_LVGL_SDL)
+  // lv_display_set_flush_cb(disp, sdl_display_flush);
+#elif defined(VOORKANT_LVGL_FBDEV)
+  // lv_display_set_flush_cb(disp, fbdev_flush);
 #else
 #error "no useful VOORKANT_LVGL_* found"
 #endif
-  /*lv_disp_t* disp;*/
-  /*disp = */ lv_disp_drv_register(&disp_drv); /*Register the driver and save the created display objects*/
+  /*lv_display_t* disp;*/
+  // /*disp = */ lv_display_drv_register(&disp_drv); /*Register the driver and save the created display objects*/
 
 // #if 0
 #if defined(VOORKANT_LVGL_FBDEV)
-  evdev_init();
+  // evdev_init();
 #endif
-  lv_indev_drv_t enc_drv;
-  lv_indev_drv_init(&enc_drv);
-  enc_drv.type = LV_INDEV_TYPE_POINTER;
+  // lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
 #if defined(VOORKANT_LVGL_SDL)
-  enc_drv.read_cb = sdl_mouse_read;
+  static lv_indev_t* indev = lv_sdl_mouse_create();
+  // lv_indev_set_read_cb(indev, sdl_mouse_read);
 #elif defined(VOORKANT_LVGL_FBDEV)
-  enc_drv.read_cb = evdev_read;
+  static lv_indev_t* indev = lv_evdev_create(LV_INDEV_TYPE_POINTER, "/dev/input/event0");
+  lv_evdev_set_calibration(indev, 200, 3850, 3600, 320);
+  lv_indev_set_display(indev, disp);
+  // enc_drv.read_cb = evdev_read;
 #else
 #error "no useful VOORKANT_LVGL_* found"
 #endif
-  /*lv_indev_t* enc_indev = */ lv_indev_drv_register(&enc_drv);
+  // /*lv_indev_t* enc_indev = */ lv_indev_drv_register(&enc_drv);
   // #endif
   // lv_indev_set_group(enc_indev, g);
   // lv_group_t* g = lv_group_create();
@@ -144,7 +147,7 @@ void uithread(int _argc, char* _argv[])
   /* container for object row (top 80% of screen) and logs (bottom 20%) */
   lv_obj_t* row_and_logs = lv_obj_create(lv_scr_act());
   lv_obj_remove_style_all(row_and_logs);
-  lv_obj_clear_flag(row_and_logs, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_remove_flag(row_and_logs, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_size(row_and_logs, MY_DISP_HOR_RES, MY_DISP_VER_RES);
   lv_obj_set_flex_flow(row_and_logs, LV_FLEX_FLOW_ROW_WRAP);
 
@@ -173,14 +176,14 @@ void uithread(int _argc, char* _argv[])
   lv_style_set_radius(&style, lv_coord_t(0));
   lv_obj_add_style(bottom_row, &style, 0);
 
-  lv_obj_t* left_btn = lv_btn_create(bottom_row);
+  lv_obj_t* left_btn = lv_button_create(bottom_row);
   lv_obj_t* left_btn_txt = lv_label_create(left_btn);
   lv_label_set_text(left_btn_txt, LV_SYMBOL_LEFT);
   lv_obj_add_event_cb(left_btn, btnLeftPress, LV_EVENT_CLICKED, NULL);
 
   UILogBox logbox(bottom_row);
 
-  lv_obj_t* right_btn = lv_btn_create(bottom_row);
+  lv_obj_t* right_btn = lv_button_create(bottom_row);
   lv_obj_t* right_btn_txt = lv_label_create(right_btn);
   lv_label_set_text(right_btn_txt, LV_SYMBOL_RIGHT);
   lv_obj_add_event_cb(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);

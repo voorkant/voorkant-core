@@ -1,8 +1,6 @@
 #ifndef UIRGBLIGHT_HPP
 #define UIRGBLIGHT_HPP
 #include "UIComponents.hpp"
-#include <src/core/lv_event.h>
-#include <src/draw/lv_img_buf.h>
 
 class UIRGBLight : public UIEntity
 {
@@ -19,6 +17,8 @@ private:
   lv_obj_t* btnColorTemp;
   lv_obj_t* btnWhite;
   lv_obj_t* cw;
+  std::vector<uint8_t> cwHSbuf;
+  lv_obj_t* cwCircle;
   lv_obj_t* brightnessSlider;
   lv_obj_t* colortempSlider;
   lv_obj_t* tilecontainer;

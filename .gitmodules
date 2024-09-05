@@ -4,9 +4,6 @@
 [submodule "src/ext/lvgl"]
 	path = subprojects/lvgl
 	url = https://github.com/lvgl/lvgl
-[submodule "subprojects/lv_drivers"]
-	path = subprojects/lv_drivers
-	url = https://github.com/lvgl/lv_drivers
 [submodule "src/ext/magic_enum"]
 	path = src/ext/magic_enum
 	url = https://github.com/Neargye/magic_enum

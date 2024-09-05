@@ -1,10 +1,12 @@
 #include "uiapexcard.hpp"
 #include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
-#include <src/extra/widgets/chart/lv_chart.h>
+#include <src/core/lv_obj_style.h>
+#include <src/layouts/grid/lv_grid.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_color.h>
 #include <chrono>
+#include <src/widgets/scale/lv_scale.h>
 #include <time.h>
 #include <date/date.h>
 
@@ -15,9 +17,11 @@
 
 static auto const G_TICK_DIVIDER = 12; // if values.size() doesn't divide cleanly by this, your graph will suck
 
+#if 0
 void UIApexCard::drawEventCB(lv_event_t* _e)
 {
-  lv_obj_draw_part_dsc_t* dsc = lv_event_get_draw_part_dsc(_e);
+  lv_draw_task_t* task = lv_event_get_draw_task(_e);
+  lv_draw_dsc_base_t* dsc = task->draw_dsc;
   if (!lv_obj_draw_part_check_type(dsc, &lv_chart_class, LV_CHART_DRAW_PART_TICK_LABEL))
     return;
 
@@ -39,6 +43,7 @@ void UIApexCard::drawEventCB(lv_event_t* _e)
     lv_snprintf(dsc->text, dsc->text_length, "%s", timebuf); // is there something simpler than snprintf if we already have the string?
   }
 }
+#endif
 
 // https://stackoverflow.com/a/38839725
 // FIXME would be much easier to handle this in JS
@@ -70,27 +75,43 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   lv_obj_set_height(flowpanel, /* MY_DISP_VER_RES */ 480 * 0.8);
   // lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
-  lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
-  lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+  // lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
+  // lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+  static int32_t column_dsc[] = {40, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST}; /*2 columns with 100 and 400 ps width*/
+  static int32_t row_dsc[] = {25, LV_GRID_FR(1), 25, LV_GRID_TEMPLATE_LAST}; /*3 100 px tall rows*/
+  lv_obj_set_grid_dsc_array(flowpanel, column_dsc, row_dsc);
+  lv_obj_set_layout(flowpanel, LV_LAYOUT_GRID);
 
   // lv_coord_t widthheight = uiEntityWidth - (lv_coord_t)50;
 
   g_log << Logger::LogLevel::Debug << "apexcard=" << _card << std::endl;
   lv_obj_t* label = createLabel(flowpanel, _card["header"]["title"]); // FIXME check show bool FIXME handle absence of title FIXME once we figure out object cleanup, stick this in the right spot
   lv_obj_set_width(label, LV_PCT(100));
-  lv_obj_set_align(label, LV_ALIGN_CENTER);
+  // lv_obj_set_align(label, LV_ALIGN_CENTER);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+  lv_obj_set_grid_cell(label, LV_GRID_ALIGN_CENTER, 0, 2, LV_GRID_ALIGN_CENTER, 0, 1);
+
+  // chart_and_y_axis = lv_obj_create(flowpanel);
+  // lv_obj_set_size(chart_and_y_axis, uiEntityWidth * 3 - 100, /* MY_DISP_VER_RES */ 480 * 0.65 - 30 - 25);
+  // lv_obj_set_align(chart_and_y_axis, LV_ALIGN_CENTER);
+  // lv_obj_set_grid_cell(chart_and_y_axis, LV_GRID_ALIGN_CENTER, 0, 1, LV_GRID_ALIGN_CENTER, 1, 1);
+  // lv_obj_set_flex_align(chart_and_y_axis, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+  // lv_obj_set_style_border_width(chart_and_y_axis, 0, LV_PART_MAIN);
+
+  lv_obj_t* scale_y = lv_scale_create(flowpanel);
+  lv_obj_set_grid_cell(scale_y, LV_GRID_ALIGN_CENTER, 0, 1, LV_GRID_ALIGN_CENTER, 1, 1);
 
   chart = lv_chart_create(flowpanel);
-  lv_obj_set_size(chart, uiEntityWidth * 3 - 100, /* MY_DISP_VER_RES */ 480 * 0.65 - 30);
+  lv_obj_set_grid_cell(chart, LV_GRID_ALIGN_CENTER, 1, 1, LV_GRID_ALIGN_CENTER, 1, 1);
+  // lv_obj_set_size(chart, uiEntityWidth * 3 - 100 - 25, /* MY_DISP_VER_RES */ 480 * 0.65 - 30);
   // lv_obj_set_width(chart, LV_PCT(100));
   // lv_obj_set_align(chart, LV_ALIGN_CENTER);
 
   std::cerr << "lv_obj_get_content_width(chart)=" << lv_obj_get_content_width(chart) << std::endl;
   std::cerr << "lv_obj_get_content_height(chart)=" << lv_obj_get_content_height(chart) << std::endl;
-  lv_obj_center(chart);
+  // lv_obj_center(chart);
   lv_chart_set_type(chart, LV_CHART_TYPE_BAR);
-  lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
+  // lv_obj_add_event_cb(chart, drawEventCB, LV_EVENT_DRAW_PART_BEGIN, reinterpret_cast<void*>(this));
 
   std::cerr << _card << std::endl;
   std::string data_generator = _card["series"][0]["data_generator"].get<std::string>();
@@ -176,8 +197,60 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   }
   lv_chart_set_point_count(chart, values.size()); // hours
   lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, min * float_factor, max * float_factor); // FIXME/FIXTHEM: lvgl 8.3 docs say it's LV_CHART_AXIS_PRIMARY which is just wrong
-  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, values.size(), 1, true, 40); // major ticks point 10 px down, minor 5. values.size() major ticks, and 1 minor (actually means zero!) in between those. [true] labels on major ticks. 40px for labels.
-  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
+  lv_obj_t* scale_x = lv_scale_create(flowpanel);
+
+  lv_scale_set_mode(scale_x, LV_SCALE_MODE_HORIZONTAL_BOTTOM);
+  lv_obj_update_layout(chart); // this makes lv_chart_get_point_pos_by_id work later
+
+  const uint32_t scale_x_tick_interval = 6;
+  lv_obj_set_size(scale_x, lv_obj_get_width(chart), 25);
+  lv_scale_set_total_tick_count(scale_x, values.size());
+  lv_scale_set_major_tick_every(scale_x, scale_x_tick_interval);
+  lv_obj_set_style_length(scale_x, 5, LV_PART_INDICATOR);
+  lv_obj_set_style_length(scale_x, 2, LV_PART_ITEMS);
+  lv_scale_set_range(scale_x, 0, values.size() - 1);
+  lv_scale_set_label_show(scale_x, true);
+  lv_obj_set_style_pad_hor(scale_x, lv_chart_get_first_point_center_offset(chart), 0);
+  lv_obj_set_grid_cell(scale_x, LV_GRID_ALIGN_CENTER, 1, 1, LV_GRID_ALIGN_CENTER, 2, 1);
+
+  labels_x.clear();
+  for (int index = 0; index < values.size(); index += scale_x_tick_interval) {
+    auto timestamp = values[index].first; // FIXME: check index before we, well, index?
+    struct tm local_timestamp;
+    localtime_r(&timestamp, &local_timestamp);
+    char timebuf[100] = "";
+    if (local_timestamp.tm_hour == 0) {
+      strftime(timebuf, sizeof(timebuf), "%d %b", &local_timestamp);
+      labels_x.emplace_back(std::string(timebuf));
+    }
+    else if (index % scale_x_tick_interval == 0) {
+      strftime(timebuf, sizeof(timebuf), "%H:%M", &local_timestamp);
+      labels_x.emplace_back(std::string(timebuf));
+    }
+  }
+
+  labels_x_charp.clear();
+  for (int index = 0; index < labels_x.size(); index++) {
+    labels_x_charp.push_back(labels_x[index].data());
+  }
+  labels_x_charp.push_back(nullptr);
+
+  // static const char *labels_x[17] = {"FOO", "bar", "FOO", "bar", "FOO", "bar", "FOO", "bar", "FOO", "bar", "FOO", "bar", "FOO", "bar", "FOO", "bar", NULL};
+  lv_scale_set_text_src(scale_x, labels_x_charp.data());
+
+  lv_scale_set_mode(scale_y, LV_SCALE_MODE_VERTICAL_LEFT);
+  lv_scale_set_range(scale_y, min * float_factor, max * float_factor);
+  lv_obj_set_size(scale_y, 25, lv_obj_get_height(chart));
+  lv_scale_set_total_tick_count(scale_y, 11);
+  lv_scale_set_major_tick_every(scale_y, 2);
+  lv_obj_set_style_length(scale_y, 5, LV_PART_INDICATOR);
+  lv_obj_set_style_length(scale_y, 2, LV_PART_ITEMS);
+  lv_scale_set_label_show(scale_y, true);
+  lv_obj_set_style_pad_hor(scale_y, lv_chart_get_first_point_center_offset(chart), 0);
+  lv_obj_set_style_pad_ver(scale_y, 0, 0);
+
+  // lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, values.size(), 1, true, 40); // major ticks point 10 px down, minor 5. values.size() major ticks, and 1 minor (actually means zero!) in between those. [true] labels on major ticks. 40px for labels.
+  // lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
 
   ser1 = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_BLUE), LV_CHART_AXIS_PRIMARY_Y);
   lv_coord_t* ser1_array = lv_chart_get_y_array(chart, ser1);
@@ -269,7 +342,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   // lv_obj_set_align(btns, LV_ALIGN_CENTER);
   // lv_obj_set_flex_flow(btns, LV_FLEX_FLOW_ROW);
   // lv_obj_set_flex_align(btns, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-  // lv_obj_clear_flag(btns, LV_OBJ_FLAG_SCROLLABLE);
+  // lv_obj_remove_flag(btns, LV_OBJ_FLAG_SCROLLABLE);
 
   // btnOnOff = createImageButton(LV_SYMBOL_POWER, UIApexCard::btnOnOffCB, LV_EVENT_VALUE_CHANGED, true);
 
@@ -342,7 +415,7 @@ void UIApexCard::update()
   //     }
   //   }
   //   else {
-  //     lv_obj_clear_state(btnOnOff, LV_STATE_CHECKED);
+  //     lv_obj_remove_state(btnOnOff, LV_STATE_CHECKED);
   //     lv_slider_set_value(brightnessSlider, 0, LV_ANIM_OFF);
   //     lv_label_set_text(brightnessLabel, "Off");
   //   }
