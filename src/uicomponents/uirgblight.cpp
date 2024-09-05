@@ -180,7 +180,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   tilecontainer = lv_tileview_create(flowpanel);
   lv_obj_add_event_cb(tilecontainer, UIRGBLight::changeTileCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
-  lv_obj_set_height(tilecontainer, uiEntityWidth);
+  lv_obj_set_height(tilecontainer, uiEntityWidth - 10);
 
   lv_coord_t sliderheight = widthheight - (lv_coord_t)25;
 
