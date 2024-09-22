@@ -6,7 +6,7 @@
 class UILogBox : public UIComponent
 {
 public:
-  UILogBox(lv_obj_t* _parent);
+  UILogBox(lv_obj_t* _parent, lv_style_t* _style);
   ~UILogBox();
   void updateIfNeeded();
 

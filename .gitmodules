@@ -10,3 +10,6 @@
 [submodule "subprojects/quickjs"]
 	path = subprojects/quickjs
 	url = https://github.com/quickjs-ng/quickjs
+[submodule "src/fonts/polarsys-b612"]
+	path = src/fonts/polarsys-b612
+	url = https://github.com/polarsys/b612/

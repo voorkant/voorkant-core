@@ -63,6 +63,20 @@ curl_dep = dependency(
     ],
 )
 
+xxd_prog = find_program('xxd', required: true)
+xxd_generator = generator(
+    xxd_prog,
+    output: '@PLAINNAME@.c',
+    arguments: ['-n', '@EXTRA_ARGS@', '-i', '@INPUT@', '@OUTPUT@'],
+)
+
+# FIXME: the explicit 'B612_Regular_ttf' below would ideally be @PLAINNAME@.underscorify() above except substitution does not work there
+
+font_b612_c = xxd_generator.process(
+    'src/fonts/polarsys-b612/fonts/ttf/B612-Regular.ttf',
+    extra_args: 'B612_Regular_ttf',
+)
+
 brew_prefix = '/opt/homebrew/include'
 brew = find_program('brew', required: false)
 if brew.found()
@@ -218,6 +232,7 @@ if get_option('front-lvgl').enabled()
             'src/uicomponents/UIComponents.cpp',
             'src/front-lvgl.cpp',
             'src/lv_conf.h',
+            font_b612_c,
             'src/generated/domains.hpp',
             version_file,
         ],
