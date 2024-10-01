@@ -6951,4 +6951,5 @@ const lv_image_dsc_t G_COLORTEMP24 = {
   .header.w = 24,
   .header.h = 24,
   .data = G_COLORTEMP24_MAP,
+  .data_size = sizeof G_COLORTEMP24_MAP,
 };

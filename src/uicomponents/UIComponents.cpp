@@ -75,7 +75,7 @@ void UIButton::btnPressCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
 
-  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
+  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(lv_event_get_user_data(_e));
   if (code == LV_EVENT_VALUE_CHANGED) {
     HADomains::Light light(ent);
     light.toggle({});
@@ -122,7 +122,7 @@ void UISwitch::swToggleCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
 
-  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
+  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(lv_event_get_user_data(_e));
   if (code == LV_EVENT_VALUE_CHANGED) {
     HADomains::Light light(ent);
     light.toggle({});
@@ -227,7 +227,7 @@ void UISensor::clickCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
 
-  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
+  std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(lv_event_get_user_data(_e));
   if (code == LV_EVENT_CLICKED) {
     g_log << Logger::Debug << "got click on " << ent->fullname << endl;
   }

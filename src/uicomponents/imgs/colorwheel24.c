@@ -6951,4 +6951,5 @@ const lv_image_dsc_t G_COLORWHEEL24 = {
   .header.w = 24,
   .header.h = 24,
   .data = G_COLORWHEEL24_MAP,
+  .data_size = sizeof G_COLORWHEEL24_MAP,
 };
