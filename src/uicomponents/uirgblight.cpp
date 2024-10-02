@@ -346,7 +346,7 @@ void UIRGBLight::btnOnOffCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
 
-  UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
+  UIRGBLight* rgb_light = (UIRGBLight*)(lv_event_get_user_data(_e));
   if (code == LV_EVENT_VALUE_CHANGED) {
     HADomains::Light light(rgb_light->entity);
     light.toggle({}); // FIXME: probably better to check state and send turn_off() or turn_on()
@@ -358,7 +358,7 @@ void UIRGBLight::btnBrightnessCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
 
-  UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
+  UIRGBLight* rgb_light = (UIRGBLight*)(lv_event_get_user_data(_e));
   if (code == LV_EVENT_CLICKED) {
     lv_obj_set_tile_id(rgb_light->tilecontainer, 0, 0, LV_ANIM_OFF);
     if (rgb_light->showBrightness) {
@@ -377,7 +377,7 @@ void UIRGBLight::btnColorWheelCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
 
-  UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
+  UIRGBLight* rgb_light = (UIRGBLight*)(lv_event_get_user_data(_e));
   if (code == LV_EVENT_CLICKED) {
     lv_obj_set_tile_id(rgb_light->tilecontainer, 1, 0, LV_ANIM_OFF);
     if (rgb_light->showBrightness) {
@@ -396,7 +396,7 @@ void UIRGBLight::btnColorTempCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
 
-  UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
+  UIRGBLight* rgb_light = (UIRGBLight*)(lv_event_get_user_data(_e));
   if (code == LV_EVENT_CLICKED) {
     lv_obj_set_tile_id(rgb_light->tilecontainer, 2, 0, LV_ANIM_OFF);
     if (rgb_light->showBrightness) {
@@ -417,7 +417,7 @@ void UIRGBLight::slideBrightnessCB(lv_event_t* _e)
   if (code == LV_EVENT_VALUE_CHANGED) {
     auto slidervalue = lv_slider_get_value(lv_event_get_target_obj(_e));
 
-    std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
+    std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(lv_event_get_user_data(_e));
     HADomains::Light light(ent);
 
     if (slidervalue == 0) {
@@ -435,7 +435,7 @@ void UIRGBLight::slideColorTempCB(lv_event_t* _e)
   if (code == LV_EVENT_VALUE_CHANGED) {
     auto slidervalue = lv_slider_get_value(lv_event_get_target_obj(_e));
 
-    std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(_e->user_data);
+    std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(lv_event_get_user_data(_e));
     HADomains::Light light(ent);
 
     light.turnOn({.kelvin = slidervalue});
@@ -446,7 +446,7 @@ void UIRGBLight::changeTileCB(lv_event_t* _e)
 {
   lv_event_code_t code = lv_event_get_code(_e);
 
-  UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
+  UIRGBLight* rgb_light = (UIRGBLight*)(lv_event_get_user_data(_e));
   if (code == LV_EVENT_VALUE_CHANGED) {
     // from https://forum.lvgl.io/t/get-current-active-tile-in-tileview/1644
     lv_obj_t* tile = lv_tileview_get_tile_act(rgb_light->tilecontainer);
@@ -486,7 +486,7 @@ void UIRGBLight::changeColorWheelCB(lv_event_t* _e)
   if (code == LV_EVENT_CLICKED) {
     // lv_obj_t* colorwheel = lv_event_get_current_target_obj(_e);
 
-    UIRGBLight* rgb_light = (UIRGBLight*)(_e->user_data);
+    UIRGBLight* rgb_light = (UIRGBLight*)(lv_event_get_user_data(_e));
 
     g_log << Logger::Debug << "color wheel got click" << std::endl;
     lv_point_t point;
