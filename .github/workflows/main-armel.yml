@@ -25,7 +25,7 @@ jobs:
     - name: Configure Meson
       run: scripts/build-targets/run armel sh -c 'LDFLAGS="-static -latomic" meson setup build-armel --prefer-static -Dbuildtype=release -Dlvgl-driver=fbdev'
     - name: Build
-      run: scripts/build-targets/run armel sh -c 'meson compile -C build-armel'
+      run: scripts/build-targets/run armel sh -c 'meson compile -C build-armel -j8'
     # FIXME: put something useful (git hash?) in artifact name. We also want this in other workflows.
     - uses: actions/upload-artifact@v4
       with:
