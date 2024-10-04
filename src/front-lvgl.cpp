@@ -58,7 +58,7 @@ void lvLogCallback(lv_log_level_t _level, const char* _buf) // FIXME use level
 
 void uithread(int _argc, char* _argv[])
 {
-  argparse::ArgumentParser program("voorkant-lvgl");
+  argparse::ArgumentParser program("voorkant-lvgl", getVersion());
 
   argparse::ArgumentParser entity_command("entity");
   entity_command.add_argument("pattern").help("what entity to render, in a c++ regex");

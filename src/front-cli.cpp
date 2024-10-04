@@ -42,7 +42,7 @@ private:
 
 void uithread(int _argc, char* _argv[])
 {
-  argparse::ArgumentParser program("voorkant-cli");
+  argparse::ArgumentParser program("voorkant-cli", getVersion());
   argparse::ArgumentParser version_command("version");
   program.add_subparser(version_command);
   argparse::ArgumentParser subscribe_command("subscribe");
