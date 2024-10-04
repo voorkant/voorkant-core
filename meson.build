@@ -73,6 +73,8 @@ if brew.found()
 endif
 
 cmake = import('cmake')
+
+# FIXME: we call this cmake_options but really it's mostly for LVGL, and we have separate cmake.subproject_options for quickjs. Need to rename.
 cmake_options = cmake.subproject_options()
 cmake_options.append_compile_args(
     'c',
@@ -91,6 +93,12 @@ cmake_options.append_compile_args(
     '-I' + meson.current_build_dir() + '/../src',
     '-I' + meson.current_build_dir() + '/../subprojects/lvgl',
     '-I/' + brew_prefix + '/include',
+)
+cmake_options.add_cmake_defines(
+    {
+        'LV_CONF_BUILD_DISABLE_EXAMPLES': true,
+        'LV_CONF_BUILD_DISABLE_DEMOS': true,
+    },
 )
 
 if cpp.links(
