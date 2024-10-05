@@ -28,6 +28,7 @@ jobs:
       run: scripts/build-targets/run armel sh -c 'meson compile -C build-armel'
     # FIXME: put something useful (git hash?) in artifact name. We also want this in other workflows.
     - uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: armel-build
         path: ${{github.workspace}}/build-armel
