@@ -154,6 +154,7 @@ void uithread(int _argc, char* _argv[])
   lv_style_init(&B612style);
   lv_style_set_text_font(&B612style, B612font);
 
+
   /* container for object row (top 80% of screen) and logs (bottom 20%) */
   lv_obj_t* row_and_logs = lv_obj_create(lv_scr_act());
   lv_obj_remove_style_all(row_and_logs);
