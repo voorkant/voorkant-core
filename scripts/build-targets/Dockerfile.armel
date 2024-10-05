@@ -2,5 +2,5 @@ FROM arm32v5/debian:bookworm
 RUN apt-get update
 RUN apt-get -yy install build-essential git cmake ninja-build nlohmann-json3-dev pkg-config libssl-dev xxd
 RUN apt-get -yy install python3-pip
-RUN pip install --break-system-packages https://github.com/Habbie/meson/archive/run-arm-on-aarch64.zip
+RUN pip install --break-system-packages meson
 RUN git config --global --add safe.directory '*'  # this makes meson's vcs_tag() work
