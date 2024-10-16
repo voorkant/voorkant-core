@@ -1,5 +1,6 @@
 #include "uirgblight.hpp"
 #include "logger.hpp"
+#include "uicomponents/UIComponents.hpp"
 #include <src/core/lv_obj_pos.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_color.h>
@@ -18,6 +19,8 @@ lv_obj_t* UIRGBLight::createImageButton(const void* _imgOrSymbol, lv_event_cb_t 
   lv_obj_t* btn = lv_button_create(btns);
   lv_obj_set_size(btn, 50, 40);
   lv_obj_set_style_pad_all(btn, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_add_style(btn, &voorkant::lvgl::mdistyle, 0);
+
   if (_toggle) {
     lv_obj_add_flag(btn, LV_OBJ_FLAG_CHECKABLE);
   }
@@ -180,9 +183,9 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   tilecontainer = lv_tileview_create(flowpanel);
   lv_obj_add_event_cb(tilecontainer, UIRGBLight::changeTileCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
-  lv_obj_set_height(tilecontainer, uiEntityWidth - 10);
+  lv_obj_set_height(tilecontainer, uiEntityWidth - 15);
 
-  lv_coord_t sliderheight = widthheight - (lv_coord_t)25;
+  lv_coord_t sliderheight = widthheight - (lv_coord_t)30;
 
   if (showBrightness) {
     lv_obj_t* brightness_tile = lv_tileview_add_tile(tilecontainer, 0, 0, LV_DIR_HOR);
@@ -259,7 +262,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_flex_align(btns, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
   lv_obj_remove_flag(btns, LV_OBJ_FLAG_SCROLLABLE);
 
-  btnOnOff = createImageButton(LV_SYMBOL_POWER, UIRGBLight::btnOnOffCB, LV_EVENT_VALUE_CHANGED, true);
+  btnOnOff = createImageButton(MDI_POWER_STANDBY, UIRGBLight::btnOnOffCB, LV_EVENT_VALUE_CHANGED, true);
 
   if (showBrightness) {
     btnBrightness = createImageButton(&G_BRIGHTNESS24, UIRGBLight::btnBrightnessCB, LV_EVENT_CLICKED);

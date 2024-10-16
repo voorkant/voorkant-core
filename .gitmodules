@@ -13,3 +13,6 @@
 [submodule "src/fonts/polarsys-b612"]
 	path = src/fonts/polarsys-b612
 	url = https://github.com/polarsys/b612/
+[submodule "src/fonts/MaterialDesign-Webfont"]
+	path = src/fonts/MaterialDesign-Webfont
+	url = https://github.com/Templarian/MaterialDesign-Webfont
