@@ -9,7 +9,8 @@ on:
 
 jobs:
   build-armel:
-    runs-on: ${{ github.repository == 'voorkant/voorkant-core' && 'ubicloud-standard-2-arm' || 'ubuntu-latest' }}
+    runs-on: ${{ ( vars.ARM64_USE_UBICLOUD == '1' || github.repository == 'voorkant/voorkant-core' ) && 'ubicloud-standard-2-arm' || 'ubuntu-latest' }}
+    if: ${{ vars.ARM64_SKIP != '1' }}
     steps:
     - uses: actions/checkout@v4
       with:
