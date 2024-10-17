@@ -77,6 +77,11 @@ font_b612_c = xxd_generator.process(
     extra_args: 'B612_Regular_ttf',
 )
 
+font_mdi_c = xxd_generator.process(
+    'src/fonts/MaterialDesign-Webfont/fonts/materialdesignicons-webfont.ttf',
+    extra_args: 'mdi_ttf',
+)
+
 brew_prefix = '/opt/homebrew/include'
 brew = find_program('brew', required: false)
 if brew.found()
@@ -233,6 +238,7 @@ if get_option('front-lvgl').enabled()
             'src/front-lvgl.cpp',
             'src/lv_conf.h',
             font_b612_c,
+            font_mdi_c,
             'src/generated/domains.hpp',
             version_file,
         ],

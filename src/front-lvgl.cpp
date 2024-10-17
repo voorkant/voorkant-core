@@ -25,6 +25,19 @@
 
 extern unsigned char B612_Regular_ttf[];
 extern unsigned int B612_Regular_ttf_len;
+extern unsigned char mdi_ttf[];
+extern unsigned int mdi_ttf_len;
+
+namespace voorkant
+{
+namespace lvgl
+{
+  lv_font_t* b612font;
+  lv_style_t b612style;
+  lv_font_t* mdifont;
+  lv_style_t mdistyle;
+}
+}
 
 std::mutex g_lvgl_updatelock;
 lv_obj_t* cont_row;
@@ -149,10 +162,15 @@ void uithread(int _argc, char* _argv[])
   // lv_group_t* g = lv_group_create();
   // lv_group_set_default(g);
 
-  static lv_font_t* B612font = lv_tiny_ttf_create_data_ex(B612_Regular_ttf, B612_Regular_ttf_len, 16, LV_FONT_KERNING_NORMAL, 1024);
-  static lv_style_t B612style;
-  lv_style_init(&B612style);
-  lv_style_set_text_font(&B612style, B612font);
+  voorkant::lvgl::b612font = lv_tiny_ttf_create_data_ex(B612_Regular_ttf, B612_Regular_ttf_len, 16, LV_FONT_KERNING_NORMAL, 1024);
+  lv_style_init(&voorkant::lvgl::b612style);
+  lv_style_set_text_font(&voorkant::lvgl::b612style, voorkant::lvgl::b612font);
+
+  voorkant::lvgl::mdifont = lv_tiny_ttf_create_data_ex(mdi_ttf, mdi_ttf_len, 16, LV_FONT_KERNING_NORMAL, 1024);
+  lv_style_init(&voorkant::lvgl::mdistyle);
+  lv_style_set_text_font(&voorkant::lvgl::mdistyle, voorkant::lvgl::mdifont);
+
+  lv_obj_add_style(lv_scr_act(), &voorkant::lvgl::b612style, 0);
 
   /* container for object row (top 80% of screen) and logs (bottom 20%) */
   lv_obj_t* row_and_logs = lv_obj_create(lv_scr_act());
@@ -188,14 +206,17 @@ void uithread(int _argc, char* _argv[])
 
   lv_obj_t* left_btn = lv_button_create(bottom_row);
   lv_obj_t* left_btn_txt = lv_label_create(left_btn);
-  lv_label_set_text(left_btn_txt, LV_SYMBOL_LEFT);
+  lv_label_set_text(left_btn_txt, MDI_ARROW_LEFT);
   lv_obj_add_event_cb(left_btn, btnLeftPress, LV_EVENT_CLICKED, NULL);
+  lv_obj_add_style(left_btn, &voorkant::lvgl::mdistyle, 0);
 
-  UILogBox logbox(bottom_row, &B612style);
+  UILogBox logbox(bottom_row, &voorkant::lvgl::b612style);
 
   lv_obj_t* right_btn = lv_button_create(bottom_row);
   lv_obj_t* right_btn_txt = lv_label_create(right_btn);
-  lv_label_set_text(right_btn_txt, LV_SYMBOL_RIGHT);
+  lv_label_set_text(right_btn_txt, MDI_ARROW_RIGHT);
+  lv_obj_add_style(right_btn_txt, &voorkant::lvgl::mdistyle, 0);
+
   lv_obj_add_event_cb(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);
 
   lv_log_register_print_cb(lvLogCallback);
