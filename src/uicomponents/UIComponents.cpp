@@ -1,6 +1,7 @@
 #include "UIComponents.hpp"
 #include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
+#include <src/core/lv_obj_style_gen.h>
 #include <src/misc/lv_area.h>
 
 lv_obj_t* UIComponent::createLabel(lv_obj_t* _parent, std::string _text)
@@ -186,16 +187,31 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_height(flowpanel, LV_SIZE_CONTENT);
   lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
-  lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
+  lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_ROW);
   lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
   lv_obj_add_event_cb(flowpanel, UISensor::clickCB, LV_EVENT_CLICKED, reinterpret_cast<void*>(&entity));
 
-  lv_obj_t* label = createLabel(flowpanel, entity->name);
+  lv_obj_t* iconpart = lv_image_create(flowpanel);
+  lv_obj_set_width(iconpart, 30);
+  lv_obj_set_height(iconpart, LV_SIZE_CONTENT);
+  lv_obj_set_style_pad_all(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_border_width(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_image_set_src(iconpart, LV_SYMBOL_LEFT);
+
+  lv_obj_t* textpart = lv_obj_create(flowpanel);
+  lv_obj_set_width(textpart, uiEntityWidth - 55);
+  lv_obj_set_height(textpart, LV_SIZE_CONTENT);
+  lv_obj_set_style_pad_all(textpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_border_width(textpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_flex_flow(textpart, LV_FLEX_FLOW_COLUMN);
+  lv_obj_set_flex_align(textpart, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+
+  lv_obj_t* label = createLabel(textpart, entity->name);
   lv_obj_set_width(label, LV_PCT(100));
   lv_obj_set_align(label, LV_ALIGN_LEFT_MID);
   lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
 
-  extratext2 = createLabel(flowpanel, "State:");
+  extratext2 = createLabel(textpart, "State:");
   lv_obj_set_width(extratext2, LV_PCT(100));
   lv_obj_set_align(extratext2, LV_ALIGN_RIGHT_MID);
   lv_obj_set_style_text_align(extratext2, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
@@ -203,7 +219,7 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   const auto& services = _entity->getServices();
   for (const auto& service : services) {
     string txt = "Service: ";
-    lv_obj_t* servicelabel = createLabel(flowpanel, txt.append(service->name));
+    lv_obj_t* servicelabel = createLabel(textpart, txt.append(service->name));
     lv_obj_set_width(servicelabel, LV_PCT(100));
     lv_obj_set_align(servicelabel, LV_ALIGN_LEFT_MID);
   }
