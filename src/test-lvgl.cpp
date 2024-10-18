@@ -5,7 +5,6 @@
 #include <string>
 #include <unistd.h>
 
-#include "main.hpp"
 #include "WSConn.hpp"
 #include "Backend.hpp"
 #include "HAEntity.hpp"
