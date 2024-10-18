@@ -5,10 +5,6 @@
 #include <string>
 #include <unistd.h>
 
-#include "WSConn.hpp"
-#include "Backend.hpp"
-#include "HAEntity.hpp"
-
 #include "logger.hpp"
 
 using std::string;
