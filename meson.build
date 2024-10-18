@@ -255,4 +255,26 @@ if get_option('front-lvgl').enabled()
             lvgl_backend_define,
         ],
     )
+
+    executable(
+        'test-lvgl',
+        [
+            'src/test-lvgl.cpp',
+            'src/logger.cpp',
+            font_b612_c,
+            version_file,
+        ],
+        install: false,
+        dependencies: [
+            thread_dep,
+            lvgl_dep,
+            sdl2_dep,
+            libatomic,
+        ],
+        include_directories: incdir,
+        cpp_args: [
+            '-DLV_CONF_PATH=' + meson.current_build_dir() + '/../src/lv_conf.h',
+            lvgl_backend_define,
+        ],
+    )
 endif

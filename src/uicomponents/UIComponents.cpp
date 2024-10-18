@@ -2,7 +2,10 @@
 #include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_style_gen.h>
+#include <src/display/lv_display.h>
 #include <src/misc/lv_area.h>
+#include <src/misc/lv_event.h>
+#include <src/widgets/canvas/lv_canvas.h>
 
 lv_obj_t* UIComponent::createLabel(lv_obj_t* _parent, std::string _text)
 {
@@ -191,12 +194,32 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
   lv_obj_add_event_cb(flowpanel, UISensor::clickCB, LV_EVENT_CLICKED, reinterpret_cast<void*>(&entity));
 
-  lv_obj_t* iconpart = lv_image_create(flowpanel);
-  lv_obj_set_width(iconpart, 30);
-  lv_obj_set_height(iconpart, LV_SIZE_CONTENT);
+
+  lv_obj_t* iconpart = lv_canvas_create(lv_screen_active());
+#define MAAT 450
+  lv_obj_set_width(iconpart, MAAT);
+  lv_obj_set_height(iconpart, MAAT);
   lv_obj_set_style_pad_all(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_border_width(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_image_set_src(iconpart, LV_SYMBOL_LEFT);
+  static auto canvas_buf = lv_draw_buf_create(MAAT, MAAT, LV_COLOR_FORMAT_ARGB8888, 0);
+  static lv_layer_t svglayer;
+  lv_canvas_init_layer(iconpart, &svglayer);
+  lv_image_cache_drop(canvas_buf);
+  lv_canvas_set_draw_buf(iconpart, canvas_buf);
+  lv_canvas_fill_bg(iconpart, lv_color_make(0xff, 0x7f, 0xff), 255);
+
+  static char svg_data[] =  "<svg width=\"8cm\" height=\"4cm\" viewBox=\"0 0 800 400\">"
+                                "<defs><radialGradient id=\"MyGradient\">"
+                                "<stop offset=\"0.2\" stop-color=\"white\"/>"
+                                "<stop offset=\"0.75\" stop-color=\"black\"/>"
+                                "</radialGradient></defs>"
+                                "<rect fill=\"url(#MyGradient)\" stroke=\"black\" stroke-width=\"5\""
+                                "x=\"100\" y=\"100\" width=\"300\" height=\"300\"/></svg>";
+
+  lv_svg_node_t * svg = lv_svg_load_data(svg_data, lv_strlen(svg_data));
+  lv_draw_svg(&svglayer, svg);
+  lv_canvas_finish_layer(iconpart, &svglayer);
+  lv_svg_node_delete(svg);
 
   lv_obj_t* textpart = lv_obj_create(flowpanel);
   lv_obj_set_width(textpart, uiEntityWidth - 55);

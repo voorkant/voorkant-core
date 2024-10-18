@@ -155,7 +155,7 @@ void uithread(int _argc, char* _argv[])
   lv_style_set_text_font(&B612style, B612font);
 
   /* container for object row (top 80% of screen) and logs (bottom 20%) */
-  lv_obj_t* row_and_logs = lv_obj_create(lv_scr_act());
+  lv_obj_t* row_and_logs = lv_obj_create(lv_screen_active());
   lv_obj_remove_style_all(row_and_logs);
   lv_obj_remove_flag(row_and_logs, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_size(row_and_logs, MY_DISP_HOR_RES, MY_DISP_VER_RES);
