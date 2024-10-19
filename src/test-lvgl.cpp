@@ -35,10 +35,16 @@ using std::flush;
 extern unsigned char B612_Regular_ttf[];
 extern unsigned int B612_Regular_ttf_len;
 
+void lvLogCallback(lv_log_level_t _level, const char* _buf) // FIXME use level
+{
+  g_log << Logger::Error << _buf << endl;
+}
+
 int main(int _argc, char* _argv[])
 {
   g_log << Logger::Debug << "calling lv_init()" << std::endl;
   lv_init();
+  lv_log_register_print_cb(lvLogCallback);
 #if defined(VOORKANT_LVGL_SDL)
   g_log << Logger::Debug << "calling sdl_init()" << std::endl;
   // sdl_init();
