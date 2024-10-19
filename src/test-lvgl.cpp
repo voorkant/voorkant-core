@@ -124,7 +124,8 @@ int main(int _argc, char* _argv[])
   lv_canvas_set_draw_buf(canvas, canvas_buf);
   lv_canvas_fill_bg(canvas, lv_color_make(0xff, 0xff, 0xff), 255);
   lv_draw_svg(&layer, svg);
-  lv_canvas_finish_layer(canvas, &layer);  lv_svg_node_delete(svg);
+  lv_canvas_finish_layer(canvas, &layer);
+  lv_svg_node_delete(svg);
 
   int i = 0;
   LV_LOG_ERROR("testing log");
