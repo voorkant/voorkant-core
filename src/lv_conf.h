@@ -327,7 +327,7 @@
      *  - LV_LOG_LEVEL_ERROR    Log only critical issues, when system may fail.
      *  - LV_LOG_LEVEL_USER     Log only custom log messages added by the user.
      *  - LV_LOG_LEVEL_NONE     Do not log anything. */
-    #define LV_LOG_LEVEL LV_LOG_LEVEL_WARN
+    #define LV_LOG_LEVEL LV_LOG_LEVEL_TRACE
 
     /** - 1: Print log with 'printf';
      *  - 0: User needs to register a callback with `lv_log_register_print_cb()`. */
@@ -347,9 +347,9 @@
     #define LV_LOG_USE_FILE_LINE 1
 
     /* Enable/disable LV_LOG_TRACE in modules that produces a huge number of logs. */
-    #define LV_LOG_TRACE_MEM        1   /**< Enable/disable trace logs in memory operations. */
-    #define LV_LOG_TRACE_TIMER      1   /**< Enable/disable trace logs in timer operations. */
-    #define LV_LOG_TRACE_INDEV      1   /**< Enable/disable trace logs in input device operations. */
+    #define LV_LOG_TRACE_MEM        0  /**< Enable/disable trace logs in memory operations. */
+    #define LV_LOG_TRACE_TIMER      0   /**< Enable/disable trace logs in timer operations. */
+    #define LV_LOG_TRACE_INDEV      0   /**< Enable/disable trace logs in input device operations. */
     #define LV_LOG_TRACE_DISP_REFR  1   /**< Enable/disable trace logs in display re-draw operations. */
     #define LV_LOG_TRACE_EVENT      1   /**< Enable/disable trace logs in event dispatch logic. */
     #define LV_LOG_TRACE_OBJ_CREATE 1   /**< Enable/disable trace logs in object creation (core `obj` creation plus every widget). */
@@ -695,7 +695,7 @@
 
 #define LV_USE_LIST       1
 
-#define LV_USE_LOTTIE     0  /**< Requires: lv_canvas, thorvg */
+#define LV_USE_LOTTIE     1  /**< Requires: lv_canvas, thorvg */
 
 #define LV_USE_MENU       1
 
