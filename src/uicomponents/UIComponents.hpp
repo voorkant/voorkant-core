@@ -10,6 +10,23 @@
 
 extern std::mutex g_lvgl_updatelock;
 
+// FIXME: this is to make objects from front-lvgl.cpp visible. This is not actually the right header file. We want some singleton core state object anyway.
+namespace voorkant
+{
+namespace lvgl
+{
+  extern lv_font_t* b612font;
+  extern lv_style_t b612style;
+  extern lv_font_t* mdifont;
+  extern lv_style_t mdistyle;
+}
+}
+
+#define MDI_ARROW_LEFT "\xf3\xb0\x81\x8d"
+#define MDI_ARROW_RIGHT "\xf3\xb0\x81\x94"
+#define MDI_POWER_STANDBY "\xf3\xb0\xa4\x86"
+#define MDI_WAZE "\xf3\xb0\xaf\x9e"
+
 // FIXME: we never free() the lv_obj_t*'s in code
 class UIComponent : public IObserver
 {
