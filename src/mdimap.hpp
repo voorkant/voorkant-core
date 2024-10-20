@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint> // FIXME: this works around a bug in frozen?
+
 #include <frozen/unordered_map.h>
 #include <frozen/string.h>
 
