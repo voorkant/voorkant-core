@@ -22,11 +22,6 @@ namespace lvgl
 }
 }
 
-#define MDI_ARROW_LEFT "\xf3\xb0\x81\x8d"
-#define MDI_ARROW_RIGHT "\xf3\xb0\x81\x94"
-#define MDI_POWER_STANDBY "\xf3\xb0\xa4\x86"
-#define MDI_WAZE "\xf3\xb0\xaf\x9e"
-
 // FIXME: we never free() the lv_obj_t*'s in code
 class UIComponent : public IObserver
 {
