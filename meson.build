@@ -153,6 +153,8 @@ if get_option('front-lvgl').enabled()
     endif
     quickjs_proj = cmake.subproject('quickjs', options: quickjs_options)
     quickjs_dep = quickjs_proj.dependency('qjs')
+
+    frozen_dep = dependency('frozen')
 endif
 
 incdir = include_directories('./src/')
@@ -241,6 +243,7 @@ if get_option('front-lvgl').enabled()
             font_mdi_c,
             'src/generated/domains.hpp',
             version_file,
+            'src/mdimap.cpp',
         ],
         install: true,
         dependencies: [
@@ -254,6 +257,7 @@ if get_option('front-lvgl').enabled()
             libatomic,
             date_dep,
             quickjs_dep,
+            frozen_dep,
         ],
         include_directories: incdir,
         cpp_args: [
