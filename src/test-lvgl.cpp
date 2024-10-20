@@ -121,8 +121,8 @@ int main(int _argc, char* _argv[])
   const char * svg_group_1 = \
                              "<svg><g fill=\"#FF0000\">"
                              "<rect x=\"0\" y=\"0\" width=\"100\" height=\"100\"/>"
-                             "<circle cx=\"100\" cy=\"100\" r=\"50\"/>"
-                             "<ellipse fill=\"#00F\" cx=\"200\" cy=\"200\" rx=\"100\" ry=50/>"
+                             "<circle fill=\"#00F\" cx=\"10\" cy=\"100\" r=\"50\"/>"
+                             "<ellipse fill=\"#00F\" cx=\"2\" cy=\"2\" rx=\"100\" ry=50/>"
                              "</g></svg>";
 
   lv_svg_node_t * svg = lv_svg_load_data(svg_group_1, lv_strlen(svg_group_1));
