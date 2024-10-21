@@ -243,7 +243,7 @@ void uithread(int _argc, char* _argv[])
   lv_style_init(&voorkant::lvgl::b612style);
   lv_style_set_text_font(&voorkant::lvgl::b612style, voorkant::lvgl::b612font);
 
-  voorkant::lvgl::mdifont = lv_tiny_ttf_create_data_ex(mdi_ttf, mdi_ttf_len, 16, LV_FONT_KERNING_NORMAL, 1024);
+  voorkant::lvgl::mdifont = lv_tiny_ttf_create_data_ex(mdi_ttf, mdi_ttf_len, 30, LV_FONT_KERNING_NORMAL, 1024);
   lv_style_init(&voorkant::lvgl::mdistyle);
   lv_style_set_text_font(&voorkant::lvgl::mdistyle, voorkant::lvgl::mdifont);
 
