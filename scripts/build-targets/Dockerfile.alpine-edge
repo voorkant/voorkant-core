@@ -1,0 +1,3 @@
+FROM alpine:edge
+RUN apk add alpine-sdk git cmake ninja-build nlohmann-json openssl-dev meson zlib-dev linux-headers
+RUN git config --global --add safe.directory '*'  # this makes meson's vcs_tag() work
