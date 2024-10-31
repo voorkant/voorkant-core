@@ -1,0 +1,15 @@
+FROM debian:experimental
+RUN apt-get update
+RUN apt-get -yy install \
+    build-essential \
+    git \
+    cmake \
+    ninja-build \
+    nlohmann-json3-dev \
+    pkg-config \
+    libsdl2-dev \
+    libssl-dev \
+    python3-pip \
+    xxd
+RUN pip install --break-system-packages meson
+RUN git config --global --add safe.directory '*'  # this makes meson's vcs_tag() work
