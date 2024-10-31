@@ -308,12 +308,12 @@ void uithread(int _argc, char* _argv[])
             g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
           }
         }
-        else if (card["type"] == "custom:apexcharts-card") {
+        // else if (card["type"] == "custom:apexcharts-card") {
 
-          std::unique_ptr<UIEntity> apex = std::make_unique<UIApexCard>(card, cont_row);
-          uielements.push_back(std::move(apex));
-          g_log << Logger::Warning << "got apex card" << std::endl;
-        }
+        //   std::unique_ptr<UIEntity> apex = std::make_unique<UIApexCard>(card, cont_row);
+        //   uielements.push_back(std::move(apex));
+        //   g_log << Logger::Warning << "got apex card" << std::endl;
+        // }
         else {
           if (card.contains(("entity"))) {
             g_log << Logger::Warning << "Card of type " << card["type"] << " found, but we have no matching UIEntity. Creating dummy for entity." << card["entity"] << std::endl;
