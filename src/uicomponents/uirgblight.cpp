@@ -1,6 +1,7 @@
 #include "uirgblight.hpp"
 #include "logger.hpp"
 #include "uicomponents/UIComponents.hpp"
+#include "uicomponents/mdimap.hpp"
 #include <src/core/lv_obj_pos.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_color.h>
@@ -262,7 +263,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_flex_align(btns, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
   lv_obj_remove_flag(btns, LV_OBJ_FLAG_SCROLLABLE);
 
-  btnOnOff = createImageButton(MDI_POWER_STANDBY, UIRGBLight::btnOnOffCB, LV_EVENT_VALUE_CHANGED, true);
+  btnOnOff = createImageButton(voorkant::mdi::name2id("power-standby").data(), UIRGBLight::btnOnOffCB, LV_EVENT_VALUE_CHANGED, true);
 
   if (showBrightness) {
     btnBrightness = createImageButton(&G_BRIGHTNESS24, UIRGBLight::btnBrightnessCB, LV_EVENT_CLICKED);

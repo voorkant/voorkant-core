@@ -82,6 +82,16 @@ font_mdi_c = xxd_generator.process(
     extra_args: 'mdi_ttf',
 )
 
+mdimap_prog = find_program('scripts/mdimap.py', required: true)
+mdimap_generator = generator(
+    mdimap_prog,
+    output: '@BASENAME@.cpp',
+    arguments: ['@INPUT@', '@OUTPUT@'],
+)
+mdimap_cpp = mdimap_generator.process(
+    'src/fonts/MaterialDesign-Webfont/scss/_variables.scss',
+)
+
 brew_prefix = '/opt/homebrew/include'
 brew = find_program('brew', required: false)
 if brew.found()
@@ -241,6 +251,7 @@ if get_option('front-lvgl').enabled()
             font_mdi_c,
             'src/generated/domains.hpp',
             version_file,
+            mdimap_cpp,
         ],
         install: true,
         dependencies: [
