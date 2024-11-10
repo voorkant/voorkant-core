@@ -1,4 +1,5 @@
 #include "UIComponents.hpp"
+#include "mdimap.hpp"
 #include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_style_gen.h>
@@ -197,7 +198,7 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_height(iconpart, LV_SIZE_CONTENT);
   lv_obj_set_style_pad_all(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_border_width(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_label_set_text(iconpart, MDI_WAZE);
+  lv_label_set_text(iconpart, voorkant::mdi::name2id("waze").data());
   lv_obj_add_style(iconpart, &voorkant::lvgl::mdistyle, 0);
   lv_obj_set_style_text_align(iconpart, LV_TEXT_ALIGN_CENTER, 0);
 
