@@ -75,6 +75,82 @@ void lvLogCallback(lv_log_level_t _level, const char* _buf) // FIXME use level
   g_log << Logger::Error << _buf << endl;
 }
 
+void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::basic_json<>& card)
+{
+  if (card["type"] == "entities") {
+    if (card.contains("entities")) { // array of objects with the entity name in it.
+      auto objs = card["entities"];
+      for (auto ent : objs) {
+        string entityname;
+        if (ent.type() == json::value_t::string) {
+          entityname = ent;
+        }
+        else {
+          entityname = ent["entity"];
+        }
+        std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
+        if (entity->getEntityType() == EntityType::Light) {
+          std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
+          uielements.push_back(std::move(btn));
+        }
+        else if (entity->getEntityType() == EntityType::Switch) {
+          std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
+          uielements.push_back(std::move(btn));
+        }
+        else if (entity->getEntityType() == EntityType::Sensor) {
+          std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row);
+          uielements.push_back(std::move(sensor));
+        }
+        else {
+          std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
+          std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
+          uielements.push_back(std::move(dummy));
+        }
+      }
+    }
+  }
+  else if (card["type"] == "button") {
+    if (card.contains("entity")) {
+      string entityname = card["entity"];
+      std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
+      std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
+      uielements.push_back(std::move(btn));
+    }
+    else {
+      g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
+    }
+  }
+  else if (card["type"] == "light") {
+    if (card.contains("entity")) {
+      string entityname = card["entity"];
+      std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
+      std::unique_ptr<UIEntity> btn = std::make_unique<UIRGBLight>(entity, cont_row);
+      uielements.push_back(std::move(btn));
+    }
+    else {
+      g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
+    }
+  }
+  else if (card["type"] == "custom:apexcharts-card") {
+
+    std::unique_ptr<UIEntity> apex = std::make_unique<UIApexCard>(card, cont_row);
+    uielements.push_back(std::move(apex));
+    g_log << Logger::Warning << "got apex card" << std::endl;
+  }
+  else {
+    if (card.contains(("entity"))) {
+      g_log << Logger::Warning << "Card of type " << card["type"] << " found, but we have no matching UIEntity. Creating dummy for entity." << card["entity"] << std::endl;
+      string entityname = card["entity"];
+      std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
+      std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
+      uielements.push_back(std::move(dummy));
+    }
+    else {
+      g_log << Logger::Warning << "Card of type " << card["type"] << " found, couldn't find entity." << std::endl;
+    }
+  }
+}
+
 void uithread(int _argc, char* _argv[])
 {
   argparse::ArgumentParser program("voorkant-lvgl", getVersion());
@@ -254,81 +330,19 @@ void uithread(int _argc, char* _argv[])
     // FIXME: lots of repeat code here, should do a <template> thing
     json result = doc["result"];
     for (auto view : result["views"]) {
-      for (auto card : view["cards"]) {
-        if (card["type"] == "entities") {
-          if (card.contains("entities")) { // array of objects with the entity name in it.
-            auto objs = card["entities"];
-            for (auto ent : objs) {
-              string entityname;
-              if (ent.type() == json::value_t::string) {
-                entityname = ent;
-              }
-              else {
-                entityname = ent["entity"];
-              }
-              std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-              if (entity->getEntityType() == EntityType::Light) {
-                std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
-                uielements.push_back(std::move(btn));
-              }
-              else if (entity->getEntityType() == EntityType::Switch) {
-                std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
-                uielements.push_back(std::move(btn));
-              }
-              else if (entity->getEntityType() == EntityType::Sensor) {
-                std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row);
-                uielements.push_back(std::move(sensor));
-              }
-              else {
-                std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-                std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
-                uielements.push_back(std::move(dummy));
-              }
-            }
+      if (view.contains("sections")) {
+        for (auto section : view["sections"]) {
+          for (auto card : section["cards"]) {
+            renderCard(uielements, card);
           }
         }
-        else if (card["type"] == "button") {
-          if (card.contains("entity")) {
-            string entityname = card["entity"];
-            std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-            std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
-            uielements.push_back(std::move(btn));
-          }
-          else {
-            g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
-          }
+      }
+      if (view.contains("cards")) {
+        for (auto card : view["cards"]) {
+          renderCard(uielements, card);
         }
-        else if (card["type"] == "light") {
-          if (card.contains("entity")) {
-            string entityname = card["entity"];
-            std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-            std::unique_ptr<UIEntity> btn = std::make_unique<UIRGBLight>(entity, cont_row);
-            uielements.push_back(std::move(btn));
-          }
-          else {
-            g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
-          }
-        }
-        else if (card["type"] == "custom:apexcharts-card") {
-
-          std::unique_ptr<UIEntity> apex = std::make_unique<UIApexCard>(card, cont_row);
-          uielements.push_back(std::move(apex));
-          g_log << Logger::Warning << "got apex card" << std::endl;
-        }
-        else {
-          if (card.contains(("entity"))) {
-            g_log << Logger::Warning << "Card of type " << card["type"] << " found, but we have no matching UIEntity. Creating dummy for entity." << card["entity"] << std::endl;
-            string entityname = card["entity"];
-            std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-            std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
-            uielements.push_back(std::move(dummy));
-          }
-          else {
-            g_log << Logger::Warning << "Card of type " << card["type"] << " found, couldn't find entity." << std::endl;
-          }
-        }
-      } // for card
-    } // for views
+      }
+    }
   }
   else {
     g_log << Logger::Info << "We expected a command" << std::endl;
