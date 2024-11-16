@@ -155,6 +155,7 @@ if get_option('front-lvgl').enabled()
 
     lvgl_proj = cmake.subproject('lvgl', options: cmake_options)
     lvgl_dep = lvgl_proj.dependency('lvgl')
+    lvgl_thorvg_dep = lvgl_proj.dependency('lvgl_thorvg')
 
     quickjs_options = cmake.subproject_options()
     quickjs_options.add_cmake_defines({'BUILD_QJS_LIBC': true})
@@ -259,12 +260,36 @@ if get_option('front-lvgl').enabled()
             thread_dep,
             curl_dep,
             lvgl_dep,
+            lvgl_thorvg_dep,
             sdl2_dep,
             openssl_dep,
             zlib_dep,
             libatomic,
             date_dep,
             quickjs_dep,
+        ],
+        include_directories: incdir,
+        cpp_args: [
+            '-DLV_CONF_PATH=' + meson.current_build_dir() + '/../src/lv_conf.h',
+            lvgl_backend_define,
+        ],
+    )
+
+    executable(
+        'test-lvgl',
+        [
+            'src/test-lvgl.cpp',
+            'src/logger.cpp',
+            font_b612_c,
+            version_file,
+        ],
+        install: false,
+        dependencies: [
+            thread_dep,
+            lvgl_dep,
+            lvgl_thorvg_dep,
+            sdl2_dep,
+            libatomic,
         ],
         include_directories: incdir,
         cpp_args: [
