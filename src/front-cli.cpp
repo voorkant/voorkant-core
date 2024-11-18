@@ -116,6 +116,7 @@ void uithread(int _argc, char* _argv[])
     }
   }
   else if (program.is_subcommand_used(dump_command)) {
+    HABackend::getInstance().start();
     json data = json::parse(dump_command.get<string>("data"));
     json res = HABackend::getInstance().doCommand(dump_command.get<string>("command"), data);
     cout << res.dump(2) << endl;
