@@ -58,7 +58,8 @@ public:
   string domain;
   string fullname;
   string id;
-  string integration;
+  string platform;
+  string translation_key;
 
   // HAEntity(json _state);
   HAEntity(json _state, std::shared_ptr<HADomain> _hadomain, HABackend* _backend);
