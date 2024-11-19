@@ -118,6 +118,10 @@ void HABackend::threadrunner()
   getstates["type"] = "get_states";
   wc->send(getstates);
 
+  json list_for_display;
+  list_for_display["type"] = "list_for_display";
+  wc->send(list_for_display);
+
   while (true) {
     auto msg = wc->recv();
 
@@ -149,6 +153,19 @@ void HABackend::threadrunner()
         std::unique_lock<std::mutex> lck(load_lock);
         loaded = true;
         load_cv.notify_all();
+      }
+      else if (j["id"] == list_for_display["id"]) {
+        std::scoped_lock lk(entitieslock);
+        std::set<string> integrations;
+        for (auto ent : j["result"]["entities"]) {
+          auto entity_id = ent["ei"].get<std::string>();
+          auto integration = ent["pl"].get<std::string>();
+          integrations.insert(integration);
+          entities[entity_id]->integration = integration;
+        }
+        for (auto integration : integrations) {
+          // fetch icons
+        }
       }
       else if (j["type"] == "event") {
         std::scoped_lock lk(entitieslock);
