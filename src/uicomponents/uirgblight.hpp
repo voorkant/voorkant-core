@@ -2,6 +2,25 @@
 #define UIRGBLIGHT_HPP
 #include "UIComponents.hpp"
 
+class LVObj
+{
+public:
+  LVObj(lv_obj_t* _obj) :
+    obj{_obj} {};
+  ~LVObj()
+  {
+    lv_obj_del(obj);
+  }
+
+  operator lv_obj_t*() { return obj; };
+
+private:
+  lv_obj_t* obj{nullptr};
+  lv_obj_t* parent{nullptr};
+};
+
+// lvobj = std::unique_ptr<lv_obj_t, decltype(&lv_obj_del)>;
+
 class UIRGBLight : public UIEntity
 {
 public:
@@ -11,7 +30,7 @@ public:
 
 private:
   // FIXME: we never free() the lv_obj_t*'s in code
-  lv_obj_t* btnOnOff;
+  LVObj btnOnOff{nullptr};
   lv_obj_t* btnBrightness;
   lv_obj_t* btnColorWheel;
   lv_obj_t* btnColorTemp;
