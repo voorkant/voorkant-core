@@ -1,4 +1,4 @@
-FROM arm32v5/debian:bookworm
+FROM --platform=linux/arm/v5 debian:bookworm
 RUN apt-get update
 RUN apt-get -yy install \
     build-essential \
