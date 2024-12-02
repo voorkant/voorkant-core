@@ -217,13 +217,6 @@ std::shared_ptr<HAEntity> HABackend::getEntityByName(const std::string& _name)
   return entities.at(_name);
 }
 
-// std::string HABackend::getIcon(const iconkey _iconkey)
-// {
-//   std::scoped_lock lk(entitieslock);
-
-//   return iconmap.at(_iconkey);
-// }
-
 json HABackend::getDashboardConfig(const std::string& _dashboard)
 {
   json url;
