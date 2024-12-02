@@ -19,6 +19,8 @@ namespace lvgl
   extern lv_style_t b612style;
   extern lv_font_t* mdifont;
   extern lv_style_t mdistyle;
+  typedef std::pair<string, string> iconkey; // platform, translation_key
+  extern map<iconkey, string> iconmap; // will need a lock eventually
 }
 }
 

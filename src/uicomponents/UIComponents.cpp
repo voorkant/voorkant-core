@@ -198,7 +198,15 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_height(iconpart, LV_SIZE_CONTENT);
   lv_obj_set_style_pad_all(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_border_width(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-  string icon = _entity->getJsonState()["attributes"].value("icon", "mdi:border-none-variant");
+  string icon = _entity->getJsonState()["attributes"].value("icon", "");
+
+  if (icon.empty()) {
+    voorkant::lvgl::iconkey key = {_entity->platform,_entity->translation_key};
+    if (voorkant::lvgl::iconmap.count(key)) {
+      icon = voorkant::lvgl::iconmap.at(key);
+    }
+  }
+  cerr<<"iconmap[" << _entity->platform << "," << _entity->translation_key << "]=" << voorkant::lvgl::iconmap[{_entity->platform,_entity->translation_key}]<<endl;
 
   if (icon.substr(0, 4) == "mdi:") {
     icon = icon.substr(4);

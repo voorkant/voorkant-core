@@ -56,8 +56,6 @@ private:
   map<string, std::shared_ptr<HADomain>> domains;
   std::mutex domainslock;
 
-  typedef std::pair<string, string> iconkey; // platform, translation_key
-  map<iconkey, string> iconmap; // under entitieslock too
 };
 
 #endif

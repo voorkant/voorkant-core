@@ -118,16 +118,6 @@ void HABackend::threadrunner()
   getstates["type"] = "get_states";
   wc->send(getstates);
 
-  // FIXME: -cli, -ftxui don't need list_for_display or get_icons
-  json list_for_display;
-  list_for_display["type"] = "list_for_display";
-  wc->send(list_for_display);
-
-  json get_icons;
-  get_icons["type"] = "frontend/get_icons";
-  get_icons["category"] = "entity"; // wonder what other categories there are. platform? integration? need to find frank somewhere
-  wc->send(get_icons);
-
   while (true) {
     auto msg = wc->recv();
 
@@ -159,46 +149,6 @@ void HABackend::threadrunner()
         std::unique_lock<std::mutex> lck(load_lock);
         loaded = true;
         load_cv.notify_all();
-      }
-      else if (j["id"] == list_for_display["id"]) {
-        std::scoped_lock lk(entitieslock);
-        std::set<string> integrations;
-        for (auto ent : j["result"]["entities"]) {
-          auto entity_id = ent["ei"].get<std::string>();
-          auto platform = ent.value("pl", "");
-          auto translation_key = ent.value("tk", "");
-          integrations.insert(platform);
-          entities[entity_id]->platform = platform;
-          entities[entity_id]->translation_key = translation_key;
-        }
-      }
-      else if (j["id"] == get_icons["id"]) {
-        std::scoped_lock lk(entitieslock);
-        // inside "resources":
-        //      "sun": {
-        //        "sensor": {
-        //          "next_dawn": {
-        //            "default": "mdi:sun-clock"
-        //          },
-        //          "next_dusk": {
-        //            "default": "mdi:sun-clock"
-        //          },
-
-
-        for (auto [platform, data] : j["result"]["resources"].items()) {
-          // FIXME: this if skips a lot
-          if (data.count("sensor")) {
-            for (auto& [key, data2] : data["sensor"].items()) {
-              // key: next_dawn, data2: "default": " ... ""
-              auto icon = data2.value("default", "");
-              if (!icon.empty()) {
-                // platform: sun, key: next_dawn, icon: mdi-sun-clock
-                iconmap[iconkey{platform, key}] = icon;
-                cerr<<"iconmap["<<platform<<","<<key<<"]="<<icon<<endl;
-              }
-            }
-          }
-        }
       }
       else if (j["type"] == "event") {
         std::scoped_lock lk(entitieslock);
@@ -266,6 +216,13 @@ std::shared_ptr<HAEntity> HABackend::getEntityByName(const std::string& _name)
 
   return entities.at(_name);
 }
+
+// std::string HABackend::getIcon(const iconkey _iconkey)
+// {
+//   std::scoped_lock lk(entitieslock);
+
+//   return iconmap.at(_iconkey);
+// }
 
 json HABackend::getDashboardConfig(const std::string& _dashboard)
 {
