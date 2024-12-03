@@ -201,16 +201,17 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   string icon = _entity->getJsonState()["attributes"].value("icon", "");
 
   if (icon.empty()) {
-    voorkant::lvgl::iconkey key = {_entity->platform,_entity->translation_key};
+    voorkant::lvgl::iconkey key = {_entity->platform, _entity->translation_key};
     if (voorkant::lvgl::iconmap.count(key)) {
       icon = voorkant::lvgl::iconmap.at(key);
     }
   }
-  cerr<<"iconmap[" << _entity->platform << "," << _entity->translation_key << "]=" << voorkant::lvgl::iconmap[{_entity->platform,_entity->translation_key}]<<endl;
+  cerr << "iconmap[" << _entity->platform << "," << _entity->translation_key << "]=" << voorkant::lvgl::iconmap[{_entity->platform, _entity->translation_key}] << endl;
 
   if (icon.substr(0, 4) == "mdi:") {
     icon = icon.substr(4);
-  } else {
+  }
+  else {
     icon = "border-none-variant";
   }
 

@@ -55,7 +55,6 @@ private:
   std::mutex entitieslock;
   map<string, std::shared_ptr<HADomain>> domains;
   std::mutex domainslock;
-
 };
 
 #endif

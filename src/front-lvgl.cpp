@@ -308,7 +308,7 @@ void uithread(int _argc, char* _argv[])
     // FIXME: -cli, -ftxui don't need list_for_display or get_icons
     json list_for_display = ha.doCommand("config/entity_registry/list_for_display", {});
 
-    cerr<<list_for_display.dump(2)<<endl;
+    cerr << list_for_display.dump(2) << endl;
     std::set<string> integrations;
     for (auto ent : list_for_display["result"]["entities"]) {
       auto entity_id = ent["ei"].get<std::string>();
@@ -334,7 +334,7 @@ void uithread(int _argc, char* _argv[])
     //            "default": "mdi:sun-clock"
     //          },
 
-    cerr<<get_icons.dump(2)<<endl;
+    cerr << get_icons.dump(2) << endl;
 
     for (auto [platform, data] : get_icons["result"]["resources"].items()) {
       // FIXME: this if skips a lot
@@ -345,7 +345,7 @@ void uithread(int _argc, char* _argv[])
           if (!icon.empty()) {
             // platform: sun, key: next_dawn, icon: mdi-sun-clock
             voorkant::lvgl::iconmap[{platform, key}] = icon;
-            cerr<<"set iconmap["<<platform<<","<<key<<"]="<<icon<<endl;
+            cerr << "set iconmap[" << platform << "," << key << "]=" << icon << endl;
           }
         }
       }
