@@ -1,4 +1,4 @@
-FROM arm32v5/debian:bookworm
+FROM --platform=linux/arm/v5 debian:bookworm
 RUN apt-get update
 RUN apt-get -yy install \
     build-essential \
@@ -9,6 +9,10 @@ RUN apt-get -yy install \
     pkg-config \
     libssl-dev \
     python3-pip \
-    xxd
+    xxd \
+    tini
 RUN pip install --break-system-packages meson
 RUN git config --global --add safe.directory '*'  # this makes meson's vcs_tag() work
+ENV PYTHONUNBUFFERED=1
+ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
+CMD ["/bin/sh"]
