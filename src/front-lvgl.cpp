@@ -38,6 +38,7 @@ namespace lvgl
   lv_font_t* mdifont;
   lv_style_t mdistyle;
   map<iconkey, string> iconmap; // will need a lock eventually
+  json iconcomponentmap; // lock?
 }
 }
 
@@ -350,6 +351,11 @@ void uithread(int _argc, char* _argv[])
         }
       }
     }
+
+    json get_icons_component_req;
+    get_icons_component_req["category"] = "entity_component";
+
+    voorkant::lvgl::iconcomponentmap = ha.doCommand("frontend/get_icons", get_icons_component_req)["result"]["resources"];
   }
 
   if (program.is_subcommand_used(entity_command)) {

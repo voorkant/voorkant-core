@@ -181,6 +181,43 @@ void UIDummy::update()
   }
 };
 
+string getIconFor(std::shared_ptr<HAEntity> _entity) // for now, this function -always- returns something that starts with mdi:
+{
+  json state = _entity->getJsonState();
+
+  // 1. see if the state simply contains an icon - user might have set it explicitly
+  string icon = state["attributes"].value("icon", "");
+
+  if (!icon.empty()) {
+    return icon;
+  }
+
+  if (state["attributes"].count("entity_picture")) {
+    // there is an icon, but it is not in a format we support yet (like SVG)
+    return "mdi:border-none-variant";
+  }
+  // 2. see if we can find one for platform+translation key
+  voorkant::lvgl::iconkey key = {_entity->platform, _entity->translation_key};
+  if (voorkant::lvgl::iconmap.count(key)) {
+    return voorkant::lvgl::iconmap.at(key);
+  }
+
+  // 3. maybe we can find one by domain plus device_class?
+  auto& domain = _entity->domain;
+  auto device_class = state["attributes"].value("device_class", "_");
+
+  if (voorkant::lvgl::iconcomponentmap.count(domain)) {
+    auto& domaindata = voorkant::lvgl::iconcomponentmap[domain];
+    if (domaindata.count(device_class)) {
+      if (domaindata[device_class].count("default")) { // FIXME: handle state-dependent variants too
+        return domaindata[device_class]["default"];
+      }
+    }
+  }
+
+  return "mdi:border-none";
+}
+
 UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   UIEntity(_entity, _parent)
 {
@@ -198,21 +235,14 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_height(iconpart, LV_SIZE_CONTENT);
   lv_obj_set_style_pad_all(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_border_width(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-  string icon = _entity->getJsonState()["attributes"].value("icon", "");
-
-  if (icon.empty()) {
-    voorkant::lvgl::iconkey key = {_entity->platform, _entity->translation_key};
-    if (voorkant::lvgl::iconmap.count(key)) {
-      icon = voorkant::lvgl::iconmap.at(key);
-    }
-  }
-  cerr << "iconmap[" << _entity->platform << "," << _entity->translation_key << "]=" << voorkant::lvgl::iconmap[{_entity->platform, _entity->translation_key}] << endl;
+  string icon = getIconFor(_entity);
+  // cerr << "iconmap[" << _entity->platform << "," << _entity->translation_key << "]=" << voorkant::lvgl::iconmap[{_entity->platform, _entity->translation_key}] << endl;
 
   if (icon.substr(0, 4) == "mdi:") {
     icon = icon.substr(4);
   }
   else {
-    icon = "border-none-variant";
+    icon = "help"; // as getIconFor currently promises something mdi:, we should never get here
   }
 
   lv_label_set_text(iconpart, voorkant::mdi::name2id(icon).data());
