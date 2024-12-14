@@ -253,7 +253,7 @@ void uithread(int _argc, char* _argv[])
   lv_obj_t* row_and_logs = lv_obj_create(lv_scr_act());
   lv_obj_remove_style_all(row_and_logs);
   lv_obj_remove_flag(row_and_logs, LV_OBJ_FLAG_SCROLLABLE);
-  lv_obj_set_size(row_and_logs, MY_DISP_HOR_RES, MY_DISP_VER_RES);
+  lv_obj_set_size(row_and_logs, lv_pct(100), lv_pct(100));
   lv_obj_set_flex_flow(row_and_logs, LV_FLEX_FLOW_ROW_WRAP);
 
   /*Create a container with ROW flex direction that wraps.
