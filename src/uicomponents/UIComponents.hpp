@@ -85,7 +85,7 @@ private:
 class UISensor : public UIEntity
 {
 public:
-  UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
+  UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent, std::string _icon = "");
   void update() override;
 
 private:

@@ -84,11 +84,13 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
       auto objs = card["entities"];
       for (auto ent : objs) {
         string entityname;
+        string icon;
         if (ent.type() == json::value_t::string) {
           entityname = ent;
         }
         else {
           entityname = ent["entity"];
+          icon = ent.value("icon", "");
         }
         std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
         if (entity->getEntityType() == EntityType::Light) {
@@ -100,7 +102,7 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
           uielements.push_back(std::move(btn));
         }
         else if (entity->getEntityType() == EntityType::Sensor) {
-          std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row);
+          std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row, icon);
           uielements.push_back(std::move(sensor));
         }
         else {

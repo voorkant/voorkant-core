@@ -181,8 +181,12 @@ void UIDummy::update()
   }
 };
 
-string getIconFor(std::shared_ptr<HAEntity> _entity) // for now, this function -always- returns something that starts with mdi:
+// if _icon is passed, we got one from the dashboard, use that
+string getIconFor(std::shared_ptr<HAEntity> _entity, std::string _icon) // for now, this function -always- returns something that starts with mdi:
 {
+  if (!_icon.empty()) {
+    return _icon;
+  }
   json state = _entity->getJsonState();
 
   // 1. see if the state simply contains an icon - user might have set it explicitly
@@ -218,7 +222,7 @@ string getIconFor(std::shared_ptr<HAEntity> _entity) // for now, this function -
   return "mdi:border-none";
 }
 
-UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
+UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent, std::string _icon) :
   UIEntity(_entity, _parent)
 {
   lv_obj_t* flowpanel = lv_obj_create(_parent);
@@ -235,7 +239,7 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_set_height(iconpart, LV_SIZE_CONTENT);
   lv_obj_set_style_pad_all(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_border_width(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-  string icon = getIconFor(_entity);
+  string icon = getIconFor(_entity, _icon);
   // cerr << "iconmap[" << _entity->platform << "," << _entity->translation_key << "]=" << voorkant::lvgl::iconmap[{_entity->platform, _entity->translation_key}] << endl;
 
   if (icon.substr(0, 4) == "mdi:") {
