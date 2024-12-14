@@ -18,6 +18,8 @@
 #include <src/misc/lv_anim.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_style.h>
+#include <stdexcept>
+#include <string>
 
 // make sure these numbers align with SDL_HOR_RES/SDL_VER_RES
 #define MY_DISP_HOR_RES 800
@@ -249,11 +251,24 @@ void uithread(int _argc, char* _argv[])
 
   lv_obj_add_style(lv_scr_act(), &voorkant::lvgl::b612style, 0);
 
+  int32_t reserved_at_top = 0;
+  auto resvar = getenv("VOORKANT_LVGL_LINES_RESERVED_AT_TOP");
+
+  if (resvar != nullptr) {
+    reserved_at_top = std::stoi(resvar);
+    if (reserved_at_top < 0) {
+      throw std::runtime_error("can't reserve a negative amount of lines");
+    }
+  }
+
+  auto parent = lv_scr_act();
+
   /* container for object row (top 80% of screen) and logs (bottom 20%) */
-  lv_obj_t* row_and_logs = lv_obj_create(lv_scr_act());
+  lv_obj_t* row_and_logs = lv_obj_create(parent);
   lv_obj_remove_style_all(row_and_logs);
   lv_obj_remove_flag(row_and_logs, LV_OBJ_FLAG_SCROLLABLE);
-  lv_obj_set_size(row_and_logs, MY_DISP_HOR_RES, MY_DISP_VER_RES);
+  lv_obj_set_size(row_and_logs, lv_pct(100), lv_obj_get_height(parent) - reserved_at_top);
+  lv_obj_set_y(row_and_logs, reserved_at_top);
   lv_obj_set_flex_flow(row_and_logs, LV_FLEX_FLOW_ROW_WRAP);
 
   /*Create a container with ROW flex direction that wraps.
@@ -261,7 +276,7 @@ void uithread(int _argc, char* _argv[])
   */
   cont_row = lv_obj_create(row_and_logs);
   lv_obj_remove_style_all(cont_row);
-  lv_obj_set_size(cont_row, MY_DISP_HOR_RES, MY_DISP_VER_RES * 0.8);
+  lv_obj_set_size(cont_row, lv_pct(100), lv_pct(80));
   lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN_WRAP);
   lv_obj_set_style_pad_row(cont_row, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_pad_column(cont_row, 9, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -270,7 +285,7 @@ void uithread(int _argc, char* _argv[])
   /* Bottom row */
   lv_obj_t* bottom_row = lv_obj_create(row_and_logs);
   lv_obj_remove_style_all(bottom_row);
-  lv_obj_set_size(bottom_row, MY_DISP_HOR_RES, MY_DISP_VER_RES * 0.2);
+  lv_obj_set_size(bottom_row, lv_pct(100), lv_pct(20));
   lv_obj_set_align(bottom_row, LV_ALIGN_CENTER);
   lv_obj_set_flex_flow(bottom_row, LV_FLEX_FLOW_ROW);
   lv_obj_set_flex_align(bottom_row, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_END);
