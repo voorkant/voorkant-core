@@ -37,6 +37,8 @@ namespace lvgl
   lv_style_t b612style;
   lv_font_t* mdifont;
   lv_style_t mdistyle;
+  map<iconkey, string> iconmap; // will need a lock eventually
+  json iconcomponentmap; // lock?
 }
 }
 
@@ -82,11 +84,13 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
       auto objs = card["entities"];
       for (auto ent : objs) {
         string entityname;
+        string icon;
         if (ent.type() == json::value_t::string) {
           entityname = ent;
         }
         else {
           entityname = ent["entity"];
+          icon = ent.value("icon", "");
         }
         std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
         if (entity->getEntityType() == EntityType::Light) {
@@ -98,7 +102,7 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
           uielements.push_back(std::move(btn));
         }
         else if (entity->getEntityType() == EntityType::Sensor) {
-          std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row);
+          std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row, icon);
           uielements.push_back(std::move(sensor));
         }
         else {
@@ -243,7 +247,7 @@ void uithread(int _argc, char* _argv[])
   lv_style_init(&voorkant::lvgl::b612style);
   lv_style_set_text_font(&voorkant::lvgl::b612style, voorkant::lvgl::b612font);
 
-  voorkant::lvgl::mdifont = lv_tiny_ttf_create_data_ex(mdi_ttf, mdi_ttf_len, 16, LV_FONT_KERNING_NORMAL, 1024);
+  voorkant::lvgl::mdifont = lv_tiny_ttf_create_data_ex(mdi_ttf, mdi_ttf_len, 30, LV_FONT_KERNING_NORMAL, 1024);
   lv_style_init(&voorkant::lvgl::mdistyle);
   lv_style_set_text_font(&voorkant::lvgl::mdistyle, voorkant::lvgl::mdifont);
 
@@ -299,6 +303,63 @@ void uithread(int _argc, char* _argv[])
   lv_log_register_print_cb(lvLogCallback);
 
   std::vector<std::unique_ptr<UIEntity>> uielements;
+  if (program.is_subcommand_used(entity_command) || program.is_subcommand_used(dashboard_command)) {
+    // need to collect some data used in both cases
+
+    auto& ha = HABackend::getInstance();
+
+    // FIXME: -cli, -ftxui don't need list_for_display or get_icons
+    json list_for_display = ha.doCommand("config/entity_registry/list_for_display", {});
+
+    cerr << list_for_display.dump(2) << endl;
+    std::set<string> integrations;
+    for (auto ent : list_for_display["result"]["entities"]) {
+      auto entity_id = ent["ei"].get<std::string>();
+      auto platform = ent.value("pl", "");
+      auto translation_key = ent.value("tk", "");
+      integrations.insert(platform);
+
+      auto entity = ha.getEntityByName(entity_id);
+      entity->platform = platform;
+      entity->translation_key = translation_key;
+    }
+    json get_icons_req;
+    get_icons_req["category"] = "entity"; // wonder what other categories there are. platform? integration? need to find frank somewhere
+
+    json get_icons = ha.doCommand("frontend/get_icons", get_icons_req);
+    // inside "resources":
+    //      "sun": {
+    //        "sensor": {
+    //          "next_dawn": {
+    //            "default": "mdi:sun-clock"
+    //          },
+    //          "next_dusk": {
+    //            "default": "mdi:sun-clock"
+    //          },
+
+    cerr << get_icons.dump(2) << endl;
+
+    for (auto [platform, data] : get_icons["result"]["resources"].items()) {
+      // FIXME: this if skips a lot
+      if (data.count("sensor")) {
+        for (auto& [key, data2] : data["sensor"].items()) {
+          // key: next_dawn, data2: "default": " ... ""
+          auto icon = data2.value("default", "");
+          if (!icon.empty()) {
+            // platform: sun, key: next_dawn, icon: mdi-sun-clock
+            voorkant::lvgl::iconmap[{platform, key}] = icon;
+            cerr << "set iconmap[" << platform << "," << key << "]=" << icon << endl;
+          }
+        }
+      }
+    }
+
+    json get_icons_component_req;
+    get_icons_component_req["category"] = "entity_component";
+
+    voorkant::lvgl::iconcomponentmap = ha.doCommand("frontend/get_icons", get_icons_component_req)["result"]["resources"];
+  }
+
   if (program.is_subcommand_used(entity_command)) {
     // FIXME: does this actually need unique_ptr? I guess it might save some copying
 

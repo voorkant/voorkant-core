@@ -19,6 +19,9 @@ namespace lvgl
   extern lv_style_t b612style;
   extern lv_font_t* mdifont;
   extern lv_style_t mdistyle;
+  typedef std::pair<string, string> iconkey; // platform, translation_key
+  extern map<iconkey, string> iconmap; // will need a lock eventually
+  extern json iconcomponentmap;
 }
 }
 
@@ -82,7 +85,7 @@ private:
 class UISensor : public UIEntity
 {
 public:
-  UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent);
+  UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent, std::string _icon = "");
   void update() override;
 
 private:
