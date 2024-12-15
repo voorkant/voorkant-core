@@ -11,12 +11,16 @@
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_scroll.h>
 #include <src/core/lv_obj_style.h>
+#include <src/core/lv_obj_style_gen.h>
+#include <src/display/lv_display.h>
 #include <src/font/lv_font.h>
 #include <src/font/lv_symbol_def.h>
 #include <src/indev/lv_indev.h>
+#include <src/layouts/grid/lv_grid.h>
 #include <src/libs/tiny_ttf/lv_tiny_ttf.h>
 #include <src/misc/lv_anim.h>
 #include <src/misc/lv_area.h>
+#include <src/misc/lv_color.h>
 #include <src/misc/lv_style.h>
 #include <stdexcept>
 #include <string>
@@ -261,14 +265,33 @@ void uithread(int _argc, char* _argv[])
     }
   }
 
-  auto parent = lv_scr_act();
+  static lv_obj_t* splitparent = lv_obj_create(lv_scr_act());
+  lv_obj_remove_style_all(splitparent);
+  lv_obj_remove_flag(splitparent, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_set_size(splitparent, lv_pct(100), lv_pct(100));
+
+  lv_obj_set_layout(splitparent, LV_LAYOUT_GRID);
+  static lv_coord_t splitparent_col_dsc[] = {LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+  static lv_coord_t splitparent_row_dsc[] = {reserved_at_top, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+  lv_obj_set_grid_dsc_array(splitparent, splitparent_col_dsc, splitparent_row_dsc);
+
+  static lv_obj_t* reserved = lv_obj_create(splitparent);
+  lv_obj_remove_style_all(reserved);
+  lv_obj_remove_flag(reserved, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_set_grid_cell(reserved, LV_GRID_ALIGN_STRETCH, 0, 1, LV_GRID_ALIGN_STRETCH, 0, 1);
+  lv_obj_set_style_bg_opa(reserved, LV_OPA_TRANSP, 0);
+
+  static lv_obj_t* content = lv_obj_create(splitparent);
+  lv_obj_remove_style_all(content);
+  lv_obj_remove_flag(content, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_set_grid_cell(content, LV_GRID_ALIGN_STRETCH, 0, 1, LV_GRID_ALIGN_STRETCH, 1, 1);
 
   /* container for object row (top 80% of screen) and logs (bottom 20%) */
-  lv_obj_t* row_and_logs = lv_obj_create(parent);
+  lv_obj_t* row_and_logs = lv_obj_create(content);
   lv_obj_remove_style_all(row_and_logs);
   lv_obj_remove_flag(row_and_logs, LV_OBJ_FLAG_SCROLLABLE);
-  lv_obj_set_size(row_and_logs, lv_pct(100), lv_obj_get_height(parent) - reserved_at_top);
-  lv_obj_set_y(row_and_logs, reserved_at_top);
+  lv_obj_set_size(row_and_logs, lv_pct(100), lv_pct(100));
+  // lv_obj_set_y(row_and_logs, reserved_at_top);
   lv_obj_set_flex_flow(row_and_logs, LV_FLEX_FLOW_ROW_WRAP);
 
   /*Create a container with ROW flex direction that wraps.
