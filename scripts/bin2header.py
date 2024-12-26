@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+
+# taken and modified from https://github.com/user-none/Bin-Headers/blob/aaebde3891957b39e4cc4c7844e1ecdecabeaaa2/bin2header.py, with gratitude
+# that repo is licensed under MIT
+
 import argparse
 import sys
 
