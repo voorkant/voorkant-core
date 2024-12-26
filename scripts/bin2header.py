@@ -33,6 +33,7 @@ def main():
     out = bin2header(data, args.var)
     with open(args.out, 'wb') as f:
         f.write(out)
+        f.write(b'\n')
 
     return 0
 
