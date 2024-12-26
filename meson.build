@@ -63,21 +63,22 @@ curl_dep = dependency(
     ],
 )
 
-xxd_prog = find_program('xxd', required: true)
-xxd_generator = generator(
-    xxd_prog,
+binh_prog = find_program('scripts/bin2header.py', required: true)
+binh_generator = generator(
+    binh_prog,
     output: '@PLAINNAME@.c',
-    arguments: ['-n', '@EXTRA_ARGS@', '-i', '@INPUT@', '@OUTPUT@'],
+    arguments: ['-v', '@EXTRA_ARGS@', '-i', '@INPUT@', '-o', '@OUTPUT@'],
 )
 
 # FIXME: the explicit 'B612_Regular_ttf' below would ideally be @PLAINNAME@.underscorify() above except substitution does not work there
 
-font_b612_c = xxd_generator.process(
+font_b612_c = binh_generator.process(
     'src/fonts/polarsys-b612/fonts/ttf/B612-Regular.ttf',
     extra_args: 'B612_Regular_ttf',
 )
 
-font_mdi_c = xxd_generator.process(
+
+font_mdi_c = binh_generator.process(
     'src/fonts/MaterialDesign-Webfont/fonts/materialdesignicons-webfont.ttf',
     extra_args: 'mdi_ttf',
 )
