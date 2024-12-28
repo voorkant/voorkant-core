@@ -29,6 +29,6 @@ endef
 MESON_ARGS += \
 	--prefer-static -Dlvgl-driver=fbdev -Dfront-ftxui=disabled
 
-TARGET_LDFLAGS += -latomic
+TARGET_LDFLAGS += -latomic -static -lstdc++ -lgcc_eh
 
 $(eval $(call BuildPackage,voorkant))
