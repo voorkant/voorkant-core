@@ -168,7 +168,6 @@ endif
 
 incdir = include_directories('./src/')
 
-openssl_dep = dependency('openssl')
 zlib_dep = dependency('zlib')
 
 if get_option('front-ftxui').enabled()
@@ -196,7 +195,6 @@ if get_option('front-ftxui').enabled()
             ftxui_screen_dep,
             ftxui_dom_dep,
             ftxui_component_dep,
-            openssl_dep,
             zlib_dep,
             libatomic,
         ],
@@ -221,7 +219,6 @@ executable(
         json_dep,
         thread_dep,
         curl_dep,
-        openssl_dep,
         zlib_dep,
         libatomic,
     ],
@@ -261,7 +258,6 @@ if get_option('front-lvgl').enabled()
             curl_dep,
             lvgl_dep,
             sdl2_dep,
-            openssl_dep,
             zlib_dep,
             libatomic,
             date_dep,
