@@ -1,0 +1,43 @@
+commit 805f0bbc7f3dfb3ca10d598b9ac53e09c9ecfaaf
+Author: Peter van Dijk <peter@7bits.nl>
+Date:   Wed Jan 1 20:15:07 2025 +0100
+
+    curl: add LIBCURL_WEBSOCKETS flag
+    
+    Signed-off-by: Peter van Dijk <peter@7bits.nl>
+
+diff --git a/net/curl/Config.in b/net/curl/Config.in
+index 29865a87a..04f03a5bd 100644
+--- a/net/curl/Config.in
++++ b/net/curl/Config.in
+@@ -45,6 +45,10 @@ config LIBCURL_HTTP
+ 	bool "HTTP / HTTPS protocol"
+ 	default y
+ 
++config LIBCURL_WEBSOCKETS
++	bool "WebSockets protocol"
++	default n
++
+ config LIBCURL_COOKIES
+ 	bool "Enable Cookies support"
+ 	depends on LIBCURL_HTTP
+diff --git a/net/curl/Makefile b/net/curl/Makefile
+index 5210f8c8d..fe529fa41 100644
+--- a/net/curl/Makefile
++++ b/net/curl/Makefile
+@@ -44,6 +44,7 @@ PKG_CONFIG_DEPENDS:= \
+   CONFIG_LIBCURL_FTP \
+   CONFIG_LIBCURL_GOPHER \
+   CONFIG_LIBCURL_HTTP \
++  CONFIG_LIBCURL_WEBSOCKETS \
+   CONFIG_LIBCURL_IMAP \
+   CONFIG_LIBCURL_LDAP \
+   CONFIG_LIBCURL_LDAPS \
+@@ -153,6 +154,7 @@ CONFIGURE_ARGS += \
+ 	$(call autoconf_bool,CONFIG_LIBCURL_SMTP,smtp) \
+ 	$(call autoconf_bool,CONFIG_LIBCURL_TELNET,telnet) \
+ 	$(call autoconf_bool,CONFIG_LIBCURL_TFTP,tftp) \
++	$(call autoconf_bool,CONFIG_LIBCURL_WEBSOCKETS,websockets) \
+ 	\
+ 	$(call autoconf_bool,CONFIG_LIBCURL_COOKIES,cookies) \
+ 	$(call autoconf_bool,CONFIG_LIBCURL_CRYPTO_AUTH,crypto-auth) \

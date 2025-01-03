@@ -1,0 +1,63 @@
+name: Build for armel (static) using the OpenWrt SDK
+
+on:
+  push:
+  pull_request:
+  schedule:
+    # Weekly build (on saturday)
+    - cron: '0 0 * * 4'
+
+jobs:
+  build-armel-owrt:
+    runs-on: 'ubuntu-24.04'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: install extra deps for nektos/act
+      if: ${{ env.ACT }}
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install rsync
+    - name: Get the SDK
+      run: |
+        # in December 2024/January 2025, https://downloads.openwrt.org/snapshots/targets/mxs/generic/openwrt-sdk-mxs-generic_gcc-13.3.0_musl_eabi.Linux-x86_64.tar.zst
+        # (master snapshot) worked too, but I prefer a more stable target. The resulting binary was 8 kbytes smaller on master at the time.
+        wget --progress=dot:giga https://downloads.openwrt.org/releases/24.10.0-rc4/targets/mxs/generic/openwrt-sdk-24.10.0-rc4-mxs-generic_gcc-13.3.0_musl_eabi.Linux-x86_64.tar.zst
+        tar xf openwrt-sdk-*.tar.zst
+        rm -f openwrt-sdk-*.tar.zst
+        mv openwrt-sdk-* ../sdk
+    - name: Set up package dir
+      run: |
+        cd ../sdk
+        mkdir -p ../package/voorkant
+        # I used symlinks in an earlier iteration, which failed because the package dir was inside. Might be an interesting optimisation, please test in GH Actions -and- act if you try symlinks here.
+        cp "${GITHUB_WORKSPACE}"/openwrt-package/voorkant/Makefile ../package/voorkant/ # I guess this could be a recursive copy instead, in case we add files/ at some point
+        cp -fpR "${GITHUB_WORKSPACE}" ../package/voorkant/src
+        ( echo "src-link voorkant ${GITHUB_WORKSPACE}/../package" ; cat feeds.conf.default ) > feeds.conf
+    - name: Update packages feed
+      run: |
+        cd "../sdk"
+        scripts/feeds update packages
+        scripts/feeds update base
+        scripts/feeds update voorkant
+        cd feeds/packages && patch -p1 < ${GITHUB_WORKSPACE}/openwrt-package/libcurl-websockets.patch
+    - name: Build package
+      run: |
+        set -x
+        cd "../sdk"
+        scripts/feeds install -f voorkant
+        cat ${GITHUB_WORKSPACE}/openwrt-package/default-dot-config >> .config
+        make defconfig
+        make -j$(nproc) V=s package/voorkant/compile
+        make -j1 V=s package/index
+    - name: Prepare artifact
+      run: |
+        cd ../sdk
+        find bin/packages/ -ls
+        tar cf ${GITHUB_WORKSPACE}/packages.tar bin/packages/ .config
+    # FIXME: put something useful (git hash?) in artifact name. We also want this in other workflows.
+    - uses: actions/upload-artifact@v4
+      with:
+        name: openwrt-armel-build
+        path: packages.tar
