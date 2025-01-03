@@ -31,8 +31,7 @@ jobs:
           ninja-build \
           nlohmann-json3-dev \
           pkg-config \
-          python3-pip \
-          xxd
+          python3-pip
       - name: Configure Meson
         run: meson setup ${{github.workspace}}/build
       - name: Build
@@ -82,8 +81,7 @@ jobs:
           ninja-build \
           nlohmann-json3-dev \
           pkg-config \
-          python3-pip \
-          xxd
+          python3-pip
       - uses: actions/checkout@v4
         with:
           submodules: recursive

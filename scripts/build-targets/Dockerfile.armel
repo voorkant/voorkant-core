@@ -9,7 +9,6 @@ RUN apt-get -yy install \
     pkg-config \
     libssl-dev \
     python3-pip \
-    xxd \
     tini
 RUN pip install --break-system-packages meson
 RUN git config --global --add safe.directory '*'  # this makes meson's vcs_tag() work
