@@ -1,0 +1,9 @@
+CONFIG_SIGNED_PACKAGES=n
+
+CONFIG_LIBCURL_WEBSOCKETS=y
+
+# we can =n a lot more things, and the list might grow over time
+CONFIG_LIBCURL_NGHTTP2=n
+
+# remove this once curl is upgraded to 8.11
+CONFIG_LIBCURL_VERBOSE=y
