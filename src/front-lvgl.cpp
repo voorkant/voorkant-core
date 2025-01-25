@@ -113,7 +113,7 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
         }
         else {
           std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-          std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
+          std::unique_ptr<UIEntity> dummy = std::make_unique<UISensor>(entity, cont_row);
           uielements.push_back(std::move(dummy));
         }
       }
@@ -152,7 +152,7 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
       g_log << Logger::Warning << "Card of type " << card["type"] << " found, but we have no matching UIEntity. Creating dummy for entity." << card["entity"] << std::endl;
       string entityname = card["entity"];
       std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-      std::unique_ptr<UIEntity> dummy = std::make_unique<UIDummy>(entity, cont_row);
+      std::unique_ptr<UIEntity> dummy = std::make_unique<UISensor>(entity, cont_row);
       uielements.push_back(std::move(dummy));
     }
     else {
@@ -408,7 +408,7 @@ void uithread(int _argc, char* _argv[])
       {EntityType::Switch, makeUIElement<UISwitch>},
       {EntityType::Fan, makeUIElement<UIButton>},
       {EntityType::Sensor, makeUIElement<UISensor>},
-      {EntityType::OTHER, makeUIElement<UIDummy>}};
+      {EntityType::OTHER, makeUIElement<UISensor>}};
 
     auto entities = HABackend::getInstance().getEntitiesByPattern(entity_command.get<string>("pattern"));
     g_log << Logger::Debug << "Entities are: " << entities.size() << std::endl;
