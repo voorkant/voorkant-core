@@ -222,14 +222,6 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent, std::st
   lv_obj_set_align(extratext2, LV_ALIGN_RIGHT_MID);
   lv_obj_set_style_text_align(extratext2, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
 
-  const auto& services = _entity->getServices();
-  for (const auto& service : services) {
-    string txt = "Service: ";
-    lv_obj_t* servicelabel = createLabel(textpart, txt.append(service->name));
-    lv_obj_set_width(servicelabel, LV_PCT(100));
-    lv_obj_set_align(servicelabel, LV_ALIGN_LEFT_MID);
-  }
-
   update();
 };
 
