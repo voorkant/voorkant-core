@@ -3,6 +3,7 @@
 #include "logger.hpp"
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_style_gen.h>
+#include <src/layouts/flex/lv_flex.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_text.h>
 
@@ -234,11 +235,21 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent, std::st
   lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
   lv_obj_add_event_cb(flowpanel, UISensor::clickCB, LV_EVENT_CLICKED, reinterpret_cast<void*>(&entity));
 
-  lv_obj_t* iconpart = lv_label_create(flowpanel);
-  lv_obj_set_width(iconpart, 30);
+  lv_obj_t* iconpart = lv_obj_create(flowpanel);
+  lv_obj_set_width(iconpart, LV_SIZE_CONTENT);
   lv_obj_set_height(iconpart, LV_SIZE_CONTENT);
   lv_obj_set_style_pad_all(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_border_width(iconpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_flex_flow(iconpart, LV_FLEX_FLOW_COLUMN);
+  lv_obj_set_flex_align(iconpart, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+
+  lv_obj_t* iconlabel = lv_label_create(iconpart);
+  lv_obj_set_width(iconlabel, 30);
+  lv_obj_set_height(iconlabel, 30);
+  lv_obj_set_pos(iconlabel, 100, 0);
+  lv_obj_set_align(iconlabel, LV_ALIGN_TOP_MID);
+  lv_obj_set_style_pad_all(iconlabel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_border_width(iconlabel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   string icon = getIconFor(_entity, _icon);
   // cerr << "iconmap[" << _entity->platform << "," << _entity->translation_key << "]=" << voorkant::lvgl::iconmap[{_entity->platform, _entity->translation_key}] << endl;
 
@@ -249,9 +260,15 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent, std::st
     icon = "help"; // as getIconFor currently promises something mdi:, we should never get here
   }
 
-  lv_label_set_text(iconpart, voorkant::mdi::name2id(icon).data());
-  lv_obj_add_style(iconpart, &voorkant::lvgl::mdistyle, 0);
-  lv_obj_set_style_text_align(iconpart, LV_TEXT_ALIGN_CENTER, 0);
+  lv_label_set_text(iconlabel, voorkant::mdi::name2id(icon).data());
+  lv_obj_add_style(iconlabel, &voorkant::lvgl::mdistyle, 0);
+  lv_obj_set_style_text_align(iconlabel, LV_TEXT_ALIGN_CENTER, 0);
+
+  lv_obj_t* iconuppusher = lv_obj_create(iconpart);
+  lv_obj_set_width(iconuppusher, 1);
+  lv_obj_set_height(iconuppusher, 10);
+  lv_obj_set_style_pad_all(iconuppusher, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_border_width(iconuppusher, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
   lv_obj_t* textpart = lv_obj_create(flowpanel);
   lv_obj_set_width(textpart, uiEntityWidth - 55);
