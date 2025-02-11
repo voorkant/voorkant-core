@@ -64,8 +64,8 @@ void btnLeftPress(lv_event_t* _e)
   lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_CLICKED) {
     lv_coord_t x = lv_obj_get_scroll_x(cont_row);
-    // this is 807 because for whatever reason the snapping requires it to be 807....
-    lv_obj_scroll_to_x(cont_row, x - 807, LV_ANIM_OFF);
+    // this was 800 but for whatever reason the snapping required it to be 807 when padding on the columns was different
+    lv_obj_scroll_to_x(cont_row, x - 800, LV_ANIM_OFF);
   }
 };
 
@@ -74,7 +74,7 @@ void btnRightPress(lv_event_t* _e)
   lv_event_code_t code = lv_event_get_code(_e);
   if (code == LV_EVENT_CLICKED) {
     lv_coord_t x = lv_obj_get_scroll_x(cont_row);
-    lv_obj_scroll_to_x(cont_row, x + 807, LV_ANIM_OFF);
+    lv_obj_scroll_to_x(cont_row, x + 800, LV_ANIM_OFF);
   }
 };
 
@@ -294,6 +294,7 @@ void uithread(int _argc, char* _argv[])
   lv_obj_t* row_and_logs = lv_obj_create(content);
   lv_obj_remove_style_all(row_and_logs);
   lv_obj_remove_flag(row_and_logs, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_set_style_pad_all(content, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_size(row_and_logs, lv_pct(100), lv_pct(100));
   // lv_obj_set_y(row_and_logs, reserved_at_top);
   lv_obj_set_flex_flow(row_and_logs, LV_FLEX_FLOW_ROW_WRAP);
@@ -305,8 +306,8 @@ void uithread(int _argc, char* _argv[])
   lv_obj_remove_style_all(cont_row);
   lv_obj_set_size(cont_row, lv_pct(100), lv_pct(80));
   lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN_WRAP);
-  lv_obj_set_style_pad_row(cont_row, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_pad_column(cont_row, 9, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_pad_row(cont_row, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_pad_column(cont_row, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_scroll_snap_x(cont_row, LV_SCROLL_SNAP_START);
 
   /* Bottom row */
