@@ -112,7 +112,6 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
           uielements.push_back(std::move(sensor));
         }
         else {
-          std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
           std::unique_ptr<UIEntity> dummy = std::make_unique<UISensor>(entity, cont_row);
           uielements.push_back(std::move(dummy));
         }
