@@ -146,11 +146,11 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
   }
   else {
     if (card.contains(("entity"))) {
-      g_log << Logger::Warning << "Card of type " << card["type"] << " found, but we have no matching UIEntity. Creating dummy for entity." << card["entity"] << std::endl;
+      g_log << Logger::Warning << "Card of type " << card["type"] << " found, but we have no matching UIEntity. Falling back to 'sensor' for entity." << card["entity"] << std::endl;
       string entityname = card["entity"];
       std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-      std::unique_ptr<UIEntity> dummy = std::make_unique<UISensor>(entity, cont_row);
-      uielements.push_back(std::move(dummy));
+      std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row);
+      uielements.push_back(std::move(sensor));
     }
     else {
       g_log << Logger::Warning << "Card of type " << card["type"] << " found, couldn't find entity." << std::endl;
