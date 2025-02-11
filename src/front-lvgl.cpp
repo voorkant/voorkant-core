@@ -107,13 +107,11 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
           std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
           uielements.push_back(std::move(btn));
         }
-        else if (entity->getEntityType() == EntityType::Sensor) {
+        else if (entity->getEntityType() == EntityType::Sensor || true) {
+          // we used to fall back to UIDummy, but UISensor actually shows things better than that,
+          // hence the || true. If you add a type, put it above.
           std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row, icon);
           uielements.push_back(std::move(sensor));
-        }
-        else {
-          std::unique_ptr<UIEntity> dummy = std::make_unique<UISensor>(entity, cont_row);
-          uielements.push_back(std::move(dummy));
         }
       }
     }
