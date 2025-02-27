@@ -4,8 +4,6 @@
 #include <mutex>
 
 #include <poll.h>
-#include <curl/curl.h>
-#include <curl/easy.h>
 
 #include <nlohmann/json.hpp>
 #include "Backend.hpp"
