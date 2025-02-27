@@ -164,7 +164,7 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in update()
   flowpanel = lv_obj_create(_parent);
   lv_obj_set_width(flowpanel, uiEntityWidth);
-  lv_obj_set_height(flowpanel, 380);
+  lv_obj_set_height(flowpanel, LV_PCT(100));
   lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
   lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
@@ -184,9 +184,9 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   tilecontainer = lv_tileview_create(flowpanel);
   lv_obj_add_event_cb(tilecontainer, UIRGBLight::changeTileCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(this));
-  lv_obj_set_height(tilecontainer, uiEntityWidth - 15);
+  lv_obj_set_height(tilecontainer, 225);
 
-  lv_coord_t sliderheight = widthheight - (lv_coord_t)30;
+  lv_coord_t sliderheight = 200;
 
   if (showBrightness) {
     lv_obj_t* brightness_tile = lv_tileview_add_tile(tilecontainer, 0, 0, LV_DIR_HOR);
@@ -200,20 +200,20 @@ UIRGBLight::UIRGBLight(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 
   if (showColorWheel) {
     lv_obj_t* cw_tile = lv_tileview_add_tile(tilecontainer, 1, 0, LV_DIR_HOR);
-    cwHSbuf.resize(widthheight * widthheight * 2); // FIXME 2 is only correct for 565 (which we are using now)
+    cwHSbuf.resize(sliderheight * sliderheight * 2); // FIXME 2 is only correct for 565 (which we are using now)
     cw = lv_canvas_create(cw_tile);
-    lv_canvas_set_buffer(cw, cwHSbuf.data(), widthheight, widthheight, LV_COLOR_FORMAT_RGB565);
-    lv_obj_set_size(cw, widthheight, widthheight);
+    lv_canvas_set_buffer(cw, cwHSbuf.data(), sliderheight, sliderheight, LV_COLOR_FORMAT_RGB565);
+    lv_obj_set_size(cw, sliderheight, sliderheight);
     lv_obj_set_align(cw, LV_ALIGN_CENTER);
     // lv_image_set_src(cw, LV_SYMBOL_OK);
-    lv_obj_set_size(cw, widthheight, widthheight);
+    lv_obj_set_size(cw, sliderheight, sliderheight);
     // lv_colorwheel_set_mode_fixed(cw, false);
     lv_canvas_fill_bg(cw, lv_color_hex(0xffffff), LV_OPA_MIN);
     // lv_canvas_set_px(cw, 25, 25, lv_palette_main(LV_PALETTE_BLUE), LV_OPA_50);
-    lv_area_t area = {0, 0, widthheight, widthheight};
+    lv_area_t area = {0, 0, sliderheight, sliderheight};
 
-    for (int x = 0; x < widthheight; x++) {
-      for (int y = 0; y < widthheight; y++) {
+    for (int x = 0; x < sliderheight; x++) {
+      for (int y = 0; y < sliderheight; y++) {
         lv_point_t xy = {x, y};
         lv_point_t nxy = normalisePointInArea(xy, area);
         lv_color_hsv_t color_hsv = nxy2hs(nxy.x, nxy.y);
