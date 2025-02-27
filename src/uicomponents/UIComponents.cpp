@@ -132,55 +132,6 @@ void UISwitch::swToggleCB(lv_event_t* _e)
   }
 };
 
-UIDummy::UIDummy(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
-  UIEntity(_entity, _parent)
-{
-  lv_obj_t* flowpanel = lv_obj_create(_parent);
-  lv_obj_set_width(flowpanel, uiEntityWidth);
-  lv_obj_set_height(flowpanel, LV_SIZE_CONTENT);
-  lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
-  lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
-  lv_obj_set_flex_align(flowpanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
-
-  lv_obj_t* label = createLabel(flowpanel, entity->name);
-  lv_obj_set_width(label, LV_PCT(100));
-  lv_obj_set_align(label, LV_ALIGN_CENTER);
-  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-
-  string text = "Domain: ";
-  lv_obj_t* extratext = createLabel(flowpanel, text.append(_entity->domain));
-  lv_obj_set_width(extratext, LV_PCT(100));
-  lv_obj_set_align(extratext, LV_ALIGN_LEFT_MID);
-
-  extratext2 = createLabel(flowpanel, "State:");
-  lv_obj_set_width(extratext2, LV_PCT(100));
-  lv_obj_set_align(extratext2, LV_ALIGN_LEFT_MID);
-
-  const auto& services = _entity->getServices();
-  for (const auto& service : services) {
-    string txt = "Service: ";
-    lv_obj_t* servicelabel = createLabel(flowpanel, txt.append(service->name));
-    lv_obj_set_width(servicelabel, LV_PCT(100));
-    lv_obj_set_align(servicelabel, LV_ALIGN_LEFT_MID);
-  }
-
-  update();
-};
-
-void UIDummy::update()
-{
-  auto state = entity->getJsonState();
-  g_log << Logger::Debug << "We received a UIupdate for " << entity->name << ":" << std::endl;
-  // g_log << Logger::Debug << state.dump(2) << std::endl; // - commented because of #93
-  string s = "State: " + state["state"].get<string>() + " " + state["attributes"].value("unit_of_measurement", "");
-
-  {
-    std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
-    lv_label_set_text(extratext2, s.data());
-  }
-};
-
 // if _icon is passed, we got one from the dashboard, use that
 string getIconFor(std::shared_ptr<HAEntity> _entity, std::string _icon) // for now, this function -always- returns something that starts with mdi:
 {
@@ -270,14 +221,6 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent, std::st
   lv_obj_set_width(extratext2, LV_PCT(100));
   lv_obj_set_align(extratext2, LV_ALIGN_RIGHT_MID);
   lv_obj_set_style_text_align(extratext2, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
-
-  const auto& services = _entity->getServices();
-  for (const auto& service : services) {
-    string txt = "Service: ";
-    lv_obj_t* servicelabel = createLabel(textpart, txt.append(service->name));
-    lv_obj_set_width(servicelabel, LV_PCT(100));
-    lv_obj_set_align(servicelabel, LV_ALIGN_LEFT_MID);
-  }
 
   update();
 };
