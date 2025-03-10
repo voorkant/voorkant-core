@@ -10,15 +10,30 @@ on:
 jobs:
   build-armel-owrt:
     runs-on: 'ubuntu-24.04'
+    container: debian:12
     steps:
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
+    #   with:
+    #     detached: true
+    - name: install required tools and libs
+      run: |
+        apt-get update
+        apt-get -y install \
+          build-essential \
+          file \
+          gawk \
+          git \
+          libncurses5-dev \
+          nodejs \
+          python3-distutils \
+          rsync \
+          unzip \
+          wget \
+          zstd
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-    - name: install extra deps for nektos/act
-      if: ${{ env.ACT }}
-      run: |
-        sudo apt-get update
-        sudo apt-get -y install rsync
     - name: Get the SDK
       run: |
         # in December 2024/January 2025, https://downloads.openwrt.org/snapshots/targets/mxs/generic/openwrt-sdk-mxs-generic_gcc-13.3.0_musl_eabi.Linux-x86_64.tar.zst
@@ -34,6 +49,7 @@ jobs:
         # I used symlinks in an earlier iteration, which failed because the package dir was inside. Might be an interesting optimisation, please test in GH Actions -and- act if you try symlinks here.
         cp "${GITHUB_WORKSPACE}"/openwrt-package/voorkant/Makefile ../package/voorkant/ # I guess this could be a recursive copy instead, in case we add files/ at some point
         cp -fpR "${GITHUB_WORKSPACE}" ../package/voorkant/src
+        rm -rf ../package/voorkant/src/openwrt-package  # if we don't do this, openwrt tries to build from here, where there is no src/ dir. I don't know why.
         ( echo "src-link voorkant ${GITHUB_WORKSPACE}/../package" ; cat feeds.conf.default ) > feeds.conf
     - name: Update packages feed
       run: |
