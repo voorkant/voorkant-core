@@ -399,6 +399,8 @@ void uithread(int _argc, char* _argv[])
 
     static auto tabbar = lv_tabview_create(cont_row);
 
+    lv_obj_add_style(tabbar, &voorkant::lvgl::b612style, 0); // FIXME: this should not be necessary
+
     // FIXME: don't use a tab bar at all if there is exactly one view?
     for (auto view : result["views"]) {
       // FIXME: if view["icon"] exists, we should be showing that
