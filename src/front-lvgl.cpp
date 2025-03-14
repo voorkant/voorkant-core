@@ -49,7 +49,6 @@ namespace lvgl
 }
 
 std::mutex g_lvgl_updatelock;
-lv_obj_t* cont_row;
 namespace
 {
 template <typename UIType>
@@ -59,35 +58,16 @@ std::unique_ptr<UIEntity> makeUIElement(std::shared_ptr<HAEntity> _entity, lv_ob
 }
 }
 
-void btnLeftPress(lv_event_t* _e)
-{
-  lv_event_code_t code = lv_event_get_code(_e);
-  if (code == LV_EVENT_CLICKED) {
-    lv_coord_t x = lv_obj_get_scroll_x(cont_row);
-    // this is 807 because for whatever reason the snapping requires it to be 807....
-    lv_obj_scroll_to_x(cont_row, x - 807, LV_ANIM_OFF);
-  }
-};
-
-void btnRightPress(lv_event_t* _e)
-{
-  lv_event_code_t code = lv_event_get_code(_e);
-  if (code == LV_EVENT_CLICKED) {
-    lv_coord_t x = lv_obj_get_scroll_x(cont_row);
-    lv_obj_scroll_to_x(cont_row, x + 807, LV_ANIM_OFF);
-  }
-};
-
 void lvLogCallback(lv_log_level_t _level, const char* _buf) // FIXME use level
 {
   g_log << Logger::Error << _buf << endl;
 }
 
-void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::basic_json<>& card)
+void renderCard(std::vector<std::unique_ptr<UIEntity>>& _uielements, nlohmann::basic_json<>& _card, lv_obj_t* _parent)
 {
-  if (card["type"] == "entities") {
-    if (card.contains("entities")) { // array of objects with the entity name in it.
-      auto objs = card["entities"];
+  if (_card["type"] == "entities") {
+    if (_card.contains("entities")) { // array of objects with the entity name in it.
+      auto objs = _card["entities"];
       for (auto ent : objs) {
         string entityname;
         string icon;
@@ -100,61 +80,68 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
         }
         std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
         if (entity->getEntityType() == EntityType::Light) {
-          std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
-          uielements.push_back(std::move(btn));
+          std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, _parent);
+          _uielements.push_back(std::move(btn));
         }
         else if (entity->getEntityType() == EntityType::Switch) {
-          std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, cont_row);
-          uielements.push_back(std::move(btn));
+          std::unique_ptr<UIEntity> btn = std::make_unique<UISwitch>(entity, _parent);
+          _uielements.push_back(std::move(btn));
         }
         else if (entity->getEntityType() == EntityType::Sensor || true) {
           // we used to fall back to UIDummy, but UISensor actually shows things better than that,
           // hence the || true. If you add a type, put it above.
-          std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row, icon);
-          uielements.push_back(std::move(sensor));
+          std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, _parent, icon);
+          _uielements.push_back(std::move(sensor));
         }
       }
     }
   }
-  else if (card["type"] == "button") {
-    if (card.contains("entity")) {
-      string entityname = card["entity"];
+  else if (_card["type"] == "button") {
+    if (_card.contains("entity")) {
+      string entityname = _card["entity"];
       std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-      std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, cont_row);
-      uielements.push_back(std::move(btn));
+      std::unique_ptr<UIEntity> btn = std::make_unique<UIButton>(entity, _parent);
+      _uielements.push_back(std::move(btn));
     }
     else {
-      g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
+      g_log << Logger::Warning << "Card is of type button, but no entity found: " << _card << std::endl;
     }
   }
-  else if (card["type"] == "light") {
-    if (card.contains("entity")) {
-      string entityname = card["entity"];
+  else if (_card["type"] == "light") {
+    if (_card.contains("entity")) {
+      string entityname = _card["entity"];
       std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-      std::unique_ptr<UIEntity> btn = std::make_unique<UIRGBLight>(entity, cont_row);
-      uielements.push_back(std::move(btn));
+      std::unique_ptr<UIEntity> btn = std::make_unique<UIRGBLight>(entity, _parent);
+      _uielements.push_back(std::move(btn));
     }
     else {
-      g_log << Logger::Warning << "Card is of type button, but no entity found: " << card << std::endl;
+      g_log << Logger::Warning << "Card is of type button, but no entity found: " << _card << std::endl;
     }
   }
-  else if (card["type"] == "custom:apexcharts-card") {
+  else if (_card["type"] == "custom:apexcharts-card") {
 
-    std::unique_ptr<UIEntity> apex = std::make_unique<UIApexCard>(card, cont_row);
-    uielements.push_back(std::move(apex));
+    std::unique_ptr<UIEntity> apex = std::make_unique<UIApexCard>(_card, _parent);
+    _uielements.push_back(std::move(apex));
     g_log << Logger::Warning << "got apex card" << std::endl;
   }
   else {
-    if (card.contains(("entity"))) {
-      g_log << Logger::Warning << "Card of type " << card["type"] << " found, but we have no matching UIEntity. Falling back to 'sensor' for entity." << card["entity"] << std::endl;
-      string entityname = card["entity"];
+    if (_card.contains(("entity"))) {
+      g_log << Logger::Warning << "Card of type " << _card["type"] << " found, but we have no matching UIEntity. Falling back to 'sensor' for entity." << _card["entity"] << std::endl;
+      string entityname = _card["entity"];
       std::shared_ptr<HAEntity> entity = HABackend::getInstance().getEntityByName(entityname);
-      std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, cont_row);
-      uielements.push_back(std::move(sensor));
+      std::unique_ptr<UIEntity> sensor = std::make_unique<UISensor>(entity, _parent);
+      _uielements.push_back(std::move(sensor));
     }
     else {
-      g_log << Logger::Warning << "Card of type " << card["type"] << " found, couldn't find entity." << std::endl;
+      g_log << Logger::Warning << "Card of type " << _card["type"] << " found, couldn't find entity." << std::endl;
     }
+  }
+}
+
+void renderSection(std::vector<std::unique_ptr<UIEntity>>& _uielements, nlohmann::basic_json<>& _section, lv_obj_t* _parent)
+{
+  for (auto card : _section["cards"]) {
+    renderCard(_uielements, card, _parent);
   }
 }
 
@@ -298,7 +285,7 @@ void uithread(int _argc, char* _argv[])
   /*Create a container with ROW flex direction that wraps.
   This is our MAIN box that we put everything in except logs. We have this here because we want some spacing around it.
   */
-  cont_row = lv_obj_create(row_and_logs);
+  static auto cont_row = lv_obj_create(row_and_logs);
   lv_obj_remove_style_all(cont_row);
   lv_obj_set_size(cont_row, lv_pct(100), lv_pct(80));
   lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN_WRAP);
@@ -320,20 +307,7 @@ void uithread(int _argc, char* _argv[])
   lv_style_set_radius(&style, lv_coord_t(0));
   lv_obj_add_style(bottom_row, &style, 0);
 
-  lv_obj_t* left_btn = lv_button_create(bottom_row);
-  lv_obj_t* left_btn_txt = lv_label_create(left_btn);
-  lv_label_set_text(left_btn_txt, voorkant::mdi::name2id("arrow-left").data());
-  lv_obj_add_event_cb(left_btn, btnLeftPress, LV_EVENT_CLICKED, NULL);
-  lv_obj_add_style(left_btn, &voorkant::lvgl::mdistyle, 0);
-
   UILogBox logbox(bottom_row, &voorkant::lvgl::b612style);
-
-  lv_obj_t* right_btn = lv_button_create(bottom_row);
-  lv_obj_t* right_btn_txt = lv_label_create(right_btn);
-  lv_label_set_text(right_btn_txt, voorkant::mdi::name2id("arrow-right").data());
-  lv_obj_add_style(right_btn_txt, &voorkant::lvgl::mdistyle, 0);
-
-  lv_obj_add_event_cb(right_btn, btnRightPress, LV_EVENT_CLICKED, NULL);
 
   lv_log_register_print_cb(lvLogCallback);
 
@@ -425,17 +399,16 @@ void uithread(int _argc, char* _argv[])
 
     // FIXME: lots of repeat code here, should do a <template> thing
     json result = doc["result"];
+
     for (auto view : result["views"]) {
       if (view.contains("sections")) {
         for (auto section : view["sections"]) {
-          for (auto card : section["cards"]) {
-            renderCard(uielements, card);
-          }
+          renderSection(uielements, section, cont_row);
         }
       }
       if (view.contains("cards")) {
         for (auto card : view["cards"]) {
-          renderCard(uielements, card);
+          renderCard(uielements, card, cont_row);
         }
       }
     }
