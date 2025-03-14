@@ -407,7 +407,7 @@ void uithread(int _argc, char* _argv[])
       auto tabview = lv_tabview_add_tab(tabbar, view["title"].get<std::string>().c_str());
       viewtabs.push_back(tabview);
       lv_obj_remove_style_all(tabview);
-      lv_obj_set_size(tabview, lv_pct(100), lv_pct(80));
+      lv_obj_set_size(tabview, lv_pct(100), lv_pct(100));
       lv_obj_set_flex_flow(tabview, LV_FLEX_FLOW_COLUMN_WRAP);
       lv_obj_set_style_pad_row(tabview, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
       lv_obj_set_style_pad_column(tabview, 9, LV_PART_MAIN | LV_STATE_DEFAULT);
