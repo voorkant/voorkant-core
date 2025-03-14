@@ -1,7 +1,9 @@
 
 #include "WSConn.hpp"
 #include "src/logger.hpp"
+#include <csignal>
 #include <iostream>
+#include <stdexcept>
 
 using std::cout;
 using std::endl;
@@ -15,7 +17,10 @@ WSConn::WSConn(std::string _url)
   curl_easy_setopt(wshandle, CURLOPT_CONNECT_ONLY, 2L);
   curl_easy_setopt(wshandle, CURLOPT_URL, _url.c_str());
   curl_easy_setopt(wshandle, CURLOPT_VERBOSE, 1L);
-  curl_easy_perform(wshandle);
+  auto res = curl_easy_perform(wshandle);
+  if (res != CURLE_OK) {
+    throw std::runtime_error(std::string("websocket connection failed: ") + curl_easy_strerror(res));
+  }
 }
 
 std::string WSConn::recv(void)

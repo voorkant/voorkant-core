@@ -29,7 +29,7 @@ std::string getEnv(std::string _key)
 }
 
 int main(int argc, char* argv[])
-{
+try {
   g_log.setLogLevel(Logger::LogLevel::Debug);
   g_log.setDoDetails(true);
   g_log << Logger::LogLevel::Info << "Starting! (version " << getVersion() << ")" << std::endl;
@@ -44,5 +44,9 @@ int main(int argc, char* argv[])
     return 0;
   }
 
+  return 1;
+}
+catch (std::exception& e) {
+  g_log << Logger::LogLevel::Error << e.what() << endl;
   return 1;
 }
