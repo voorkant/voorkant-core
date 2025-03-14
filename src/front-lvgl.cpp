@@ -115,7 +115,7 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& _uielements, nlohmann::b
       _uielements.push_back(std::move(btn));
     }
     else {
-      g_log << Logger::Warning << "Card is of type button, but no entity found: " << _card << std::endl;
+      g_log << Logger::Warning << "Card is of type light, but no entity found: " << _card << std::endl;
     }
   }
   else if (_card["type"] == "custom:apexcharts-card") {
