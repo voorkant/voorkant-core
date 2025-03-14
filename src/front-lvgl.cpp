@@ -288,10 +288,6 @@ void uithread(int _argc, char* _argv[])
   static auto cont_row = lv_obj_create(row_and_logs);
   lv_obj_remove_style_all(cont_row);
   lv_obj_set_size(cont_row, lv_pct(100), lv_pct(80));
-  lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_COLUMN_WRAP);
-  lv_obj_set_style_pad_row(cont_row, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_pad_column(cont_row, 9, LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_scroll_snap_x(cont_row, LV_SCROLL_SNAP_START);
 
   /* Bottom row */
   lv_obj_t* bottom_row = lv_obj_create(row_and_logs);
@@ -312,6 +308,7 @@ void uithread(int _argc, char* _argv[])
   lv_log_register_print_cb(lvLogCallback);
 
   std::vector<std::unique_ptr<UIEntity>> uielements;
+  std::vector<lv_obj_t*> viewtabs;
   if (program.is_subcommand_used(entity_command) || program.is_subcommand_used(dashboard_command)) {
     // need to collect some data used in both cases
 
@@ -400,15 +397,29 @@ void uithread(int _argc, char* _argv[])
     // FIXME: lots of repeat code here, should do a <template> thing
     json result = doc["result"];
 
+    static auto tabbar = lv_tabview_create(cont_row);
+
+    // FIXME: don't use a tab bar at all if there is exactly one view?
     for (auto view : result["views"]) {
+      // FIXME: if view["icon"] exists, we should be showing that
+      auto tabview = lv_tabview_add_tab(tabbar, view["title"].get<std::string>().c_str());
+      viewtabs.push_back(tabview);
+      lv_obj_remove_style_all(tabview);
+      lv_obj_set_size(tabview, lv_pct(100), lv_pct(80));
+      lv_obj_set_flex_flow(tabview, LV_FLEX_FLOW_COLUMN_WRAP);
+      lv_obj_set_style_pad_row(tabview, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_pad_column(tabview, 9, LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_scroll_snap_x(tabview, LV_SCROLL_SNAP_START);
+      lv_obj_remove_flag(tabview, LV_OBJ_FLAG_SCROLLABLE);
+
       if (view.contains("sections")) {
         for (auto section : view["sections"]) {
-          renderSection(uielements, section, cont_row);
+          renderSection(uielements, section, tabview);
         }
       }
       if (view.contains("cards")) {
         for (auto card : view["cards"]) {
-          renderCard(uielements, card, cont_row);
+          renderCard(uielements, card, tabview);
         }
       }
     }
