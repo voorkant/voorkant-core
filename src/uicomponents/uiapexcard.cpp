@@ -71,7 +71,7 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
 
   // // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
   flowpanel = lv_obj_create(_parent);
-  lv_obj_set_width(flowpanel, uiEntityWidth * 3);
+  // lv_obj_set_width(flowpanel, uiEntityWidth * 3);
   lv_obj_set_height(flowpanel, /* MY_DISP_VER_RES */ 480 * 0.8);
   // lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);

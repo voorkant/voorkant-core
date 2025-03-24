@@ -140,8 +140,18 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& _uielements, nlohmann::b
 
 void renderSection(std::vector<std::unique_ptr<UIEntity>>& _uielements, nlohmann::basic_json<>& _section, lv_obj_t* _parent)
 {
+  auto section = lv_obj_create(_parent);
+  lv_obj_remove_style_all(section);
+  //lv_obj_set_size(section, lv_pct(50), lv_pct(100));
+  lv_obj_set_flex_flow(section, LV_FLEX_FLOW_COLUMN);
+  lv_obj_set_flex_grow(section, 1);
+  lv_obj_set_style_pad_row(section, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_pad_column(section, 9, LV_PART_MAIN | LV_STATE_DEFAULT);
+  // lv_obj_set_scroll_snap_x(section, LV_SCROLL_SNAP_START);
+  lv_obj_remove_flag(section, LV_OBJ_FLAG_SCROLLABLE);
+
   for (auto card : _section["cards"]) {
-    renderCard(_uielements, card, _parent);
+    renderCard(_uielements, card, section);
   }
 }
 
@@ -408,7 +418,7 @@ void uithread(int _argc, char* _argv[])
       viewtabs.push_back(tabview);
       lv_obj_remove_style_all(tabview);
       lv_obj_set_size(tabview, lv_pct(100), lv_pct(100));
-      lv_obj_set_flex_flow(tabview, LV_FLEX_FLOW_COLUMN_WRAP);
+      lv_obj_set_flex_flow(tabview, LV_FLEX_FLOW_ROW);
       lv_obj_set_style_pad_row(tabview, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
       lv_obj_set_style_pad_column(tabview, 9, LV_PART_MAIN | LV_STATE_DEFAULT);
       lv_obj_set_scroll_snap_x(tabview, LV_SCROLL_SNAP_START);

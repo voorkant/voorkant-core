@@ -46,7 +46,8 @@ public:
 
 protected:
   std::shared_ptr<HAEntity> entity;
-  const lv_coord_t uiEntityWidth = (800 - (2 * 9)) / 3;
+  // const lv_coord_t uiEntityWidth = (800 - (2 * 9)) / 3;
+  const lv_coord_t uiEntityWidth = 200;
 };
 
 class UIButton : public UIEntity
