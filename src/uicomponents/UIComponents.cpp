@@ -210,7 +210,7 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent, std::st
 
   lv_obj_t* textpart = lv_obj_create(flowpanel);
   // lv_obj_set_width(textpart, uiEntityWidth - 55);
-  lv_obj_set_width(textpart, LV_PCT(85));
+  lv_obj_set_flex_grow(textpart, 1);
   lv_obj_set_height(textpart, LV_SIZE_CONTENT);
   lv_obj_set_style_pad_all(textpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_border_width(textpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
