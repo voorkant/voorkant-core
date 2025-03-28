@@ -413,8 +413,19 @@ void uithread(int _argc, char* _argv[])
 
     // FIXME: don't use a tab bar at all if there is exactly one view?
     for (auto view : result["views"]) {
-      // FIXME: if view["icon"] exists, we should be showing that
-      auto tabview = lv_tabview_add_tab(tabbar, view["title"].get<std::string>().c_str());
+      uint32_t idx = lv_obj_get_child_count(lv_tabview_get_tab_bar(tabbar));
+
+      auto title = view["title"].get<std::string>();
+      auto tabview = lv_tabview_add_tab(tabbar, title.c_str());
+
+      if (view.count("icon")) {
+        // next couple of lines taken from lg_tabview.c lv_tabview_rename_tab, suggesting that an accessor is missing
+        lv_obj_t* tab_bar = lv_tabview_get_tab_bar(tabbar);
+        lv_obj_t* button = lv_obj_get_child_by_type(tab_bar, idx, &lv_button_class);
+        lv_obj_t* label = lv_obj_get_child_by_type(button, 0, &lv_label_class);
+        lv_label_set_text(label, voorkant::mdi::name2id(view["icon"].get<std::string>().substr(4)).data());
+        lv_obj_add_style(label, &voorkant::lvgl::mdistyle, 0);
+      }
       viewtabs.push_back(tabview);
       lv_obj_remove_style_all(tabview);
       lv_obj_set_size(tabview, lv_pct(100), lv_pct(100));
