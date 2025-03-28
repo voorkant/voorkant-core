@@ -103,7 +103,7 @@ UISwitch::UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_add_event_cb(sw, UISwitch::swToggleCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
   lv_obj_set_align(sw, LV_ALIGN_RIGHT_MID);
 
-  lv_obj_t* label = createLabel(switchcontainer, _entity->name);
+  lv_obj_t* label = createLabel(switchcontainer, _entity->name); // FIXME _entity->name ignores custom names set in dashboard. likely a problem in more places.
   lv_obj_set_align(label, LV_ALIGN_LEFT_MID);
   // lv_obj_set_width(label, uiEntityWidth - 65); // 50 + padding == switch width
 
