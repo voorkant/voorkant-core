@@ -94,6 +94,7 @@ UISwitch::UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_t* switchcontainer = lv_obj_create(_parent);
   // lv_obj_set_width(switchcontainer, uiEntityWidth);
   lv_obj_set_height(switchcontainer, LV_SIZE_CONTENT);
+  lv_obj_set_width(switchcontainer, LV_PCT(100));
   lv_obj_remove_flag(switchcontainer, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_style_pad_all(switchcontainer, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
 
