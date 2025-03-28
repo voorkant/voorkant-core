@@ -142,7 +142,6 @@ void renderSection(std::vector<std::unique_ptr<UIEntity>>& _uielements, nlohmann
 {
   auto section = lv_obj_create(_parent);
   lv_obj_remove_style_all(section);
-  //lv_obj_set_size(section, lv_pct(50), lv_pct(100));
   lv_obj_set_height(section, lv_pct(100));
   lv_obj_set_flex_flow(section, LV_FLEX_FLOW_COLUMN);
   lv_obj_set_flex_grow(section, 1);
