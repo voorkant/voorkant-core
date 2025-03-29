@@ -411,6 +411,9 @@ void uithread(int _argc, char* _argv[])
     static auto tabview = lv_tabview_create(cont_row);
 
     lv_obj_add_style(tabview, &voorkant::lvgl::b612style, 0); // FIXME: this should not be necessary?
+    lv_obj_remove_flag(lv_tabview_get_content(tabview), LV_OBJ_FLAG_SCROLLABLE);
+
+    lv_obj_t* tab_bar = lv_tabview_get_tab_bar(tabview);
 
     // FIXME: don't use a tab bar at all if there is exactly one view?
     for (auto view : result["views"]) {
@@ -419,7 +422,6 @@ void uithread(int _argc, char* _argv[])
       auto title = view["title"].get<std::string>();
       auto tab = lv_tabview_add_tab(tabview, title.c_str());
 
-      lv_obj_t* tab_bar = lv_tabview_get_tab_bar(tabview);
       lv_obj_set_width(tab_bar, LV_PCT(80)); // FIXME: if you set this to 100, or remove the entire line, the tabbar renders wrong until it gets touched
       lv_obj_t* button = lv_obj_get_child_by_type(tab_bar, idx, &lv_button_class);
       lv_obj_set_flex_grow(button, 0);
