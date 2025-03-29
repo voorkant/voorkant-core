@@ -22,6 +22,7 @@
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_color.h>
 #include <src/misc/lv_style.h>
+#include <src/widgets/tabview/lv_tabview.h>
 #include <stdexcept>
 #include <string>
 
@@ -407,42 +408,47 @@ void uithread(int _argc, char* _argv[])
     // FIXME: lots of repeat code here, should do a <template> thing
     json result = doc["result"];
 
-    static auto tabbar = lv_tabview_create(cont_row);
+    static auto tabview = lv_tabview_create(cont_row);
 
-    lv_obj_add_style(tabbar, &voorkant::lvgl::b612style, 0); // FIXME: this should not be necessary
+    lv_obj_add_style(tabview, &voorkant::lvgl::b612style, 0); // FIXME: this should not be necessary?
 
     // FIXME: don't use a tab bar at all if there is exactly one view?
     for (auto view : result["views"]) {
-      uint32_t idx = lv_obj_get_child_count(lv_tabview_get_tab_bar(tabbar));
+      uint32_t idx = lv_obj_get_child_count(lv_tabview_get_tab_bar(tabview));
 
       auto title = view["title"].get<std::string>();
-      auto tabview = lv_tabview_add_tab(tabbar, title.c_str());
+      auto tab = lv_tabview_add_tab(tabview, title.c_str());
+
+      lv_obj_t* tab_bar = lv_tabview_get_tab_bar(tabview);
+      lv_obj_set_width(tab_bar, LV_PCT(80)); // FIXME: if you set this to 100, or remove the entire line, the tabbar renders wrong until it gets touched
+      lv_obj_t* button = lv_obj_get_child_by_type(tab_bar, idx, &lv_button_class);
+      lv_obj_set_flex_grow(button, 0);
+      lv_obj_set_width(button, LV_SIZE_CONTENT);
+      lv_obj_t* label = lv_obj_get_child_by_type(button, 0, &lv_label_class);
+      lv_obj_set_style_margin_hor(label, 10, 0);
 
       if (view.count("icon")) {
         // next couple of lines taken from lg_tabview.c lv_tabview_rename_tab, suggesting that an accessor is missing
-        lv_obj_t* tab_bar = lv_tabview_get_tab_bar(tabbar);
-        lv_obj_t* button = lv_obj_get_child_by_type(tab_bar, idx, &lv_button_class);
-        lv_obj_t* label = lv_obj_get_child_by_type(button, 0, &lv_label_class);
         lv_label_set_text(label, voorkant::mdi::name2id(view["icon"].get<std::string>().substr(4)).data());
         lv_obj_add_style(label, &voorkant::lvgl::mdistyle, 0);
       }
-      viewtabs.push_back(tabview);
-      lv_obj_remove_style_all(tabview);
-      lv_obj_set_size(tabview, lv_pct(100), lv_pct(100));
-      lv_obj_set_flex_flow(tabview, LV_FLEX_FLOW_ROW);
-      lv_obj_set_style_pad_row(tabview, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-      lv_obj_set_style_pad_column(tabview, 9, LV_PART_MAIN | LV_STATE_DEFAULT);
-      lv_obj_set_scroll_snap_x(tabview, LV_SCROLL_SNAP_START);
-      lv_obj_remove_flag(tabview, LV_OBJ_FLAG_SCROLLABLE);
+      viewtabs.push_back(tab);
+      lv_obj_remove_style_all(tab);
+      lv_obj_set_size(tab, lv_pct(100), lv_pct(100));
+      lv_obj_set_flex_flow(tab, LV_FLEX_FLOW_ROW);
+      lv_obj_set_style_pad_row(tab, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_pad_column(tab, 9, LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_scroll_snap_x(tab, LV_SCROLL_SNAP_START);
+      lv_obj_remove_flag(tab, LV_OBJ_FLAG_SCROLLABLE);
 
       if (view.contains("sections")) {
         for (auto section : view["sections"]) {
-          renderSection(uielements, section, tabview);
+          renderSection(uielements, section, tab);
         }
       }
       if (view.contains("cards")) {
         for (auto card : view["cards"]) {
-          renderCard(uielements, card, tabview);
+          renderCard(uielements, card, tab);
         }
       }
     }
