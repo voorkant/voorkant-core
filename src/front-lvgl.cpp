@@ -42,6 +42,8 @@ namespace lvgl
 {
   lv_font_t* b612font;
   lv_style_t b612style;
+  lv_font_t* b612fontbig;
+  lv_style_t b612stylebig;
   lv_font_t* mdifont;
   lv_style_t mdistyle;
   map<iconkey, string> iconmap; // will need a lock eventually
@@ -63,6 +65,8 @@ void lvLogCallback(lv_log_level_t _level, const char* _buf) // FIXME use level
 {
   g_log << Logger::Error << _buf << endl;
 }
+
+static lv_obj_t* clocklabel{nullptr};
 
 void renderCard(std::vector<std::unique_ptr<UIEntity>>& _uielements, nlohmann::basic_json<>& _card, lv_obj_t* _parent)
 {
@@ -414,6 +418,7 @@ void uithread(int _argc, char* _argv[])
     lv_obj_remove_flag(lv_tabview_get_content(tabview), LV_OBJ_FLAG_SCROLLABLE);
 
     lv_obj_t* tab_bar = lv_tabview_get_tab_bar(tabview);
+    lv_obj_set_width(tab_bar, LV_PCT(80)); // FIXME: if you set this to 100, or remove the entire line, the tabbar renders wrong until it gets touched. Sometimes also happens at 80....
 
     // FIXME: don't use a tab bar at all if there is exactly one view?
     for (auto view : result["views"]) {
@@ -422,7 +427,6 @@ void uithread(int _argc, char* _argv[])
       auto title = view["title"].get<std::string>();
       auto tab = lv_tabview_add_tab(tabview, title.c_str());
 
-      lv_obj_set_width(tab_bar, LV_PCT(80)); // FIXME: if you set this to 100, or remove the entire line, the tabbar renders wrong until it gets touched
       lv_obj_t* button = lv_obj_get_child_by_type(tab_bar, idx, &lv_button_class);
       lv_obj_set_flex_grow(button, 0);
       lv_obj_set_width(button, LV_SIZE_CONTENT);
@@ -454,6 +458,15 @@ void uithread(int _argc, char* _argv[])
         }
       }
     }
+
+    // FIXME: nothing about the way this clock is put on the screen makes me happy. I want it to be part of tab_bar, flushed to the right
+    clocklabel = lv_label_create(lv_screen_active());
+    lv_obj_set_align(clocklabel, LV_ALIGN_TOP_RIGHT);
+    lv_label_set_text(clocklabel, "13:37");
+    voorkant::lvgl::b612fontbig = lv_tiny_ttf_create_data_ex(B612_Regular_ttf, B612_Regular_ttf_len, 32, LV_FONT_KERNING_NORMAL, 1024);
+    lv_style_init(&voorkant::lvgl::b612stylebig);
+    lv_style_set_text_font(&voorkant::lvgl::b612stylebig, voorkant::lvgl::b612fontbig);
+    lv_obj_add_style(clocklabel, &voorkant::lvgl::b612stylebig, 0);
   }
   else {
     g_log << Logger::Info << "We expected a command" << std::endl;
@@ -470,6 +483,12 @@ void uithread(int _argc, char* _argv[])
     usleep(5 * 1000); // 5000 usec = 5 ms
     {
       std::unique_lock<std::mutex> lvlock(g_lvgl_updatelock);
+      // FIXME: we don't need to update the clock every 5ms
+      auto t = std::time(nullptr);
+      auto tm = *std::localtime(&t);
+      std::ostringstream time;
+      time << std::put_time(&tm, "%H:%M:%S");
+      lv_label_set_text(clocklabel, time.str().c_str());
       lv_tick_inc(5); // 5 ms
       lv_task_handler();
     }
