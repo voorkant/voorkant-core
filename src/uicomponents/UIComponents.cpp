@@ -130,8 +130,8 @@ void UISwitch::swToggleCB(lv_event_t* _e)
 
   std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(lv_event_get_user_data(_e));
   if (code == LV_EVENT_VALUE_CHANGED) {
-    HADomains::Light light(ent);
-    light.toggle({});
+    HADomains::Light light(ent); // FIXME: this is wrong for things like switch.ac, sends the wrong domain (light instead of switch)
+    light.toggle({}); // FIXME: HAweb explicitly calls turn_on/turn_off instead of toggle
   }
 };
 
