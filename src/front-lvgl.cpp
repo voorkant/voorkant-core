@@ -452,10 +452,11 @@ void uithread(int _argc, char* _argv[])
           renderSection(uielements, section, tab);
         }
       }
-      if (view.contains("cards")) {
-        for (auto card : view["cards"]) {
-          renderCard(uielements, card, tab);
-        }
+      else {
+        // if we get here, this was not a Sections view, and we dumbly assume it's a masonry view, holding cards
+        // FIXME: which we then all render vertically as if they are in one section, which is not pretty
+        // need to check whether type 3 (Panel) and 4 (Sidebar) from https://www.home-assistant.io/dashboards/views/ do anything sensible here
+        renderSection(uielements, view, tab);
       }
     }
 
