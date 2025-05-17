@@ -221,7 +221,10 @@ executable(
 )
 
 if get_option('front-lvgl').enabled()
-    date_dep = dependency('date', default_options: ['default_library=static'])
+    date_dep = dependency(
+        'date',
+        default_options: ['default_library=static', 'use_system_tzdb=true'],
+    )
 
     executable(
         'voorkant-lvgl',
