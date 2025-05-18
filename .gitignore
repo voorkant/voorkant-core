@@ -1,3 +1,4 @@
 .cache
 .secrets*
 subprojects/*/
+!subprojects/packagefiles/
