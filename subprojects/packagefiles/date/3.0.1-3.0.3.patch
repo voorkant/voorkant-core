@@ -1,0 +1,3653 @@
+diff --git a/.gitattributes b/.gitattributes
+new file mode 100644
+index 0000000..ab8d8e4
+--- /dev/null
++++ b/.gitattributes
+@@ -0,0 +1,4 @@
++# Normalize EOL for all files that Git considers text files.
++* text=auto eol=lf
++*zip -text -diff
++
+diff --git a/.gitignore b/.gitignore
+index e88e3be..3126959 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -135,7 +135,7 @@ publish/
+ # Publish Web Output
+ *.[Pp]ublish.xml
+ *.azurePubxml
+-# TODO: Comment the next line if you want to checkin your web deploy settings 
++# TODO: Comment the next line if you want to checkin your web deploy settings
+ # but database connection strings (with potential passwords) will be unencrypted
+ *.pubxml
+ *.publishproj
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 012512a..082f835 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -7,7 +7,7 @@
+      include( FetchContent )
+      FetchContent_Declare( date_src
+        GIT_REPOSITORY https://github.com/HowardHinnant/date.git
+-       GIT_TAG        v3.0.0  # adjust tag/branch/commit as needed
++       GIT_TAG        v3.0.1  # adjust tag/branch/commit as needed
+      )
+      FetchContent_MakeAvailable(date_src)
+      ...
+@@ -17,13 +17,16 @@
+ 
+ cmake_minimum_required( VERSION 3.7 )
+ 
+-project( date VERSION 3.0.0 )
++project( date VERSION 3.0.3 )
+ set(ABI_VERSION 3) # used as SOVERSION, increment when ABI changes
+ 
+-include( GNUInstallDirs )
+-
+ get_directory_property( has_parent PARENT_DIRECTORY )
+ 
++if (POLICY CMP0077)
++    # Allow CMake 3.13+ to override options when using FetchContent / add_subdirectory.
++    cmake_policy(SET CMP0077 NEW)
++endif ()
++
+ # Override by setting on CMake command line.
+ set( CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard whose features are requested." )
+ 
+@@ -35,12 +38,17 @@ option( ENABLE_DATE_TESTING "Enable unit tests" OFF )
+ option( DISABLE_STRING_VIEW "Disable string view" OFF )
+ option( COMPILE_WITH_C_LOCALE "define ONLY_C_LOCALE=1" OFF )
+ option( BUILD_TZ_LIB "build/install of TZ library" OFF )
++option( ENABLE_DATE_INSTALL "Enable install" ON )
+ 
+ if( ENABLE_DATE_TESTING AND NOT BUILD_TZ_LIB )
+-    message(WARNING "Testing requested, bug BUILD_TZ_LIB not ON - forcing the latter")
++    message(WARNING "Testing requested, but BUILD_TZ_LIB not ON - forcing the latter")
+     set (BUILD_TZ_LIB ON CACHE BOOL "required for testing" FORCE)
+ endif( )
+ 
++if( ENABLE_DATE_INSTALL )
++  include( GNUInstallDirs )
++endif( )
++
+ function( print_option OPT )
+     if ( NOT DEFINED PRINT_OPTION_CURR_${OPT} OR ( NOT PRINT_OPTION_CURR_${OPT} STREQUAL ${OPT} ) )
+         set( PRINT_OPTION_CURR_${OPT} ${${OPT}} CACHE BOOL "" )
+@@ -63,19 +71,27 @@ add_library( date INTERFACE )
+ add_library( date::date ALIAS date )
+ target_include_directories( date INTERFACE
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+-    $<INSTALL_INTERFACE:include> )
++    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> )
+ # adding header sources just helps IDEs
+ target_sources( date INTERFACE
+-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:include>/date/date.h
+-    # the rest of these are not currently part of the public interface of the library:
+-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/date/solar_hijri.h>
+-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/date/islamic.h>
+-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/date/iso_week.h>
+-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/date/julian.h>
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>/date/date.h
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>/date/solar_hijri.h
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>/date/islamic.h
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>/date/iso_week.h
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>/date/julian.h
++)
++
++set(TARGET_HEADERS
++    include/date/date.h
++    include/date/solar_hijri.h
++    include/date/islamic.h
++    include/date/iso_week.h
++    include/date/julian.h
+ )
++
+ if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
+     # public headers will get installed:
+-    set_target_properties( date PROPERTIES PUBLIC_HEADER include/date/date.h )
++    set_target_properties( date PROPERTIES PUBLIC_HEADER "${TARGET_HEADERS}" )
+ endif ()
+ 
+ # These used to be set with generator expressions,
+@@ -95,6 +111,8 @@ else()
+ endif()
+ if ( DISABLE_STRING_VIEW )
+   target_compile_definitions( date INTERFACE HAS_STRING_VIEW=0 -DHAS_DEDUCTION_GUIDES=0 )
++else()
++  target_compile_definitions( date INTERFACE HAS_STRING_VIEW=1 )
+ endif()
+ 
+ #[===================================================================[
+@@ -102,16 +120,17 @@ endif()
+ #]===================================================================]
+ if( BUILD_TZ_LIB )
+     add_library( date-tz )
++    target_compile_definitions( date-tz PRIVATE BUILD_TZ_LIB=1 )
+     target_sources( date-tz
+       PUBLIC
+-        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:include>/date/tz.h
++        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>/date/tz.h
+       PRIVATE
+         include/date/tz_private.h
+         src/tz.cpp )
+     if ( IOS )
+       target_sources( date-tz
+         PUBLIC
+-          $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:include>/date/ios.h
++          $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>/date/ios.h
+         PRIVATE
+           src/ios.mm )
+     endif()
+@@ -119,7 +138,7 @@ if( BUILD_TZ_LIB )
+     target_link_libraries( date-tz PUBLIC date )
+     target_include_directories( date-tz PUBLIC
+         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+-        $<INSTALL_INTERFACE:include> )
++        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> )
+ 
+     if ( USE_SYSTEM_TZ_DB OR MANUAL_TZ_DB )
+       target_compile_definitions( date-tz PRIVATE AUTO_DOWNLOAD=0 HAS_REMOTE_API=0 )
+@@ -161,45 +180,47 @@ endif( )
+ #[===================================================================[
+    installation
+ #]===================================================================]
+-set( version_config "${CMAKE_CURRENT_BINARY_DIR}/dateConfigVersion.cmake" )
+-
+-include( CMakePackageConfigHelpers )
+-write_basic_package_version_file( "${version_config}"
+-    VERSION ${PROJECT_VERSION}
+-    COMPATIBILITY SameMajorVersion )
+-
+-install( TARGETS date
+-    EXPORT dateConfig
+-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/date )
+-export( TARGETS date NAMESPACE date:: FILE dateTargets.cmake )
+-if (CMAKE_VERSION VERSION_LESS 3.15)
+-    install(
+-        FILES include/date/date.h
+-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/date )
+-endif ()
+-
+-if( BUILD_TZ_LIB )
+-    install( TARGETS date-tz
+-        EXPORT dateConfig
+-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/date
+-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )  # This is for Windows
+-    export( TARGETS date-tz NAMESPACE date:: APPEND FILE dateTargets.cmake )
+-endif( )
+-
+-if( WIN32 AND NOT CYGWIN)
+-    set( CONFIG_LOC CMake )
+-else( )
+-    set( CONFIG_LOC "${CMAKE_INSTALL_LIBDIR}/cmake/date" )
++if( ENABLE_DATE_INSTALL )
++  set( version_config "${CMAKE_CURRENT_BINARY_DIR}/dateConfigVersion.cmake" )
++
++  include( CMakePackageConfigHelpers )
++  write_basic_package_version_file( "${version_config}"
++      VERSION ${PROJECT_VERSION}
++      COMPATIBILITY SameMajorVersion )
++
++  install( TARGETS date
++      EXPORT dateConfig
++      PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/date )
++  export( TARGETS date NAMESPACE date:: FILE dateTargets.cmake )
++  if (CMAKE_VERSION VERSION_LESS 3.15)
++      install(
++          FILES ${TARGET_HEADERS}
++          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/date )
++  endif ()
++
++  if( BUILD_TZ_LIB )
++      install( TARGETS date-tz
++          EXPORT dateConfig
++          PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/date
++          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )  # This is for Windows
++      export( TARGETS date-tz NAMESPACE date:: APPEND FILE dateTargets.cmake )
++  endif( )
++
++  if( WIN32 AND NOT CYGWIN)
++      set( CONFIG_LOC CMake )
++  else( )
++      set( CONFIG_LOC "${CMAKE_INSTALL_LIBDIR}/cmake/date" )
++  endif( )
++  install( EXPORT dateConfig
++    FILE dateTargets.cmake
++    NAMESPACE date::
++    DESTINATION ${CONFIG_LOC} )
++  install (
++    FILES cmake/dateConfig.cmake "${version_config}"
++    DESTINATION ${CONFIG_LOC})
+ endif( )
+-install( EXPORT dateConfig
+-  FILE dateTargets.cmake
+-  NAMESPACE date::
+-  DESTINATION ${CONFIG_LOC} )
+-install (
+-  FILES cmake/dateConfig.cmake "${version_config}"
+-  DESTINATION ${CONFIG_LOC})
+ 
+ #[===================================================================[
+    testing
+diff --git a/README.md b/README.md
+index 7ef280f..46d6d23 100644
+--- a/README.md
++++ b/README.md
+@@ -80,5 +80,6 @@ cmake --build . --target testit # Consider '-- -j4' for multithreading
+ * https://github.com/KomodoPlatform/atomicDEX-Pro
+ * https://github.com/Kotlin/kotlinx-datetime
+ * https://github.com/royalbee/jewish_date
++* https://github.com/apache/arrow/
+ 
+ If you would like your project (or product) on this list, just let me know.
+diff --git a/include/date/date.h b/include/date/date.h
+index 7b6b4e4..beb627e 100644
+--- a/include/date/date.h
++++ b/include/date/date.h
+@@ -1316,7 +1316,7 @@ CONSTCD11
+ std::chrono::duration<Rep, Period>
+ abs(std::chrono::duration<Rep, Period> d)
+ {
+-    return d >= d.zero() ? d : -d;
++    return d >= d.zero() ? d : static_cast<decltype(d)>(-d);
+ }
+ 
+ // round down
+@@ -4206,8 +4206,8 @@ template <class CharT, class Traits, class Duration>
+ inline
+ typename std::enable_if
+ <
+-    std::ratio_less<typename Duration::period, days::period>::value
+-    , std::basic_ostream<CharT, Traits>&
++    !std::is_convertible<Duration, days>::value,
++    std::basic_ostream<CharT, Traits>&
+ >::type
+ operator<<(std::basic_ostream<CharT, Traits>& os, const sys_time<Duration>& tp)
+ {
+@@ -4228,7 +4228,7 @@ inline
+ std::basic_ostream<CharT, Traits>&
+ operator<<(std::basic_ostream<CharT, Traits>& os, const local_time<Duration>& ut)
+ {
+-    return (os << sys_time<Duration>{ut.time_since_epoch()});
++    return (date::operator<<(os, sys_time<Duration>{ut.time_since_epoch()}));
+ }
+ 
+ namespace detail
+@@ -4787,7 +4787,11 @@ struct fields
+     hh_mm_ss<Duration>    tod{};
+     bool                  has_tod = false;
+ 
++#if !defined(__clang__) && defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ <= 409)
++    fields() : ymd{nanyear/0/0}, wd{8u}, tod{}, has_tod{false} {}
++#else
+     fields() = default;
++#endif
+ 
+     fields(year_month_day ymd_) : ymd(ymd_) {}
+     fields(weekday wd_) : wd(wd_) {}
+@@ -6209,8 +6213,13 @@ to_stream(std::basic_ostream<CharT, Traits>& os, const CharT* fmt,
+           const std::chrono::seconds* offset_sec = nullptr)
+ {
+     using CT = typename std::common_type<Duration, std::chrono::seconds>::type;
+-    auto ld = floor<days>(tp);
+-    fields<CT> fds{year_month_day{ld}, hh_mm_ss<CT>{tp-local_seconds{ld}}};
++    auto ld = std::chrono::time_point_cast<days>(tp);
++    fields<CT> fds;
++    if (ld <= tp)
++        fds = fields<CT>{year_month_day{ld}, hh_mm_ss<CT>{tp-local_seconds{ld}}};
++    else
++        fds = fields<CT>{year_month_day{ld - days{1}},
++                         hh_mm_ss<CT>{days{1} - (local_seconds{ld} - tp)}};
+     return to_stream(os, fmt, fds, abbrev, offset_sec);
+ }
+ 
+@@ -6223,8 +6232,13 @@ to_stream(std::basic_ostream<CharT, Traits>& os, const CharT* fmt,
+     using CT = typename std::common_type<Duration, seconds>::type;
+     const std::string abbrev("UTC");
+     CONSTDATA seconds offset{0};
+-    auto sd = floor<days>(tp);
+-    fields<CT> fds{year_month_day{sd}, hh_mm_ss<CT>{tp-sys_seconds{sd}}};
++    auto sd = std::chrono::time_point_cast<days>(tp);
++    fields<CT> fds;
++    if (sd <= tp)
++        fds = fields<CT>{year_month_day{sd}, hh_mm_ss<CT>{tp-sys_seconds{sd}}};
++    else
++        fds = fields<CT>{year_month_day{sd - days{1}},
++                         hh_mm_ss<CT>{days{1} - (sys_seconds{sd} - tp)}};
+     return to_stream(os, fmt, fds, &abbrev, &offset);
+ }
+ 
+@@ -6337,7 +6351,10 @@ read_signed(std::basic_istream<CharT, Traits>& is, unsigned m = 1, unsigned M =
+         if (('0' <= c && c <= '9') || c == '-' || c == '+')
+         {
+             if (c == '-' || c == '+')
++            {
+                 (void)is.get();
++                --M;
++            }
+             auto x = static_cast<int>(read_unsigned(is, std::max(m, 1u), M));
+             if (!is.fail())
+             {
+@@ -6401,7 +6418,7 @@ read_long_double(std::basic_istream<CharT, Traits>& is, unsigned m = 1, unsigned
+         is.setstate(std::ios::failbit);
+         return 0;
+     }
+-    return i + f/std::pow(10.L, fcount);
++    return static_cast<long double>(i) + static_cast<long double>(f)/std::pow(10.L, fcount);
+ }
+ 
+ struct rs
+@@ -6510,7 +6527,14 @@ read(std::basic_istream<CharT, Traits>& is, int a0, Args&& ...args)
+             *e++ = static_cast<CharT>(CharT(u % 10) + CharT{'0'});
+             u /= 10;
+         } while (u > 0);
++#if defined(__GNUC__) && __GNUC__ >= 11
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wstringop-overflow"
++#endif
+         std::reverse(buf, e);
++#if defined(__GNUC__) && __GNUC__ >= 11
++#pragma GCC diagnostic pop
++#endif
+         for (auto p = buf; p != e && is.rdstate() == std::ios::goodbit; ++p)
+             read(is, *p);
+     }
+@@ -6576,7 +6600,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+ 
+         CONSTDATA int not_a_year = numeric_limits<short>::min();
+         CONSTDATA int not_a_2digit_year = 100;
+-        CONSTDATA int not_a_century = not_a_year / 100;
++        CONSTDATA int not_a_century = numeric_limits<int>::min();
+         CONSTDATA int not_a_month = 0;
+         CONSTDATA int not_a_day = 0;
+         CONSTDATA int not_a_hour = numeric_limits<int>::min();
+@@ -6767,7 +6791,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+                         CONSTDATA auto w = Duration::period::den == 1 ? 2 : 3 + dfs::width;
+                         int tH;
+                         int tM;
+-                        long double S;
++                        long double S{};
+                         read(is, ru{tH, 1, 2}, CharT{':'}, ru{tM, 1, 2},
+                                                CharT{':'}, rld{S, 1, w});
+                         checked_set(H, tH, not_a_hour, is);
+@@ -6847,7 +6871,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+                         CONSTDATA auto w = Duration::period::den == 1 ? 2 : 3 + dfs::width;
+                         int tH = not_a_hour;
+                         int tM = not_a_minute;
+-                        long double S;
++                        long double S{};
+                         read(is, ru{tH, 1, 2}, CharT{':'}, ru{tM, 1, 2},
+                                                CharT{':'}, rld{S, 1, w});
+                         checked_set(H, tH, not_a_hour, is);
+@@ -7202,7 +7226,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+                         // "%I:%M:%S %p"
+                         using dfs = detail::decimal_format_seconds<Duration>;
+                         CONSTDATA auto w = Duration::period::den == 1 ? 2 : 3 + dfs::width;
+-                        long double S;
++                        long double S{};
+                         int tI = not_a_hour_12_value;
+                         int tM = not_a_minute;
+                         read(is, ru{tI, 1, 2}, CharT{':'}, ru{tM, 1, 2},
+@@ -7258,7 +7282,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+                     {
+                         using dfs = detail::decimal_format_seconds<Duration>;
+                         CONSTDATA auto w = Duration::period::den == 1 ? 2 : 3 + dfs::width;
+-                        long double S;
++                        long double S{};
+                         read(is, rld{S, 1, width == -1 ? w : static_cast<unsigned>(width)});
+                         checked_set(s, round_i<Duration>(duration<long double>{S}),
+                                     not_a_second, is);
+@@ -7292,7 +7316,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+                         CONSTDATA auto w = Duration::period::den == 1 ? 2 : 3 + dfs::width;
+                         int tH = not_a_hour;
+                         int tM = not_a_minute;
+-                        long double S;
++                        long double S{};
+                         read(is, ru{tH, 1, 2}, CharT{':'}, ru{tM, 1, 2},
+                                                CharT{':'}, rld{S, 1, w});
+                         checked_set(H, tH, not_a_hour, is);
+@@ -7503,7 +7527,12 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+                     {
+                         auto c = static_cast<char>(Traits::to_char_type(ic));
+                         if (c == '-')
++                        {
+                             neg = true;
++                            (void)is.get();
++                        }
++                        else if (c == '+')
++                            (void)is.get();
+                     }
+                     if (modified == CharT{})
+                     {
+@@ -7719,9 +7748,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+                 year_month_day ymd_trial = sys_days(year{Y}/January/Sunday[1]) +
+                                            weeks{U-1} +
+                                            (weekday{static_cast<unsigned>(wd)} - Sunday);
+-                if (Y == not_a_year)
+-                    Y = static_cast<int>(ymd_trial.year());
+-                else if (year{Y} != ymd_trial.year())
++                if (year{Y} != ymd_trial.year())
+                     goto broken;
+                 if (m == not_a_month)
+                     m = static_cast<int>(static_cast<unsigned>(ymd_trial.month()));
+@@ -7738,9 +7765,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+                 year_month_day ymd_trial = sys_days(year{Y}/January/Monday[1]) +
+                                            weeks{W-1} +
+                                            (weekday{static_cast<unsigned>(wd)} - Monday);
+-                if (Y == not_a_year)
+-                    Y = static_cast<int>(ymd_trial.year());
+-                else if (year{Y} != ymd_trial.year())
++                if (year{Y} != ymd_trial.year())
+                     goto broken;
+                 if (m == not_a_month)
+                     m = static_cast<int>(static_cast<unsigned>(ymd_trial.month()));
+@@ -7755,11 +7780,11 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+             if (j != not_a_doy && Y != not_a_year)
+             {
+                 auto ymd_trial = year_month_day{local_days(year{Y}/1/1) + days{j-1}};
+-                if (m == 0)
++                if (m == not_a_month)
+                     m = static_cast<int>(static_cast<unsigned>(ymd_trial.month()));
+                 else if (month(static_cast<unsigned>(m)) != ymd_trial.month())
+                     goto broken;
+-                if (d == 0)
++                if (d == not_a_day)
+                     d = static_cast<int>(static_cast<unsigned>(ymd_trial.day()));
+                 else if (day(static_cast<unsigned>(d)) != ymd_trial.day())
+                     goto broken;
+@@ -7891,7 +7916,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt, year& y,
+ {
+     using CT = std::chrono::seconds;
+     fields<CT> fds{};
+-    from_stream(is, fmt, fds, abbrev, offset);
++    date::from_stream(is, fmt, fds, abbrev, offset);
+     if (!fds.ymd.year().ok())
+         is.setstate(std::ios::failbit);
+     if (!is.fail())
+@@ -7907,7 +7932,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt, month& m,
+ {
+     using CT = std::chrono::seconds;
+     fields<CT> fds{};
+-    from_stream(is, fmt, fds, abbrev, offset);
++    date::from_stream(is, fmt, fds, abbrev, offset);
+     if (!fds.ymd.month().ok())
+         is.setstate(std::ios::failbit);
+     if (!is.fail())
+@@ -7923,7 +7948,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt, day& d,
+ {
+     using CT = std::chrono::seconds;
+     fields<CT> fds{};
+-    from_stream(is, fmt, fds, abbrev, offset);
++    date::from_stream(is, fmt, fds, abbrev, offset);
+     if (!fds.ymd.day().ok())
+         is.setstate(std::ios::failbit);
+     if (!is.fail())
+@@ -7939,7 +7964,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt, weekday& wd
+ {
+     using CT = std::chrono::seconds;
+     fields<CT> fds{};
+-    from_stream(is, fmt, fds, abbrev, offset);
++    date::from_stream(is, fmt, fds, abbrev, offset);
+     if (!fds.wd.ok())
+         is.setstate(std::ios::failbit);
+     if (!is.fail())
+@@ -7955,7 +7980,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt, year_month&
+ {
+     using CT = std::chrono::seconds;
+     fields<CT> fds{};
+-    from_stream(is, fmt, fds, abbrev, offset);
++    date::from_stream(is, fmt, fds, abbrev, offset);
+     if (!fds.ymd.month().ok())
+         is.setstate(std::ios::failbit);
+     if (!is.fail())
+@@ -7971,7 +7996,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt, month_day&
+ {
+     using CT = std::chrono::seconds;
+     fields<CT> fds{};
+-    from_stream(is, fmt, fds, abbrev, offset);
++    date::from_stream(is, fmt, fds, abbrev, offset);
+     if (!fds.ymd.month().ok() || !fds.ymd.day().ok())
+         is.setstate(std::ios::failbit);
+     if (!is.fail())
+@@ -7987,7 +8012,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+ {
+     using CT = std::chrono::seconds;
+     fields<CT> fds{};
+-    from_stream(is, fmt, fds, abbrev, offset);
++    date::from_stream(is, fmt, fds, abbrev, offset);
+     if (!fds.ymd.ok())
+         is.setstate(std::ios::failbit);
+     if (!is.fail())
+@@ -8007,7 +8032,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+     auto offptr = offset ? offset : &offset_local;
+     fields<CT> fds{};
+     fds.has_tod = true;
+-    from_stream(is, fmt, fds, abbrev, offptr);
++    date::from_stream(is, fmt, fds, abbrev, offptr);
+     if (!fds.ymd.ok() || !fds.tod.in_conventional_range())
+         is.setstate(std::ios::failbit);
+     if (!is.fail())
+@@ -8025,7 +8050,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+     using detail::round_i;
+     fields<CT> fds{};
+     fds.has_tod = true;
+-    from_stream(is, fmt, fds, abbrev, offset);
++    date::from_stream(is, fmt, fds, abbrev, offset);
+     if (!fds.ymd.ok() || !fds.tod.in_conventional_range())
+         is.setstate(std::ios::failbit);
+     if (!is.fail())
+@@ -8042,12 +8067,13 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
+ {
+     using Duration = std::chrono::duration<Rep, Period>;
+     using CT = typename std::common_type<Duration, std::chrono::seconds>::type;
++    using detail::round_i;
+     fields<CT> fds{};
+-    from_stream(is, fmt, fds, abbrev, offset);
++    date::from_stream(is, fmt, fds, abbrev, offset);
+     if (!fds.has_tod)
+         is.setstate(std::ios::failbit);
+     if (!is.fail())
+-        d = std::chrono::duration_cast<Duration>(fds.tod.to_duration());
++        d = round_i<Duration>(fds.tod.to_duration());
+     return is;
+ }
+ 
+@@ -8070,6 +8096,25 @@ public:
+         , offset_(offset)
+         {}
+ 
++#if HAS_STRING_VIEW
++    parse_manip(const CharT* format, Parsable& tp,
++                std::basic_string<CharT, Traits, Alloc>* abbrev = nullptr,
++                std::chrono::minutes* offset = nullptr)
++        : format_(format)
++        , tp_(tp)
++        , abbrev_(abbrev)
++        , offset_(offset)
++        {}
++
++    parse_manip(std::basic_string_view<CharT, Traits> format, Parsable& tp,
++                std::basic_string<CharT, Traits, Alloc>* abbrev = nullptr,
++                std::chrono::minutes* offset = nullptr)
++        : format_(format)
++        , tp_(tp)
++        , abbrev_(abbrev)
++        , offset_(offset)
++        {}
++#endif  // HAS_STRING_VIEW
+ };
+ 
+ template <class Parsable, class CharT, class Traits, class Alloc>
+@@ -8077,14 +8122,14 @@ std::basic_istream<CharT, Traits>&
+ operator>>(std::basic_istream<CharT, Traits>& is,
+            const parse_manip<Parsable, CharT, Traits, Alloc>& x)
+ {
+-    return from_stream(is, x.format_.c_str(), x.tp_, x.abbrev_, x.offset_);
++    return date::from_stream(is, x.format_.c_str(), x.tp_, x.abbrev_, x.offset_);
+ }
+ 
+ template <class Parsable, class CharT, class Traits, class Alloc>
+ inline
+ auto
+ parse(const std::basic_string<CharT, Traits, Alloc>& format, Parsable& tp)
+-    -> decltype(from_stream(std::declval<std::basic_istream<CharT, Traits>&>(),
++    -> decltype(date::from_stream(std::declval<std::basic_istream<CharT, Traits>&>(),
+                             format.c_str(), tp),
+                 parse_manip<Parsable, CharT, Traits, Alloc>{format, tp})
+ {
+@@ -8096,7 +8141,7 @@ inline
+ auto
+ parse(const std::basic_string<CharT, Traits, Alloc>& format, Parsable& tp,
+       std::basic_string<CharT, Traits, Alloc>& abbrev)
+-    -> decltype(from_stream(std::declval<std::basic_istream<CharT, Traits>&>(),
++    -> decltype(date::from_stream(std::declval<std::basic_istream<CharT, Traits>&>(),
+                             format.c_str(), tp, &abbrev),
+                 parse_manip<Parsable, CharT, Traits, Alloc>{format, tp, &abbrev})
+ {
+@@ -8108,7 +8153,7 @@ inline
+ auto
+ parse(const std::basic_string<CharT, Traits, Alloc>& format, Parsable& tp,
+       std::chrono::minutes& offset)
+-    -> decltype(from_stream(std::declval<std::basic_istream<CharT, Traits>&>(),
++    -> decltype(date::from_stream(std::declval<std::basic_istream<CharT, Traits>&>(),
+                             format.c_str(), tp,
+                             std::declval<std::basic_string<CharT, Traits, Alloc>*>(),
+                             &offset),
+@@ -8122,7 +8167,7 @@ inline
+ auto
+ parse(const std::basic_string<CharT, Traits, Alloc>& format, Parsable& tp,
+       std::basic_string<CharT, Traits, Alloc>& abbrev, std::chrono::minutes& offset)
+-    -> decltype(from_stream(std::declval<std::basic_istream<CharT, Traits>&>(),
++    -> decltype(date::from_stream(std::declval<std::basic_istream<CharT, Traits>&>(),
+                             format.c_str(), tp, &abbrev, &offset),
+                 parse_manip<Parsable, CharT, Traits, Alloc>{format, tp, &abbrev, &offset})
+ {
+@@ -8135,7 +8180,7 @@ template <class Parsable, class CharT>
+ inline
+ auto
+ parse(const CharT* format, Parsable& tp)
+-    -> decltype(from_stream(std::declval<std::basic_istream<CharT>&>(), format, tp),
++    -> decltype(date::from_stream(std::declval<std::basic_istream<CharT>&>(), format, tp),
+                 parse_manip<Parsable, CharT>{format, tp})
+ {
+     return {format, tp};
+@@ -8145,7 +8190,7 @@ template <class Parsable, class CharT, class Traits, class Alloc>
+ inline
+ auto
+ parse(const CharT* format, Parsable& tp, std::basic_string<CharT, Traits, Alloc>& abbrev)
+-    -> decltype(from_stream(std::declval<std::basic_istream<CharT, Traits>&>(), format,
++    -> decltype(date::from_stream(std::declval<std::basic_istream<CharT, Traits>&>(), format,
+                             tp, &abbrev),
+                 parse_manip<Parsable, CharT, Traits, Alloc>{format, tp, &abbrev})
+ {
+@@ -8156,7 +8201,7 @@ template <class Parsable, class CharT>
+ inline
+ auto
+ parse(const CharT* format, Parsable& tp, std::chrono::minutes& offset)
+-    -> decltype(from_stream(std::declval<std::basic_istream<CharT>&>(), format,
++    -> decltype(date::from_stream(std::declval<std::basic_istream<CharT>&>(), format,
+                             tp, std::declval<std::basic_string<CharT>*>(), &offset),
+                 parse_manip<Parsable, CharT>{format, tp, nullptr, &offset})
+ {
+@@ -8168,7 +8213,7 @@ inline
+ auto
+ parse(const CharT* format, Parsable& tp,
+       std::basic_string<CharT, Traits, Alloc>& abbrev, std::chrono::minutes& offset)
+-    -> decltype(from_stream(std::declval<std::basic_istream<CharT, Traits>&>(), format,
++    -> decltype(date::from_stream(std::declval<std::basic_istream<CharT, Traits>&>(), format,
+                             tp, &abbrev, &offset),
+                 parse_manip<Parsable, CharT, Traits, Alloc>{format, tp, &abbrev, &offset})
+ {
+diff --git a/include/date/ios.h b/include/date/ios.h
+index ee54b9d..a9f8636 100644
+--- a/include/date/ios.h
++++ b/include/date/ios.h
+@@ -36,10 +36,10 @@
+     {
+     namespace iOSUtils
+     {
+-    
++
+     std::string get_tzdata_path();
+     std::string get_current_timezone();
+-    
++
+     }  // namespace iOSUtils
+     }  // namespace date
+ 
+diff --git a/include/date/iso_week.h b/include/date/iso_week.h
+index 4a0a4a9..90dfcc1 100644
+--- a/include/date/iso_week.h
++++ b/include/date/iso_week.h
+@@ -148,6 +148,8 @@ public:
+     year& operator+=(const years& y) NOEXCEPT;
+     year& operator-=(const years& y) NOEXCEPT;
+ 
++    CONSTCD14 bool is_leap() const NOEXCEPT;
++
+     CONSTCD11 explicit operator int() const NOEXCEPT;
+     CONSTCD11 bool ok() const NOEXCEPT;
+ 
+@@ -599,6 +601,17 @@ inline year year::operator--(int) NOEXCEPT {auto tmp(*this); --(*this); return t
+ inline year& year::operator+=(const years& y) NOEXCEPT {*this = *this + y; return *this;}
+ inline year& year::operator-=(const years& y) NOEXCEPT {*this = *this - y; return *this;}
+ 
++CONSTCD14
++inline
++bool
++year::is_leap() const NOEXCEPT
++{
++    const auto y = date::year{static_cast<int>(y_)};
++    const auto s0 = sys_days((y-years{1})/12/date::thu[date::last]);
++    const auto s1 = sys_days(y/12/date::thu[date::last]);
++    return s1-s0 != days{7*52};
++}
++
+ CONSTCD11 inline year::operator int() const NOEXCEPT {return y_;}
+ CONSTCD11 inline bool year::ok() const NOEXCEPT {return min() <= *this && *this <= max();}
+ 
+@@ -1020,10 +1033,7 @@ inline
+ weeknum
+ year_lastweek::weeknum() const NOEXCEPT
+ {
+-    const auto y = date::year{static_cast<int>(y_)};
+-    const auto s0 = sys_days((y-years{1})/12/date::thu[date::last]);
+-    const auto s1 = sys_days(y/12/date::thu[date::last]);
+-    return iso_week::weeknum(static_cast<unsigned>(date::trunc<weeks>(s1-s0).count()));
++    return iso_week::weeknum(y_.is_leap() ? 53u : 52u);
+ }
+ 
+ CONSTCD11 inline bool year_lastweek::ok() const NOEXCEPT {return y_.ok();}
+diff --git a/include/date/julian.h b/include/date/julian.h
+index d909d69..da692a4 100644
+--- a/include/date/julian.h
++++ b/include/date/julian.h
+@@ -1655,10 +1655,10 @@ inline
+ bool
+ month_day::ok() const NOEXCEPT
+ {
+-    CONSTDATA julian::day d[] = { 
+-        julian::day(31), julian::day(29), julian::day(31), julian::day(30), 
+-        julian::day(31), julian::day(30), julian::day(31), julian::day(31), 
+-        julian::day(30), julian::day(31), julian::day(30), julian::day(31) 
++    CONSTDATA julian::day d[] = {
++        julian::day(31), julian::day(29), julian::day(31), julian::day(30),
++        julian::day(31), julian::day(30), julian::day(31), julian::day(31),
++        julian::day(30), julian::day(31), julian::day(30), julian::day(31)
+     };
+     return m_.ok() && julian::day(1) <= d_ && d_ <= d[static_cast<unsigned>(m_)-1];
+ }
+@@ -1949,10 +1949,10 @@ inline
+ day
+ year_month_day_last::day() const NOEXCEPT
+ {
+-    CONSTDATA julian::day d[] = { 
+-        julian::day(31), julian::day(28), julian::day(31), julian::day(30), 
+-        julian::day(31), julian::day(30), julian::day(31), julian::day(31), 
+-        julian::day(30), julian::day(31), julian::day(30), julian::day(31) 
++    CONSTDATA julian::day d[] = {
++        julian::day(31), julian::day(28), julian::day(31), julian::day(30),
++        julian::day(31), julian::day(30), julian::day(31), julian::day(31),
++        julian::day(30), julian::day(31), julian::day(30), julian::day(31)
+     };
+     return month() != feb || !y_.is_leap() ? d[static_cast<unsigned>(month())-1] : julian::day(29);
+ }
+diff --git a/include/date/ptz.h b/include/date/ptz.h
+index ebd6e04..274fa87 100644
+--- a/include/date/ptz.h
++++ b/include/date/ptz.h
+@@ -36,8 +36,24 @@
+ // Posix::time_zone tz{"EST5EDT,M3.2.0,M11.1.0"};
+ // zoned_time<system_clock::duration, Posix::time_zone> zt{tz, system_clock::now()};
+ //
+-// If the rule set is missing (everything starting with ','), then the rule is that the
+-// alternate offset is never enabled.
++// In C++17 CTAD simplifies this to:
++//
++// Posix::time_zone tz{"EST5EDT,M3.2.0,M11.1.0"};
++// zoned_time zt{tz, system_clock::now()};
++//
++// Extension to the Posix rules to allow a constant daylight saving offset:
++//
++// If the rule set is missing (everything starting with ','), then
++// there must be exactly one abbreviation (std or daylight) with
++// length 3 or greater, and that will be used as the constant offset. If
++// there are two, the std abbreviation is silently set to "", and the
++// result is constant daylight saving. If there are zero abbreviations
++// with no rule set, an exception is thrown.
++//
++// Example:
++// "EST5" yields a constant offset of -5h with 0h save and "EST abbreviation.
++// "5EDT" yields a constant offset of -4h with 1h save and "EDT" abbreviation.
++// "EST5EDT" and "5EDT4" are both equal to "5EDT".
+ //
+ // Note, Posix-style time zones are not recommended for all of the reasons described here:
+ // https://stackoverflow.com/tags/timezone/info
+@@ -46,6 +62,7 @@
+ // have to have Posix time zones, you're welcome to use this one.
+ 
+ #include "date/tz.h"
++#include <algorithm>
+ #include <cctype>
+ #include <ostream>
+ #include <string>
+@@ -322,6 +339,7 @@ time_zone::get_next_end(date::year y) const
+     return date::sys_seconds{(end_rule_(++y) - (offset_ + save_)).time_since_epoch()};
+ }
+ 
++inline
+ date::sys_info
+ time_zone::contant_offset() const
+ {
+@@ -331,11 +349,22 @@ time_zone::contant_offset() const
+     using date::January;
+     using date::December;
+     using date::last;
++    using std::chrono::minutes;
+     sys_info r;
+     r.begin = sys_days{year::min()/January/1};
+     r.end   = sys_days{year::max()/December/last};
+-    r.abbrev = std_abbrev_;
+-    r.offset = offset_;
++    if (std_abbrev_.size() > 0)
++    {
++        r.abbrev = std_abbrev_;
++        r.offset = offset_;
++        r.save = {};
++    }
++    else
++    {
++        r.abbrev = dst_abbrev_;
++        r.offset = offset_ + save_;
++        r.save = date::ceil<minutes>(save_);
++    }
+     return r;
+ }
+ 
+@@ -346,11 +375,14 @@ time_zone::time_zone(const detail::string_t& s)
+     using detail::read_signed_time;
+     using detail::throw_invalid;
+     auto i = read_name(s, 0, std_abbrev_);
++    auto std_name_i = i;
++    auto abbrev_name_i = i;
+     i = read_signed_time(s, i, offset_);
+     offset_ = -offset_;
+     if (i != s.size())
+     {
+         i = read_name(s, i, dst_abbrev_);
++        abbrev_name_i = i;
+         if (i != s.size())
+         {
+             if (s[i] != ',')
+@@ -373,6 +405,32 @@ time_zone::time_zone(const detail::string_t& s)
+             }
+         }
+     }
++    if (start_rule_.ok())
++    {
++        if (std_abbrev_.size() < 3)
++            throw_invalid(s, std_name_i, "Zone with rules must have a std"
++                                         " abbreviation of length 3 or greater");
++        if (dst_abbrev_.size() < 3)
++            throw_invalid(s, abbrev_name_i, "Zone with rules must have a daylight"
++                                            " abbreviation of length 3 or greater");
++    }
++    else
++    {
++        if (dst_abbrev_.size() >= 3)
++        {
++            std_abbrev_.clear();
++        }
++        else if (std_abbrev_.size() < 3)
++        {
++            throw_invalid(s, std_name_i, "Zone must have at least one abbreviation"
++                                         " of length 3 or greater");
++        }
++        else
++        {
++            dst_abbrev_.clear();
++            save_ = {};
++        }
++    }
+ }
+ 
+ template <class Duration>
+@@ -395,6 +453,10 @@ time_zone::get_info(date::sys_time<Duration> st) const
+     if (start_rule_.ok())
+     {
+         auto y = year_month_day{floor<days>(st)}.year();
++        if (st >= get_next_start(y))
++            ++y;
++        else if (st < get_prev_end(y))
++            --y;
+         auto start = get_start(y);
+         auto end   = get_end(y);
+         if (start <= end)  // (northern hemisphere)
+@@ -448,6 +510,7 @@ time_zone::get_info(date::sys_time<Duration> st) const
+     }
+     else
+         r = contant_offset();
++    assert(r.begin <= st && st < r.end);
+     return r;
+ }
+ 
+@@ -589,11 +652,22 @@ time_zone::name() const
+ {
+     using namespace date;
+     using namespace std::chrono;
+-    auto nm = std_abbrev_;
++    auto print_abbrev = [](std::string const& nm)
++        {
++            if (std::any_of(nm.begin(), nm.end(),
++                         [](char c)
++                         {
++                             return !std::isalpha(c);
++                         }))
++            {
++                return '<' + nm + '>';
++            }
++            return nm;
++        };
+     auto print_offset = [](seconds off)
+         {
+             std::string nm;
+-            hh_mm_ss<seconds> offset{-off};
++            date::hh_mm_ss<seconds> offset{-off};
+             if (offset.is_negative())
+                 nm += '-';
+             nm += std::to_string(offset.hours().count());
+@@ -613,10 +687,11 @@ time_zone::name() const
+             }
+             return nm;
+         };
++    auto nm = print_abbrev(std_abbrev_);
+     nm += print_offset(offset_);
+     if (!dst_abbrev_.empty())
+     {
+-        nm += dst_abbrev_;
++        nm += print_abbrev(dst_abbrev_);
+         if (save_ != hours{1})
+             nm += print_offset(offset_+save_);
+         if (start_rule_.ok())
+@@ -678,6 +753,8 @@ read_date(const string_t& s, unsigned i, rule& r)
+         ++i;
+         unsigned n;
+         i = read_unsigned(s, i, 3, n, "Expected to find the Julian day [1, 365]");
++        if (!(1 <= n && n <= 365))
++            throw_invalid(s, i-1, "Expected Julian day to be in the range [1, 365]");
+         r.mode_ = rule::J;
+         r.n_ = n;
+     }
+@@ -686,16 +763,22 @@ read_date(const string_t& s, unsigned i, rule& r)
+         ++i;
+         unsigned m;
+         i = read_unsigned(s, i, 2, m, "Expected to find month [1, 12]");
++        if (!(1 <= m && m <= 12))
++            throw_invalid(s, i-1, "Expected month to be in the range [1, 12]");
+         if (i == s.size() || s[i] != '.')
+             throw_invalid(s, i, "Expected '.' after month");
+         ++i;
+         unsigned n;
+         i = read_unsigned(s, i, 1, n, "Expected to find week number [1, 5]");
++        if (!(1 <= n && n <= 5))
++            throw_invalid(s, i-1, "Expected week number to be in the range [1, 5]");
+         if (i == s.size() || s[i] != '.')
+             throw_invalid(s, i, "Expected '.' after weekday index");
+         ++i;
+         unsigned wd;
+         i = read_unsigned(s, i, 1, wd, "Expected to find day of week [0, 6]");
++        if (wd > 6)
++            throw_invalid(s, i-1, "Expected day of week to be in the range [0, 6]");
+         r.mode_ = rule::M;
+         r.m_ = month{m};
+         r.wd_ = weekday{wd};
+@@ -705,6 +788,8 @@ read_date(const string_t& s, unsigned i, rule& r)
+     {
+         unsigned n;
+         i = read_unsigned(s, i, 3, n);
++        if (n > 365)
++            throw_invalid(s, i-1, "Expected Julian day to be in the range [0, 365]");
+         r.mode_ = rule::N;
+         r.n_ = n;
+     }
+@@ -749,8 +834,6 @@ read_name(const string_t& s, unsigned i, std::string& name)
+             ++i;
+         }
+     }
+-    if (name.size() < 3)
+-        throw_invalid(s, i, "Found name to be shorter than 3 characters");
+     return i;
+ }
+ 
+@@ -786,16 +869,22 @@ read_unsigned_time(const string_t& s, unsigned i, std::chrono::seconds& t)
+         throw_invalid(s, i, "Expected to read unsigned time, but found end of string");
+     unsigned x;
+     i = read_unsigned(s, i, 2, x, "Expected to find hours [0, 24]");
++    if (x > 24)
++        throw_invalid(s, i-1, "Expected hours to be in the range [0, 24]");
+     t = hours{x};
+     if (i != s.size() && s[i] == ':')
+     {
+         ++i;
+         i = read_unsigned(s, i, 2, x, "Expected to find minutes [0, 59]");
++        if (x > 59)
++            throw_invalid(s, i-1, "Expected minutes to be in the range [0, 59]");
+         t += minutes{x};
+         if (i != s.size() && s[i] == ':')
+         {
+             ++i;
+             i = read_unsigned(s, i, 2, x, "Expected to find seconds [0, 59]");
++            if (x > 59)
++                throw_invalid(s, i-1, "Expected seconds to be in the range [0, 59]");
+             t += seconds{x};
+         }
+     }
+diff --git a/include/date/solar_hijri.h b/include/date/solar_hijri.h
+index 6f6c331..8de9cb5 100644
+--- a/include/date/solar_hijri.h
++++ b/include/date/solar_hijri.h
+@@ -1707,11 +1707,11 @@ inline
+ bool
+ month_day::ok() const NOEXCEPT
+ {
+-    CONSTDATA solar_hijri::day d[] = { 
+-        solar_hijri::day(31), solar_hijri::day(31), solar_hijri::day(31), 
+-        solar_hijri::day(31), solar_hijri::day(31), solar_hijri::day(31), 
+-        solar_hijri::day(30), solar_hijri::day(30), solar_hijri::day(30), 
+-        solar_hijri::day(30), solar_hijri::day(30), solar_hijri::day(30) 
++    CONSTDATA solar_hijri::day d[] = {
++        solar_hijri::day(31), solar_hijri::day(31), solar_hijri::day(31),
++        solar_hijri::day(31), solar_hijri::day(31), solar_hijri::day(31),
++        solar_hijri::day(30), solar_hijri::day(30), solar_hijri::day(30),
++        solar_hijri::day(30), solar_hijri::day(30), solar_hijri::day(30)
+     };
+     return m_.ok() && solar_hijri::day(1) <= d_ && d_ <= d[static_cast<unsigned>(m_)-1];
+ }
+@@ -2002,11 +2002,11 @@ inline
+ day
+ year_month_day_last::day() const NOEXCEPT
+ {
+-    CONSTDATA solar_hijri::day d[] = { 
+-        solar_hijri::day(31), solar_hijri::day(31), solar_hijri::day(31), 
+-        solar_hijri::day(31), solar_hijri::day(31), solar_hijri::day(31), 
+-        solar_hijri::day(30), solar_hijri::day(30), solar_hijri::day(30), 
+-        solar_hijri::day(30), solar_hijri::day(30), solar_hijri::day(29) 
++    CONSTDATA solar_hijri::day d[] = {
++        solar_hijri::day(31), solar_hijri::day(31), solar_hijri::day(31),
++        solar_hijri::day(31), solar_hijri::day(31), solar_hijri::day(31),
++        solar_hijri::day(30), solar_hijri::day(30), solar_hijri::day(30),
++        solar_hijri::day(30), solar_hijri::day(30), solar_hijri::day(29)
+     };
+     return month() != esf || !y_.is_leap() ?
+         d[static_cast<unsigned>(month()) - 1] : solar_hijri::day(30);
+diff --git a/include/date/tz.h b/include/date/tz.h
+index 4921068..73b897b 100644
+--- a/include/date/tz.h
++++ b/include/date/tz.h
+@@ -49,12 +49,12 @@
+ 
+ #ifndef HAS_REMOTE_API
+ #  if USE_OS_TZDB == 0
+-#    ifdef _WIN32
++#    if defined _WIN32 || defined __ANDROID__
+ #      define HAS_REMOTE_API 0
+ #    else
+ #      define HAS_REMOTE_API 1
+ #    endif
+-#  else  // HAS_REMOTE_API makes no since when using the OS timezone database
++#  else  // HAS_REMOTE_API makes no sense when using the OS timezone database
+ #    define HAS_REMOTE_API 0
+ #  endif
+ #endif
+@@ -139,6 +139,13 @@ namespace date
+ 
+ enum class choose {earliest, latest};
+ 
++#if defined(BUILD_TZ_LIB)
++# if defined(ANDROID) || defined(__ANDROID__)
++struct tzdb;
++static std::unique_ptr<tzdb> init_tzdb();
++# endif // defined(ANDROID) || defined(__ANDROID__)
++#endif // defined(BUILD_TZ_LIB)
++
+ namespace detail
+ {
+     struct undocumented;
+@@ -231,8 +238,8 @@ nonexistent_local_time::make_msg(local_time<Duration> tp, const local_info& i)
+        << i.first.abbrev << " and\n"
+        << local_seconds{i.second.begin.time_since_epoch()} + i.second.offset << ' '
+        << i.second.abbrev
+-       << " which are both equivalent to\n"
+-       << i.first.end << " UTC";
++       << " which are both equivalent to\n";
++    date::operator<<(os, i.first.end) << " UTC";
+     return os.str();
+ }
+ 
+@@ -821,6 +828,12 @@ public:
+ 
+ #if !USE_OS_TZDB
+     DATE_API void add(const std::string& s);
++#else
++# if defined(BUILD_TZ_LIB)
++#  if defined(ANDROID) || defined(__ANDROID__)
++    friend std::unique_ptr<tzdb> init_tzdb();
++#  endif // defined(ANDROID) || defined(__ANDROID__)
++# endif // defined(BUILD_TZ_LIB)
+ #endif  // !USE_OS_TZDB
+ 
+ private:
+@@ -844,8 +857,11 @@ private:
+     DATE_API void
+     load_data(std::istream& inf, std::int32_t tzh_leapcnt, std::int32_t tzh_timecnt,
+                                  std::int32_t tzh_typecnt, std::int32_t tzh_charcnt);
++# if defined(ANDROID) || defined(__ANDROID__)
++    void parse_from_android_tzdata(std::ifstream& inf, const std::size_t off);
++# endif // defined(ANDROID) || defined(__ANDROID__)
+ #else  // !USE_OS_TZDB
+-    DATE_API sys_info   get_info_impl(sys_seconds tp, int timezone) const;
++    DATE_API sys_info   get_info_impl(sys_seconds tp, int tz_int) const;
+     DATE_API void adjust_infos(const std::vector<detail::Rule>& rules);
+     DATE_API void parse_info(std::istream& in);
+ #endif  // !USE_OS_TZDB
+@@ -1190,11 +1206,11 @@ struct tzdb
+ #endif  // defined(_MSC_VER) && (_MSC_VER < 1900)
+ 
+ #if HAS_STRING_VIEW
+-    const time_zone* locate_zone(std::string_view tz_name) const;
++    DATE_API const time_zone* locate_zone(std::string_view tz_name) const;
+ #else
+-    const time_zone* locate_zone(const std::string& tz_name) const;
++    DATE_API const time_zone* locate_zone(const std::string& tz_name) const;
+ #endif
+-    const time_zone* current_zone() const;
++    DATE_API const time_zone* current_zone() const;
+ };
+ 
+ using TZ_DB = tzdb;
+@@ -1209,9 +1225,9 @@ class tzdb_list
+     std::atomic<tzdb*> head_{nullptr};
+ 
+ public:
+-    ~tzdb_list();
++    DATE_API ~tzdb_list();
+     tzdb_list() = default;
+-    tzdb_list(tzdb_list&& x) NOEXCEPT;
++    DATE_API tzdb_list(tzdb_list&& x) NOEXCEPT;
+ 
+     const tzdb& front() const NOEXCEPT {return *head_;}
+           tzdb& front()       NOEXCEPT {return *head_;}
+@@ -1224,7 +1240,7 @@ public:
+     const_iterator cbegin() const NOEXCEPT;
+     const_iterator cend() const NOEXCEPT;
+ 
+-    const_iterator erase_after(const_iterator p) NOEXCEPT;
++    DATE_API const_iterator erase_after(const_iterator p) NOEXCEPT;
+ 
+     struct undocumented_helper;
+ private:
+diff --git a/include/date/tz_private.h b/include/date/tz_private.h
+index aec01d0..1a01f17 100644
+--- a/include/date/tz_private.h
++++ b/include/date/tz_private.h
+@@ -289,8 +289,7 @@ struct transition
+     std::ostream&
+     operator<<(std::ostream& os, const transition& t)
+     {
+-        using date::operator<<;
+-        os << t.timepoint << "Z ";
++        date::operator<<(os, t.timepoint) << "Z ";
+         if (t.info->offset >= std::chrono::seconds{0})
+             os << '+';
+         os << make_time(t.info->offset);
+diff --git a/src/ios.mm b/src/ios.mm
+index fe3bb24..9e5d800 100644
+--- a/src/ios.mm
++++ b/src/ios.mm
+@@ -51,7 +51,7 @@ namespace date
+ {
+     namespace iOSUtils
+     {
+-        
++
+         struct TarInfo
+         {
+             char objType;
+@@ -60,14 +60,14 @@ namespace date
+             size_t blocksContentSize; // adjusted size to 512 bytes blocks
+             bool success;
+         };
+-        
++
+         std::string convertCFStringRefPathToCStringPath(CFStringRef ref);
+         bool extractTzdata(CFURLRef homeUrl, CFURLRef archiveUrl, std::string destPath);
+         TarInfo getTarObjectInfo(std::ifstream &readStream);
+         std::string getTarObject(std::ifstream &readStream, int64_t size);
+         bool writeFile(const std::string &tzdataPath, const std::string &fileName,
+                        const std::string &data, size_t realContentSize);
+-        
++
+         std::string
+         get_current_timezone()
+         {
+@@ -75,18 +75,18 @@ namespace date
+             CFStringRef tzNameRef = CFTimeZoneGetName(tzRef);
+             CFIndex bufferSize = CFStringGetLength(tzNameRef) + 1;
+             char buffer[bufferSize];
+-            
++
+             if (CFStringGetCString(tzNameRef, buffer, bufferSize, kCFStringEncodingUTF8))
+             {
+                 CFRelease(tzRef);
+                 return std::string(buffer);
+             }
+-            
++
+             CFRelease(tzRef);
+-            
++
+             return "";
+         }
+-        
++
+         std::string
+         get_tzdata_path()
+         {
+@@ -96,7 +96,7 @@ namespace date
+                              INTERNAL_DIR + "/" + TZDATA_DIR);
+             std::string result_path(std::string(convertCFStringRefPathToCStringPath(homePath)) +
+                                     INTERNAL_DIR);
+-            
++
+             if (access(path.c_str(), F_OK) == 0)
+             {
+ #if TAR_DEBUG
+@@ -104,34 +104,34 @@ namespace date
+ #endif
+                 CFRelease(homeUrlRef);
+                 CFRelease(homePath);
+-                
++
+                 return result_path;
+             }
+-            
++
+             CFBundleRef mainBundle = CFBundleGetMainBundle();
+             CFArrayRef paths = CFBundleCopyResourceURLsOfType(mainBundle, CFSTR(TARGZ_EXTENSION),
+                                                               NULL);
+-            
++
+             if (CFArrayGetCount(paths) != 0)
+             {
+                 // get archive path, assume there is no other tar.gz in bundle
+                 CFURLRef archiveUrl = static_cast<CFURLRef>(CFArrayGetValueAtIndex(paths, 0));
+                 CFStringRef archiveName = CFURLCopyPath(archiveUrl);
+                 archiveUrl = CFBundleCopyResourceURL(mainBundle, archiveName, NULL, NULL);
+-                
++
+                 extractTzdata(homeUrlRef, archiveUrl, path);
+-                
++
+                 CFRelease(archiveUrl);
+                 CFRelease(archiveName);
+             }
+-            
++
+             CFRelease(homeUrlRef);
+             CFRelease(homePath);
+             CFRelease(paths);
+-            
++
+             return result_path;
+         }
+-        
++
+         std::string
+         convertCFStringRefPathToCStringPath(CFStringRef ref)
+         {
+@@ -142,55 +142,55 @@ namespace date
+             delete[] buffer;
+             return result;
+         }
+-        
++
+         bool
+         extractTzdata(CFURLRef homeUrl, CFURLRef archiveUrl, std::string destPath)
+         {
+             std::string TAR_TMP_PATH = "/tmp.tar";
+-            
++
+             CFStringRef homeStringRef = CFURLCopyPath(homeUrl);
+             auto homePath = convertCFStringRefPathToCStringPath(homeStringRef);
+             CFRelease(homeStringRef);
+-            
++
+             CFStringRef archiveStringRef = CFURLCopyPath(archiveUrl);
+             auto archivePath = convertCFStringRefPathToCStringPath(archiveStringRef);
+             CFRelease(archiveStringRef);
+-            
++
+             // create Library path
+             auto libraryPath = homePath + INTERNAL_DIR;
+-            
++
+             // create tzdata path
+             auto tzdataPath = libraryPath + "/" + TZDATA_DIR;
+-            
++
+             // -- replace %20 with " "
+             const std::string search = "%20";
+             const std::string replacement = " ";
+             size_t pos = 0;
+-            
++
+             while ((pos = archivePath.find(search, pos)) != std::string::npos) {
+                 archivePath.replace(pos, search.length(), replacement);
+                 pos += replacement.length();
+             }
+-            
++
+             gzFile tarFile = gzopen(archivePath.c_str(), "rb");
+-            
++
+             // create tar unpacking path
+             auto tarPath = libraryPath + TAR_TMP_PATH;
+-            
++
+             // create tzdata directory
+             mkdir(destPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+-            
++
+             // ======= extract tar ========
+-            
++
+             std::ofstream os(tarPath.c_str(), std::ofstream::out | std::ofstream::app);
+             unsigned int bufferLength = 1024 * 256;  // 256Kb
+             unsigned char *buffer = (unsigned char *)malloc(bufferLength);
+             bool success = true;
+-            
++
+             while (true)
+             {
+                 int readBytes = gzread(tarFile, buffer, bufferLength);
+-                
++
+                 if (readBytes > 0)
+                 {
+                     os.write((char *) &buffer[0], readBytes);
+@@ -214,21 +214,21 @@ namespace date
+                             break;
+                         }
+             }
+-            
++
+             os.close();
+             free(buffer);
+             gzclose(tarFile);
+-            
++
+             if (!success)
+             {
+                 remove(tarPath.c_str());
+                 return false;
+             }
+-            
++
+             // ======== extract files =========
+-            
++
+             uint64_t location = 0; // Position in the file
+-            
++
+             // get file size
+             struct stat stat_buf;
+             int res = stat(tarPath.c_str(), &stat_buf);
+@@ -239,20 +239,20 @@ namespace date
+                 return false;
+             }
+             int64_t tarSize = stat_buf.st_size;
+-            
++
+             // create read stream
+             std::ifstream is(tarPath.c_str(), std::ifstream::in | std::ifstream::binary);
+-            
++
+             // process files
+             while (location < tarSize)
+             {
+                 TarInfo info = getTarObjectInfo(is);
+-                
++
+                 if (!info.success || info.realContentSize == 0)
+                 {
+                     break; // something wrong or all files are read
+                 }
+-                
++
+                 switch (info.objType)
+                 {
+                     case '0':   // file
+@@ -266,17 +266,17 @@ namespace date
+ #endif
+                         writeFile(tzdataPath, info.objName, obj, info.realContentSize);
+                         location += info.blocksContentSize;
+-                        
++
+                         break;
+                     }
+                 }
+             }
+-            
++
+             remove(tarPath.c_str());
+-            
++
+             return true;
+         }
+-        
++
+         TarInfo
+         getTarObjectInfo(std::ifstream &readStream)
+         {
+@@ -285,22 +285,22 @@ namespace date
+             char type;
+             char name[TAR_NAME_SIZE + 1];
+             char sizeBuf[TAR_SIZE_SIZE + 1];
+-            
++
+             readStream.read(buffer, length);
+-            
++
+             memcpy(&type, &buffer[TAR_TYPE_POSITION], 1);
+-            
++
+             memset(&name, '\0', TAR_NAME_SIZE + 1);
+             memcpy(&name, &buffer[TAR_NAME_POSITION], TAR_NAME_SIZE);
+-            
++
+             memset(&sizeBuf, '\0', TAR_SIZE_SIZE + 1);
+             memcpy(&sizeBuf, &buffer[TAR_SIZE_POSITION], TAR_SIZE_SIZE);
+             size_t realSize = strtol(sizeBuf, NULL, 8);
+             size_t blocksSize = realSize + (TAR_BLOCK_SIZE - (realSize % TAR_BLOCK_SIZE));
+-            
++
+             return {type, std::string(name), realSize, blocksSize, true};
+         }
+-        
++
+         std::string
+         getTarObject(std::ifstream &readStream, int64_t size)
+         {
+@@ -308,29 +308,29 @@ namespace date
+             readStream.read(buffer, size);
+             return std::string(buffer);
+         }
+-        
++
+         bool
+         writeFile(const std::string &tzdataPath, const std::string &fileName, const std::string &data,
+                   size_t realContentSize)
+         {
+             std::ofstream os(tzdataPath + "/" + fileName, std::ofstream::out | std::ofstream::binary);
+-            
++
+             if (!os) {
+                 return false;
+             }
+-            
++
+             // trim empty space
+             char trimmedData[realContentSize + 1];
+             memset(&trimmedData, '\0', realContentSize);
+             memcpy(&trimmedData, data.c_str(), realContentSize);
+-            
++
+             // write
+             os.write(trimmedData, realContentSize);
+             os.close();
+-            
++
+             return true;
+         }
+-        
++
+     }  // namespace iOSUtils
+ }  // namespace date
+ 
+diff --git a/src/tz.cpp b/src/tz.cpp
+index 26babbd..15c9f5d 100644
+--- a/src/tz.cpp
++++ b/src/tz.cpp
+@@ -92,6 +92,27 @@
+ #  define TARGET_OS_SIMULATOR 0
+ #endif
+ 
++#if defined(ANDROID) || defined(__ANDROID__)
++#  include <sys/system_properties.h>
++#  if USE_OS_TZDB
++#    define MISSING_LEAP_SECONDS 1
++// from https://android.googlesource.com/platform/bionic/+/master/libc/tzcode/bionic.cpp
++static constexpr size_t ANDROID_TIMEZONE_NAME_LENGTH = 40;
++struct bionic_tzdata_header_t {
++  char tzdata_version[12];
++  std::int32_t index_offset;
++  std::int32_t data_offset;
++  std::int32_t final_offset;
++};
++struct index_entry_t {
++  char buf[ANDROID_TIMEZONE_NAME_LENGTH];
++  std::int32_t start;
++  std::int32_t length;
++  std::int32_t unused; // Was raw GMT offset; always 0 since tzdata2014f (L).
++};
++#  endif // USE_OS_TZDB
++#endif // defined(ANDROID) || defined(__ANDROID__)
++
+ #if USE_OS_TZDB
+ #  include <dirent.h>
+ #endif
+@@ -118,6 +139,9 @@
+ // the current time zone. On Win32 windows.h provides a means to do it.
+ // gcc/mingw supports unistd.h on Win32 but MSVC does not.
+ 
++#ifdef __ANDROID__
++#  define INSTALL .
++#endif
+ #ifdef _WIN32
+ #  ifdef WINAPI_FAMILY
+ #    include <winapifamily.h>
+@@ -170,9 +194,9 @@
+ 
+ #ifdef _WIN32
+ static CONSTDATA char folder_delimiter = '\\';
+-#else   // !_WIN32
++#elif !defined(ANDROID) && !defined(__ANDROID__)
+ static CONSTDATA char folder_delimiter = '/';
+-#endif  // !_WIN32
++#endif  // !defined(WIN32) && !defined(ANDROID) && !defined(__ANDROID__)
+ 
+ #if defined(__GNUC__) && __GNUC__ < 5
+    // GCC 4.9 Bug 61489 Wrong warning with -Wmissing-field-initializers
+@@ -183,6 +207,36 @@ static CONSTDATA char folder_delimiter = '/';
+ #if !USE_OS_TZDB
+ 
+ #  ifdef _WIN32
++
++static
++std::wstring
++convert_utf8_to_utf16(const std::string& s)
++{
++    std::wstring out;
++    const int size = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, NULL, 0);
++
++    if (size == 0)
++    {
++        std::string msg = "Failed to determine required size when converting \"";
++        msg += s;
++        msg += "\" to UTF-16.";
++        throw std::runtime_error(msg);
++    }
++
++    out.resize(size);
++    const int check = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, &out[0], size);
++
++    if (size != check)
++    {
++        std::string msg = "Failed to convert \"";
++        msg += s;
++        msg += "\" to UTF-16.";
++        throw std::runtime_error(msg);
++    }
++
++    return out;
++}
++
+ #    ifndef WINRT
+ 
+ namespace
+@@ -267,6 +321,89 @@ get_download_folder()
+ 
+ #  endif  // !_WIN32
+ 
++/*
++ * This class is provided to mimic the following usage of `ifstream`:
++ *
++ * std::ifstream is(filename);
++ *
++ * file_streambuf ibuf(filename);
++ * std::istream is(&ibuf);
++ *
++ * This is required because `ifstream` does not support opening files
++ * containing wide characters on Windows. On Windows, `file_streambuf` uses
++ * `file_open()` to convert the file name to UTF-16 before opening it with
++ * `_wfopen()`.
++ *
++ * Note that this is not an exact re-implementation of `ifstream`,
++ * but is enough for usage here.
++ *
++ * It is partially based on these two implementations:
++ * - fdinbuf from http://www.josuttis.com/cppcode/fdstream.html
++ * - stdiobuf https://stackoverflow.com/questions/12342542/convert-file-to-ifstream-c-android-ndk
++ *
++ * Apparently MSVC provides non-standard overloads of `ifstream` that support
++ * a `const wchar_t*` file name, but MinGW does not https://stackoverflow.com/a/822032
++ */
++class file_streambuf
++  : public std::streambuf
++{
++private:
++    FILE* file_;
++    static const int buffer_size_ = 1024;
++    char buffer_[buffer_size_];
++
++public:
++    ~file_streambuf()
++    {
++        if (file_)
++        {
++            ::fclose(file_);
++        }
++    }
++    file_streambuf(const file_streambuf&) = delete;
++    file_streambuf& operator=(const file_streambuf&) = delete;
++
++    file_streambuf(const std::string& filename)
++        : file_(file_open(filename))
++    {
++    }
++
++protected:
++    virtual
++    int_type
++    underflow()
++    {
++        if (gptr() == egptr() && file_)
++        {
++            const size_t size = ::fread(buffer_, 1, buffer_size_, file_);
++            setg(buffer_, buffer_, buffer_ + size);
++        }
++        return (gptr() == egptr())
++            ? traits_type::eof()
++                : traits_type::to_int_type(*gptr());
++    }
++
++private:
++    FILE*
++    file_open(const std::string& filename)
++    {
++#  ifdef _WIN32
++        std::wstring wfilename = convert_utf8_to_utf16(filename);
++        FILE* file = ::_wfopen(wfilename.c_str(), L"r");
++#  else // !_WIN32
++        FILE* file = ::fopen(filename.c_str(), "rb");
++#  endif // _WIN32
++        if (file == NULL)
++        {
++            std::string msg = "Error opening file \"";
++            msg += filename;
++            msg += "\".";
++            throw std::runtime_error(msg);
++        }
++        return file;
++    }
++};
++
+ #endif  // !USE_OS_TZDB
+ 
+ namespace date
+@@ -303,9 +440,9 @@ access_install()
+ }
+ 
+ void
+-set_install(const std::string& s)
++set_install(const std::string& install)
+ {
+-    access_install() = s;
++    access_install() = install;
+ }
+ 
+ static
+@@ -349,7 +486,18 @@ discover_tz_dir()
+ {
+     struct stat sb;
+     using namespace std;
+-#  ifndef __APPLE__
++#  if defined(ANDROID) || defined(__ANDROID__)
++    CONSTDATA auto tz_dir_default = "/apex/com.android.tzdata/etc/tz";
++    CONSTDATA auto tz_dir_fallback = "/system/usr/share/zoneinfo";
++
++    // Check updatable path first
++    if(stat(tz_dir_default, &sb) == 0 && S_ISDIR(sb.st_mode))
++        return tz_dir_default;
++    else if(stat(tz_dir_fallback, &sb) == 0 && S_ISDIR(sb.st_mode))
++        return tz_dir_fallback;
++    else
++        throw runtime_error("discover_tz_dir failed to find zoneinfo\n");
++#  elif !defined(__APPLE__)
+     CONSTDATA auto tz_dir_default = "/usr/share/zoneinfo";
+     CONSTDATA auto tz_dir_buildroot = "/usr/share/zoneinfo/uclibc";
+ 
+@@ -372,9 +520,10 @@ discover_tz_dir()
+     if (!(lstat(timezone, &sb) == 0 && S_ISLNK(sb.st_mode) && sb.st_size > 0))
+         throw runtime_error("discover_tz_dir failed\n");
+     string result;
+-    char rp[PATH_MAX+1] = {};
+-    if (readlink(timezone, rp, sizeof(rp)-1) > 0)
+-        result = string(rp);
++    unique_ptr<char[]> rp(new char[sb.st_size]);
++    const auto rp_length = readlink(timezone, rp.get(), sb.st_size);
++    if (rp_length > 0)
++        result = string(rp.get(), rp_length); // readlink doesn't null-terminate
+     else
+         throw system_error(errno, system_category(), "readlink() failed");
+     auto i = result.find("zoneinfo");
+@@ -406,7 +555,9 @@ get_tz_dir()
+ static_assert(min_year <= max_year, "Configuration error");
+ #endif
+ 
++#if !defined(ANDROID) && !defined(__ANDROID__)
+ static std::unique_ptr<tzdb> init_tzdb();
++#endif // !defined(ANDROID) && !defined(__ANDROID__)
+ 
+ tzdb_list::~tzdb_list()
+ {
+@@ -465,31 +616,67 @@ get_tzdb_list()
+     return tz_db;
+ }
+ 
++#if !defined(ANDROID) && !defined(__ANDROID__)
++inline
++static
++char
++tolower(char c)
++{
++    return static_cast<char>(std::tolower(c));
++}
++
++inline
++static
++void
++tolower(std::string& s)
++{
++    for (auto& c : s)
++        c = tolower(c);
++}
++
++inline
+ static
+ std::string
+-parse3(std::istream& in)
++get_alpha_word(std::istream& in)
+ {
+-    std::string r(3, ' ');
+     ws(in);
+-    r[0] = static_cast<char>(in.get());
+-    r[1] = static_cast<char>(in.get());
+-    r[2] = static_cast<char>(in.get());
+-    return r;
++    std::string s;
++    while (!in.eof() && std::isalpha(in.peek()))
++        s.push_back(static_cast<char>(in.get()));
++    return s;
++}
++#endif // !defined(ANDROID) && !defined(__ANDROID__)
++
++inline
++static
++bool
++is_prefix_of(std::string const& key, std::string const& value)
++{
++    const size_t size = std::min(key.size(), value.size());
++    return key.compare(0, size, value, 0, size) == 0;
+ }
+ 
++#if !defined(ANDROID) && !defined(__ANDROID__)
+ static
+ unsigned
+ parse_month(std::istream& in)
+ {
+-    CONSTDATA char*const month_names[] =
+-        {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+-         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+-    auto s = parse3(in);
+-    auto m = std::find(std::begin(month_names), std::end(month_names), s) - month_names;
++    static std::string const month_names[] =
++        {"january", "february", "march", "april", "may", "june",
++         "july", "august", "september", "october", "november", "december"};
++    auto s = get_alpha_word(in);
++    tolower(s);
++    auto m = std::find_if(std::begin(month_names), std::end(month_names),
++                 [&s](std::string const& m)
++                 {
++                     return is_prefix_of(s, m);
++                 })
++                  - month_names;
+     if (m >= std::end(month_names) - std::begin(month_names))
+         throw std::runtime_error("oops: bad month name: " + s);
+     return static_cast<unsigned>(++m);
+ }
++#endif // !defined(ANDROID) && !defined(__ANDROID__)
+ 
+ #if !USE_OS_TZDB
+ 
+@@ -559,15 +746,8 @@ load_timezone_mappings_from_xml_file(const std::string& input_path)
+     std::vector<detail::timezone_mapping> mappings;
+     std::string line;
+ 
+-    std::ifstream is(input_path);
+-    if (!is.is_open())
+-    {
+-        // We don't emit file exceptions because that's an implementation detail.
+-        std::string msg = "Error opening time zone mapping file \"";
+-        msg += input_path;
+-        msg += "\".";
+-        throw std::runtime_error(msg);
+-    }
++    file_streambuf ibuf(input_path);
++    std::istream is(&ibuf);
+ 
+     auto error = [&input_path, &line_num](const char* info)
+     {
+@@ -697,7 +877,6 @@ load_timezone_mappings_from_xml_file(const std::string& input_path)
+         }
+     }
+ 
+-    is.close();
+     return mappings;
+ }
+ 
+@@ -709,10 +888,16 @@ static
+ unsigned
+ parse_dow(std::istream& in)
+ {
+-    CONSTDATA char*const dow_names[] =
+-        {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+-    auto s = parse3(in);
+-    auto dow = std::find(std::begin(dow_names), std::end(dow_names), s) - dow_names;
++    static std::string const dow_names[] =
++        {"sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
++    auto s = get_alpha_word(in);
++    tolower(s);
++    auto dow = std::find_if(std::begin(dow_names), std::end(dow_names),
++                 [&s](std::string const& dow)
++                 {
++                     return is_prefix_of(s, dow);
++                 })
++                  - dow_names;
+     if (dow >= std::end(dow_names) - std::begin(dow_names))
+         throw std::runtime_error("oops: bad dow name: " + s);
+     return static_cast<unsigned>(dow);
+@@ -973,7 +1158,7 @@ detail::operator>>(std::istream& is, MonthDayTime& x)
+         auto m = parse_month(is);
+         if (!is.eof() && ws(is) && !is.eof() && is.peek() != '#')
+         {
+-            if (is.peek() == 'l')
++            if (tolower(is.peek()) == 'l')
+             {
+                 for (int i = 0; i < 4; ++i)
+                     is.get();
+@@ -2039,6 +2224,9 @@ time_zone::load_data(std::istream& inf,
+ void
+ time_zone::init_impl()
+ {
++#if defined(ANDROID) || defined(__ANDROID__)
++    return;
++#endif // defined(ANDROID) || defined(__ANDROID__)
+     using namespace std;
+     using namespace std::chrono;
+     auto name = get_tz_dir() + ('/' + name_);
+@@ -2164,7 +2352,7 @@ time_zone::get_info_impl(local_seconds tp) const
+ {
+     using namespace std::chrono;
+     init();
+-    local_info i;
++    local_info i{};
+     i.result = local_info::unique;
+     auto tr = upper_bound(transitions_.begin(), transitions_.end(), tp,
+                           [](const local_seconds& x, const transition& t)
+@@ -2200,6 +2388,86 @@ time_zone::get_info_impl(local_seconds tp) const
+     return i;
+ }
+ 
++#if defined(ANDROID) || defined(__ANDROID__)
++void
++time_zone::parse_from_android_tzdata(std::ifstream& inf, const std::size_t off)
++{
++    using namespace std;
++    using namespace std::chrono;
++    if (!inf.is_open())
++        throw std::runtime_error{"Unable to open tzdata"};
++    std::size_t restorepos = inf.tellg();
++    inf.seekg(off, inf.beg);
++    load_header(inf);
++    auto v = load_version(inf);
++    std::int32_t tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt,
++                 tzh_timecnt,    tzh_typecnt,    tzh_charcnt;
++    skip_reserve(inf);
++    load_counts(inf, tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt,
++                     tzh_timecnt,    tzh_typecnt,    tzh_charcnt);
++    if (v == 0)
++    {
++        load_data<int32_t>(inf, tzh_leapcnt, tzh_timecnt, tzh_typecnt, tzh_charcnt);
++    }
++    else
++    {
++#if !defined(NDEBUG)
++        inf.ignore((4+1)*tzh_timecnt + 6*tzh_typecnt + tzh_charcnt + 8*tzh_leapcnt +
++                   tzh_ttisstdcnt + tzh_ttisgmtcnt);
++        load_header(inf);
++        auto v2 = load_version(inf);
++        assert(v == v2);
++        skip_reserve(inf);
++#else  // defined(NDEBUG)
++        inf.ignore((4+1)*tzh_timecnt + 6*tzh_typecnt + tzh_charcnt + 8*tzh_leapcnt +
++                   tzh_ttisstdcnt + tzh_ttisgmtcnt + (4+1+15));
++#endif  // defined(NDEBUG)
++        load_counts(inf, tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt,
++                         tzh_timecnt,    tzh_typecnt,    tzh_charcnt);
++        load_data<int64_t>(inf, tzh_leapcnt, tzh_timecnt, tzh_typecnt, tzh_charcnt);
++    }
++#if !MISSING_LEAP_SECONDS
++    if (tzh_leapcnt > 0)
++    {
++        auto& leap_seconds = get_tzdb_list().front().leap_seconds;
++        auto itr = leap_seconds.begin();
++        auto l = itr->date();
++        seconds leap_count{0};
++        for (auto t = std::upper_bound(transitions_.begin(), transitions_.end(), l,
++                                       [](const sys_seconds& x, const transition& ct)
++                                       {
++                                           return x < ct.timepoint;
++                                       });
++                  t != transitions_.end(); ++t)
++        {
++            while (t->timepoint >= l)
++            {
++                ++leap_count;
++                if (++itr == leap_seconds.end())
++                    l = sys_days(max_year/max_day);
++                else
++                    l = itr->date() + leap_count;
++            }
++            t->timepoint -= leap_count;
++        }
++    }
++#endif  // !MISSING_LEAP_SECONDS
++    auto b = transitions_.begin();
++    auto i = transitions_.end();
++    if (i != b)
++    {
++        for (--i; i != b; --i)
++        {
++            if (i->info->offset == i[-1].info->offset &&
++                i->info->abbrev == i[-1].info->abbrev &&
++                i->info->is_dst == i[-1].info->is_dst)
++                i = transitions_.erase(i);
++        }
++    }
++    inf.seekg(restorepos, inf.beg);
++}
++#endif // defined(ANDROID) || defined(__ANDROID__)
++
+ std::ostream&
+ operator<<(std::ostream& os, const time_zone& z)
+ {
+@@ -2600,7 +2868,8 @@ operator<<(std::ostream& os, const time_zone& z)
+         os.width(8);
+         os << s.format_ << "   ";
+         os << s.until_year_ << ' ' << s.until_date_;
+-        os << "   " << s.until_utc_ << " UTC";
++        os << "   ";
++        date::operator<<(os, s.until_utc_) << " UTC";
+         os << "   " << s.until_std_ << " STD";
+         os << "   " << s.until_loc_;
+         os << "   " << make_time(s.initial_save_);
+@@ -2625,20 +2894,19 @@ operator<<(std::ostream& os, const time_zone& z)
+ std::ostream&
+ operator<<(std::ostream& os, const leap_second& x)
+ {
+-    using namespace date;
+-    return os << x.date_ << "  +";
++    return date::operator<<(os, x.date_) << "  +";
+ }
+ 
+ #if USE_OS_TZDB
+ 
++#if !defined(ANDROID) && !defined(__ANDROID__)
+ static
+ std::string
+ get_version()
+ {
+-    using namespace std;
+-    auto path = get_tz_dir() + string("/+VERSION");
+-    ifstream in{path};
+-    string version;
++    auto path = get_tz_dir() + std::string("/+VERSION");
++    std::ifstream in{path};
++    std::string version;
+     if (in)
+     {
+         in >> version;
+@@ -2669,16 +2937,17 @@ find_read_and_leap_seconds()
+             std::getline(in, line);
+             if (!line.empty() && line[0] != '#')
+             {
+-                std::istringstream in(line);
+-                in.exceptions(std::ios::failbit | std::ios::badbit);
++                std::istringstream iss(line);
++                iss.exceptions(std::ios::failbit | std::ios::badbit);
+                 std::string word;
+-                in >> word;
+-                if (word == "Leap")
++                iss >> word;
++                tolower(word);
++                if (is_prefix_of(word, "leap"))
+                 {
+                     int y, m, d;
+-                    in >> y;
+-                    m = static_cast<int>(parse_month(in));
+-                    in >> d;
++                    iss >> y;
++                    m = static_cast<int>(parse_month(iss));
++                    iss >> d;
+                     leap_seconds.push_back(leap_second(sys_days{year{y}/m/d} + days{1},
+                                                                  detail::undocumented{}));
+                 }
+@@ -2703,11 +2972,11 @@ find_read_and_leap_seconds()
+             std::getline(in, line);
+             if (!line.empty() && line[0] != '#')
+             {
+-                std::istringstream in(line);
+-                in.exceptions(std::ios::failbit | std::ios::badbit);
++                std::istringstream iss(line);
++                iss.exceptions(std::ios::failbit | std::ios::badbit);
+                 using seconds = std::chrono::seconds;
+                 seconds::rep s;
+-                in >> s;
++                iss >> s;
+                 if (s == 2272060800)
+                     continue;
+                 leap_seconds.push_back(leap_second(sys_seconds{seconds{s}} - offset,
+@@ -2716,6 +2985,7 @@ find_read_and_leap_seconds()
+         }
+         return leap_seconds;
+     }
++#if !MISSING_LEAP_SECONDS
+     in.clear();
+     in.open(get_tz_dir() + std::string(1, folder_delimiter) + "right/UTC",
+                      std::ios_base::binary);
+@@ -2730,8 +3000,10 @@ find_read_and_leap_seconds()
+     {
+         return load_just_leaps(in);
+     }
++#endif
+     return {};
+ }
++#endif // !defined(ANDROID) && !defined(__ANDROID__)
+ 
+ static
+ std::unique_ptr<tzdb>
+@@ -2739,6 +3011,38 @@ init_tzdb()
+ {
+     std::unique_ptr<tzdb> db(new tzdb);
+ 
++#if defined(ANDROID) || defined(__ANDROID__)
++    auto path = get_tz_dir() + std::string("/tzdata");
++    std::ifstream in{path};
++    if (!in)
++        throw std::runtime_error("Can not open " + path);
++    bionic_tzdata_header_t hdr{};
++    in.read(reinterpret_cast<char*>(&hdr), sizeof(bionic_tzdata_header_t));
++    if (!is_prefix_of(hdr.tzdata_version, "tzdata") || hdr.tzdata_version[11] != 0)
++        throw std::runtime_error("Malformed tzdata - invalid magic!");
++    maybe_reverse_bytes(hdr.index_offset);
++    maybe_reverse_bytes(hdr.data_offset);
++    maybe_reverse_bytes(hdr.final_offset);
++    if (hdr.index_offset > hdr.data_offset)
++        throw std::runtime_error("Malformed tzdata - hdr.index_offset > hdr.data_offset!");
++    const size_t index_size = hdr.data_offset - hdr.index_offset;
++    if ((index_size % sizeof(index_entry_t)) != 0)
++        throw std::runtime_error("Malformed tzdata - index size malformed!");
++    //Iterate through zone index
++    index_entry_t index_entry{};
++    for (size_t idx = 0; idx < index_size; idx += sizeof(index_entry_t)) {
++        in.read(reinterpret_cast<char*>(&index_entry), sizeof(index_entry_t));
++        maybe_reverse_bytes(index_entry.start);
++        maybe_reverse_bytes(index_entry.length);
++        time_zone timezone{std::string(index_entry.buf),
++                           detail::undocumented{}};
++        timezone.parse_from_android_tzdata(in, hdr.data_offset + index_entry.start);
++        db->zones.emplace_back(std::move(timezone));
++    }
++    db->zones.shrink_to_fit();
++    std::sort(db->zones.begin(), db->zones.end());
++    db->version = std::string(hdr.tzdata_version).replace(0, 6, "");
++#else
+     //Iterate through folders
+     std::queue<std::string> subfolders;
+     subfolders.emplace(get_tz_dir());
+@@ -2763,6 +3067,7 @@ init_tzdb()
+                 strcmp(d->d_name, "version")      == 0      ||
+                 strcmp(d->d_name, "zone.tab")     == 0      ||
+                 strcmp(d->d_name, "zone1970.tab") == 0      ||
++                strcmp(d->d_name, "zonenow.tab")  == 0      ||
+                 strcmp(d->d_name, "tzdata.zi")    == 0      ||
+                 strcmp(d->d_name, "leapseconds")  == 0      ||
+                 strcmp(d->d_name, "leap-seconds.list") == 0   )
+@@ -2790,6 +3095,7 @@ init_tzdb()
+     std::sort(db->zones.begin(), db->zones.end());
+     db->leap_seconds = find_read_and_leap_seconds();
+     db->version = get_version();
++#endif // defined(ANDROID) || defined(__ANDROID__)
+     return db;
+ }
+ 
+@@ -2836,7 +3142,8 @@ bool
+ file_exists(const std::string& filename)
+ {
+ #ifdef _WIN32
+-    return ::_access(filename.c_str(), 0) == 0;
++    std::wstring wfilename = convert_utf8_to_utf16(filename);
++    return ::_waccess(wfilename.c_str(), 0) == 0;
+ #else
+     return ::access(filename.c_str(), F_OK) == 0;
+ #endif
+@@ -3413,16 +3720,27 @@ std::string
+ get_version(const std::string& path)
+ {
+     std::string version;
+-    std::ifstream infile(path + "version");
+-    if (infile.is_open())
++
++    std::string path_version = path + "version";
++
++    if (file_exists(path_version))
+     {
++        file_streambuf inbuf(path_version);
++        std::istream infile(&inbuf);
++
+         infile >> version;
++
+         if (!infile.fail())
+             return version;
+     }
+-    else
++
++    std::string path_news = path + "NEWS";
++
++    if (file_exists(path_news))
+     {
+-        infile.open(path + "NEWS");
++        file_streambuf inbuf(path_news);
++        std::istream infile(&inbuf);
++
+         while (infile)
+         {
+             infile >> version;
+@@ -3433,6 +3751,7 @@ get_version(const std::string& path)
+             }
+         }
+     }
++
+     throw std::runtime_error("Unable to get Timezone database version from " + path);
+ }
+ 
+@@ -3504,7 +3823,13 @@ init_tzdb()
+ 
+     for (const auto& filename : files)
+     {
+-        std::ifstream infile(path + filename);
++        std::string file_path = path + filename;
++        if (!file_exists(file_path))
++        {
++          continue;
++        }
++        file_streambuf inbuf(file_path);
++        std::istream infile(&inbuf);
+         while (infile)
+         {
+             std::getline(infile, line);
+@@ -3513,22 +3838,23 @@ init_tzdb()
+                 std::istringstream in(line);
+                 std::string word;
+                 in >> word;
+-                if (word == "Rule")
++                tolower(word);
++                if (is_prefix_of(word, "rule"))
+                 {
+                     db->rules.push_back(Rule(line));
+                     continue_zone = false;
+                 }
+-                else if (word == "Link")
++                else if (is_prefix_of(word, "link"))
+                 {
+                     db->links.push_back(time_zone_link(line));
+                     continue_zone = false;
+                 }
+-                else if (word == "Leap")
++                else if (is_prefix_of(word, "leap"))
+                 {
+                     db->leap_seconds.push_back(leap_second(line, detail::undocumented{}));
+                     continue_zone = false;
+                 }
+-                else if (word == "Zone")
++                else if (is_prefix_of(word, "zone"))
+                 {
+                     db->zones.push_back(time_zone(line, detail::undocumented{}));
+                     continue_zone = true;
+@@ -3537,6 +3863,10 @@ init_tzdb()
+                 {
+                     db->zones.back().add(line);
+                 }
++                else if (word.size() > 0 && word[0] == '#')
++                {
++                    continue;
++                }
+                 else
+                 {
+                     std::cerr << line << '\n';
+@@ -3582,6 +3912,67 @@ get_tzdb()
+     return get_tzdb_list().front();
+ }
+ 
++namespace {
++
++class recursion_limiter
++{
++    unsigned depth_ = 0;
++    unsigned limit_;
++
++    class restore_recursion_depth;
++
++public:
++    recursion_limiter(recursion_limiter const&) = delete;
++    recursion_limiter& operator=(recursion_limiter const&) = delete;
++
++    explicit constexpr recursion_limiter(unsigned limit) noexcept;
++
++    restore_recursion_depth count();
++};
++
++class recursion_limiter::restore_recursion_depth
++{
++    recursion_limiter* rc_;
++
++public:
++    ~restore_recursion_depth();
++    restore_recursion_depth(restore_recursion_depth&&) = default;
++
++    explicit restore_recursion_depth(recursion_limiter* rc) noexcept;
++};
++
++inline
++recursion_limiter::restore_recursion_depth::~restore_recursion_depth()
++{
++    --(rc_->depth_);
++}
++
++inline
++recursion_limiter::restore_recursion_depth::restore_recursion_depth(recursion_limiter* rc)
++                                                                                  noexcept
++    : rc_{rc}
++{}
++
++inline
++constexpr
++recursion_limiter::recursion_limiter(unsigned limit) noexcept
++    : limit_{limit}
++{
++}
++
++inline
++recursion_limiter::restore_recursion_depth
++recursion_limiter::count()
++{
++    ++depth_;
++    if (depth_ > limit_)
++        throw std::runtime_error("recursion limit of " +
++                                  std::to_string(limit_) + " exceeded");
++    return restore_recursion_depth{this};
++}
++
++}  // unnamed namespace
++
+ const time_zone*
+ #if HAS_STRING_VIEW
+ tzdb::locate_zone(std::string_view tz_name) const
+@@ -3589,6 +3980,10 @@ tzdb::locate_zone(std::string_view tz_name) const
+ tzdb::locate_zone(const std::string& tz_name) const
+ #endif
+ {
++    // If a link-to-link chain exceeds this limit, give up
++    thread_local recursion_limiter rc{10};
++    auto restore_count = rc.count();
++
+     auto zi = std::lower_bound(zones.begin(), zones.end(), tz_name,
+ #if HAS_STRING_VIEW
+         [](const time_zone& z, const std::string_view& nm)
+@@ -3612,13 +4007,7 @@ tzdb::locate_zone(const std::string& tz_name) const
+         });
+         if (li != links.end() && li->name() == tz_name)
+         {
+-            zi = std::lower_bound(zones.begin(), zones.end(), li->target(),
+-                [](const time_zone& z, const std::string& nm)
+-                {
+-                    return z.name() < nm;
+-                });
+-            if (zi != zones.end() && zi->name() == li->target())
+-                return &*zi;
++            return locate_zone(li->target());
+         }
+ #endif  // !USE_OS_TZDB
+         throw std::runtime_error(std::string(tz_name) + " not found in timezone database");
+@@ -3794,10 +4183,12 @@ bool
+ sniff_realpath(const char* timezone)
+ {
+     using namespace std;
+-    char rp[PATH_MAX+1] = {};
+-    if (realpath(timezone, rp) == nullptr)
++    unique_ptr<char, decltype(free) *> rp(realpath(timezone, nullptr), free);
++    if (rp.get() == nullptr)
+         throw system_error(errno, system_category(), "realpath() failed");
+-    auto result = extract_tz_name(rp);
++    auto result = extract_tz_name(rp.get());
++    if (result.find("posix") == 0)
++        return false;
+     return result != "posixrules";
+ }
+ 
+@@ -3824,18 +4215,24 @@ tzdb::current_zone() const
+         {
+             using namespace std;
+             static const bool use_realpath = sniff_realpath(timezone);
+-            char rp[PATH_MAX+1] = {};
+             if (use_realpath)
+             {
+-                if (realpath(timezone, rp) == nullptr)
++                unique_ptr<char, decltype(free) *> rp(realpath(timezone, nullptr), free);
++                if (rp.get() == nullptr)
+                     throw system_error(errno, system_category(), "realpath() failed");
++                return locate_zone(extract_tz_name(rp.get()));
+             }
+             else
+             {
+-                if (readlink(timezone, rp, sizeof(rp)-1) <= 0)
++                // +1 because st_size doesn't include the '\0' terminator
++                const auto rp_size = sb.st_size + 1;
++                unique_ptr<char[]> rp(new char[rp_size]);
++                const auto rp_length = readlink(timezone, rp.get(), rp_size);
++                if (rp_length <= 0)
+                     throw system_error(errno, system_category(), "readlink() failed");
++                rp.get()[rp_length] = '\0'; // readlink doesn't null-terminate
++                return locate_zone(extract_tz_name(rp.get()));
+             }
+-            return locate_zone(extract_tz_name(rp));
+         }
+     }
+     // On embedded systems e.g. buildroot with uclibc the timezone is linked
+@@ -3854,9 +4251,10 @@ tzdb::current_zone() const
+         if (lstat(timezone, &sb) == 0 && S_ISLNK(sb.st_mode) && sb.st_size > 0) {
+             using namespace std;
+             string result;
+-            char rp[PATH_MAX+1] = {};
+-            if (readlink(timezone, rp, sizeof(rp)-1) > 0)
+-                result = string(rp);
++            unique_ptr<char[]> rp(new char[sb.st_size]);
++            const auto rp_length = readlink(timezone, rp.get(), sb.st_size);
++            if (rp_length > 0)
++                result = string(rp.get(), rp_length); // readlink doesn't null-terminate
+             else
+                 throw system_error(errno, system_category(), "readlink() failed");
+ 
+@@ -3904,6 +4302,18 @@ tzdb::current_zone() const
+         if (!result.empty())
+             return locate_zone(result);
+ #endif
++    // Fall through to try other means.
++    }
++    {
++    // On Android, it is not possible to use file based approach either,
++    // we have to ask the value of `persist.sys.timezone` system property
++#if defined(ANDROID) || defined(__ANDROID__)
++    char sys_timezone[PROP_VALUE_MAX];
++    if (__system_property_get("persist.sys.timezone", sys_timezone) > 0)
++    {
++        return locate_zone(sys_timezone);
++    }
++#endif // defined(ANDROID) || defined(__ANDROID__)
+     // Fall through to try other means.
+     }
+     {
+@@ -3919,13 +4329,32 @@ tzdb::current_zone() const
+             auto p = result.find("ZONE=\"");
+             if (p != std::string::npos)
+             {
+-                result.erase(p, p+6);
++                result.erase(0, p+6);
+                 result.erase(result.rfind('"'));
+                 return locate_zone(result);
+             }
+         }
+         // Fall through to try other means.
+     }
++    // On OpenWRT we need to check /etc/config/system
++    // It will have a line with the following structure
++    //   ...
++    //   option zoneName 'Europe/Berlin'
++    //   ...
++    {
++        std::ifstream timezone_file("/etc/config/system");
++        if (timezone_file.is_open())
++        {
++            for(std::string result; std::getline(timezone_file, result);) {
++                std::string findStr = "option zoneName '";
++                size_t startPos = result.find(findStr);
++                if (startPos != std::string::npos) {
++                    size_t endPos = result.find("'", startPos + findStr.size());
++                    return locate_zone(result.substr(startPos + findStr.size(), endPos - startPos - findStr.size()));
++                }
++            }
++        }
++    }
+     throw std::runtime_error("Could not get current timezone");
+ }
+ 
+diff --git a/test/clock_cast_test/local_t.pass.cpp b/test/clock_cast_test/local_t.pass.cpp
+index c80459d..ae5edec 100644
+--- a/test/clock_cast_test/local_t.pass.cpp
++++ b/test/clock_cast_test/local_t.pass.cpp
+@@ -28,6 +28,7 @@ main()
+ {
+    using namespace date;
+    using namespace std::chrono;
++   using date::local_days, date::local_t, date::January, date::July, date::Sunday;
+ 
+    // self
+    {
+diff --git a/test/clock_cast_test/noncastable.pass.cpp b/test/clock_cast_test/noncastable.pass.cpp
+index 373f223..3e1c5c1 100644
+--- a/test/clock_cast_test/noncastable.pass.cpp
++++ b/test/clock_cast_test/noncastable.pass.cpp
+@@ -191,6 +191,7 @@ main()
+     using namespace date;
+     using namespace std::chrono;
+     using sys_clock = std::chrono::system_clock;
++    using local_t = date::local_t;
+ 
+     //steady_clock (must be different that sys_clock)
+     static_assert(is_clock_castable<steady_clock, steady_clock>::value, "steady_clock -> steady_clock");
+diff --git a/test/date_test/detail/decimal_format_seconds.pass.cpp b/test/date_test/detail/decimal_format_seconds.pass.cpp
+index cce6ae8..6769905 100644
+--- a/test/date_test/detail/decimal_format_seconds.pass.cpp
++++ b/test/date_test/detail/decimal_format_seconds.pass.cpp
+@@ -33,15 +33,15 @@
+ // private:
+ //     std::chrono::seconds s_;
+ //     precision            sub_s_;
+-// 
++//
+ // public:
+ //     constexpr explicit decimal_format_seconds(const Duration& d) noexcept;
+-// 
++//
+ //     constexpr std::chrono::seconds& seconds() noexcept;
+ //     constexpr std::chrono::seconds seconds() const noexcept;
+ //     constexpr precision subseconds() const noexcept;
+ //     constexpr precision to_duration() const noexcept;
+-// 
++//
+ //     template <class CharT, class Traits>
+ //     friend
+ //     std::basic_ostream<CharT, Traits>&
+diff --git a/test/date_test/durations_output.pass.cpp b/test/date_test/durations_output.pass.cpp
+index ebf3ff5..8215d62 100644
+--- a/test/date_test/durations_output.pass.cpp
++++ b/test/date_test/durations_output.pass.cpp
+@@ -36,7 +36,7 @@ void test_SI()
+    // atto
+    {
+      duration<int, std::atto> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13as");
+      os.str("");
+    }
+@@ -44,7 +44,7 @@ void test_SI()
+    // femto
+    {
+      duration<int, std::femto> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13fs");
+      os.str("");
+    }
+@@ -52,7 +52,7 @@ void test_SI()
+    // pico
+    {
+      duration<int, std::pico> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13ps");
+      os.str("");
+    }
+@@ -60,7 +60,7 @@ void test_SI()
+    // nano
+    {
+      duration<int, std::nano> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13ns");
+      os.str("");
+    }
+@@ -68,7 +68,7 @@ void test_SI()
+    // mikro
+    {
+      duration<int, std::micro> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13\xC2\xB5s");
+      os.str("");
+    }
+@@ -76,7 +76,7 @@ void test_SI()
+    // milli
+    {
+      duration<int, std::milli> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13ms");
+      os.str("");
+    }
+@@ -84,7 +84,7 @@ void test_SI()
+    // centi
+    {
+      duration<int, std::centi> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13cs");
+      os.str("");
+    }
+@@ -92,7 +92,7 @@ void test_SI()
+    // deci
+    {
+      duration<int, std::deci> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13ds");
+      os.str("");
+    }
+@@ -100,7 +100,7 @@ void test_SI()
+    // seconds
+    {
+      duration<int> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13s");
+      os.str("");
+    }
+@@ -108,7 +108,7 @@ void test_SI()
+    // deca
+    {
+      duration<int, std::deca> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13das");
+      os.str("");
+    }
+@@ -116,7 +116,7 @@ void test_SI()
+    // hecto
+    {
+      duration<int, std::hecto> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13hs");
+      os.str("");
+    }
+@@ -124,7 +124,7 @@ void test_SI()
+    // kilo
+    {
+      duration<int, std::kilo> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13ks");
+      os.str("");
+    }
+@@ -132,7 +132,7 @@ void test_SI()
+    // mega
+    {
+      duration<int, std::mega> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13Ms");
+      os.str("");
+    }
+@@ -140,7 +140,7 @@ void test_SI()
+    // giga
+    {
+      duration<int, std::giga> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13Gs");
+      os.str("");
+    }
+@@ -148,7 +148,7 @@ void test_SI()
+    // tera
+    {
+      duration<int, std::tera> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13Ts");
+      os.str("");
+    }
+@@ -156,7 +156,7 @@ void test_SI()
+    // peta
+    {
+      duration<int, std::peta> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13Ps");
+      os.str("");
+    }
+@@ -164,7 +164,7 @@ void test_SI()
+    // femto
+    {
+      duration<int, std::exa> d(13);
+-     os << d;
++     date::operator<<(os, d);
+      assert(os.str() == "13Es");
+      os.str("");
+    }
+@@ -180,7 +180,7 @@ void test_calendar()
+    // minutes
+    {
+       minutes d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13min");
+       os.str("");
+    }
+@@ -188,7 +188,7 @@ void test_calendar()
+    // hours
+    {
+       hours d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13h");
+       os.str("");
+    }
+@@ -196,7 +196,7 @@ void test_calendar()
+    // days
+    {
+       days d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13d");
+       os.str("");
+    }
+@@ -212,7 +212,7 @@ void test_integral_scale()
+    // ratio 123 / 1
+    {
+       duration<int, std::ratio<123, 1>> d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13[123]s");
+       os.str("");
+    }
+@@ -220,7 +220,7 @@ void test_integral_scale()
+    // ratio 100 / 4 = ratio 25 / 1
+    {
+       duration<int, std::ratio<25, 1>> d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13[25]s");
+       os.str("");
+    }
+@@ -228,7 +228,7 @@ void test_integral_scale()
+    // weeks = ratio 7 * 24 * 60 * 60 / 1 = ratio 604800 / 1
+    {
+       weeks d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13[604800]s");
+       os.str("");
+    }
+@@ -236,7 +236,7 @@ void test_integral_scale()
+    // years = 146097/400 days = ratio 146097/400 * 24 * 60 * 60 = ratio 31556952 / 1
+    {
+       years d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13[31556952]s");
+       os.str("");
+    }
+@@ -244,7 +244,7 @@ void test_integral_scale()
+    // months = 1/12 years = ratio 1/12 * 31556952  = ratio 2629746 / 1
+    {
+       months d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13[2629746]s");
+       os.str("");
+    }
+@@ -260,7 +260,7 @@ void test_ratio_scale()
+    // ratio 1 / 2
+    {
+       duration<int, std::ratio<1, 2>> d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13[1/2]s");
+       os.str("");
+    }
+@@ -268,7 +268,7 @@ void test_ratio_scale()
+    // ratio 100 / 3
+    {
+       duration<int, std::ratio<100, 3>> d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13[100/3]s");
+       os.str("");
+    }
+@@ -276,7 +276,7 @@ void test_ratio_scale()
+    // ratio 100 / 6 = ratio 50 / 3
+    {
+       duration<int, std::ratio<100, 6>> d(13);
+-      os << d;
++      date::operator<<(os, d);
+       assert(os.str() == "13[50/3]s");
+       os.str("");
+    }
+diff --git a/test/date_test/format/century.pass.cpp b/test/date_test/format/century.pass.cpp
+index 1b401f7..a3506d1 100644
+--- a/test/date_test/format/century.pass.cpp
++++ b/test/date_test/format/century.pass.cpp
+@@ -32,86 +32,86 @@ main()
+     using namespace date;
+     using namespace std::chrono;
+     std::ostringstream os;
+-    os << format("%C", sys_days{jun/1/20001});
++    os << date::format("%C", sys_days{jun/1/20001});
+     assert(os.str() == "200");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/20000});
++    os << date::format("%C", sys_days{jun/1/20000});
+     assert(os.str() == "200");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/19999});
++    os << date::format("%C", sys_days{jun/1/19999});
+     assert(os.str() == "199");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/2001});
++    os << date::format("%C", sys_days{jun/1/2001});
+     assert(os.str() == "20");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/2000});
++    os << date::format("%C", sys_days{jun/1/2000});
+     assert(os.str() == "20");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/1999});
++    os << date::format("%C", sys_days{jun/1/1999});
+     assert(os.str() == "19");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/101});
++    os << date::format("%C", sys_days{jun/1/101});
+     assert(os.str() == "01");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/100});
++    os << date::format("%C", sys_days{jun/1/100});
+     assert(os.str() == "01");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/99});
++    os << date::format("%C", sys_days{jun/1/99});
+     assert(os.str() == "00");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/1});
++    os << date::format("%C", sys_days{jun/1/1});
+     assert(os.str() == "00");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/0});
++    os << date::format("%C", sys_days{jun/1/0});
+     assert(os.str() == "00");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/-1});
++    os << date::format("%C", sys_days{jun/1/-1});
+     assert(os.str() == "-01");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/-99});
++    os << date::format("%C", sys_days{jun/1/-99});
+     assert(os.str() == "-01");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/-100});
++    os << date::format("%C", sys_days{jun/1/-100});
+     assert(os.str() == "-01");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/-101});
++    os << date::format("%C", sys_days{jun/1/-101});
+     assert(os.str() == "-02");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/-1999});
++    os << date::format("%C", sys_days{jun/1/-1999});
+     assert(os.str() == "-20");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/-2000});
++    os << date::format("%C", sys_days{jun/1/-2000});
+     assert(os.str() == "-20");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/-2001});
++    os << date::format("%C", sys_days{jun/1/-2001});
+     assert(os.str() == "-21");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/-19999});
++    os << date::format("%C", sys_days{jun/1/-19999});
+     assert(os.str() == "-200");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/-20000});
++    os << date::format("%C", sys_days{jun/1/-20000});
+     assert(os.str() == "-200");
+ 
+     os.str("");
+-    os << format("%C", sys_days{jun/1/-20001});
++    os << date::format("%C", sys_days{jun/1/-20001});
+     assert(os.str() == "-201");
+ }
+diff --git a/test/date_test/format/misc.pass.cpp b/test/date_test/format/misc.pass.cpp
+index 06deb24..cfcea69 100644
+--- a/test/date_test/format/misc.pass.cpp
++++ b/test/date_test/format/misc.pass.cpp
+@@ -29,12 +29,11 @@ void
+ test(const std::string& in_fmt, const std::string& input,
+      const std::string& out_fmt, const std::string& output)
+ {
+-    using namespace date;
+     std::istringstream in{input};
+     T t;
+     in >> parse(in_fmt, t);
+     assert(!in.fail());
+-    auto s = format(out_fmt, t);
++    auto s = date::format(out_fmt, t);
+     assert(s == output);
+ }
+ 
+diff --git a/test/date_test/format/range.pass.cpp b/test/date_test/format/range.pass.cpp
+index fbe2d8c..f18dc14 100644
+--- a/test/date_test/format/range.pass.cpp
++++ b/test/date_test/format/range.pass.cpp
+@@ -40,39 +40,41 @@ main()
+     using namespace date;
+     using namespace std::chrono;
+     std::ostringstream os;
+-    os << format("%F %T", sys_days{jan/1/year::min()});
++    using date::year, date::last;
++
++    os << date::format("%F %T", sys_days{jan/1/year::min()});
+     assert(os.str() == "-32767-01-01 00:00:00");
+     os.str("");
+-    os << format("%F %T", sys_days{dec/last/year::max()});
++    os << date::format("%F %T", sys_days{dec/last/year::max()});
+     assert(os.str() == "32767-12-31 00:00:00");
+     os.str("");
+-    os << format("%F %T", sys_days{dec/last/year::max()} + hours{23} + minutes{59} +
++    os << date::format("%F %T", sys_days{dec/last/year::max()} + hours{23} + minutes{59} +
+                                                   seconds{59} + microseconds{999999});
+     assert(os.str() == "32767-12-31 23:59:59.999999");
+     os.str("");
+ 
+-    os << format("%Y-%m-%d %H:%M:%S", sys_days{jan/1/year::min()});
++    os << date::format("%Y-%m-%d %H:%M:%S", sys_days{jan/1/year::min()});
+     assert(os.str() == "-32767-01-01 00:00:00");
+     os.str("");
+-    os << format("%Y-%m-%d %H:%M:%S", sys_days{dec/last/year::max()});
++    os << date::format("%Y-%m-%d %H:%M:%S", sys_days{dec/last/year::max()});
+     assert(os.str() == "32767-12-31 00:00:00");
+     os.str("");
+-    os << format("%Y-%m-%d %H:%M:%S", sys_days{dec/last/year::max()} + hours{23} +
++    os << date::format("%Y-%m-%d %H:%M:%S", sys_days{dec/last/year::max()} + hours{23} +
+                                         minutes{59} + seconds{59} + microseconds{999999});
+     assert(os.str() == "32767-12-31 23:59:59.999999");
+     os.str("");
+ 
+-    os << format("%F %T", sys_days{jan/1/year::min()} + microfortnights{1});
++    os << date::format("%F %T", sys_days{jan/1/year::min()} + microfortnights{1});
+     assert(os.str() == "-32767-01-01 00:00:01.2096");
+     os.str("");
+-    os << format("%F %T", sys_days{dec/last/year::max()} + microfortnights{1});
++    os << date::format("%F %T", sys_days{dec/last/year::max()} + microfortnights{1});
+     assert(os.str() == "32767-12-31 00:00:01.2096");
+     os.str("");
+ 
+-    os << format("%F", jan/1/year::min());
++    os << date::format("%F", jan/1/year::min());
+     assert(os.str() == "-32767-01-01");
+     os.str("");
+-    os << format("%F", dec/last/year::max());
++    os << date::format("%F", dec/last/year::max());
+     assert(os.str() == "32767-12-31");
+     os.str("");
+ }
+diff --git a/test/date_test/format/two_dight_year.pass.cpp b/test/date_test/format/two_dight_year.pass.cpp
+index 3f615b3..c7642b7 100644
+--- a/test/date_test/format/two_dight_year.pass.cpp
++++ b/test/date_test/format/two_dight_year.pass.cpp
+@@ -32,90 +32,90 @@ main()
+     using namespace date;
+     using namespace std::chrono;
+     std::ostringstream os;
+-    os << format("%y", sys_days{jun/1/20001});
++    os << date::format("%y", sys_days{jun/1/20001});
+     assert(os.str() == "01");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/20000});
++    os << date::format("%y", sys_days{jun/1/20000});
+     assert(os.str() == "00");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/19999});
++    os << date::format("%y", sys_days{jun/1/19999});
+     assert(os.str() == "99");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/2001});
++    os << date::format("%y", sys_days{jun/1/2001});
+     assert(os.str() == "01");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/2000});
++    os << date::format("%y", sys_days{jun/1/2000});
+     assert(os.str() == "00");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/1999});
++    os << date::format("%y", sys_days{jun/1/1999});
+     assert(os.str() == "99");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/101});
++    os << date::format("%y", sys_days{jun/1/101});
+     assert(os.str() == "01");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/100});
++    os << date::format("%y", sys_days{jun/1/100});
+     assert(os.str() == "00");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/99});
++    os << date::format("%y", sys_days{jun/1/99});
+     assert(os.str() == "99");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/1});
++    os << date::format("%y", sys_days{jun/1/1});
+     assert(os.str() == "01");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/0});
++    os << date::format("%y", sys_days{jun/1/0});
+     assert(os.str() == "00");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/-1});
++    os << date::format("%y", sys_days{jun/1/-1});
+     assert(os.str() == "01");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/-99});
++    os << date::format("%y", sys_days{jun/1/-99});
+     assert(os.str() == "99");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/-100});
++    os << date::format("%y", sys_days{jun/1/-100});
+     assert(os.str() == "00");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/-101});
++    os << date::format("%y", sys_days{jun/1/-101});
+     assert(os.str() == "01");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/-1999});
++    os << date::format("%y", sys_days{jun/1/-1999});
+     assert(os.str() == "99");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/-2000});
++    os << date::format("%y", sys_days{jun/1/-2000});
+     assert(os.str() == "00");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/-2001});
++    os << date::format("%y", sys_days{jun/1/-2001});
+     assert(os.str() == "01");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/-19999});
++    os << date::format("%y", sys_days{jun/1/-19999});
+     assert(os.str() == "99");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/-20000});
++    os << date::format("%y", sys_days{jun/1/-20000});
+     assert(os.str() == "00");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/-20001});
++    os << date::format("%y", sys_days{jun/1/-20001});
+     assert(os.str() == "01");
+ 
+     os.str("");
+-    os << format("%y", sys_days{jun/1/year::min()});
++    os << date::format("%y", sys_days{jun/1/date::year::min()});
+     assert(os.str() == "67");
+ }
+diff --git a/test/date_test/multi_year_duration_addition.pass.cpp b/test/date_test/multi_year_duration_addition.pass.cpp
+index 5d1d031..c0a8cf9 100644
+--- a/test/date_test/multi_year_duration_addition.pass.cpp
++++ b/test/date_test/multi_year_duration_addition.pass.cpp
+@@ -83,10 +83,11 @@ main()
+     constexpr ConvertibleToMonths custom_month;
+     constexpr ConvertibleToYears custom_year;
+     constexpr ConvertibleToYearsAndMonths prefer_year;
+-    
++
++    using date::last;
+ 
+     {
+-       constexpr year_month ym = 2001_y/feb;
++       constexpr date::year_month ym = 2001_y/feb;
+        CPP14_ASSERT(ym + one_month == 2001_y/mar);
+        NOEXCEPT_ASSERT(ym + one_month);
+        CPP14_ASSERT(one_month + ym == 2001_y/mar);
+@@ -97,7 +98,7 @@ main()
+        NOEXCEPT_ASSERT(copy(ym) += one_month);
+        CPP14_ASSERT((copy(ym) -= one_month) == 2001_y/jan);
+        NOEXCEPT_ASSERT(copy(ym) -= one_month);
+-      
++
+        CPP11_ASSERT(ym + one_year == 2002_y/feb);
+        NOEXCEPT_ASSERT(ym + one_year);
+        CPP11_ASSERT(one_year + ym == 2002_y/feb);
+@@ -141,7 +142,7 @@ main()
+        NOEXCEPT_ASSERT(copy(ym) += custom_month);
+        CPP14_ASSERT((copy(ym) -= custom_month) == 2001_y/jan);
+        NOEXCEPT_ASSERT(copy(ym) -= custom_month);
+-      
++
+        CPP11_ASSERT(ym + custom_year == 2002_y/feb);
+        NOEXCEPT_ASSERT(ym + custom_year);
+        CPP11_ASSERT(custom_year + ym == 2002_y/feb);
+@@ -166,7 +167,7 @@ main()
+     }
+ 
+     {
+-       constexpr year_month_day ym = 2001_y/feb/10;
++       constexpr date::year_month_day ym = 2001_y/feb/10;
+        CPP14_ASSERT(ym + one_month == 2001_y/mar/10);
+        NOEXCEPT_ASSERT(ym + one_month);
+        CPP14_ASSERT(one_month + ym == 2001_y/mar/10);
+@@ -177,7 +178,7 @@ main()
+        NOEXCEPT_ASSERT(copy(ym) += one_month);
+        CPP14_ASSERT((copy(ym) -= one_month) == 2001_y/jan/10);
+        NOEXCEPT_ASSERT(copy(ym) -= one_month);
+-      
++
+        CPP11_ASSERT(ym + one_year == 2002_y/feb/10);
+        NOEXCEPT_ASSERT(ym + one_year);
+        CPP11_ASSERT(one_year + ym == 2002_y/feb/10);
+@@ -221,7 +222,7 @@ main()
+        NOEXCEPT_ASSERT(copy(ym) += custom_month);
+        CPP14_ASSERT((copy(ym) -= custom_month) == 2001_y/jan/10);
+        NOEXCEPT_ASSERT(copy(ym) -= custom_month);
+-      
++
+        CPP11_ASSERT(ym + custom_year == 2002_y/feb/10);
+        NOEXCEPT_ASSERT(ym + custom_year);
+        CPP11_ASSERT(custom_year + ym == 2002_y/feb/10);
+@@ -246,7 +247,7 @@ main()
+     }
+ 
+     {
+-       constexpr year_month_day_last ym = 2001_y/feb/last;
++       constexpr date::year_month_day_last ym = 2001_y/feb/last;
+        CPP14_ASSERT(ym + one_month == 2001_y/mar/last);
+        NOEXCEPT_ASSERT(ym + one_month);
+        CPP14_ASSERT(one_month + ym == 2001_y/mar/last);
+@@ -257,7 +258,7 @@ main()
+        NOEXCEPT_ASSERT(copy(ym) += one_month);
+        CPP14_ASSERT((copy(ym) -= one_month) == 2001_y/jan/last);
+        NOEXCEPT_ASSERT(copy(ym) -= one_month);
+-      
++
+        CPP11_ASSERT(ym + one_year == 2002_y/feb/last);
+        NOEXCEPT_ASSERT(ym + one_year);
+        CPP11_ASSERT(one_year + ym == 2002_y/feb/last);
+@@ -301,7 +302,7 @@ main()
+        NOEXCEPT_ASSERT(copy(ym) += custom_month);
+        CPP14_ASSERT((copy(ym) -= custom_month) == 2001_y/jan/last);
+        NOEXCEPT_ASSERT(copy(ym) -= custom_month);
+-      
++
+        CPP11_ASSERT(ym + custom_year == 2002_y/feb/last);
+        NOEXCEPT_ASSERT(ym + custom_year);
+        CPP11_ASSERT(custom_year + ym == 2002_y/feb/last);
+@@ -326,7 +327,7 @@ main()
+     }
+ 
+     {
+-       constexpr year_month_weekday ym = 2001_y/feb/fri[4];
++       constexpr date::year_month_weekday ym = 2001_y/feb/fri[4];
+        CPP14_ASSERT(ym + one_month == 2001_y/mar/fri[4]);
+        NOEXCEPT_ASSERT(ym + one_month);
+        CPP14_ASSERT(one_month + ym == 2001_y/mar/fri[4]);
+@@ -337,7 +338,7 @@ main()
+        NOEXCEPT_ASSERT(copy(ym) += one_month);
+        CPP14_ASSERT((copy(ym) -= one_month) == 2001_y/jan/fri[4]);
+        NOEXCEPT_ASSERT(copy(ym) -= one_month);
+-      
++
+        CPP11_ASSERT(ym + one_year == 2002_y/feb/fri[4]);
+        NOEXCEPT_ASSERT(ym + one_year);
+        CPP11_ASSERT(one_year + ym == 2002_y/feb/fri[4]);
+@@ -381,7 +382,7 @@ main()
+        NOEXCEPT_ASSERT(copy(ym) += custom_month);
+        CPP14_ASSERT((copy(ym) -= custom_month) == 2001_y/jan/fri[4]);
+        NOEXCEPT_ASSERT(copy(ym) -= custom_month);
+-      
++
+        CPP11_ASSERT(ym + custom_year == 2002_y/feb/fri[4]);
+        NOEXCEPT_ASSERT(ym + custom_year);
+        CPP11_ASSERT(custom_year + ym == 2002_y/feb/fri[4]);
+@@ -406,7 +407,7 @@ main()
+     }
+ 
+     {
+-       constexpr year_month_weekday_last ym = 2001_y/feb/fri[last];
++       constexpr date::year_month_weekday_last ym = 2001_y/feb/fri[last];
+        CPP14_ASSERT(ym + one_month == 2001_y/mar/fri[last]);
+        NOEXCEPT_ASSERT(ym + one_month);
+        CPP14_ASSERT(one_month + ym == 2001_y/mar/fri[last]);
+@@ -417,7 +418,7 @@ main()
+        NOEXCEPT_ASSERT(copy(ym) += one_month);
+        CPP14_ASSERT((copy(ym) -= one_month) == 2001_y/jan/fri[last]);
+        NOEXCEPT_ASSERT(copy(ym) -= one_month);
+-      
++
+        CPP11_ASSERT(ym + one_year == 2002_y/feb/fri[last]);
+        NOEXCEPT_ASSERT(ym + one_year);
+        CPP11_ASSERT(one_year + ym == 2002_y/feb/fri[last]);
+@@ -461,7 +462,7 @@ main()
+        NOEXCEPT_ASSERT(copy(ym) += custom_month);
+        CPP14_ASSERT((copy(ym) -= custom_month) == 2001_y/jan/fri[last]);
+        NOEXCEPT_ASSERT(copy(ym) -= custom_month);
+-      
++
+        CPP11_ASSERT(ym + custom_year == 2002_y/feb/fri[last]);
+        NOEXCEPT_ASSERT(ym + custom_year);
+        CPP11_ASSERT(custom_year + ym == 2002_y/feb/fri[last]);
+diff --git a/test/date_test/parse.pass.cpp b/test/date_test/parse.pass.cpp
+index a7fecfd..13ca909 100644
+--- a/test/date_test/parse.pass.cpp
++++ b/test/date_test/parse.pass.cpp
+@@ -390,6 +390,7 @@ test_F()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::year_month_day;
+     {
+         std::istringstream in{"2016-12-13"};
+         sys_days tp;
+@@ -400,7 +401,7 @@ test_F()
+     }
+     {
+         std::istringstream in{"2016-12-13"};
+-        year_month_day tp;
++        year_month_day tp{};
+         in >> parse("%F", tp);
+         assert(!in.fail());
+         assert(!in.bad());
+@@ -413,6 +414,7 @@ test_H()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::sys_time;
+     {
+         std::istringstream in{"2016-12-11 15"};
+         sys_time<hours> tp;
+@@ -434,6 +436,7 @@ test_Ip()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::sys_time;
+     {
+         std::istringstream in{"2016-12-11 1 pm"};
+         sys_time<hours> tp;
+@@ -507,6 +510,7 @@ test_M()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::sys_time;
+     {
+         std::istringstream in{"2016-12-11 15"};
+         sys_time<minutes> tp;
+@@ -528,6 +532,7 @@ test_S()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::sys_time;
+     {
+         std::istringstream in{"2016-12-11 15"};
+         sys_seconds tp;
+@@ -557,6 +562,7 @@ test_T()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::sys_time;
+     {
+         std::istringstream in{"2016-12-11 15:43:22"};
+         sys_seconds tp;
+@@ -615,6 +621,7 @@ test_p()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::sys_time;
+     {
+         std::istringstream in{"2016-12-11 11pm"};
+         sys_time<hours> tp;
+@@ -744,6 +751,7 @@ test_z()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::local_seconds, date::local_days;
+     {
+         std::istringstream in{"2016-12-26 15:53:22 -0500"};
+         sys_seconds tp;
+@@ -775,6 +783,7 @@ test_Z()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::local_seconds, date::local_days;
+     {
+         std::string a;
+         std::istringstream in{"2016-12-26 15:53:22 word"};
+diff --git a/test/date_test/time_of_day_hours.pass.cpp b/test/date_test/time_of_day_hours.pass.cpp
+index 5b12429..8b03a79 100644
+--- a/test/date_test/time_of_day_hours.pass.cpp
++++ b/test/date_test/time_of_day_hours.pass.cpp
+@@ -79,16 +79,16 @@ main()
+     static_assert(t1.to_duration() == hours{13}, "");
+ #endif
+ 
+-    auto t2 = t1;
++    const auto t2 = t1;
+     assert(t2.hours() == t1.hours());
+     assert(t2.to_duration() == t1.to_duration());
+     ostringstream os;
+     os << t2;
+     assert(os.str() == "13:00:00");
+-    auto h = make12(t2.hours());
++    auto h = date::make12(t2.hours());
+     os.str("");
+     assert(h == hours{1});
+     assert(t2.to_duration() == t1.to_duration());
+-    assert(!is_am(t2.hours()));
+-    assert(is_pm(t2.hours()));
++    assert(!date::is_am(t2.hours()));
++    assert(date::is_pm(t2.hours()));
+ }
+diff --git a/test/date_test/year.pass.cpp b/test/date_test/year.pass.cpp
+index 585a245..eb411b9 100644
+--- a/test/date_test/year.pass.cpp
++++ b/test/date_test/year.pass.cpp
+@@ -90,6 +90,7 @@ main()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::year;
+ 
+     static_assert(year{2015} == 2015_y, "");
+     static_assert(year{2015} != 2016_y, "");
+diff --git a/test/date_test/year_month.pass.cpp b/test/date_test/year_month.pass.cpp
+index eec28a9..0688a0f 100644
+--- a/test/date_test/year_month.pass.cpp
++++ b/test/date_test/year_month.pass.cpp
+@@ -75,6 +75,9 @@ test_arithmetic()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::year_month;
++    using date::year;
++    using date::month;
+ 
+     for (int y1 = 2010; y1 <= 2015; ++y1)
+     {
+@@ -114,6 +117,7 @@ void test_arithemtic_not_ok()
+ {
+   using namespace date;
+   using namespace std::chrono;
++  using date::year_month, date::month;
+ 
+   year_month ym{2018_y, month{14}};
+ 
+@@ -123,7 +127,7 @@ void test_arithemtic_not_ok()
+     assert(ym - months{0} == ym2);
+     assert(ym - ym2 == months{0});
+     assert(ym2 - ym == months{0});
+-   
++
+     auto ymc = ym;
+     ymc += months{0};
+     assert(ymc.ok());
+diff --git a/test/iso_week/lastweek_weekday.pass.cpp b/test/iso_week/lastweek_weekday.pass.cpp
+index 3ffbb25..39156a6 100644
+--- a/test/iso_week/lastweek_weekday.pass.cpp
++++ b/test/iso_week/lastweek_weekday.pass.cpp
+@@ -56,7 +56,6 @@ static_assert( std::is_trivially_move_assignable<iso_week::lastweek_weekday>{},
+ 
+ static_assert(std::is_trivially_copyable<iso_week::lastweek_weekday>{}, "");
+ static_assert(std::is_standard_layout<iso_week::lastweek_weekday>{}, "");
+-static_assert(std::is_literal_type<iso_week::lastweek_weekday>{}, "");
+ 
+ static_assert( std::is_nothrow_constructible<iso_week::lastweek_weekday,
+                                                  iso_week::weekday>{}, "");
+diff --git a/test/iso_week/weekday.pass.cpp b/test/iso_week/weekday.pass.cpp
+index 25b3545..c3d4dfa 100644
+--- a/test/iso_week/weekday.pass.cpp
++++ b/test/iso_week/weekday.pass.cpp
+@@ -82,7 +82,6 @@ static_assert( std::is_trivially_move_assignable<iso_week::weekday>{}, "");
+ 
+ static_assert(std::is_trivially_copyable<iso_week::weekday>{}, "");
+ static_assert(std::is_standard_layout<iso_week::weekday>{}, "");
+-static_assert(std::is_literal_type<iso_week::weekday>{}, "");
+ 
+ static_assert( std::is_nothrow_constructible<iso_week::weekday, unsigned>{}, "");
+ static_assert( std::is_nothrow_constructible<iso_week::weekday, iso_week::sys_days>{}, "");
+diff --git a/test/iso_week/weeknum.pass.cpp b/test/iso_week/weeknum.pass.cpp
+index 5e60d77..5d9e809 100644
+--- a/test/iso_week/weeknum.pass.cpp
++++ b/test/iso_week/weeknum.pass.cpp
+@@ -70,7 +70,6 @@ static_assert( std::is_trivially_move_assignable<iso_week::weeknum>{}, "");
+ 
+ static_assert(std::is_trivially_copyable<iso_week::weeknum>{}, "");
+ static_assert(std::is_standard_layout<iso_week::weeknum>{}, "");
+-static_assert(std::is_literal_type<iso_week::weeknum>{}, "");
+ 
+ static_assert( std::is_nothrow_constructible<iso_week::weeknum, unsigned>{}, "");
+ static_assert(!std::is_convertible<unsigned, iso_week::weeknum>{}, "");
+diff --git a/test/iso_week/weeknum_weekday.pass.cpp b/test/iso_week/weeknum_weekday.pass.cpp
+index c02c093..e275e6a 100644
+--- a/test/iso_week/weeknum_weekday.pass.cpp
++++ b/test/iso_week/weeknum_weekday.pass.cpp
+@@ -59,7 +59,6 @@ static_assert( std::is_trivially_move_assignable<iso_week::weeknum_weekday>{}, "
+ 
+ static_assert(std::is_trivially_copyable<iso_week::weeknum_weekday>{}, "");
+ static_assert(std::is_standard_layout<iso_week::weeknum_weekday>{}, "");
+-static_assert(std::is_literal_type<iso_week::weeknum_weekday>{}, "");
+ 
+ static_assert( std::is_nothrow_constructible<iso_week::weeknum_weekday,
+                                                  iso_week::weeknum,
+diff --git a/test/iso_week/year.pass.cpp b/test/iso_week/year.pass.cpp
+index 1f1675a..3e44369 100644
+--- a/test/iso_week/year.pass.cpp
++++ b/test/iso_week/year.pass.cpp
+@@ -72,7 +72,6 @@ static_assert( std::is_trivially_move_assignable<iso_week::year>{}, "");
+ 
+ static_assert(std::is_trivially_copyable<iso_week::year>{}, "");
+ static_assert(std::is_standard_layout<iso_week::year>{}, "");
+-static_assert(std::is_literal_type<iso_week::year>{}, "");
+ 
+ static_assert( std::is_nothrow_constructible<iso_week::year, int>{}, "");
+ static_assert(!std::is_convertible<int, iso_week::year>{}, "");
+@@ -84,6 +83,7 @@ int
+ main()
+ {
+     using namespace iso_week;
++    using iso_week::year;
+ 
+     static_assert(year{2015} == 2015_y, "");
+     static_assert(int{year{2015}} == 2015, "");
+@@ -93,6 +93,9 @@ main()
+     static_assert(year{2015} <= 2015_y, "");
+     static_assert(year{2016} >= 2015_y, "");
+ 
++    static_assert(year{2015}.is_leap(), "");
++    static_assert(!year{2016}.is_leap(), "");
++
+     auto y = year{2014};
+     assert(++y == year{2015});
+     assert(y == year{2015});
+diff --git a/test/iso_week/year_lastweek.pass.cpp b/test/iso_week/year_lastweek.pass.cpp
+index 8874472..60486bb 100644
+--- a/test/iso_week/year_lastweek.pass.cpp
++++ b/test/iso_week/year_lastweek.pass.cpp
+@@ -64,7 +64,6 @@ static_assert( std::is_trivially_move_assignable<iso_week::year_lastweek>{}, "")
+ 
+ static_assert(std::is_trivially_copyable<iso_week::year_lastweek>{}, "");
+ static_assert(std::is_standard_layout<iso_week::year_lastweek>{}, "");
+-static_assert(std::is_literal_type<iso_week::year_lastweek>{}, "");
+ 
+ static_assert(std::is_nothrow_constructible<iso_week::year_lastweek,
+                                                 iso_week::year>{}, "");
+diff --git a/test/iso_week/year_lastweek_weekday.pass.cpp b/test/iso_week/year_lastweek_weekday.pass.cpp
+index 5f65f6f..1cdc3ee 100644
+--- a/test/iso_week/year_lastweek_weekday.pass.cpp
++++ b/test/iso_week/year_lastweek_weekday.pass.cpp
+@@ -65,7 +65,6 @@ static_assert( std::is_trivially_move_assignable<iso_week::year_lastweek_weekday
+ 
+ static_assert(std::is_trivially_copyable<iso_week::year_lastweek_weekday>{}, "");
+ static_assert(std::is_standard_layout<iso_week::year_lastweek_weekday>{}, "");
+-static_assert(std::is_literal_type<iso_week::year_lastweek_weekday>{}, "");
+ 
+ static_assert( std::is_nothrow_constructible<iso_week::year_lastweek_weekday,
+                                                  iso_week::year, iso_week::weekday>{}, "");
+diff --git a/test/iso_week/year_weeknum.pass.cpp b/test/iso_week/year_weeknum.pass.cpp
+index 6e9d4b6..08d495b 100644
+--- a/test/iso_week/year_weeknum.pass.cpp
++++ b/test/iso_week/year_weeknum.pass.cpp
+@@ -65,7 +65,6 @@ static_assert( std::is_trivially_move_assignable<iso_week::year_weeknum>{}, "");
+ 
+ static_assert(std::is_trivially_copyable<iso_week::year_weeknum>{}, "");
+ static_assert(std::is_standard_layout<iso_week::year_weeknum>{}, "");
+-static_assert(std::is_literal_type<iso_week::year_weeknum>{}, "");
+ 
+ static_assert( std::is_nothrow_constructible<iso_week::year_weeknum,
+                                                  iso_week::year,
+diff --git a/test/iso_week/year_weeknum_weekday.pass.cpp b/test/iso_week/year_weeknum_weekday.pass.cpp
+index 0540f97..8ca1c79 100644
+--- a/test/iso_week/year_weeknum_weekday.pass.cpp
++++ b/test/iso_week/year_weeknum_weekday.pass.cpp
+@@ -69,7 +69,6 @@ static_assert( std::is_trivially_move_assignable<iso_week::year_weeknum_weekday>
+ 
+ static_assert(std::is_trivially_copyable<iso_week::year_weeknum_weekday>{}, "");
+ static_assert(std::is_standard_layout<iso_week::year_weeknum_weekday>{}, "");
+-static_assert(std::is_literal_type<iso_week::year_weeknum_weekday>{}, "");
+ 
+ static_assert( std::is_nothrow_constructible<iso_week::year_weeknum_weekday,
+                                                  iso_week::year, iso_week::weeknum,
+diff --git a/test/posix/ptz.pass.cpp b/test/posix/ptz.pass.cpp
+index 5601c21..dd8a398 100644
+--- a/test/posix/ptz.pass.cpp
++++ b/test/posix/ptz.pass.cpp
+@@ -29,10 +29,11 @@
+ bool
+ is_equal(date::sys_info const& x, date::sys_info const& y)
+ {
++    using namespace std::chrono;
+     return x.begin == y.begin &&
+            x.end == y.end &&
+            x.offset == y.offset &&
+-           x.save == y.save &&
++           (x.save == minutes{0}) == (y.save == minutes{0}) &&
+            x.abbrev == y.abbrev;
+ }
+ 
+@@ -49,13 +50,14 @@ main()
+     using namespace date;
+     using namespace std;
+     using namespace std::chrono;
++    using date::local_days, date::Sunday, date::last;
+ 
+     auto tzi = locate_zone("Australia/Sydney");
+     Posix::time_zone tzp{"AEST-10AEDT,M10.1.0,M4.1.0/3"};
+     auto tp = local_days{2021_y/1/1} + 0s;
+     assert(tzp.get_info(tp).result == local_info::unique);
+     assert(is_equal(tzi->get_info(tp), tzp.get_info(tp)));
+-    
++
+     tp = local_days{2021_y/10/Sunday[1]} + 2h + 30min;
+     assert(tzp.get_info(tp).result == local_info::nonexistent);
+     assert(is_equal(tzi->get_info(tp), tzp.get_info(tp)));
+diff --git a/test/testit b/test/testit
+index 21ec3a2..69669ff 100755
+--- a/test/testit
++++ b/test/testit
+@@ -46,8 +46,14 @@ fi
+ 
+ if [ -z "$CXX_LANG" ]
+ then
+-    CXX_LANG=c++14
++    CXX_LANG=c++17
+ fi
++
++if expr "$CXX" : ".*g++" >/dev/null
++then
++	OPTIONS="$OPTIONS -pthread"
++fi
++
+ OPTIONS="-std=${CXX_LANG} $OPTIONS -I$ROOT -Wall $ROOT/src/tz.cpp -lcurl"
+ 
+ echo $ROOT
+diff --git a/test/tz_test/OffsetZone.h b/test/tz_test/OffsetZone.h
+index bacb03c..8e71e24 100644
+--- a/test/tz_test/OffsetZone.h
++++ b/test/tz_test/OffsetZone.h
+@@ -42,7 +42,7 @@ public:
+         {
+             using namespace date;
+             using namespace std::chrono;
+-            using LT = local_time<std::common_type_t<Duration, minutes>>;
++            using LT = date::local_time<std::common_type_t<Duration, minutes>>;
+             return LT{(tp + offset_).time_since_epoch()};
+         }
+ 
+@@ -52,7 +52,7 @@ public:
+         {
+             using namespace date;
+             using namespace std::chrono;
+-            using ST = sys_time<std::common_type_t<Duration, minutes>>;
++            using ST = date::sys_time<std::common_type_t<Duration, minutes>>;
+             return ST{(tp - offset_).time_since_epoch()};
+         }
+ 
+diff --git a/test/tz_test/validate.cpp b/test/tz_test/validate.cpp
+index 2202b37..7f914e0 100644
+--- a/test/tz_test/validate.cpp
++++ b/test/tz_test/validate.cpp
+@@ -9,7 +9,7 @@ test_info(const date::time_zone* zone, const date::sys_info& info)
+     auto begin = info.begin;
+     auto end = info.end - microseconds{1};
+     auto mid = begin + (end - begin) /2;
+-    using sys_microseconds = sys_time<microseconds>;
++    using sys_microseconds = date::sys_time<microseconds>;
+     using zoned_microseconds = zoned_time<microseconds>;
+     zoned_microseconds local{zone};
+ 
+@@ -106,7 +106,7 @@ tzmain()
+     {
+         std::cout << name << '\n';
+         auto z = locate_zone(name);
+-        auto begin = sys_days(jan/1/year::min()) + seconds{0};
++        auto begin = sys_days(jan/1/date::year::min()) + seconds{0};
+         auto end   = sys_days(jan/1/2035) + seconds{0};
+         auto info = z->get_info(begin);
+         std::cout << "Initially:           ";
+@@ -130,7 +130,7 @@ tzmain()
+                     info.save == prev_save)
+                 continue;
+             auto dp = floor<days>(begin);
+-            auto ymd = year_month_day(dp);
++            auto ymd = date::year_month_day(dp);
+             auto time = make_time(begin - dp);
+             std::cout << ymd << ' ' << time << "Z ";
+             if (info.offset >= seconds{0})
+diff --git a/test/tz_test/zoned_time.pass.cpp b/test/tz_test/zoned_time.pass.cpp
+index 70f3a83..92c0874 100644
+--- a/test/tz_test/zoned_time.pass.cpp
++++ b/test/tz_test/zoned_time.pass.cpp
+@@ -25,12 +25,12 @@
+ // {
+ // public:
+ //     using duration = typename std::common_type<Duration, std::chrono::seconds>::type;
+-// 
++//
+ //              zoned_time();
+ //              zoned_time(const sys_time<Duration>& st);
+ //     explicit zoned_time(const time_zone* z);
+ //     explicit zoned_time(std::string_view name);
+-// 
++//
+ //     template <class Duration2,
+ //               class = typename std::enable_if
+ //                       <
+@@ -38,36 +38,36 @@
+ //                                               sys_time<Duration>>::value
+ //                       >::type>
+ //         zoned_time(const zoned_time<Duration2>& zt) NOEXCEPT;
+-// 
++//
+ //     zoned_time(const time_zone* z,    const local_time<Duration>& tp);
+ //     zoned_time(std::string_view name, const local_time<Duration>& tp);
+ //     zoned_time(const time_zone* z,    const local_time<Duration>& tp, choose c);
+ //     zoned_time(std::string_view name, const local_time<Duration>& tp, choose c);
+-// 
++//
+ //     zoned_time(const time_zone* z,    const zoned_time<Duration>& zt);
+ //     zoned_time(std::string_view name, const zoned_time<Duration>& zt);
+ //     zoned_time(const time_zone* z,    const zoned_time<Duration>& zt, choose);
+ //     zoned_time(std::string_view name, const zoned_time<Duration>& zt, choose);
+-// 
++//
+ //     zoned_time(const time_zone* z,    const sys_time<Duration>& st);
+ //     zoned_time(std::string_view name, const sys_time<Duration>& st);
+-// 
++//
+ //     zoned_time& operator=(const sys_time<Duration>& st);
+ //     zoned_time& operator=(const local_time<Duration>& ut);
+-// 
++//
+ //     explicit operator sys_time<duration>() const;
+ //     explicit operator local_time<duration>() const;
+-// 
++//
+ //     const time_zone*     get_time_zone() const;
+ //     local_time<duration> get_local_time() const;
+ //     sys_time<duration>   get_sys_time() const;
+ //     sys_info             get_info() const;
+-// 
++//
+ //     template <class Duration1, class Duration2>
+ //     friend
+ //     bool
+ //     operator==(const zoned_time<Duration1>& x, const zoned_time<Duration2>& y);
+-// 
++//
+ //     template <class CharT, class Traits, class Duration1>
+ //     friend
+ //     std::basic_ostream<CharT, Traits>&
+@@ -108,6 +108,7 @@ main()
+     using namespace std;
+     using namespace std::chrono;
+     using namespace date;
++    using date::sys_time, date::local_days, date::local_seconds;
+     static_assert( is_nothrow_destructible<zoned_seconds>{}, "");
+     static_assert( is_default_constructible<zoned_seconds>{}, "");
+     static_assert( is_nothrow_copy_constructible<zoned_seconds>{}, "");
+diff --git a/test/tz_test/zoned_time_deduction.pass.cpp b/test/tz_test/zoned_time_deduction.pass.cpp
+index e62e11a..7935d17 100644
+--- a/test/tz_test/zoned_time_deduction.pass.cpp
++++ b/test/tz_test/zoned_time_deduction.pass.cpp
+@@ -34,6 +34,7 @@ void testDeductionFrom(Source&& s)
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::sys_time, date::local_days, date::local_time;
+ 
+     // No time point
+     {
+@@ -148,13 +149,14 @@ main()
+ {
+     using namespace date;
+     using namespace std::chrono;
++    using date::sys_time, date::local_days, date::local_time;
+ 
+ #if HAS_DEDUCTION_GUIDES
+     //  no arguments
+     {
+         zoned_time zt{};
+         static_assert(std::is_same<decltype(zt), zoned_time<seconds>>::value, "");
+-    } 
++    }
+ 
+     // zoned_time
+     {

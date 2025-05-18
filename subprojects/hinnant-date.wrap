@@ -7,6 +7,7 @@ patch_filename = hinnant-date_3.0.1-2_patch.zip
 patch_url = https://wrapdb.mesonbuild.com/v2/hinnant-date_3.0.1-2/get_patch
 patch_hash = 11b715b792609117a63310eeefc2939cc2ca26ecd4e996108335e504db58a41d
 wrapdb_version = 3.0.1-2
+diff_files = date/3.0.1-3.0.3.patch
 
 [provide]
 tz = tz_dep
