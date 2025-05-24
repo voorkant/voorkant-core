@@ -71,9 +71,15 @@ jobs:
       run: |
         cd ../sdk
         find bin/packages/ -ls
-        tar cf ${GITHUB_WORKSPACE}/packages.tar bin/packages/ .config
+        mkdir unpacked
+        gzip -cd $(find bin/packages/ -name 'voorkant*.ipk') | tar xOf - ./data.tar.gz | tar xzvf - -C unpacked
+        mv bin/packages/ .config unpacked/ ${GITHUB_WORKSPACE}
     # FIXME: put something useful (git hash?) in artifact name. We also want this in other workflows.
     - uses: actions/upload-artifact@v4
       with:
         name: openwrt-armel-build
-        path: packages.tar
+        include-hidden-files: true
+        path: |
+          packages
+          unpacked/
+          .config
