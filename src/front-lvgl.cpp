@@ -84,7 +84,7 @@ void lvLogCallback(lv_log_level_t _level, const char* _buf) // FIXME use level
 }
 
 void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::basic_json<>& card)
-{
+try {
   if (card["type"] == "entities") {
     if (card.contains("entities")) { // array of objects with the entity name in it.
       auto objs = card["entities"];
@@ -156,6 +156,9 @@ void renderCard(std::vector<std::unique_ptr<UIEntity>>& uielements, nlohmann::ba
       g_log << Logger::Warning << "Card of type " << card["type"] << " found, couldn't find entity." << std::endl;
     }
   }
+}
+catch (std::out_of_range) { // this does not really discriminate for exception origin, but it makes us not crash on disabled things.
+  return;
 }
 
 void uithread(int _argc, char* _argv[])
