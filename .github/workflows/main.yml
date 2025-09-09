@@ -11,7 +11,7 @@ jobs:
   build-ubuntu:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
       # https://github.com/mesonbuild/meson/issues/13888 - CMake 3.31.0 causes breakage with cmake module due to --dependency-file
@@ -47,7 +47,7 @@ jobs:
   build-macos:
     runs-on: macos-13
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
       - name: Install dependencies (brew)
@@ -82,7 +82,7 @@ jobs:
           nlohmann-json3-dev \
           pkg-config \
           python3-pip
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
       - name: Fix checkout permissions
