@@ -34,6 +34,9 @@ jobs:
     - uses: actions/checkout@v5
       with:
         submodules: recursive
+    - name: mark git safe dirs for vcs_tag lookup
+      run: |
+        git config --global --add safe.directory '*'  # this makes meson's vcs_tag() work
     - name: Get the SDK
       run: |
         # in December 2024/January 2025, https://downloads.openwrt.org/snapshots/targets/mxs/generic/openwrt-sdk-mxs-generic_gcc-13.3.0_musl_eabi.Linux-x86_64.tar.zst
