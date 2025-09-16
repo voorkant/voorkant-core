@@ -93,6 +93,12 @@ json HABackend::doCommand(const string& _command, const json& _data)
   return jsonresponse;
 }
 
+static void setTimeZone(const std::string &tz)
+{
+  setenv("TZ", tz.c_str(), 1);
+  tzset();
+}
+
 void HABackend::threadrunner()
 {
   json getdomains;
@@ -117,6 +123,10 @@ void HABackend::threadrunner()
   json getstates;
   getstates["type"] = "get_states";
   wc->send(getstates);
+
+  json getconfig;
+  getconfig["type"] = "get_config";
+  wc->send(getconfig);
 
   while (true) {
     auto msg = wc->recv();
@@ -150,6 +160,10 @@ void HABackend::threadrunner()
         loaded = true;
         load_cv.notify_all();
       }
+      else if (j["id"] == getconfig["id"]) {
+        setTimeZone( j["result"]["time_zone"]);
+        tzset();
+      }
       else if (j["type"] == "event") {
         std::scoped_lock lk(entitieslock);
         //  something happened!
@@ -167,6 +181,9 @@ void HABackend::threadrunner()
           else {
             std::cerr << "Ignoring state change from " << entity_id << ". We have not received initial state yet." << std::endl;
           }
+        }
+        else if (event_type == "core_config_updated") {
+          setTimeZone(event["data"]["time_zone"]);
         }
         else {
           cerr << "Event type received that we didn't expect: " << event_type << endl;
