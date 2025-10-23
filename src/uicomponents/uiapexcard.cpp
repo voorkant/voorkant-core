@@ -71,8 +71,8 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
 
   // // We generate a UI based on 'supported_color_modes'. color_mode then tells us which mode to use. Color_mode should be in uiupdate()
   flowpanel = lv_obj_create(_parent);
-  lv_obj_set_width(flowpanel, uiEntityWidth * 3);
-  lv_obj_set_height(flowpanel, /* MY_DISP_VER_RES */ 480 * 0.8);
+  lv_obj_set_width(flowpanel, LV_PCT(100));
+  lv_obj_set_height(flowpanel, LV_PCT(100));
   // lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
   // lv_obj_set_flex_flow(flowpanel, LV_FLEX_FLOW_COLUMN);
@@ -104,7 +104,8 @@ UIApexCard::UIApexCard(json _card, lv_obj_t* _parent) :
   chart = lv_chart_create(flowpanel);
   lv_obj_set_grid_cell(chart, LV_GRID_ALIGN_CENTER, 1, 1, LV_GRID_ALIGN_CENTER, 1, 1);
   // lv_obj_set_size(chart, uiEntityWidth * 3 - 100 - 25, /* MY_DISP_VER_RES */ 480 * 0.65 - 30);
-  // lv_obj_set_width(chart, LV_PCT(100));
+  lv_obj_set_width(chart, LV_PCT(92));
+  lv_obj_set_height(chart, LV_PCT(80));
   // lv_obj_set_align(chart, LV_ALIGN_CENTER);
 
   std::cerr << "lv_obj_get_content_width(chart)=" << lv_obj_get_content_width(chart) << std::endl;

@@ -12,7 +12,7 @@ UILogBox::UILogBox(lv_obj_t* _parent, lv_style_t* _style) :
   lv_obj_set_flex_align(log_box, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
   lv_obj_set_flex_grow(log_box, 1);
   lv_textarea_set_placeholder_text(log_box, "No log...");
-  lv_obj_add_style(log_box, _style, 0);
+  lv_obj_add_style(log_box, _style, 0); // FIXME: this line is confirmed unnecessary
   g_log.attach((IObserver*)this);
 }
 

@@ -46,7 +46,9 @@ UIButton::UIButton(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 {
   // FIXME: This code is duplicated in UISwitch, consider this after another few UIentities
   btn = lv_button_create(_parent);
-  lv_obj_set_size(btn, uiEntityWidth, 50);
+  // lv_obj_set_size(btn, uiEntityWidth, 50);
+  lv_obj_set_width(btn, LV_PCT(100));
+
   lv_obj_center(btn);
   lv_obj_set_style_pad_all(btn, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_add_flag(btn, LV_OBJ_FLAG_CHECKABLE);
@@ -90,8 +92,9 @@ UISwitch::UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
 {
   // This code is duplicated in UISwitch, consider this after another few UIentities
   lv_obj_t* switchcontainer = lv_obj_create(_parent);
-  lv_obj_set_width(switchcontainer, uiEntityWidth);
+  // lv_obj_set_width(switchcontainer, uiEntityWidth);
   lv_obj_set_height(switchcontainer, LV_SIZE_CONTENT);
+  lv_obj_set_width(switchcontainer, LV_PCT(100));
   lv_obj_remove_flag(switchcontainer, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_style_pad_all(switchcontainer, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -100,9 +103,9 @@ UISwitch::UISwitch(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent) :
   lv_obj_add_event_cb(sw, UISwitch::swToggleCB, LV_EVENT_VALUE_CHANGED, reinterpret_cast<void*>(&entity));
   lv_obj_set_align(sw, LV_ALIGN_RIGHT_MID);
 
-  lv_obj_t* label = createLabel(switchcontainer, _entity->name);
+  lv_obj_t* label = createLabel(switchcontainer, _entity->name); // FIXME _entity->name ignores custom names set in dashboard. likely a problem in more places.
   lv_obj_set_align(label, LV_ALIGN_LEFT_MID);
-  lv_obj_set_width(label, uiEntityWidth - 65); // 50 + padding == switch width
+  // lv_obj_set_width(label, uiEntityWidth - 65); // 50 + padding == switch width
 
   update();
 };
@@ -127,8 +130,8 @@ void UISwitch::swToggleCB(lv_event_t* _e)
 
   std::shared_ptr<HAEntity> ent = *reinterpret_cast<std::shared_ptr<HAEntity>*>(lv_event_get_user_data(_e));
   if (code == LV_EVENT_VALUE_CHANGED) {
-    HADomains::Light light(ent);
-    light.toggle({});
+    HADomains::Light light(ent); // FIXME: this is wrong for things like switch.ac, sends the wrong domain (light instead of switch)
+    light.toggle({}); // FIXME: HAweb explicitly calls turn_on/turn_off instead of toggle
   }
 };
 
@@ -177,7 +180,8 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent, std::st
   UIEntity(_entity, _parent)
 {
   lv_obj_t* flowpanel = lv_obj_create(_parent);
-  lv_obj_set_width(flowpanel, uiEntityWidth);
+  // lv_obj_set_width(flowpanel, uiEntityWidth);
+  lv_obj_set_width(flowpanel, LV_PCT(100));
   lv_obj_set_height(flowpanel, LV_SIZE_CONTENT);
   lv_obj_set_style_pad_all(flowpanel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_align(flowpanel, LV_ALIGN_CENTER);
@@ -205,7 +209,8 @@ UISensor::UISensor(std::shared_ptr<HAEntity> _entity, lv_obj_t* _parent, std::st
   lv_obj_set_style_text_align(iconpart, LV_TEXT_ALIGN_CENTER, 0);
 
   lv_obj_t* textpart = lv_obj_create(flowpanel);
-  lv_obj_set_width(textpart, uiEntityWidth - 55);
+  // lv_obj_set_width(textpart, uiEntityWidth - 55);
+  lv_obj_set_flex_grow(textpart, 1);
   lv_obj_set_height(textpart, LV_SIZE_CONTENT);
   lv_obj_set_style_pad_all(textpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_border_width(textpart, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
