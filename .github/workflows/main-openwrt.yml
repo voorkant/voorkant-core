@@ -41,7 +41,7 @@ jobs:
       run: |
         # in December 2024/January 2025, https://downloads.openwrt.org/snapshots/targets/mxs/generic/openwrt-sdk-mxs-generic_gcc-13.3.0_musl_eabi.Linux-x86_64.tar.zst
         # (master snapshot) worked too, but I prefer a more stable target. The resulting binary was 8 kbytes smaller on master at the time.
-        wget --progress=dot:giga https://downloads.openwrt.org/releases/24.10.0-rc4/targets/mxs/generic/openwrt-sdk-24.10.0-rc4-mxs-generic_gcc-13.3.0_musl_eabi.Linux-x86_64.tar.zst
+        wget --progress=dot:giga https://downloads.openwrt.org/releases/24.10.4/targets/mxs/generic/openwrt-sdk-24.10.4-mxs-generic_gcc-13.3.0_musl_eabi.Linux-x86_64.tar.zst
         tar xf openwrt-sdk-*.tar.zst
         rm -f openwrt-sdk-*.tar.zst
         mv openwrt-sdk-* ../sdk
