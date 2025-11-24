@@ -31,7 +31,7 @@ jobs:
           unzip \
           wget \
           zstd
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
     - name: mark git safe dirs for vcs_tag lookup
