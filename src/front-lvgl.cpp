@@ -234,7 +234,10 @@ void uithread(int _argc, char* _argv[])
   // lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
 #if defined(VOORKANT_LVGL_SDL)
   static lv_indev_t* indev = lv_sdl_mouse_create();
-  // lv_indev_set_read_cb(indev, sdl_mouse_read);
+  static lv_indev_t* inkeydev = lv_sdl_keyboard_create();
+  static lv_group_t* g = lv_group_create();
+  lv_indev_set_group(inkeydev, g);
+  lv_group_set_default(g);
 #elif defined(VOORKANT_LVGL_FBDEV)
   static lv_indev_t* indev = lv_evdev_create(LV_INDEV_TYPE_POINTER, "/dev/input/event0");
   lv_evdev_set_calibration(indev, 200, 3850, 3600, 320);
