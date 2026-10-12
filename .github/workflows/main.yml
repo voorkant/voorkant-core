@@ -40,7 +40,7 @@ jobs:
         run: scripts/background-ha.sh
       - name: test voorkant-cli
         run: LD_LIBRARY_PATH=./build/subprojects/curl-8.5.0/build/lib/.libs/ HA_WS_URL=ws://localhost:8123/api/websocket HA_API_TOKEN=$(cat scripts/docker/longtoken.txt) build/voorkant-cli list-entities
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: ubuntu-build
           path: ${{github.workspace}}/build
@@ -57,7 +57,7 @@ jobs:
         env:
           CC: gcc
       - run: meson compile -C ${{github.workspace}}/build -v
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: macos-build
           path: ${{github.workspace}}/build
